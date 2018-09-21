@@ -1,0 +1,64 @@
+<template>
+  <div class="usedCar-wrapper" @click.stop>
+    <header>
+        <p>
+        <i class='icon'></i>
+        <span class='title'>二手车</span>
+        </p>
+    </header>
+    <div class='main'>
+
+    </div>
+
+  </div>
+  
+</template>
+<script>
+export default {
+  methods: {
+  }
+
+};
+</script>
+<style lang="scss" scoped>
+@import "~common/scss/mixin";
+@import "~common/scss/variable";
+
+.usedCar-wrapper {
+    overflow: auto;
+    width: 100%;
+    background: #fff;
+
+    header {
+        line-height: 0.88rem;
+        text-align: center;
+        font-size: 0.36rem;
+        font-weight: bold;
+        width: 100%;
+        padding: 0 .3rem;
+        padding-bottom: .2rem;
+
+        .icon {
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            width: 0.21rem;
+            height: 0.36rem;
+            @include bg-image("返回");
+            float: left;
+            margin-top: .26rem;
+        }
+    }
+
+    .main {
+        width: 100%;
+        height: 12.06rem;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+        @include bg-image("即将推出");
+    }
+
+}
+</style>
