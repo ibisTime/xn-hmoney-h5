@@ -2,20 +2,17 @@
 <div>
   <div :class = "[Show ? 'filter otc-wrapper': 'otc-wrapper' ]" @click.stop>
       <div class='header'>
-        <select name="" id="">
-          <option value="ETH">ETH<span class="sicon"></span></option>
-          <option value="ETH">ETH</option>
-          <option value="ETH">ETH</option>
+        <select name="bbName" v-model="config.coin" @change="getAdverFn">
+          <option :value="item.symbol" v-for="(item, index) in bbList" :key="index">{{item.symbol}}<span :class="{sicon: index == 0}"></span></option>
         </select>
         <p class="buySell">
-        <span :class="[flag1 ? 'buy select' : 'buy']" @click='buy'>买币</span>
-        <span :class="[flag2 ? 'sell select' : 'sell']" @click='sell'>卖币</span>
+        <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>买币</span>
+        <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>卖币</span>
         </p>
         <router-link to='trading' class='trading'>币币交易</router-link>
       </div>
       <div class="top">
         <div class='top-main'>
-            <p>地区<span></span></p>
             <p>货币<span></span></p>
             <p>支付方式<span></span></p>
             <p :class="[show ? 'act' : '']" @click="show = !show" >排序<span></span></p>
@@ -43,94 +40,30 @@
         </slider>
       </div>
       <!-- 买币 -->
-      <div v-show="flag1" class='main'>
-        <router-link to='otc-buy'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='green color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>量采风<span class='ico'>支付宝</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>购买</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-buy'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='yellow color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>alen<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>购买</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-buy'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='color gray'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>DFDFG<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>购买</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-buy'>
-        <div class='content'>
+      <div class='main'>
+        <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
           <div class='cont'>
-            <div class='preson'>
+            <div class='preson' :data-href="'../user/user-detail.html?coin=' + adverItem.tradeCoin + '&userId=' + adverItem.userId + '&adsCode=' + adverItem.code">
               <div class='pic'>
+                <img :src="getAvatar(adverItem.user.photo)" alt="">
                 <span class='green color'></span>
               </div>
               <span class='name'>已实名</span>
             </div>
             <div class='text'>
-              <p class='title'>的方菲<span class='ico'>支付宝</span></p>
-              <p class='disc'>交易12•好评100%•信任5</p>
-              <p class='limit'>限额：100-12345 CNY</p>
+              <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
+              <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}%•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
+              <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} CNY</p>
             </div>
             <div class='number'>
-              <p class='num'>285600 CNY</p>
-              <p class='shop'>购买</p>
+              <p class='num'>{{adverItem.truePrice.toFixed(2)}} CNY</p>
+              <p class='shop'>{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
             </div>
           </div>
         </div>
-        </router-link>
       </div>
-      <!-- 卖币 -->
-      <div v-show='flag2' class='main'>
+       <!-- 卖币 -->
+      <!--<div v-show='flag2' class='main'>
         <router-link to='otc-sell'>
           <div class='content'>
             <div class='cont'>
@@ -215,7 +148,7 @@
             </div>
           </div>
         </router-link>
-      </div>
+      </div> -->
       <div  @click='relShow' class='release'>
       </div>
 
@@ -240,12 +173,29 @@
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {formatImg} from 'common/js/util';
+import {formatImg, getUserId, getAvatar} from 'common/js/util';
 import {getBannerList} from 'api/general';
+import {getAdvertisingData} from 'api/otc';
 import Slider from 'base/slider/slider';
 export default {
   data() {
     return {
+      PHOTO_SUFFIX: '?imageMogr2/auto-orient/thumbnail/!150x150r',
+      PIC_PREFIX: 'http://ounm8iw2d.bkt.clouddn.com/',
+      userId: getUserId(),
+      bbList: [],
+      config: {
+        start: '1',
+        limit: '10',
+        coin:'ETH',
+        tradeType: '1'
+      },
+      bizTypeList: {
+        "0": "支付宝",
+        "1": "微信",
+        "2": "银行卡转账"
+    },
+      bbDataList: [],
       banners: [],
       show: false,
       Show: false,
@@ -257,11 +207,24 @@ export default {
     this.getInitData();
   },
   updated() {
-    this.getInitData();
+    // this.getInitData();
+  },
+  mounted() {
+    this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
+    getAdvertisingData(this.config).then(data => {
+      this.bbDataList = data.list;
+    })
   },
   computed: {
+    
   },
   methods: {
+    //根据币种请求数据
+    getAdverFn(){
+      getAdvertisingData(this.config).then(data => {
+        this.advertisingFn(this.config.tradeType);
+      })
+    },
     getInitData() {
       this.getBannerList();
     },
@@ -275,13 +238,21 @@ export default {
         backgroundImage: `url(${formatImg(imgs)})`
       };
     },
+    advertisingFn(type){
+      this.config.tradeType = type;
+      getAdvertisingData(this.config).then(data => {
+        this.bbDataList = data.list;
+      })
+    },
     buy() {
       this.flag1 = true;
       this.flag2 = false;
+      this.advertisingFn('1');
     },
     sell() {
       this.flag1 = false;
       this.flag2 = true;
+      this.advertisingFn('0');
     },
     goOtcBuy() {
       this.$router.push('otc-buy');
@@ -296,7 +267,27 @@ export default {
       this.$router.push('buy-publish');
     },
     goSellPublish() {
-      this.$router.push('sell-publish');
+      this.$router.push('buy-publish?type=1');
+    },
+    
+    getPic(pic, suffix) {
+      if (!pic) {
+          return "";
+      }
+      pic = pic.split(/\|\|/)[0];
+      if (!/^http|^data:image/i.test(pic)) {
+          suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
+          pic = this.PIC_PREFIX + pic + suffix;
+      }
+      return pic;
+    },
+    getAvatar(pic, suffix) {
+      var defaultAvatar = '';
+      var suffix = suffix || this.PHOTO_SUFFIX;
+      if (!pic) {
+          pic = defaultAvatar;
+      }
+      return this.getPic(pic, suffix);
     }
   },
   components: {
@@ -469,7 +460,11 @@ export default {
             background-size: 100% 100%;
             @include bg-image("头像(4)");
             position: relative;
-
+            img{
+              height: 100%;
+              width: 100%;
+              border-radius: 50%;
+            }
             .color {
               display: inline-block;
               width: .2rem;

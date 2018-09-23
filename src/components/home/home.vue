@@ -72,6 +72,7 @@
   import Scroll from 'base/scroll/scroll';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
+  import {getBbListData} from 'api/otc';
   export default {
     data() {
       return {
@@ -90,7 +91,12 @@
       }  
     },
     updated() {
-      this.getInitData();
+      //this.getInitData();
+    },
+    mounted() {
+      getBbListData().then(data => {
+        sessionStorage.setItem('coinData', JSON.stringify(data));
+      })
     },
     computed: {
     },

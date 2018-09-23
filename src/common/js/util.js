@@ -511,7 +511,7 @@ export function moneyFormat(money, format, coin, isRe = false) {
       flag = true;
   }
   // 默认格式为2位小数
-  if (isUndefined(format) || typeof format === 'object') {
+  if (isUnDefined(format) || typeof format === 'object') {
       format = 2;
   }
   if (coin) {
@@ -610,6 +610,37 @@ export function getCoinUnit(coin) {
   }
   var unit = getCoinData()[coin].unit;
   return unit;
+}
+
+//获取链接入参
+export function getUrlParam(name, locat) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var locat = locat ? "?" + locat.split("?")[1] : '';
+  var r = (locat ? locat : window.location.search).substr(1).match(reg);
+  if (r != null) return decodeURIComponent(r[2]);
+  return '';
+}
+//图片格式化
+export function getPic(pic, suffix) {
+  if (!pic) {
+      return "";
+  }console.log(pic)
+  pic = pic.split(/\|\|/)[0];
+  if (!/^http|^data:image/i.test(pic)) {
+      suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
+      pic = PIC_PREFIX + pic + suffix;
+  }
+  return pic;
+}
+//图片格式化-头像
+var PHOTO_SUFFIX = '?imageMogr2/auto-orient/thumbnail/!150x150r';
+export function getAvatar(pic, suffix) {
+  var defaultAvatar = '';
+  var suffix = suffix || PHOTO_SUFFIX;
+  if (!pic) {
+      pic = defaultAvatar;
+  }
+  return getPic(pic, suffix);
 }
 
 // export function setCoinData() {
