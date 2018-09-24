@@ -1,7 +1,6 @@
 import {setCookie, getCookie, delCookie} from './cookie';
 // import {setProfilePortrait} from 'common/js/message';
 import BigDecimal from './BigDecimal';
-import $ from 'jquery';
 // 日期格式化
 export function formatDate(date, fmt) {
   date = new Date(date);
@@ -642,25 +641,3 @@ export function getAvatar(pic, suffix) {
   }
   return getPic(pic, suffix);
 }
-
-// export function setCoinData() {
-//   getCoinList().then(data => {
-//     let coinList = [];
-//     let coinData = {};
-//     data.map( d => {
-//       coinData[d.symbol] = {
-//         'coin': d.symbol,
-//         'unit': '1e' + d.unit,
-//         'name': d.cname,
-//         'type': d.type,
-//         'status': d.status
-//       };
-//       coinList.push({
-//         key: d.symbol,
-//         value: d.cname
-//       });
-//     });
-//     window.sessionStorage.setItem('cionData',JSON.stringify(coinData));
-//     window.sessionStorage.setItem('cionList',JSON.stringify(coinList));
-//   })
-// }

@@ -11,7 +11,7 @@
               <input type="submit" value="登  录" @click='login'>
               <p>
                   <router-link class="reg" to="/registered">立即注册</router-link>
-                  <router-link class="paw" to="/">忘记密码？</router-link>
+                  <router-link class="paw" to="/security-tradePassword">忘记密码？</router-link>
               </p>
           </div>
       </div>

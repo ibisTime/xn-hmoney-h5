@@ -27,31 +27,32 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag' to='security-bindingEmail'>
+        <router-link v-show="show" class='tag' to='security-bindingEmail'>
             <p>
             <span>绑定邮箱</span>
             <i class='icon'></i>
             </p>
         </router-link>
-    </div>
-    <div class='content'>
-        <router-link class='tag mb20' to='security-email'>
-            <p>
-            <span>修改邮箱</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link v-show="show" class='tag mb20' to='security-phoneNumber'>
-            <p>
-            <span>修改手机号</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
         <div v-show="!show" class='tag mb20'>
             <p>
-            <span>修改手机号</span>
+            <span>已绑定邮箱</span>
             <i class='icon'></i>
-            <span class='tel'>13154785962</span>
+            <span class='tel'>{{email}}</span>
+            </p>
+        </div>
+    </div>
+    <div class='content'>
+        <router-link v-show="show1" class='tag mb20' to='security-phoneNumber'>
+            <p>
+            <span>绑定手机号</span>
+            <i class='icon'></i>
+            </p>
+        </router-link>
+        <div v-show="!show1" class='tag mb20'>
+            <p>
+            <span>已绑定手机号</span>
+            <i class='icon'></i>
+            <span class='tel'>{{mobile}}</span>
             </p>
         </div>
         <router-link class='tag mb20' to='security-loginPassword'>
@@ -64,15 +65,28 @@
     <div class="footer">
         <button>退出登录</button>
     </div>
-
   </div>
 </template>
 <script>
+import {getUserById} from '../../api/person';
+import {getUserId} from '../../common/js/util';
+
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      show1: true,
+      email: '',
+      mobile: ''
     };
+  },
+  created() {
+    getUserById(getUserId()).then((data) => {
+      this.mobile = data.mobile;
+      this.email = data.email;
+      this.email === '' ? this.show = true : this.show = false;
+      this.mobile === '' ? this.show1 = true : this.show1 = false;
+    });
   },
   methods: {}
 };

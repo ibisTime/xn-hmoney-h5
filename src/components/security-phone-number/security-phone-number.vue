@@ -3,50 +3,45 @@
     <header>
         <p>
         <i class='icon'></i>
-        <span class='title'>修改手机号</span>
+        <span class='title'>绑定手机号</span>
         </p>
     </header>
     <div class="main">
-      <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>15868201234</p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="promi" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
-      <p><input type="text" placeholder="新手机号"></p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p><input type="text" v-model="mobile" placeholder="请输入手机号"></p>
+      <p class='text3'><input v-model="smsCaptcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
 
     </div>
     <div class="foot">
-      <button>确 定</button>
+      <button @click="bindPhone">确 定</button>
     </div>
     <div class='promit'>
       <i class='icon'></i><span>请联系客服热线：289-3760-0000 进行修改</span>
     </div>
-    <div v-show="show2" class='windows'>
-      <div class="cont">
-        <div class='text'>
-          <p class='txt1'>获取验证码失败</p>
-          <p class='txt2'>请联系客服热线</p>
-          <p class='txt3'>289-3760-0000</p>
-        </div>
-        <p class='yes' @click='show2 = !show2'>确 定</p>
-      </div>
-    </div>
-
   </div>
 </template>
 <script>
+import {getUserId} from '../../common/js/util';
+import {bindingPhone, getSmsCaptcha1} from '../../api/person';
+
 export default {
   data() {
     return {
       show: true,
-      show2: false
+      mobile: '',
+      smsCaptcha: '',
+      bizType: '805060',
     };
   },
   methods: {
     get() {
       this.show = false;
+      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+      });
     },
-    promi() {
-      this.show2 = true;
+    bindPhone() {
+      bindingPhone(1, this.mobile, this.smsCaptcha, getUserId()).then(data => {
+        this.$router.push('security-center');
+      })
     }
   }
 };
@@ -182,45 +177,5 @@ export default {
       margin-right: .13rem;
     }
   }
-
-  .windows {
-    width: 100%;
-    height: 100%;
-    top: 0;
-    text-align: center;
-    position: fixed;
-    background: rgba(0,0,0,.5);
-    .cont {
-      width: 6.6rem;
-      height: 4.21rem;
-      background: #fff;
-      border-radius: .08rem;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 4rem;
-      .text {
-        font-weight: bold;
-        height: 3.3rem;
-        border-bottom: .01rem solid #d8d8d8;
-        .txt1 {
-          font-size: .38rem;
-          line-height: .54rem;
-          padding: .69rem 0 .36rem;
-        }
-        .txt2, .txt3 {
-          font-size: .36rem;
-          line-height: .54rem;
-        }
-      }
-      .yes {
-        line-height: .9rem;
-        font-size: .32rem;
-        color: #d53d3d;
-      }
-    }
-  }
-
-
 }
 </style>

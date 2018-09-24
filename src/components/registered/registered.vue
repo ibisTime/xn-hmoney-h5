@@ -40,7 +40,8 @@ export default {
       smsCaptcha: '',
       password1: '',
       password2: '',
-      bizType: '805041'
+      bizType1: '805041',
+      bizType2: '805043'
     };
   },
   computed: {},
@@ -55,11 +56,11 @@ export default {
       this.$router.go(-1);
     },
     getSca1() {
-      getSmsCaptcha1(this.bizType, this.phone).then(data => {
+      getSmsCaptcha1(this.bizType1, this.phone).then(data => {
       });
     },
     getSca2() {
-      getSmsCaptcha2(this.bizType, this.email).then(data => {
+      getSmsCaptcha2(this.bizType2, this.email).then(data => {
       });
     },
     regist() {

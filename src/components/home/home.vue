@@ -84,14 +84,8 @@
     },
     created() {
       this.getInitData();
-      if(!isLogin()) {
-        this.$router.push('login');
-      }else {
-        this.$router.push('page');
-      }  
     },
     updated() {
-      //this.getInitData();
     },
     mounted() {
       getBbListData().then(data => {

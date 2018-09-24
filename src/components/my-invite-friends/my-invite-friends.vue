@@ -5,7 +5,7 @@
             <div class='logo'></div>
             <div class="pic icon"></div>
             <div class="text1">
-                送您一份<spann class='red1'>数字资产</spann>
+                送您一份<span class='red1'>数字资产</span>
             </div>
             <i class='icon ico1'></i>
             <p class='text2 red2'> 每个人都应该拥有一些比特币</p>
@@ -27,20 +27,25 @@
 </template> 
 <script>
 const QRCode = require('js-qrcode');
+import {getUserId} from 'common/js/util';
+
 export default {
   data() {
     return {
     };
   },
   mounted() {
-    this.wxUrl = 'http://www.baidu.com';
+    this.userId = getUserId();
+    this.wxUrl = 'http://www.baidu.com/';
+    this.Url = this.wxUrl+this.userId;
+    console.log(this.Url);
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,
       correctLevel: 2,
       foreground: '#000000'
     });
-    qr.make(this.wxUrl);
+    qr.make(this.Url);
   }
 };
 </script>

@@ -8,29 +8,52 @@
     </header>
     <div class="main">
       <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>15868201234</p>
-      <p class='text3'><input type="text" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
-      <p><input type="password" placeholder="新密码(不少于6位)"></p>
-      <p><input type="password" placeholder="确认密码"></p>
+      <p>{{mobile}}</p>
+      <p class='text3'><input v-model="smsCaptcha" type="text" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p><input v-model="newLoginPwd" type="password" placeholder="新密码(不少于6位)"></p>
+      <p><input v-model="surePwd" type="password" placeholder="确认密码"></p>
     </div>
     <div class="foot">
-      <button>确 定</button>
-
+      <button @click="changeLoginPassword">确 定</button>
     </div>
    
 
   </div>
 </template>
 <script>
+import {getUserById, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
+import {getUserId} from '../../common/js/util';
+
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      mobile: '',
+      smsCaptcha: '',
+      newLoginPwd: '',
+      surePwd: '',
+      bizType: '805063',
     };
+  },
+  created() {
+    getUserById(getUserId()).then((data) => {
+      this.mobile = data.mobile;
+    });
   },
   methods: {
     get() {
       this.show = false;
+      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+      });
+    },
+    changeLoginPassword() {
+      changeLoginPwd(this.mobile, this.newLoginPwd, this.smsCaptcha).then((data) => {
+        if(this.newLoginPwd === this.surePwd) {
+          this.$router.push('login');
+        } else {
+          alert('密码不一致，请重新输入');
+        }
+      });
     }
   }
 };

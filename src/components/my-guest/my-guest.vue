@@ -14,14 +14,13 @@
                 </div>
                 <div class='text'>
                     <div class='text1'>
-                        <p class='txt1'><span class='name'>KOALA</span><span class='slogn1'>已认证</span></p>
+                        <p class='txt1'><span class='name'>{{list.user}}</span><span class='slogn1'>已认证</span></p>
                         <p class='txt2 gray'>2018-09-03</p>
                     </div>
                     <div class='text2'>
-                        <p class='txt1'>交易金额：26890.00</p>
-                        <p class='txt2'>获佣：<span class='red'>200X</span></p>
+                        <p class='txt1'>交易金额：{{list.tradeCount}}</p>
+                        <p class='txt2'>{{commission.status == '1' ? '获佣：' : '待获佣'}}<span class='red'>{{list.tradeCount}}{{commission.currency}}</span></p>
                     </div>
-
                 </div>
             </div>
         </router-link>
@@ -43,7 +42,7 @@
                 </div>
             </div>
         </router-link>
-        <router-link to='mine' class='list-wrap'>
+        <!-- <router-link to='mine' class='list-wrap'>
             <div class='list'>
                 <div class='pic'>
                     <i class='icon'></i>
@@ -78,16 +77,36 @@
 
                 </div>
             </div>
-        </router-link>
+        </router-link> -->
 
     </div>
   </div>
 </template>
 <script>
+import {myGuest1, myGuest2} from '../../api/person';
+import {getUserId} from '../../common/js/util';
+
 export default {
   data() {
     return {
+        commission: {
+            createDatetime: '2018-0924',
+            currency: 'X',
+            status: '1'
+        },
+        list: {
+            tradeAwardCount: '10',
+            tradeCount: '1000',
+            user: 'rjn'
+        }
     };
+  },
+  created() {
+    myGuest1(10, 0).then((data) => {
+    });
+    myGuest2(getUserId(), 10, 0).then((data) => {
+        console.log(data);
+    })
   },
   methods: {
   }
