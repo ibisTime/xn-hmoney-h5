@@ -21,8 +21,8 @@
   </div>
 </template>
 <script>
-import {getUserById, changeTradPwd, getSmsCaptcha1} from '../../api/person';
-import {getUserId} from '../../common/js/util';
+import {getUser, changeTradPwd, getSmsCaptcha1} from '../../api/person';
+import {captValid, rePwdValid, tradeValid} from '../../common/js/util';
 
 export default {
   data() {
@@ -36,7 +36,7 @@ export default {
     };
   },
   created() {
-    getUserById(getUserId()).then((data) => {
+    getUser().then((data) => {
       this.mobile = data.mobile;
     });
   },
@@ -48,7 +48,9 @@ export default {
     },
     changeTradPwd() {
       changeTradPwd(this.newPayPwd, smsCaptcha, getUserId()).then((data) => {
-        if(this.newPayPwd === this.surePwd) {
+        if(captValid(this.smsCaptcha)) {
+        }
+        if(tradeValid(this.newPayPwd) && rePwdValid(this.newPayPwd, this.surePwd)) {
           this.$router.push('mine');
         } else {
           alert('密码不一致，请重新输入');

@@ -115,7 +115,7 @@
     </div>
     <!-- 已发布 -->
     <div v-show="show2" class='has-adver'>
-        <router-link to='sell-publish' class='list-wrap'>
+        <router-link to='buy-publish?type=1' class='list-wrap'>
             <div class='list1'>
                 <div class='pic'>
                     <i class='icon'></i>
@@ -139,7 +139,7 @@
                 </router-link>
             </div>
         </router-link>
-        <router-link to='sell-publish' class='list-wrap'>
+        <router-link to='buy-publish?type=1' class='list-wrap'>
             <div class='list1'>
                 <div class='pic'>
                     <i class='icon'></i>
@@ -163,7 +163,7 @@
                 </router-link>
             </div>
         </router-link>
-        <router-link to='sell-publish' class='list-wrap'>
+        <router-link to='buy-publish?type=1' class='list-wrap'>
             <div class='list1'>
                 <div class='pic'>
                     <i class='icon'></i>
@@ -187,7 +187,7 @@
                 </router-link>
             </div>
         </router-link>
-        <router-link to='sell-publish' class='list-wrap'>
+        <router-link to='buy-publish?type=1' class='list-wrap'>
             <div class='list1'>
                 <div class='pic'>
                     <i class='icon'></i>

@@ -7,19 +7,19 @@
         </p>
     </header>
     <div class='main'>
-        <router-link to='mine' class='list-wrap'>
+        <router-link to='mine' class='list-wrap' v-for='(item,index) in list' :key="index">
             <div class='list'>
                 <div class='pic'>
                     <i class='icon'></i>
                 </div>
                 <div class='text'>
                     <div class='text1'>
-                        <p class='txt1'><span class='name'>{{list.user}}</span><span class='slogn1'>已认证</span></p>
-                        <p class='txt2 gray'>2018-09-03</p>
+                        <p class='txt1'><span class='name'>{{item.user.realName}}</span><span class='slogn1' :class="[item.user.idNO ? 'slogn1' : 'slogn2']">{{item.user.idNO ? '已认证' : '未认证'}}</span></p>
+                        <p class='txt2 gray'>{{item.user.createDatetime}}</p>
                     </div>
                     <div class='text2'>
-                        <p class='txt1'>交易金额：{{list.tradeCount}}</p>
-                        <p class='txt2'>{{commission.status == '1' ? '获佣：' : '待获佣'}}<span class='red'>{{list.tradeCount}}{{commission.currency}}</span></p>
+                        <p class='txt1'>交易金额：{{item.tradeCount}}</p>
+                        <p class='txt2'>{{item.regAwardCount ? '待获佣：' : '获佣：'}}<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.tradeCount}}{{item.user.currency}}</span></p>
                     </div>
                 </div>
             </div>
@@ -35,8 +35,8 @@
                         <p class='txt2 gray'>2018-09-03</p>
                     </div>
                     <div class='text2'>
-                        <p class='txt1'>交易金额：26890.00</p>
-                        <p class='txt2 gray'>待获佣</p>
+                        <p class='txt1'>交易金额：26890.00CNY</p>
+                        <p class='txt2 red'>获佣：45X</p>
                     </div>
 
                 </div>
@@ -83,32 +83,32 @@
   </div>
 </template>
 <script>
-import {myGuest1, myGuest2} from '../../api/person';
-import {getUserId} from '../../common/js/util';
+import { myGuest } from "../../api/person";
+import { getUser, formatDate, moneyFormat, isUnDefined } from "../../common/js/util";
 
 export default {
   data() {
     return {
-        commission: {
-            createDatetime: '2018-0924',
-            currency: 'X',
-            status: '1'
-        },
-        list: {
-            tradeAwardCount: '10',
-            tradeCount: '1000',
-            user: 'rjn'
-        }
+      list: [],
+      start: 1,
+      limit: 10
     };
   },
   created() {
-    myGuest1(10, 0).then((data) => {
-    });
-    myGuest2(getUserId(), 10, 0).then((data) => {
-        console.log(data);
-    })
+      this.myGuest();
   },
   methods: {
+    myGuest() {
+      myGuest(this.start, this.limit).then(data => {
+        console.log(data);
+        data.list.map( v => {
+            v.tradeCount = moneyFormat(v.tradeCount);
+            v.regAwardCount = isUnDefined(v.regAwardCount);
+            v.user.createDatetime = formatDate(v.user.createDatetime, 'yyyy-MM-dd');
+        });
+        this.list = data.list;
+      });
+    }
   }
 };
 </script>
@@ -121,10 +121,10 @@ export default {
   color: #333;
   width: 100%;
   .red {
-      color: #d53d3d;
+    color: #d53d3d;
   }
   .gray {
-      color: #999;
+    color: #999;
   }
 
   .icon {
@@ -142,7 +142,7 @@ export default {
     background: #fff;
     width: 100%;
     padding: 0 0.3rem;
-    margin-bottom: .2rem;
+    margin-bottom: 0.2rem;
 
     .icon {
       width: 0.21rem;
@@ -156,72 +156,67 @@ export default {
     width: 100%;
     background: #fff;
     .list-wrap {
-        display: block;
+      display: block;
+      width: 100%;
+      padding: 0.4rem 0;
+      border-bottom: 0.01rem solid #e5e5e5;
+      .list {
         width: 100%;
-        padding: .4rem 0;
-        border-bottom: .01rem solid #e5e5e5;
-        .list {
+        padding: 0 0.3rem;
+        display: flex;
+        .pic {
+          width: 1rem;
+          height: 1rem;
+          border-radius: 50%;
+          margin-right: 0.22rem;
+          .icon {
             width: 100%;
-            padding: 0 .3rem;
-            display: flex;
-            .pic {
-                width: 1rem;
-                height: 1rem;
-                border-radius: 50%;
-                margin-right: .22rem;
-                .icon {
-                    width: 100%;
-                    height: 100%;
-                     @include bg-image("头像(4)");
-                }
-            }
-            .text {
-                width: 83%;
-                font-size: .24rem;
-                color: #323232;
-                .text1, .text2 {
-                    display: flex;
-                    justify-content: space-between;
-                }
-
-                .text1 {
-                    padding-bottom: .27rem;
-                    .name {
-                        font-size: .28rem;
-                        font-weight: bold;
-                    }
-                    .slogn1 {
-                        display: inline-block;
-                        width: .74rem;
-                        border-radius: .04rem;
-                        background: #d53d3d;
-                        font-size: .2rem;
-                        color: #fff;
-                        text-align: center;
-                        line-height: .28rem;
-                        margin-left: .23rem;
-                    }
-                    .slogn2 {
-                        display: inline-block;
-                        width: .74rem;
-                        border-radius: .04rem;
-                        background: #b3b3b3;
-                        font-size: .2rem;
-                        color: #fff;
-                        text-align: center;
-                        line-height: .28rem;
-                        margin-left: .23rem;
-                    }
-
-                }
-
-            }
-            
+            height: 100%;
+            @include bg-image("头像(4)");
+          }
         }
+        .text {
+          width: 83%;
+          font-size: 0.24rem;
+          color: #323232;
+          .text1,
+          .text2 {
+            display: flex;
+            justify-content: space-between;
+          }
+
+          .text1 {
+            padding-bottom: 0.27rem;
+            .name {
+              font-size: 0.28rem;
+              font-weight: bold;
+            }
+            .slogn1 {
+              display: inline-block;
+              width: 0.74rem;
+              border-radius: 0.04rem;
+              background: #d53d3d;
+              font-size: 0.2rem;
+              color: #fff;
+              text-align: center;
+              line-height: 0.28rem;
+              margin-left: 0.23rem;
+            }
+            .slogn2 {
+              display: inline-block;
+              width: 0.74rem;
+              border-radius: 0.04rem;
+              background: #b3b3b3;
+              font-size: 0.2rem;
+              color: #fff;
+              text-align: center;
+              line-height: 0.28rem;
+              margin-left: 0.23rem;
+            }
+          }
+        }
+      }
     }
-
   }
-
-
 }
 </style>

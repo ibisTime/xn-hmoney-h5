@@ -11,11 +11,13 @@ export function getUser() {
 }
 
 /**
- * 获取用户详情
- * @param {string} userId
+ * 获取用户详情列表
  */
-export function getUserById(userId) {
-  return fetch(805121, { userId });
+export function getUserList() {
+  return fetch(805120, {
+    start: '0',
+    limit: '100'
+  });
 }
 
 // 登陆
@@ -64,7 +66,7 @@ export function getSmsCaptcha2(bizType, email) {
 // 钱包
 export function wallet(userId) {
   return fetch(802301, {
-    userId
+    userId: getUserId()
   });
 }
 
@@ -106,18 +108,20 @@ export function changeTradPwd(newTradePwd, smsCaptcha, userId) {
 }
 
 // 我的获客
-export function myGuest1(limit, start) {
-  return fetch(802395, {
+export function myGuest(start, limit) {
+  return fetch(802399, {
+    start,
     limit,
-    start
+    userId: getUserId()
   })
 }
 
-// 我的获客直推
-export function myGuest2(userId, limit, start) {
-  return fetch(802399, {
-    userId,
-    limit,
-    start
+// 我的订单
+export function myOrder(statusList, start, limit) {
+  return fetch(625250, {
+    belongUser: getUserId(),
+    statusList,
+    start,
+    limit
   })
 }

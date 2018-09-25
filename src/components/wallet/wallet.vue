@@ -6,7 +6,8 @@
       <div class='banner'>
         <p class='txt1'><span class='icon ico'></span>总资产X币</p>
         <div class='txt2' style='margin-top:.3rem;'>
-          <p class='t1'>{{data[2].amount}}</p>
+          <p class='t1'>{{info[1].amount}}</p>
+          <!-- <p class='t1'>{{amount}}</p> -->
           <!-- <p class='t2'>≈60000.00 CNY</p> -->
         </div>
         <div class='txt3'>
@@ -29,9 +30,9 @@
       <div class='my-assets'>
         <i class="icon ico1"></i>
         <div class='my'>
-          <p class='txt1'>自己币种资产({{data[2].currency}})</p>
-          <p class='txt2'>{{data[2].amount}}</p>
-          <p class='txt3'><span>冻结{{data[2].frozenAmount}}</span><span>可用{{data[2].amount - data[2].frozenAmount}}{{data[2].currency}}</span><span></span></p>
+          <p class='txt1'>自己币种资产({{info[1].currency}})</p>
+          <p class='txt2'>{{info[1].amount}}</p>
+          <p class='txt3'><span>冻结{{info[1].frozenAmount}}</span><span>可用{{info[1].amount - info[1].frozenAmount}}{{info[1].currency}}</span><span></span></p>
         </div>
         <div class='datil'>
           <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
@@ -46,9 +47,9 @@
       <div class='my-assets my-assets1'>
         <i class="icon ico1 icon1"></i>
         <div class='my'>
-          <p class='txt1'>比特币资产({{data[0].currency}})</p>
-          <p class='txt2'>{{data[0].amount}}</p>
-          <p class='txt3'><span>冻结{{data[0].frozenAmount}}</span><span>可用{{data[0].amount - data[0].frozenAmount}}{{data[0].currency}}</span><span></span></p>
+          <p class='txt1'>比特币资产({{info[2].currency}})</p>
+          <p class='txt2'>{{info[2].amount}}</p>
+          <p class='txt3'><span>冻结{{info[2].frozenAmount}}</span><span>可用{{info[2].amount - info[2].frozenAmount}}{{info[2].currency}}</span><span></span></p>
         </div>
         <div class='datil datil1'>
           <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
@@ -59,9 +60,9 @@
       <div class='my-assets my-assets1'>
         <i class="icon ico1 icon2"></i>
         <div class='my'>
-          <p class='txt1'>以太币资产({{data[1].currency}})</p>
-          <p class='txt2'>{{data[1].amount}}</p>
-          <p class='txt3'><span>冻结{{data[1].frozenAmount}}</span><span>可用{{data[1].amount - data[1].frozenAmount}}{{data[1].currency}}</span><span></span></p>
+          <p class='txt1'>以太币资产({{info[0].currency}})</p>
+          <p class='txt2'>{{info[0].amount}}</p>
+          <p class='txt3'><span>冻结{{info[0].frozenAmount}}</span><span>可用{{info[0].amount - info[0].frozenAmount}}{{info[0].currency}}</span><span></span></p>
         </div>
         <div class='datil datil1'>
           <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
@@ -81,21 +82,22 @@ import {getUserId, moneyFormat, moneyParse, moneyReplaceComma, moneyFormatSubtra
 export default {
   data() {
     return {
-      data: [
-        {}
-      ]
+      info: [{}, {}, {}]
     };
   },
   computed: {},
   created() {
-    wallet(getUserId()).then(data => {
-      data.forEach( d => {
-        console.log(d);
-      })
-
-    });
+    this.wallet();
   },
   methods: {
+    wallet() {
+      wallet().then(v => {
+        v.map( v => {
+          v.amount = moneyFormat(v.amount, 8);
+        } )
+        this.info = v;
+      });
+    }
   },
   components: {
     Footer

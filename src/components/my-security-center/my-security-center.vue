@@ -68,8 +68,7 @@
   </div>
 </template>
 <script>
-import {getUserById} from '../../api/person';
-import {getUserId} from '../../common/js/util';
+import {getUser} from '../../api/person';
 
 export default {
   data() {
@@ -81,7 +80,7 @@ export default {
     };
   },
   created() {
-    getUserById(getUserId()).then((data) => {
+    getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
       this.email === '' ? this.show = true : this.show = false;

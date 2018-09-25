@@ -15,17 +15,17 @@
         </p>
     </div>
     <div v-show='show' class='list-start'>
-        <div class='list' @click='goDetails'>
+        <div class='list' @click='goDetails' v-for='(item,index) in list1' :key="index">
             <div class='pic'>
                 <i class='icon'></i>
             </div>
             <div class='text1'>
-                <p class='txt1'>KOALA<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：500.08 CNY</p>
+                <p class='txt1'>{{item.buyUser}}<span :class="[item.type === 'buy' ? 'buy' : 'sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
+                <p class='txt2'>交易金额：{{item.count}} {{item.tradeCoin}}</p>
             </div>
             <div class='text2'>
                 <p class='txt1'>交易进行中</p>
-                <p class='txt2'>订单编号:1020</p>
+                <p class='txt2'>订单编号:{{item.code}}</p>
             </div>
         </div>
         <div class='list'>
@@ -41,7 +41,7 @@
                 <p class='txt2'>订单编号：2080</p>
             </div>
         </div>
-        <div class='list'>
+        <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
             </div>
@@ -66,21 +66,21 @@
                 <p class='txt1'>交易进行中</p>
                 <p class='txt2'>订单编号：2080</p>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div v-show='!show' class='list-end'>
-        <div class='list' @click='goDetails'>
+        <div class='list' @click='goDetails' v-for='(item,index) in list2' :key="index">
             <div class='pic'>
                 <i class='icon'></i>
             </div>
             <div class='text1'>
-                <p class='txt1'>KOALA<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：500.08 CNY</p>
+                <p class='txt1'>{{item.buyUser}}<span :class="[item.type === 'buy' ? 'buy' : 'sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
+                <p class='txt2'>交易金额：{{item.count}} {{item.tradeCoin}}</p>
             </div>
             <div class='text2'>
                 <p class='txt1'>交易已结束</p>
-                <p class='txt2'>订单编号:1020</p>
+                <p class='txt2'>订单编号:{{item.code}}</p>
             </div>
         </div>
         <div class='list'>
@@ -96,7 +96,7 @@
                 <p class='txt2'>订单编号：2080</p>
             </div>
         </div>
-        <div class='list'>
+        <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
             </div>
@@ -121,16 +121,27 @@
                 <p class='txt1'>交易已结束</p>
                 <p class='txt2'>订单编号：2080</p>
             </div>
-        </div>
+        </div> -->
     </div>
   </div>
 </template>
 <script>
+import { myOrder } from "../../api/person";
+import { moneyFormat } from "../../common/js/util";
+
 export default {
   data() {
     return {
       show: true,
+      list1: [],
+      list2: [],
+      start1: 1,
+      start2: 1,
+      limit1: 10,
+      limit2: 10
     };
+  },
+  created() {
   },
   methods: {
     goBack() {
@@ -141,9 +152,21 @@ export default {
     },
     starting() {
       this.show = true;
+      myOrder(['0', '1', '2', '5'], this.start1, this.limit1).then( data => {
+        data.list.map( v => {
+            v.count = moneyFormat(v.count);
+        });
+            this.list1 = data.list;
+      })
     },
     ended() {
       this.show = false;
+      myOrder(['3', '4'], this.start2, this.limit2).then( data => {
+        data.list.map( v => {
+            v.count = moneyFormat(v.count);
+        });
+            this.list2 = data.list;  
+      })
     }
   }
 };

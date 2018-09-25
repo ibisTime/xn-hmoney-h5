@@ -28,6 +28,7 @@
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId} from 'common/js/util';
+import {URL} from 'common/js/config';
 
 export default {
   data() {
@@ -36,9 +37,8 @@ export default {
   },
   mounted() {
     this.userId = getUserId();
-    this.wxUrl = 'http://www.baidu.com/';
+    this.wxUrl = URL;
     this.Url = this.wxUrl+this.userId;
-    console.log(this.Url);
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,

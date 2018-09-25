@@ -21,8 +21,7 @@
   </div>
 </template>
 <script>
-import {getUserById, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
-import {getUserId} from '../../common/js/util';
+import {getUser, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
 
 export default {
   data() {
@@ -36,7 +35,7 @@ export default {
     };
   },
   created() {
-    getUserById(getUserId()).then((data) => {
+    getUser().then((data) => {
       this.mobile = data.mobile;
     });
   },

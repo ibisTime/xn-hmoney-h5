@@ -16,7 +16,7 @@
           <i></i>
           <span>我要购买</span>
         </router-link>
-        <router-link to="" class="sell item-1">
+        <router-link to="trading" class="sell item-1">
           <i></i>
           <span>我要出售</span>
         </router-link>

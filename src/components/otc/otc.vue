@@ -15,11 +15,11 @@
         <div class='top-main'>
             <p>货币<span></span></p>
             <p>支付方式<span></span></p>
-            <p :class="[show ? 'act' : '']" @click="show = !show" >排序<span></span></p>
+            <p :class="[show3 ? 'act' : '']" @click="show = !show3" >排序<span></span></p>
         </div>
       </div>
       <!-- 下拉选择 -->
-      <div v-show='show' class='select4'>
+      <div v-show='show3' class='select3'>
         <div class='main'>
           <p>单价从低到高</p>
           <p>单价从高到低</p>
@@ -197,7 +197,7 @@ export default {
     },
       bbDataList: [],
       banners: [],
-      show: false,
+      show3: false,
       Show: false,
       flag1: true,
       flag2: false
@@ -264,7 +264,7 @@ export default {
       this.Show = false;
     },
     goBuyPublish() {
-      this.$router.push('buy-publish');
+      this.$router.push('buy-publish?type=0');
     },
     goSellPublish() {
       this.$router.push('buy-publish?type=1');
@@ -399,7 +399,7 @@ export default {
     }
   }
 
-  .select4 {
+  .select3 {
     position: fixed;
     top: 1.62rem;
     width: 100%;
@@ -416,7 +416,7 @@ export default {
       p {
         border-bottom: .01rem solid #e5e5e5;
       }
-      p:hover {
+      p:active {
         color: #d53d3d;
       }
     }

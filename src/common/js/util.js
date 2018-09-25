@@ -1,6 +1,6 @@
 import {setCookie, getCookie, delCookie} from './cookie';
 // import {setProfilePortrait} from 'common/js/message';
-import BigDecimal from './BigDecimal';
+import './BigDecimal';
 // 日期格式化
 export function formatDate(date, fmt) {
   date = new Date(date);
@@ -280,7 +280,7 @@ export function mobileValid(mobile) {
   if (isUnDefined(mobile)) {
     result.err = 1;
     result.msg = '不能为空';
-  } else if (!/^1[3|4|5|7|8]\d{9}$/.test(mobile)) {
+  } else if (!/^1[3|4|5|6|7|8]\d{9}$/.test(mobile)) {
     result.err = 1;
     result.msg = '格式错误';
   }
