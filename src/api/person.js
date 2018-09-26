@@ -125,3 +125,48 @@ export function myOrder(statusList, start, limit) {
     limit
   })
 }
+
+// 场外交易买卖币购买和出售详情
+export function otcBuy(adsCode, userId) {
+  return fetch(625226, {
+    adsCode,
+    userId
+  })
+}
+
+// 我的广告
+export function myAdver(statusList, start = 0, limit = 10) {
+  return fetch(625225, {
+    statusList,
+    start,
+    limit
+  })
+}
+
+// 钱包 -- 转出
+export function walletOut(accountNumber, amount, applyNote, applyUser, payCardInfo, payCardNo) {
+  return fetch(802350, {
+    accountNumber,
+    amount,
+    applyNote,
+    applyUser,
+    payCardInfo,
+    payCardNo
+  })
+}
+
+// 钱包 -- 账单
+export function walletBill(accountNumber, start = 0, limit = 10) {
+  return fetch(802322, {
+    accountNumber,
+    start,
+    limit
+  })
+}
+
+// 钱包 -- 账单 -- 账单详情
+export function billDetails(code) {
+  return fetch(802321, {
+    code
+  })
+}

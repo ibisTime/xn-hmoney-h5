@@ -20,7 +20,7 @@
                 <i class='icon'></i>
             </div>
             <div class='text1'>
-                <p class='txt1'>{{item.buyUser}}<span :class="[item.type === 'buy' ? 'buy' : 'sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
+                <p class='txt1'><span class='t1'>{{item.buyUser}}</span><span :class="[item.type === 'buy' ? 'txt2 buy' : 'txt2 sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
                 <p class='txt2'>交易金额：{{item.count}} {{item.tradeCoin}}</p>
             </div>
             <div class='text2'>
@@ -28,7 +28,7 @@
                 <p class='txt2'>订单编号:{{item.code}}</p>
             </div>
         </div>
-        <div class='list'>
+        <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
             </div>
@@ -40,7 +40,7 @@
                 <p class='txt1'>交易进行中</p>
                 <p class='txt2'>订单编号：2080</p>
             </div>
-        </div>
+        </div> -->
         <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
@@ -75,7 +75,7 @@
                 <i class='icon'></i>
             </div>
             <div class='text1'>
-                <p class='txt1'>{{item.buyUser}}<span :class="[item.type === 'buy' ? 'buy' : 'sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
+                <p class='txt1'><span class='t1'>{{item.buyUser}}</span><span :class="[item.type === 'buy' ? 'txt2 buy' : 'txt2 sell']">{{item.type === 'buy' ? '购买' : '出售'}}</span></p>
                 <p class='txt2'>交易金额：{{item.count}} {{item.tradeCoin}}</p>
             </div>
             <div class='text2'>
@@ -83,7 +83,7 @@
                 <p class='txt2'>订单编号:{{item.code}}</p>
             </div>
         </div>
-        <div class='list'>
+        <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
             </div>
@@ -95,7 +95,7 @@
                 <p class='txt1'>交易已结束</p>
                 <p class='txt2'>订单编号：2080</p>
             </div>
-        </div>
+        </div> -->
         <!-- <div class='list'>
             <div class='pic'>
                 <i class='icon'></i>
@@ -253,7 +253,15 @@ export default {
       .txt1 {
         margin-bottom: 0.27rem;
         font-weight: bold;
-        span {
+        display: inline-block;
+        .t1 {
+            display: inline-block;
+            width: 2.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .txt2 {
           display: inline-block;
           width: 0.6rem;
           font-size: 0.2rem;
@@ -261,7 +269,7 @@ export default {
           text-align: center;
           line-height: 0.28rem;
           border-radius: 0.04rem;
-          margin-left: 0.33rem;
+          margin-left: 0.1rem;
         }
         .buy {
           background: #d53d3d;
@@ -288,8 +296,12 @@ export default {
         margin-bottom: 0.23rem;
       }
       .txt2 {
+        width: 3rem;
         font-size: 0.24rem;
         color: #666;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
   }
