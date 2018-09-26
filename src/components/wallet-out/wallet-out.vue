@@ -42,7 +42,17 @@
   </div>
 </template>
 <script>
+import {walletOut} from '../../api/person';
+
 export default {
+  created() {
+    
+  },
+  methods: {
+    walletOut() {
+      walletOut()
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

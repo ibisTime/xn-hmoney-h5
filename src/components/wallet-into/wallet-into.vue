@@ -23,14 +23,23 @@
     </div>
     <div class='address'>
         <p class='txt'>地址</p>
-        <input id='copyObj' class='url' readonly type="text" value='1cjiosuadfiosdaufi0xf750b288323dfpfdspof'/>
+        <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
     <button @click='CopyUrl'>复制收款地址</button>
   </div>
 </template>
 <script>
+import { getUrlParam } from 'common/js/util';
 const QRCode = require('js-qrcode');
 export default {
+  data() {
+    return {
+      adress: ''
+    };
+  },
+  created() {
+    this.adress = getUrlParam('adress');
+  },
   methods: {
     CopyUrl() {
       let url = document.querySelector('#copyObj');

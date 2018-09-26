@@ -9,9 +9,9 @@
     <div class="main">
       <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p>{{mobile}}</p>
-      <p class='text3'><input v-model="smsCaptcha" type="text" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
-      <p><input v-model="newLoginPwd" type="password" placeholder="新密码(不少于6位)"></p>
-      <p><input v-model="surePwd" type="password" placeholder="确认密码"></p>
+      <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p><input v-model="newLoginPwd" type="password" pattern="^[a-zA-Z]\w{5,15}$" placeholder="新密码(不少于6位)"></p>
+      <p><input v-model="surePwd" type="password" pattern="^[a-zA-Z]\w{5,15}$" placeholder="确认密码"></p>
     </div>
     <div class="foot">
       <button @click="changeLoginPassword">确 定</button>

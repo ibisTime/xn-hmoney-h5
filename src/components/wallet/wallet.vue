@@ -35,9 +35,9 @@
           <p class='txt3'><span>冻结{{info[1].frozenAmount}}</span><span>可用{{info[1].amount - info[1].frozenAmount}}{{info[1].currency}}</span><span></span></p>
         </div>
         <div class='datil'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
+          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[1].address">转入</router-link></div>|
           <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
+          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[1].accountNumber">账单</router-link></div>
         </div>
         <div class='operate'>
           <router-link to='wallet-top-up' class='txt1'>充值</router-link>|
@@ -52,9 +52,9 @@
           <p class='txt3'><span>冻结{{info[2].frozenAmount}}</span><span>可用{{info[2].amount - info[2].frozenAmount}}{{info[2].currency}}</span><span></span></p>
         </div>
         <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
+          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[2].address">转入</router-link></div>|
           <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
+          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[2].accountNumber">账单</router-link></div>
         </div>
       </div>
       <div class='my-assets my-assets1'>
@@ -65,9 +65,9 @@
           <p class='txt3'><span>冻结{{info[0].frozenAmount}}</span><span>可用{{info[0].amount - info[0].frozenAmount}}{{info[0].currency}}</span><span></span></p>
         </div>
         <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
+          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[0].address">转入</router-link></div>|
           <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
+          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[0].accountNumber">账单</router-link></div>
         </div>
       </div>
       <Footer></Footer>

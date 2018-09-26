@@ -8,22 +8,22 @@
       </p>
     </header>
     <div class='list-wrap'>
-      <router-link to='bill-details' class="bill-list">
+      <router-link :to="'bill-details' + '?code=' + data.code" class="bill-list" v-for='(item,index) in data' :key='index'>
         <div class="list">
           <div class='mark'>
-            <i class='icon'></i>
+            <i :class="[item.transAmount < 0 ? 'icon' : 'icon ico3']"></i>
           </div>
           <div class='item'>
             <p class='collect'>
-              <span class='txt1'>收款</span>
-              <span class='txt2'>-10ETH</span>
+              <span class='txt1'>{{item.bizType}}</span>
+              <span :class="[item.transAmount < 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmount}}{{item.currency}}</span>
             </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>取现矿工费</p>
+            <p class='time'>{{item.createDatetime}}</p>
+            <p class='explain'>{{item.bizNote}}</p>
           </div>
         </div>
       </router-link>
-      <router-link to='bill-details' class="bill-list">
+      <router-link :to="'bill-details' + '?code=' + data.code" class="bill-list">
         <div class="list">
           <div class='mark'>
             <i class='icon'></i>
@@ -38,7 +38,7 @@
           </div>
         </div>
       </router-link>
-      <router-link to='bill-details' class="bill-list">
+      <!-- <router-link to='bill-details' class="bill-list">
         <div class="list">
           <div class='mark'>
             <i class='icon ico1'></i>
@@ -67,8 +67,8 @@
             <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
           </div>
         </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
+      </router-link> -->
+      <!-- <router-link to='bill-details' class="bill-list">
         <div class="list">
           <div class='mark'>
             <i class='icon ico3'></i>
@@ -82,8 +82,8 @@
             <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
           </div>
         </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
+      </router-link> -->
+      <!-- <router-link to='bill-details' class="bill-list">
         <div class="list">
           <div class='mark'>
             <i class='icon ico4'></i>
@@ -97,7 +97,7 @@
             <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
           </div>
         </div>
-      </router-link>
+      </router-link> -->
     </div>
     <!-- 筛选弹窗 -->
     <div class='select'>
@@ -110,8 +110,40 @@
   </div>
 </template>
 <script>
+import { getUrlParam } from 'common/js/util';
+import { walletBill } from 'api/person';
+import { getDictList } from 'api/general';
+
 export default {
+  data() {
+    return {
+      data: [],
+      code: '12345'
+    }
+  },
+  created() {
+    this.getDictList();
+  },
   methods: {
+    getDictList() {
+      // 获取数据字典
+      getDictList('jour_biz_type_user').then( d => {
+        // 获取账单列表
+        walletBill(getUrlParam('accountNumber')).then((data) => {
+          // 遍历账单列表 将type转化对应的账单类型
+          data.list.map( v => {
+            for(let i = 0, len = d.length; i < len; i++) {
+              // 取出当前type对应的账单类型
+              if(v.bizType === element.dkey) {
+                v.bizType === element.dvalue;
+                break;
+              }
+            }
+          })
+          this.data = data.list;
+        });
+      })
+    }
   }
 };
 </script>
