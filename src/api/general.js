@@ -92,7 +92,7 @@ export function getDictList(parentKey) {
   if (getDictList[parentKey]) {
     return Promise.resolve(getDictList[parentKey]);
   }
-  return fetch(630036, {
+  return fetch(801907, {
     parentKey
   }).then((data) => {
     getDictList[parentKey] = data;

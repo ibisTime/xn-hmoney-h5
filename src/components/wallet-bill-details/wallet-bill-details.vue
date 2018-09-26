@@ -9,29 +9,29 @@
       <div class='box'>
             <div class='mess'>
                 <p class='name'>转出</p>
-                <p class='num'>{{data.transAmount}}{{data.currency}}</p>
+                <p class='num'>-40ETH</p>
             </div>
       </div>
       <div class='main'>
           <div class='list'>
               <span class='txt1'>变动前金额</span>
-              <span class='txt2'>{{data.preAmount}}{{data.currency}}</span>
+              <span class='txt2'>0.0002ETH</span>
           </div>
           <div class='list'>
               <span class='txt1'>变动后金额</span>
-              <span class='txt2'>{{data.postAmount}}{{data.currency}}</span>
+              <span class='txt2'>0.0001ETH</span>
           </div>
           <div class='list'>
               <span class='txt1'>手续费用</span>
-              <span class='txt2'>0.0002{{data.currency}}</span>
+              <span class='txt2'>0.0002ETH</span>
           </div>
           <div class='list'>
               <span class='txt1'>变动时间</span>
-              <span class='txt2'>{{data.createDatetime}}</span>
+              <span class='txt2'>2017-10-10 12:20:22</span>
           </div>
           <div class='list'>
               <span class='txt1'>明细状态</span>
-              <span class='txt2'>{{data.bizNote}}</span>
+              <span class='txt2'>未对账</span>
           </div>
           <div class='list'>
               <span class='txt1'>明细摘要</span>
@@ -41,25 +41,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate } from 'common/js/util';
-import { billDetails } from 'api/person';
-
 export default {
-    data() {
-        return {
-            data: []
-        }
-    },
-    created() {
-        this.billDetails();
-    },
-    methods: {
-        billDetails() {
-            billDetails(getUrlParam('code')).then((data) => {
-                this.data = data.list;
-            });
-        }
-    }
 };
 </script>
 <style lang="scss" scoped>

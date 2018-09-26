@@ -42,7 +42,6 @@
       <!-- 买币 -->
       <div class='main'>
         <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
-        <router-link :to=" url + '?adsCode=' + adverItem.code + '&userId=' + adverItem.userId">
           <div class='cont'>
             <div class='preson' :data-href="'../user/user-detail.html?coin=' + adverItem.tradeCoin + '&userId=' + adverItem.userId + '&adsCode=' + adverItem.code">
               <div class='pic'>
@@ -61,7 +60,6 @@
               <p class='shop'>{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
             </div>
           </div>
-        </router-link>
         </div>
       </div>
        <!-- 卖币 -->
@@ -196,14 +194,13 @@ export default {
         "0": "支付宝",
         "1": "微信",
         "2": "银行卡转账"
-      },
+    },
       bbDataList: [],
       banners: [],
       show3: false,
       Show: false,
       flag1: true,
-      flag2: false,
-      url: 'otc-buy'
+      flag2: false
     };
   },
   created() {
@@ -251,13 +248,11 @@ export default {
       this.flag1 = true;
       this.flag2 = false;
       this.advertisingFn('1');
-      this.url = 'otc-buy'
     },
     sell() {
       this.flag1 = false;
       this.flag2 = true;
       this.advertisingFn('0');
-      this.url = 'otc-sell'
     },
     goOtcBuy() {
       this.$router.push('otc-buy');

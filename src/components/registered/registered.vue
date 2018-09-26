@@ -11,15 +11,15 @@
           </p>
           <router-view></router-view>
           <div calss="main-tel">
-            <input required v-model="phone" v-show="flag" pattern="^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$" type="text" placeholder="请输入手机号">
-            <input required v-model="email" v-show="!flag" pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" type="text" placeholder="请输入邮箱账号">
+            <input required v-model="phone" v-show="flag" type="text" placeholder="请输入手机号">
+            <input required v-model="email" v-show="!flag" type="text" placeholder="请输入邮箱账号">
             <p class="yzm">
-            <input required v-model="smsCaptcha" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
+            <input required v-model="smsCaptcha" type="text" placeholder="请输入验证码">
             <input type="button" class="getYam" @click="getSca1" value="获取验证码">
             <input v-show="!flag" type="button" class="getYam" @click="getSca2" value="获取验证码">
             </p>
-            <input required v-model="password1" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请输入密码">
-            <input required v-model="password2" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请确认密码">
+            <input required v-model="password1" type="password" placeholder="请输入密码">
+            <input required v-model="password2" type="password" placeholder="请确认密码">
             <p class="check">
             <input type="checkbox"><span>我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             <input @click='regist' type="submit" value="注册">

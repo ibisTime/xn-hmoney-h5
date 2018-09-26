@@ -19,12 +19,12 @@
                     </div>
                     <div class='text2'>
                         <p class='txt1'>交易金额：{{item.tradeCount}}</p>
-                        <p class='txt2'>{{item.regAwardCount ? '待获佣：' : '获佣：'}}<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.tradeCount}}{{item.tradeCount ? 'X' : ''}}</span></p>
+                        <p class='txt2'>{{item.regAwardCount ? '待获佣：' : '获佣：'}}<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.tradeCount}}{{item.user.currency}}</span></p>
                     </div>
                 </div>
             </div>
         </router-link>
-        <!-- <router-link to='mine' class='list-wrap'>
+        <router-link to='mine' class='list-wrap'>
             <div class='list'>
                 <div class='pic'>
                     <i class='icon'></i>
@@ -41,7 +41,7 @@
 
                 </div>
             </div>
-        </router-link> -->
+        </router-link>
         <!-- <router-link to='mine' class='list-wrap'>
             <div class='list'>
                 <div class='pic'>
