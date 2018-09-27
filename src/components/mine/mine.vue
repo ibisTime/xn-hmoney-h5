@@ -5,8 +5,8 @@
       <div class="my">
         <div class="pic"></div>
         <div class="h-text">
-          <p class="name">{{name}}</p>
-          <p class="intro">交易 2 | 好评率 99% | 信用 1</p>
+          <p class="name">{{data.userId}}</p>
+          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{data.userStatistics.beiPingJiaCount != 0 ?(data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100 : '0'}}% | 信用 {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>
@@ -99,16 +99,19 @@
 <script>
 import Scroll from 'base/scroll/scroll';
 import Footer from 'components/footer/footer';
-import {getUserId} from '../../common/js/util';
+import { getUser } from "api/person";
 
 export default {
   data() {
     return {
-      name: ''
+      data: []
     };
   },
   created() {
-    this.name = getUserId();
+    getUser().then((data) => {
+      this.data = data;
+      console.log(data);
+    });
   },
   computed: {},
   methods: {},

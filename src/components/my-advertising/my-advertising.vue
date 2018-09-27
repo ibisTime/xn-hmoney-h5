@@ -215,7 +215,7 @@
   </div>
 </template>
 <script>
-import { myAdver } from "../../api/person";
+import { myAdver } from "api/person";
 
 export default {
   data() {
@@ -224,7 +224,7 @@ export default {
     };
   },
   created() {
-      this.myAdver1();
+    //   this.myAdver1();
   },
   methods: {
     change1() {
@@ -235,9 +235,9 @@ export default {
     },
     // 未发布
     myAdver1() {
-        myAdver(['0']).then((data) => {
-            console.log(data);
-        });
+        // myAdver('ETH').then((data) => {
+        //     console.log(data);
+        // });
     }
   }
 };

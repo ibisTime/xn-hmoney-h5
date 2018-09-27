@@ -110,15 +110,7 @@ export default new Router({
     },
     {
       path: '/page',
-      component: Home,
-      beforeRouteLeave(to, from, next) {
-        if(to.path === '/login' || to.path === '/registered') {
-          next();
-        } else {
-          alert('还没有登陆，请先登录！');
-          next('/login');
-        }
-      },
+      component: Home
     },
     {
       path: '/system-notice',

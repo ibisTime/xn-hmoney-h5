@@ -122,6 +122,14 @@
       Scroll,
       Footer
     }
+    // beforeRouteLeave(to, from, next) {
+    //   if(to.path === '/login' || to.path === '/registered') {
+    //     next();
+    //   } else {
+    //     alert('还没有登陆，请先登录！');
+    //     next('/login');
+    //   }
+    // }
   };
 </script>
 <style lang="scss" scoped>

@@ -11,6 +11,7 @@
           </p>
           <router-view></router-view>
           <div calss="main-tel">
+            <input type="text" placeholder="请输入用户昵称" v-model="nickname">
             <input required v-model="phone" v-show="flag" pattern="^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$" type="text" placeholder="请输入手机号">
             <input required v-model="email" v-show="!flag" pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" type="text" placeholder="请输入邮箱账号">
             <p class="yzm">
@@ -21,9 +22,9 @@
             <input required v-model="password1" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请输入密码">
             <input required v-model="password2" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请确认密码">
             <p class="check">
-            <input type="checkbox"><span>我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
-            <input @click='regist' type="submit" value="注册">
+            <span click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span>我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
+            <input @click='regist' type="submit" value="注册">
           </div>
       </div>
   </div>
@@ -38,10 +39,12 @@ export default {
       phone: '',
       email: '',
       smsCaptcha: '',
+      nickname: '',
       password1: '',
       password2: '',
       bizType1: '805041',
-      bizType2: '805043'
+      bizType2: '805043',
+      checked: true
     };
   },
   computed: {},
@@ -65,11 +68,11 @@ export default {
     },
     regist() {
       if(this.flag == false) {
-        reisteredEamil(this.email, this.password1, this.smsCaptcha).then(data => {
+        reisteredEamil( this.smsCaptcha, this.email, this.password1, this.nickname).then(data => {
           this.$router.push('login');
         });
       } else {
-        reistered(this.phone, this.password1, this.smsCaptcha).then(data => {
+        reistered(this.phone, this.password1, this.smsCaptcha, this.nickname).then(data => {
           this.$router.push('login');
         });
       }
@@ -169,13 +172,21 @@ export default {
     .check {
       margin-top: .42rem;
 
-      input[type="checkbox"] {
+      .checkbox {
+        display: inline-block;
         float: left;
         width: .24rem;
         height: .24rem;
         border: .02rem solid #979797;
         border-radius: .04rem;
         margin-right: .08rem;
+      }
+
+      .active {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+        @include bg-image("打勾");
       }
 
       span {

@@ -30,20 +30,22 @@ export function login(loginName, loginPwd) {
 }
 
 // 手机注册
-export function reistered(mobile, loginPwd, smsCaptcha) {
+export function reistered(mobile, loginPwd, smsCaptcha ,nickname) {
   return fetch(805041, {
     mobile,
     loginPwd,
-    smsCaptcha
+    smsCaptcha,
+    nickname
   });
 }
 
 // 邮箱注册
-export function reisteredEamil(captcha, email, loginPwd) {
+export function reisteredEamil(captcha, email, loginPwd, nickname) {
   return fetch(805043, {
     captcha,
     email,
-    loginPwd
+    loginPwd,
+    nickname
   });
 }
 
@@ -135,11 +137,9 @@ export function otcBuy(adsCode, userId) {
 }
 
 // 我的广告
-export function myAdver(statusList, start = 0, limit = 10) {
-  return fetch(625225, {
-    statusList,
-    start,
-    limit
+export function myAdver(nickName) {
+  return fetch(625228, {
+    nickName
   })
 }
 
@@ -168,5 +168,13 @@ export function walletBill(accountNumber, start = 0, limit = 10) {
 export function billDetails(code) {
   return fetch(802321, {
     code
+  })
+}
+
+// 查盘口
+export function dishMouth(symbol, toSymbol) {
+  return fetch(650065, {
+    symbol,
+    toSymbol
   })
 }

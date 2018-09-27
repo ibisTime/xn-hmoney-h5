@@ -110,7 +110,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam } from 'common/js/util';
+import { getUrlParam, formatDate } from 'common/js/util';
 import { walletBill } from 'api/person';
 import { getDictList } from 'api/general';
 

@@ -4,13 +4,13 @@
       <p>
       <i class='icon'></i>
       <span class='txt1'>转出</span>
-      <router-link to='wallet-bill' class='txt2'>记录</router-link>
+      <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link>
       </p>
     </header>
     <div class='main'>
       <p class='text'>
         <span>可用余额</span>
-        <input type="text" class='dis' readonly value='0.000023 BTC'>
+        <input type="text" class='dis' readonly v-model="value">
       </p>
       <p class='text'>
         <span>接受地址</span>
@@ -34,7 +34,7 @@
       </div>
       <p class='text2'>
         <span>慢</span>
-        <span class='txt'>0.002 BTC</span>
+        <span class='txt'>0 {{currency}}</span>
         <span>快</span>
       </p>
     </div>
@@ -43,10 +43,22 @@
 </template>
 <script>
 import {walletOut} from '../../api/person';
+import { getUrlParam } from 'common/js/util';
 
 export default {
+  data() {
+    return {
+      currency: '',
+      amount: '',
+      value: '',
+      accountNumber: ''
+    }
+  },
   created() {
-    
+    this.currency = getUrlParam('currency');
+    this.amount = getUrlParam('amount');
+    this.value = this.amount + this.currency;
+    this.accountNumber = getUrlParam('accountNumber');
   },
   methods: {
     walletOut() {

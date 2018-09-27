@@ -4,12 +4,12 @@
       <p>
       <i class='icon'></i>
       <span class='txt1'>转入</span>
-      <router-link to='wallet-bill' class='txt2'>记录</router-link>
+      <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link>
       </p>
     </header>
     <div class='prompt'>
         <p class='text'>
-            BTC钱包地址禁止充值除BTC之外额其他资产，任何BTC资产充值将不可找回
+            {{currency}}钱包地址禁止充值除BTC之外额其他资产，任何{{currency}}资产充值将不可找回
         </p>
         <i class='icon'></i>
     </div>
@@ -34,11 +34,15 @@ const QRCode = require('js-qrcode');
 export default {
   data() {
     return {
-      adress: ''
+      adress: '',
+      currency: '',
+      accountNumber: ''
     };
   },
   created() {
     this.adress = getUrlParam('adress');
+    this.currency = getUrlParam('currency');
+    this.accountNumber = getUrlParam('accountNumber');
   },
   methods: {
     CopyUrl() {

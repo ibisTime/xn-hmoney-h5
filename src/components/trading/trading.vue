@@ -353,15 +353,19 @@
 </template>
 <script>
 import Footer from 'components/footer/footer';
+import {dishMouth} from 'api/person';
+
 export default {
   data() {
     return {
       show1: true,
       show2: true,
-      show3: false
+      show3: false,
+      data: []
     };
   },
   created() {
+    this.dishMouth();
   },
   updated() {
   },
@@ -382,6 +386,13 @@ export default {
     },
     showTwo() {
       this.show2 = false;
+    },
+    dishMouth() {
+      dishMouth('BTC', 'ETH').then((data) => {
+        this.data = data;
+        // console.log(this.data);
+        // console.log(this.data.asks);
+      });
     }
   },
   components: {

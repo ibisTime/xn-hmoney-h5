@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @touchmove.prevent>
+  <div id="app">
     <div>
       <router-view></router-view>
     </div>
@@ -11,11 +11,11 @@ import {isLogin} from './common/js/util';
 
   export default {
     created() {
-      // if(!isLogin()) {
-      //   this.$router.push('login');
-      // }else {
-      //   this.$router.push('page');
-      // }
+      if(!isLogin()) {
+        this.$router.push('login');
+      }else {
+        this.$router.push('page');
+      }
     },
   };
 </script>

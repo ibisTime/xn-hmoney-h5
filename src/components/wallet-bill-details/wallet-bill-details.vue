@@ -57,6 +57,7 @@ export default {
         billDetails() {
             billDetails(getUrlParam('code')).then((data) => {
                 this.data = data.list;
+                this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd');
             });
         }
     }

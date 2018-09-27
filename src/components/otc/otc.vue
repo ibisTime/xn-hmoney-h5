@@ -210,7 +210,6 @@ export default {
     this.getInitData();
   },
   updated() {
-    // this.getInitData();
   },
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
@@ -219,7 +218,6 @@ export default {
     })
   },
   computed: {
-    
   },
   methods: {
     //根据币种请求数据
@@ -273,8 +271,7 @@ export default {
     },
     goSellPublish() {
       this.$router.push('buy-publish?type=1');
-    },
-    
+    }, 
     getPic(pic, suffix) {
       if (!pic) {
           return "";
@@ -573,70 +570,69 @@ export default {
   }
 }
 
-  .release2 {
+.release2 {
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #fff;
+  opacity: 0.64;
+  z-index: 1000;
+
+  .main {
     width: 100%;
-    height: 100%;
-    z-index: 1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #fff;
-    opacity: 0.64;
-    z-index: 1000;
+    position: absolute;
+    bottom: 2.26rem;
+    font-size: .3rem;
+    color:#333;
+    padding: 0 1.42rem;
+    display: flex;
+    justify-content: space-between;
 
-    .main {
-      width: 100%;
-      position: absolute;
-      bottom: 2.26rem;
-      font-size: .3rem;
-      color:#333;
-      padding: 0 1.42rem;
-      display: flex;
-      justify-content: space-between;
-
-      span {
-        display: block;
-        width: 1.35rem;
-        height:1.35rem;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 100%;
-        margin-bottom: .3rem;
-      }
-
-      .buy {
-          text-align: center;
-          span {
-          @include bg-image("发布购买");
-        }
-      }
-
-      .sell {
-        text-align: center;
-          span {
-          @include bg-image("发布卖出");
-        }
-      }
-
-
-
-    }
-
-    .close {
-      width: .36rem;
-      height: .36rem;
+    span {
+      display: block;
+      width: 1.35rem;
+      height:1.35rem;
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100% 100%;
-      @include bg-image("叉");
-      position: absolute;
-      bottom: .6rem;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-bottom: .3rem;
     }
+
+    .buy {
+        text-align: center;
+        span {
+        @include bg-image("发布购买");
+      }
+    }
+
+    .sell {
+      text-align: center;
+        span {
+        @include bg-image("发布卖出");
+      }
+    }
+
+
 
   }
 
+  .close {
+    width: .36rem;
+    height: .36rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    @include bg-image("叉");
+    position: absolute;
+    bottom: .6rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+}
 
 .filter {
     -webkit-filter: blur(.45rem);
