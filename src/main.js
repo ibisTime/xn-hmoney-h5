@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import fastclick from 'fastclick';
 import VueLazyLoad from 'vue-lazyload';
+import 'common/js/validate';
 import VueI18n from 'vue-i18n';
 import LangStorage from './common/js/cookie';
 /* eslint-disable no-unused-vars */

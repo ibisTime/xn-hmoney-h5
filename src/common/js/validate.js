@@ -37,12 +37,38 @@ Validator.extend('capt', {
   }
 });
 
-// 短信验证码
-Validator.extend('mobileValid', {
-  getMessage: field => '格式错误',
+// 手机号检验
+Validator.extend('phone', {
+  getMessage: field => '手机号格式错误',
   validate: value => {
     var isIDCard1 = /^1[3|4|5|6|7|8]\d{9}$/;
     return isIDCard1.test(value);
+  }
+});
+
+// 邮箱账号检验
+Validator.extend('email', {
+  getMessage: field => '邮箱格式错误',
+  validate: value => {
+    var isIDCard1 = /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
+    return isIDCard1.test(value);
+  }
+});
+
+// 登录密码校验
+Validator.extend('password', {
+  getMessage: field => '密码格式不正确',
+  validate: value => {
+    var isIDCard1 = /^[a-zA-Z0-9]{6,21}$/;
+    return isIDCard1.test(value);
+  }
+});
+
+// 昵称校验
+Validator.extend('nickname', {
+  getMessage: field => '昵称不能大于10位',
+  validate: value => {
+    return value.length < 11;
   }
 });
 
@@ -55,12 +81,12 @@ Validator.extend('trade', {
 });
 
 // 校验第二次密码是否和第一次相同
-Validator.extend('trade', {
-  getMessage: field => '长度不能小于6位',
-  validate: value => {
-    return value.length < 6;
-  }
-});
+// Validator.extend('trade', {
+//   getMessage: field => '两次密码不一致',
+//   validate: value => {
+//     return value.length < 6;
+//   }
+// });
   
 const config = {
   errorBagName: 'errors', // change if property conflicts

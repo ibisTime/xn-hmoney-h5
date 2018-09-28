@@ -7,7 +7,7 @@
         </p>
     </header>
     <div class="main">
-      <p><input v-model="email" type="text" placeholder="请输入邮箱"></p>
+      <p><input v-model="email" pattern="[a-zA-Z0-9]{5,12}@qq.com" type="text" placeholder="请输入邮箱"></p>
       <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
 
     </div>
@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import {getUserId} from '../../common/js/util';
+import {getUserId,CheckMail} from '../../common/js/util';
 import {bindingEmail, getSmsCaptcha2} from '../../api/person';
 
 export default {
@@ -34,13 +34,17 @@ export default {
   methods: {
     get() {
       this.show = false;
-      getSmsCaptcha2(this.bizType, this.email).then(data => {
-      });
+      if(CheckMail(this.email) === true) {
+        getSmsCaptcha2(this.bizType, this.email).then(data => {
+        });
+      }
     },
     bindEmail() {
-      bindingEmail(this.captcha, this.email, getUserId()).then(data => {
-        this.$router.push('security-center');
-      })
+      if(CheckMail(this.email) === true) {
+        bindingEmail(this.captcha, this.email, getUserId()).then(data => {
+          this.$router.push('security-center');
+        })
+      }
     }
   }
 };

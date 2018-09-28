@@ -28,7 +28,6 @@
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId} from 'common/js/util';
-import {URL} from 'common/js/config';
 
 export default {
   data() {
@@ -37,7 +36,7 @@ export default {
   },
   mounted() {
     this.userId = getUserId();
-    this.wxUrl = URL;
+    this.wxUrl = window.location.origin + '/registered' + '?invitecode=' + getUserId();
     this.Url = this.wxUrl+this.userId;
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {

@@ -6,7 +6,7 @@
       <div class="card">
           <div class="main">
               <h3>欢迎回来</h3>
-              <input type="text" v-model="username" placeholder="请输入账号">
+              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" placeholder="请输入账号">
               <input type="password" v-model="password" placeholder="请输入密码（6～16个字符或字母组成）">
               <input type="submit" value="登  录" @click='login'>
               <p>

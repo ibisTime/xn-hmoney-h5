@@ -22,6 +22,7 @@
 </template>
 <script>
 import {getUser, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
+import { rePwdValid, tradeValid} from '../../common/js/util';
 
 export default {
   data() {
@@ -46,13 +47,13 @@ export default {
       });
     },
     changeLoginPassword() {
-      changeLoginPwd(this.mobile, this.newLoginPwd, this.smsCaptcha).then((data) => {
-        if(this.newLoginPwd === this.surePwd) {
-          this.$router.push('login');
+        if(tradeValid(this.newLoginPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newLoginPwd, this.surePwd).err === 0) {
+          changeLoginPwd(this.mobile, this.newLoginPwd, this.smsCaptcha).then((data) => {
+            this.$router.push('login');
+          });
         } else {
           alert('密码不一致，请重新输入');
         }
-      });
     }
   }
 };

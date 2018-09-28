@@ -81,9 +81,11 @@ export default {
   },
   created() {
     getUser().then((data) => {
+      console.log(data);
+      console.log(data.emailBindFlag);
       this.mobile = data.mobile;
       this.email = data.email;
-      this.email === '' ? this.show = true : this.show = false;
+      data.emailBindFlag === false ? this.show = true : this.show = false;
       this.mobile === '' ? this.show1 = true : this.show1 = false;
     });
   },

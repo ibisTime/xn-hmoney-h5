@@ -47,15 +47,13 @@ export default {
       });
     },
     changeTradPwd() {
-      changeTradPwd(this.newPayPwd, smsCaptcha, getUserId()).then((data) => {
-        if(captValid(this.smsCaptcha)) {
-        }
-        if(tradeValid(this.newPayPwd) && rePwdValid(this.newPayPwd, this.surePwd)) {
-          this.$router.push('mine');
+        if(tradeValid(this.newPayPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newPayPwd, this.surePwd).err === 0) {
+          changeTradPwd(this.newPayPwd, smsCaptcha, getUserId()).then((data) => {
+            this.$router.push('mine');
+          });
         } else {
           alert('密码不一致，请重新输入');
         }
-      });
     }
   }
 };

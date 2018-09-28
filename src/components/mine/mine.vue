@@ -5,7 +5,7 @@
       <div class="my">
         <div class="pic"></div>
         <div class="h-text">
-          <p class="name">{{data.userId}}</p>
+          <p class="name">{{data.nickname}}</p>
           <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{data.userStatistics.beiPingJiaCount != 0 ?(data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100 : '0'}}% | 信用 {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>

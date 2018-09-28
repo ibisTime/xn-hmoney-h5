@@ -10,40 +10,62 @@
               <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">邮箱注册</span>
           </p>
           <router-view></router-view>
-          <div calss="main-tel">
-            <input type="text" placeholder="请输入用户昵称" v-model="nickname">
-            <input required v-model="phone" v-show="flag" pattern="^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$" type="text" placeholder="请输入手机号">
-            <input required v-model="email" v-show="!flag" pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" type="text" placeholder="请输入邮箱账号">
+          <div class="main-tel">
+            <p><input type="text" name="username" v-validate="'required|nickname'" placeholder="请输入用户昵称" v-model="nickname">
+            <span v-show="errors.has('username')" class="error-tip">{{errors.first('username')}}</span>
+            </p>
+            <p>
+            <input required v-model="phone" v-show="flag" name="phone" v-validate="'required|phone'" type="text" placeholder="请输入手机号">
+            <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
+            </p>
+            <p>
+            <input required v-model="email" v-show="!flag" name="email" v-validate="'required|email'" type="text" placeholder="请输入邮箱账号">
+            <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
+            </p>
             <p class="yzm">
-            <input required v-model="smsCaptcha" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
+            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
+            <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
             <input type="button" class="getYam" @click="getSca1" value="获取验证码">
             <input v-show="!flag" type="button" class="getYam" @click="getSca2" value="获取验证码">
             </p>
-            <input required v-model="password1" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请输入密码">
-            <input required v-model="password2" pattern="^[a-zA-Z]\w{5,15}$" type="password" placeholder="请确认密码">
+            <p>
+            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合不少于6位">
+            <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+            </p>
+            <p>
+            <input required v-model="password2"  name="password" v-validate="'required|password'" type="password" placeholder="请确认密码">
+            <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+            </p>
             <p class="check">
             <span click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span>我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
-            <input @click='regist' type="submit" value="注册">
+            <input type="submit" @click="regist" value="注册">
           </div>
       </div>
   </div>
 </template>
 <script>
-import {reistered, reisteredEamil, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {
+  reistered,
+  reisteredEamil,
+  getSmsCaptcha1,
+  getSmsCaptcha2
+} from "../../api/person";
+import { rePwdValid } from "../../common/js/util";
+
 export default {
   props: {},
   data() {
     return {
       flag: true,
-      phone: '',
-      email: '',
-      smsCaptcha: '',
-      nickname: '',
-      password1: '',
-      password2: '',
-      bizType1: '805041',
-      bizType2: '805043',
+      phone: "",
+      email: "",
+      smsCaptcha: "",
+      nickname: "",
+      password1: "",
+      password2: "",
+      bizType1: "805041",
+      bizType2: "805043",
       checked: true
     };
   },
@@ -59,12 +81,10 @@ export default {
       this.$router.go(-1);
     },
     getSca1() {
-      getSmsCaptcha1(this.bizType1, this.phone).then(data => {
-      });
+      getSmsCaptcha1(this.bizType1, this.phone).then(data => {});
     },
     getSca2() {
-      getSmsCaptcha2(this.bizType2, this.email).then(data => {
-      });
+      getSmsCaptcha2(this.bizType2, this.email).then(data => {});
     },
     regist() {
       if(this.flag == false) {
@@ -78,8 +98,7 @@ export default {
       }
     }
   },
-  components: {
-  }
+  components: {}
 };
 </script>
 <style lang="scss" scoped>
@@ -87,7 +106,7 @@ export default {
 @import "~common/scss/variable";
 
 .regist-wrapper {
-  background:#fff;
+  background: #fff;
   .header {
     width: 100%;
     height: 0.4rem;
@@ -107,7 +126,8 @@ export default {
     width: 6.3rem;
     margin: 0 auto;
 
-    input[type="text"], input[type="password"] {
+    input[type="text"],
+    input[type="password"] {
       width: 6.1rem;
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
@@ -122,15 +142,14 @@ export default {
       box-shadow: 0 6px 14px 2px rgba(200, 193, 193, 0.72);
       border-radius: 4px;
       text-align: center;
-      font: 0.32rem/.9rem PingFangSC-Semibold;
+      font: 0.32rem/0.9rem PingFangSC-Semibold;
       color: #fff;
       letter-spacing: 0.003rem;
       margin: 0.7rem 0 0.4rem;
     }
 
-
     .title {
-      font: 0.52rem/.73rem PingFangSC-Semibold;
+      font: 0.52rem/0.73rem PingFangSC-Semibold;
       color: #333;
       padding-top: 0.89rem;
       padding-bottom: 0.62rem;
@@ -138,15 +157,31 @@ export default {
 
     #tabs .tab-item {
       display: inline-block;
-      margin-right: .5rem;
-      font: 0.4rem/.56rem PingFangSC-Medium;
+      margin-right: 0.5rem;
+      font: 0.4rem/0.56rem PingFangSC-Medium;
       color: #4d4d4d;
     }
 
     #tabs .activeClass {
-      color:#d53d3d;
-      padding-bottom: .12rem;
-      border-bottom: .04rem solid #d53d3d;
+      color: #d53d3d;
+      padding-bottom: 0.12rem;
+      border-bottom: 0.04rem solid #d53d3d;
+    }
+
+    .main-tel {
+      p {
+        position: relative;
+        .error-tip {
+          position: absolute;
+          font-size: 0.3rem;
+          color:red;
+          right: .3rem;
+          top: .6rem;
+        }
+        .capt {
+          right: 2.5rem;
+        }
+      }
     }
 
     .yzm {
@@ -156,30 +191,30 @@ export default {
 
     .getYam {
       position: absolute;
-      top: .5rem;
+      top: 0.5rem;
       width: 2.1rem;
-      height:.68rem;
-      border: .02rem solid #D53D3D;
+      height: 0.68rem;
+      border: 0.02rem solid #d53d3d;
       background: #fff;
-      border-radius: .04rem;
+      border-radius: 0.04rem;
       right: 0;
-      font: .26rem/.68rem PingFangSC-Regular;
-      color: #D53D3D;
-      letter-spacing: .0031rem;
+      font: 0.26rem/.68rem PingFangSC-Regular;
+      color: #d53d3d;
+      letter-spacing: 0.0031rem;
       text-align: center;
     }
 
     .check {
-      margin-top: .42rem;
+      margin-top: 0.42rem;
 
       .checkbox {
         display: inline-block;
         float: left;
-        width: .24rem;
-        height: .24rem;
-        border: .02rem solid #979797;
-        border-radius: .04rem;
-        margin-right: .08rem;
+        width: 0.24rem;
+        height: 0.24rem;
+        border: 0.02rem solid #979797;
+        border-radius: 0.04rem;
+        margin-right: 0.08rem;
       }
 
       .active {
@@ -191,18 +226,15 @@ export default {
 
       span {
         float: left;
-        font: .24rem/.26rem PingFangSC-Regular;
+        font: 0.24rem/.26rem PingFangSC-Regular;
         color: #999;
         letter-spacing: 0.002rem;
 
         i {
-          color: #D53D3D;
+          color: #d53d3d;
         }
       }
-
     }
-
-
   }
 }
 </style>
