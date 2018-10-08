@@ -102,14 +102,14 @@
             </p>
           </div>
       </div>
-      <div class='select-time'>
+      <!-- <div class='select-time'>
           <p class='text1'>
             <span class='txt1'>是否实名</span>
             <span class='txt2'><i :class="[isReal ? 'icon icon1' : 'icon']" @click='isRealFn("0")'></i>启用</span>
             <span class='txt3'><i :class="[!isReal ? 'icon icon1' : 'icon']" @click='isRealFn("1")'></i>不启用</span>
             <i class='icon ico2'></i>
           </p>
-      </div>
+      </div> -->
       <div class='select-last'>
         <p class='text1' @click="onlyFans">
           <span>仅粉丝</span>
@@ -286,18 +286,18 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    isRealFn(i){
-      if(this.isReal){
-        this.config.onlyCert = '0';
-      }else{
-        this.config.onlyCert = '1';
-      }
-      if(i == 0){
-        this.isReal = true;
-      }else{
-        this.isReal = false;
-      }
-    },
+    // isRealFn(i){
+    //   if(this.isReal){
+    //     this.config.onlyCert = '0';
+    //   }else{
+    //     this.config.onlyCert = '1';
+    //   }
+    //   if(i == 0){
+    //     this.isReal = true;
+    //   }else{
+    //     this.isReal = false;
+    //   }
+    // },
     isSelectFn(i){
       if(i == 0){
         this.select = true;
@@ -334,9 +334,12 @@ export default {
         totalCount = this.config.totalCount * 1e18;
       }
       // this.config.totalCount = moneyFormat(this.config.totalCount, '', this.config.tradeCoin);
-      this.config.totalCount = totalCount;
+      // this.config.totalCount = totalCount;
       this.config.displayTime = this.displayTime;
-      addAdvertising(this.config).then(data => {
+      addAdvertising({
+        ...this.config,
+        totalCount
+      }).then(data => {
         message.show('操作成功！');
         setTimeout(() => {
           this.$router.push(path);

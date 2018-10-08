@@ -39,7 +39,7 @@
           </div>
         </slider>
       </div>
-      <!-- 买币 -->
+      <!-- 买币、卖币 -->
       <div class='main'>
         <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
           <div class='cont'>
@@ -57,98 +57,11 @@
             </div>
             <div class='number'>
               <p class='num'>{{adverItem.truePrice.toFixed(2)}} CNY</p>
-              <p class='shop'>{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
+              <p class='shop' @click="adverClickFn">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
             </div>
           </div>
         </div>
       </div>
-       <!-- 卖币 -->
-      <!--<div v-show='flag2' class='main'>
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='green color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>量采风<span class='ico'>支付宝</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-sell'>       
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='yellow color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>alen<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>  
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='color gray'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>DFDFG<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='green color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>的方菲<span class='ico'>支付宝</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-      </div> -->
       <div  @click='relShow' class='release'>
       </div>
 
@@ -211,6 +124,7 @@ export default {
   },
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
+    console.log(this.bbList)
     getAdvertisingData(this.config).then(data => {
       this.bbDataList = data.list;
     })
@@ -269,7 +183,6 @@ export default {
     goSellPublish() {
       this.$router.push('buy-publish?type=1');
     },
-    
     getPic(pic, suffix) {
       if (!pic) {
           return "";
@@ -288,7 +201,8 @@ export default {
           pic = defaultAvatar;
       }
       return this.getPic(pic, suffix);
-    }
+    },
+    adverClickFn(){}
   },
   components: {
     Footer,
@@ -301,7 +215,7 @@ export default {
 @import "~common/scss/variable";
 
 .otc-wrapper {
-  font-family: PingFangSC-Medium;
+  font-family: 'PingFangSC-Medium';
   font-size: .3rem;
   color: #333;
   height: 100%;
