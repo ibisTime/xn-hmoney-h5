@@ -3,7 +3,6 @@
     <div class='header'>
         <span @click='goBack()' class='icon'></span>
         <span class='txt1'>{{type}}发布</span>
-        <button class='txt2' @click="saveOtcData">保存草稿</button>
     </div>
     <div class='publish-list'>
         <p>
@@ -22,7 +21,7 @@
         </p>
         <p>
           <span class='txt1'>溢价<i></i></span>
-          <input type="text" v-model="config.yj_price">
+          <input type="text" v-model="yj_price">
           <span class='txt2'>CNY</span>
           <span class='ico'></span>
         </p>
@@ -96,20 +95,20 @@
                 <option :value="eItem" v-for="(eItem, eIndex) in endTimeList" :key="eIndex">{{eItem}}</option>
               </select>
             </p>
-            <p class='text3'>
+            <!-- <p class='text3'>
               <i class='icon'></i>
               <span>添加时间段</span>
-            </p>
+            </p> -->
           </div>
       </div>
-      <div class='select-time'>
+      <!-- <div class='select-time'>
           <p class='text1'>
             <span class='txt1'>是否实名</span>
             <span class='txt2'><i :class="[isReal ? 'icon icon1' : 'icon']" @click='isRealFn("0")'></i>启用</span>
             <span class='txt3'><i :class="[!isReal ? 'icon icon1' : 'icon']" @click='isRealFn("1")'></i>不启用</span>
             <i class='icon ico2'></i>
           </p>
-      </div>
+      </div> -->
       <div class='select-last'>
         <p class='text1' @click="onlyFans">
           <span>仅粉丝</span>
@@ -121,14 +120,15 @@
       </div>
     </div>
     <div class='footer'>
-        <button @click="toOtcFn">直接发布</button>
+        <button @click="toOtcFn" :class="{'btn-w': isDetail}">直接发布</button>
+        <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">保存草稿</button>
     </div>
   </div>
 </template>
 <script>
 import Message from 'base/message/message';
 import {getUserId, moneyFormat, getUrlParam} from 'common/js/util';
-import {addAdvertising, getBbListData, getAdvertisePrice} from 'api/otc';
+import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising} from 'api/otc';
 
 const message = new Message();
 
@@ -136,6 +136,7 @@ export default {
   data() {
     return {
       type: '购买',
+      adsCode: '',
       dayList: [
         {
           week: '星期一',
@@ -224,16 +225,17 @@ export default {
       select: true,
       isReal: false,
       isFans: false,
+      isDetail: false,
       bbList: [],
       bbPrice: '',
+      yj_price: '',     //溢价
       config: {
         price: '',        //价格
-        yj_price: '',     //溢价
         minTrade: '',     //最小
         maxTrade: '',     // 最大
         totalCount: '',   // 交易总量
         payType: '0',      // 支付方式
-        onlyCert: '0',     // 实名认证1是0否
+        onlyCert: '1',     // 实名认证1是0否
         onlyTrust: '0',    //0=任何人都可以交易、1=只有受信任的人可以交易
         tradeCoin: 'BTC', //币种类型
         tradeCurrency: 'CNY', // 货币类型
@@ -243,7 +245,7 @@ export default {
         publishType: '0',    // "0", "存草稿" "1", "直接发布"	
         protectPrice: '',
         truePrice: '0',
-        premiumRate: '0',
+        premiumRate: '0',   // 溢价率
         userId: getUserId()
       }
     };
@@ -253,11 +255,13 @@ export default {
   updated() {},
   mounted() {
     this.config.tradeType = getUrlParam('type');
+    console.log(this.config.tradeType);
     if(this.config.tradeType == '1'){
       this.type = '出售';
     }
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
     this.getBbPrice('BTC');
+    this.getAdverDetail();
   },
   computed: {},
   methods: {
@@ -270,34 +274,25 @@ export default {
       this.isFans = !this.isFans;
     },
     getBbPrice(tradeCoin){
-      if(tradeCoin != 'X'){
-        getAdvertisePrice(tradeCoin).then(data => {
+      getAdvertisePrice(tradeCoin).then(data => {
           this.bbPrice = data.mid;
-        })
-      }else{
-        getAdvertisePrice('BTC').then(data => {
-          let mid = data.mid;
-          getAdvertisePrice('X', 'BTC').then(data => {
-            this.bbPrice = parseFloat(data.mid) * parseFloat(mid);
-          })
-        })
-      }
+        });
     },
     goBack() {
       this.$router.go(-1);
     },
-    isRealFn(i){
-      if(this.isReal){
-        this.config.onlyCert = '0';
-      }else{
-        this.config.onlyCert = '1';
-      }
-      if(i == 0){
-        this.isReal = true;
-      }else{
-        this.isReal = false;
-      }
-    },
+    // isRealFn(i){
+    //   if(this.isReal){
+    //     this.config.onlyCert = '0';
+    //   }else{
+    //     this.config.onlyCert = '1';
+    //   }
+    //   if(i == 0){
+    //     this.isReal = true;
+    //   }else{
+    //     this.isReal = false;
+    //   }
+    // },
     isSelectFn(i){
       if(i == 0){
         this.select = true;
@@ -326,9 +321,8 @@ export default {
         })
       }
       this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
-      this.config.publishType = '1';
       let totalCount = '';
-      if(this.config.totalCount == 'BTC'){
+      if(this.config.tradeCoin == 'BTC'){
         totalCount = this.config.totalCount * 1e8;
       }else{
         totalCount = this.config.totalCount * 1e18;
@@ -336,20 +330,69 @@ export default {
       // this.config.totalCount = moneyFormat(this.config.totalCount, '', this.config.tradeCoin);
       this.config.totalCount = totalCount;
       this.config.displayTime = this.displayTime;
-      addAdvertising(this.config).then(data => {
+      this.config.premiumRate = parseFloat(this.yj_price) / parseFloat(this.bbPrice);
+      if(!this.isDetail){
+        let that = this;
+        addAdvertising(this.config).then(data => {
+          cgAdver(that);
+        })
+      }else{
+        this.config.publishType = '3';
+        this.config.adsCode = this.adsCode;
+        let that = this;
+        exitAdverFn(that);
+      }
+      function exitAdverFn(that){
+        ExitAdvertising(that.config).then(data => {
+          cgAdver(that);
+        });
+      }
+      function cgAdver(that){
         message.show('操作成功！');
+        console.log(that.config);
         setTimeout(() => {
-          this.$router.push(path);
+          that.$router.push(path);
         }, 300);
-      })
+      }
     },
     toOtcFn(){
+      this.config.publishType = '1';
       this.changeConfig('/otc');
     },
     //保存草稿
     saveOtcData(){
       this.config.publishType = '0';
       this.changeConfig('/my-advertising');
+    },
+    getAdverDetail(){
+      this.adsCode = this.$route.query.code;
+      let userId = this.$route.query.userId;
+      if(this.adsCode){
+        this.isDetail = true;
+        getAdvertiseDetail(this.adsCode, userId).then(data => {
+          console.log(data);
+          if(data.onlyTrust === '1'){
+            this.isFans = true;
+          }
+          let blv = 0;
+          if(data.tradeCoin != 'BTC'){
+            blv = 1e18;
+          }else{
+            blv = 1e8;
+          }
+          this.config.minTrade = data.minTrade;
+          this.config.maxTrade = data.maxTrade;
+          this.config.totalCount = parseFloat(data.totalCountString) / blv;
+          this.config.payType = data.payType;
+          this.config.payLimit = data.payLimit;
+          this.$refs.leaveMessage.value = data.leaveMessage;
+          this.config.tradeCurrency = data.tradeCurrency;
+          this.config.tradeCoin = data.tradeCoin;
+          this.config.onlyTrust = data.onlyTrust;
+          this.config.protectPrice = data.protectPrice;
+          this.yj_price = parseFloat(data.premiumRate) * parseFloat(data.marketPrice);
+        })
+      }
     }
   },
   components: {}
@@ -645,7 +688,7 @@ export default {
     background: #fff;
     text-align: center;
     button {
-      width: 6.9rem;
+      width: 3.3rem;
       height: 1rem;
       border-radius: 0.08rem;
       background: #d53d3d;
@@ -653,6 +696,14 @@ export default {
       color: #fff;
       line-height: 1rem;
       margin-top: 0.15rem;
+      margin-right: 0.1rem;
+      &:nth-of-type(2){
+        background: #333;
+        color: #fff;
+      }
+    }
+    .btn-w{
+      width: 6.9rem;
     }
   }
 }

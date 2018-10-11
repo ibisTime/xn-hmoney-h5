@@ -7,19 +7,19 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {isLogin} from './common/js/util';
+import {isLogin, getUrlParam} from './common/js/util';
 
   export default {
     created() {
+      let url = location.href;
+      console.log(url);
       if(!isLogin()) {
         this.$router.push('login');
-      }else {
-        this.$router.push('page');
       }
     },
   };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
   .loading-container {
     position: absolute;
     top: 0;
@@ -33,5 +33,8 @@ import {isLogin} from './common/js/util';
       width: 100%;
       transform: translate3d(0, -50%, 0);
     }
+  }
+  .hidden{
+    display: none;
   }
 </style>

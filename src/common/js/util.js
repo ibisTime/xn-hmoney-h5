@@ -650,3 +650,4 @@ export function getAvatar(pic, suffix) {
   }
   return getPic(pic, suffix);
 }
+

@@ -90,7 +90,7 @@
     mounted() {
       getBbListData().then(data => {
         sessionStorage.setItem('coinData', JSON.stringify(data));
-      })
+      });
     },
     computed: {
     },

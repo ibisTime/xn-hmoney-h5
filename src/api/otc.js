@@ -1,4 +1,5 @@
 import fetch from 'common/js/fetch';
+import { getUserId } from '../common/js/util';
 
 //获取已发布币种列表
 export function getBbListData(){
@@ -13,6 +14,14 @@ export function getAdvertisePrice(coin, ctype) {
     return fetch("625292", {
         coin,
         refCurrency
+    });
+}
+
+// 获取广告详情
+export function getAdvertiseDetail(adsCode, userId) {
+    return fetch("625226", {
+        adsCode,
+        userId
     });
 }
 
@@ -34,4 +43,9 @@ export function getAdvertisingData(config){
 // 发布广告
 export function addAdvertising(config){
     return fetch('625220', config);
+}
+
+// 修改广告
+export function ExitAdvertising(config){
+    return fetch('625221', config);
 }

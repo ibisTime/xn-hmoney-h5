@@ -102,7 +102,7 @@ export function getDictList(parentKey) {
 
 // 获取banner
 export function getBannerList() {
-  return fetch(805806, {
+  return fetch(630506, {
     type: 2,
     belong: 0
   });

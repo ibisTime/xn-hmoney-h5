@@ -13,13 +13,29 @@
       </div>
       <div class="top">
         <div class='top-main'>
-            <p>货币<span></span></p>
-            <p>支付方式<span></span></p>
-            <p :class="[show3 ? 'act' : '']" @click="show = !show3" >排序<span></span></p>
+            <p>
+              <select name="hbName" @change="selHbName" ref="select_hb">
+                <option value="">请选择</option>
+                <option value="CNY">CNY</option>
+                <option value="USD">USD</option>
+              </select>
+              <span></span>
+            </p>
+            <p>
+              <!-- 支付方式<span></span> -->
+              <select name="bbPayType" @change="selPayType" ref="select_pay">
+                <option value="">请选择</option>
+                <option value="0">支付宝</option>
+                <option value="1">微信</option>
+                <option value="2">银行卡转账</option>
+              </select>
+              <span></span>
+            </p>
+            <!-- <p :class="[show3 ? 'act' : '']" @click="show = !show3" >排序<span></span></p> -->
         </div>
       </div>
       <!-- 下拉选择 -->
-      <div v-show='show3' class='select3'>
+      <!-- <div v-show='show3' class='select3'>
         <div class='main'>
           <p>单价从低到高</p>
           <p>单价从高到低</p>
@@ -30,7 +46,7 @@
           <p>发布时间从早到晚</p>
           <p>发布时间从晚到早</p>
         </div>
-      </div>
+      </div> -->
       <!-- banner -->
       <div class="slider-wrapper">
         <slider>
@@ -41,116 +57,40 @@
       </div>
       <!-- 买币 -->
       <div class='main'>
-        <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
-        <router-link :to=" url + '?adsCode=' + adverItem.code + '&userId=' + adverItem.userId">
-          <div class='cont'>
-            <div class='preson' :data-href="'../user/user-detail.html?coin=' + adverItem.tradeCoin + '&userId=' + adverItem.userId + '&adsCode=' + adverItem.code">
-              <div class='pic'>
-                <img :src="getAvatar(adverItem.user.photo)" alt="">
-                <span class='green color'></span>
+        <Scroll 
+          ref="scroll"
+          :data="bbDataList"
+          :hasMore="hasMore"
+          @pullingUp="getBBListData"
+        >
+          <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
+            <router-link :to=" url + '?adsCode=' + adverItem.code + '&userId=' + adverItem.userId">
+            </router-link>
+            <div class='cont'>
+              <div class='preson'>
+                <div class='pic'>
+                  <img :src="getAvatar(adverItem.user.photo)" alt="">
+                  <span class='green color'></span>
+                </div>
+                <span class='name'>已实名</span>
               </div>
-              <span class='name'>已实名</span>
-            </div>
-            <div class='text'>
-              <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
-              <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}%•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
-              <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} CNY</p>
-            </div>
-            <div class='number'>
-              <p class='num'>{{adverItem.truePrice.toFixed(2)}} CNY</p>
-              <p class='shop'>{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
+              <div class='text'>
+                <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
+                <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}%•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
+                <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} CNY</p>
+              </div>
+              <div class='number'>
+                <p class='num'>{{adverItem.truePrice.toFixed(2)}} CNY</p>
+                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.payType, adverItem.code)">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
+              </div>
             </div>
           </div>
-        </router-link>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': bbDataList.length > 0}">
+          <img src="./暂无明细.png" />
+          <p>暂无广告</p>
         </div>
       </div>
-       <!-- 卖币 -->
-      <!--<div v-show='flag2' class='main'>
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='green color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>量采风<span class='ico'>支付宝</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-sell'>       
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='yellow color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>alen<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>  
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='color gray'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>DFDFG<span class='ico'>银行卡</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link to='otc-sell'>
-          <div class='content'>
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic'>
-                  <span class='green color'></span>
-                </div>
-                <span class='name'>已实名</span>
-              </div>
-              <div class='text'>
-                <p class='title'>的方菲<span class='ico'>支付宝</span></p>
-                <p class='disc'>交易12•好评100%•信任5</p>
-                <p class='limit'>限额：100-12345 CNY</p>
-              </div>
-              <div class='number'>
-                <p class='num'>285600 CNY</p>
-                <p class='shop'>出售</p>
-              </div>
-            </div>
-          </div>
-        </router-link>
-      </div> -->
       <div  @click='relShow' class='release'>
       </div>
 
@@ -179,6 +119,7 @@ import {formatImg, getUserId, getAvatar} from 'common/js/util';
 import {getBannerList} from 'api/general';
 import {getAdvertisingData} from 'api/otc';
 import Slider from 'base/slider/slider';
+import Scroll from 'base/scroll/scroll';
 export default {
   data() {
     return {
@@ -187,8 +128,6 @@ export default {
       userId: getUserId(),
       bbList: [],
       config: {
-        start: '1',
-        limit: '10',
         coin:'ETH',
         tradeType: '1'
       },
@@ -203,7 +142,10 @@ export default {
       Show: false,
       flag1: true,
       flag2: false,
-      url: 'otc-buy'
+      url: 'otc-buy',
+      hasMore: true,
+      start: 1,
+      limit: 10
     };
   },
   created() {
@@ -213,18 +155,43 @@ export default {
   },
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
-    getAdvertisingData(this.config).then(data => {
-      this.bbDataList = data.list;
-    })
+    let coin = sessionStorage.getItem('coin') || 'ETH';
+    this.config.coin = coin != 'undefined' ? coin : 'ETH';
+    this.getBBListData();
   },
   computed: {
   },
   methods: {
+    // 请求列表数据
+    getBBListData(){
+      this.config.start = this.start;
+      this.config.limit = this.limit;
+      getAdvertisingData(this.config).then(data => {
+        if (data.totalPage <= this.start) {
+          this.hasMore = false;
+          this.bbDataList = data.list;
+        }else{
+          this.bbDataList = [...this.bbDataList, ...data.list];
+          this.start++;
+        }
+        console.log(this.bbDataList);
+      })
+    },
+    // 根据条件查询数据
+    selHbName(){
+      this.config.tradeCurrency = this.$refs.select_hb.value;
+      this.getBBListData();
+    },
+    selPayType(){
+      this.config.payType = this.$refs.select_pay.value;
+      this.getBBListData();
+    },
     //根据币种请求数据
     getAdverFn(){
-      getAdvertisingData(this.config).then(data => {
-        this.advertisingFn(this.config.tradeType);
-      })
+      sessionStorage.setItem('coin', this.config.coin);
+      this.start = 1;
+      this.limit = 10;
+      this.getBBListData();
     },
     getInitData() {
       this.getBannerList();
@@ -241,9 +208,7 @@ export default {
     },
     advertisingFn(type){
       this.config.tradeType = type;
-      getAdvertisingData(this.config).then(data => {
-        this.bbDataList = data.list;
-      })
+      this.getBBListData();
     },
     buy() {
       this.flag1 = true;
@@ -290,11 +255,31 @@ export default {
           pic = defaultAvatar;
       }
       return this.getPic(pic, suffix);
+    },
+    // 编辑、购买或出售
+    toclAdver(userId, type, code){
+      console.log(this.bbDataList)
+      if(userId === this.userId){
+        this.$router.push({
+          path:'/buy-publish',
+          query: {
+            userId,
+            code,
+            type
+          }
+        })
+      }else{
+        this.$router.push({path: '/otc-buy', query: {
+          userId,
+          adsCode: code
+        }});
+      }
     }
   },
   components: {
     Footer,
-    Slider
+    Slider,
+    Scroll
   }
 };
 </script>
@@ -376,9 +361,14 @@ export default {
       width: 100%;
       padding: 0 .3rem;
       display: flex;
-      justify-content: space-between;
       font: .26rem/.64rem PingFangSC-Medium;
-
+      p{
+        margin-right: .8rem;
+        select{
+          width: 1.5rem;
+          padding: 0.05rem 0.1rem;
+        }
+      }
       .act {
         color: #d53d3d;
         span {
@@ -550,6 +540,20 @@ export default {
             color: #d53d3d;
           }
         }
+      }
+    }
+    .no-data {
+      width: 100%;
+      padding: 1.6rem 0 1.2rem;
+      text-align: center;
+      img {
+          vertical-align: bottom;
+          width: 2rem;
+      }
+      p {
+          font-size: 15px;
+          color: #999;
+          margin-top: 15px;
       }
     }
 
