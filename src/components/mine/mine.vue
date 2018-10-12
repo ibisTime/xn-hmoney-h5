@@ -21,7 +21,7 @@
           <span>我要出售</span>
         </router-link>
       </div>
-      <div class="item item-Wrap item1">
+      <div class="item item-Wrap item1 hidden">
         <router-link to="my-currency" class="item-2">
           <div class='box'>
           <i></i>

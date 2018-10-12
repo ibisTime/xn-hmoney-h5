@@ -327,3 +327,10 @@ export function editIntroduce (introduce) {
     userId: getUserId()
   });
 }
+
+/**
+ * 用户认证
+ */
+export function userAttestation (config) {
+  return fetch(805160, config);
+}

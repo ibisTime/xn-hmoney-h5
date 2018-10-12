@@ -75,7 +75,7 @@ export function getAppId() {
 
 // 获取七牛token
 export function getQiniuToken() {
-  return fetch(805951, {});
+  return fetch(630091, {});
 }
 
 // 发送验证码
@@ -95,7 +95,6 @@ export function getDictList(parentKey) {
   return fetch(630036, {
     parentKey
   }).then((data) => {
-    getDictList[parentKey] = data;
     return Promise.resolve(data);
   });
 }

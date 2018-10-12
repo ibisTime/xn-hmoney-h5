@@ -35,6 +35,9 @@ import {isLogin, getUrlParam} from './common/js/util';
     }
   }
   .hidden{
-    display: none;
+    display: none !important;
+  }
+  .show{
+    display: block !important;
   }
 </style>

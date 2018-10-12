@@ -1,9 +1,5 @@
 <template>
   <div class="publish-wrapper" @click.stop>
-    <div class='header'>
-        <span @click='goBack()' class='icon'></span>
-        <span class='txt1'>{{type}}发布</span>
-    </div>
     <div class='publish-list'>
         <p>
           <span class='txt1'>交易币种<i></i></span>
@@ -11,43 +7,41 @@
             <option :value="item.symbol" v-for="(item, index) in bbList" :key="index">{{item.symbol}}</option>
           </select>
           <span class='icon'></span>
-          <span class='ico'></span>
         </p>
         <p>
           <span class='txt1'>价格<i></i></span>
           <input type="text" readonly v-model="bbPrice">
           <span class='txt2'>CNY</span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('jg')"></span>
         </p>
         <p>
-          <span class='txt1'>溢价<i></i></span>
-          <input type="text" v-model="yj_price">
-          <span class='txt2'>CNY</span>
-          <span class='ico'></span>
+          <span class='txt1'>溢价率<i></i></span>
+          <input type="text" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice">
+          <span class='txt2'>%</span>
+          <span class='ico' @click.stop="showMsg('jv')"></span>
         </p>
         <p>
-          <span class='txt1'>最低价<i></i></span>
-          <input type="text" v-model="config.protectPrice" placeholder="广告可交易的最小价">
+          <span class='txt1'>{{type !== '购买' ? '最低价' : '最高价'}}<i></i></span>
+          <input type="text" v-model="config.protectPrice" :placeholder="type !== '购买' ? '广告可交易的最低价' : '广告可交易的最高价'">
           <span class='txt2'>CNY</span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('low')"></span>
         </p>
         <p>
           <span class='txt1'>最小价<i></i></span>
           <input type="text" v-model="config.minTrade" placeholder="单笔交易的最小额度">
           <span class='txt2'>CNY</span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('min')"></span>
         </p>
         <p>
           <span class='txt1'>最大价<i></i></span>
           <input type="text" v-model="config.maxTrade" placeholder="单笔交易的最大额度">
           <span class='txt2'>CNY</span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('max')"></span>
         </p>
         <p>
-          <span class='txt1'>出售总量<i></i></span>
+          <span class='txt1'>{{type}}总量<i></i></span>
           <input type="text" v-model="config.totalCount" placeholder="请输入售卖币的总量">
           <span class='txt2'>{{config.tradeCoin}}</span>
-          <span class='ico'></span>
         </p>
         <p>
           <span class='txt1'>付款方式<i></i></span>
@@ -58,13 +52,13 @@
 						<option value="2">银行卡</option>
           </select>
           <span class='icon'></span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('ty')"></span>
         </p>
         <p>
           <span class='txt1'>付款期限<i></i></span>
           <input type="text" placeholder="请输入付款期限" v-model="config.payLimit">
           <span class='txt2'>分钟</span>
-          <span class='ico'></span>
+          <span class='ico' @click.stop="showMsg('qx')"></span>
         </p>
     </div>
     <textarea class='message' placeholder="请写下您的广告留言吧" ref="leaveMessage">
@@ -82,7 +76,7 @@
             <span class='txt1'>开放时间</span>
             <span class='txt2'><i :class="[select ? 'icon icon1' : 'icon']" @click='isSelectFn("0")'></i>任何时候</span>
             <span class='txt3'><i :class="[!select ? 'icon icon1' : 'icon']" @click='isSelectFn("1")'></i>自定义</span>
-            <i class='icon ico2'></i>
+            <i class='icon ico2' @click="showMsg('time')"></i>
           </p>
           <div class="select-time" v-show="!select">
             <p class='text2' v-for="(dayItem, index) in dayList" :key="index">
@@ -111,11 +105,8 @@
       </div> -->
       <div class='select-last'>
         <p class='text1' @click="onlyFans">
-          <span>仅粉丝</span>
-          <span>
-          <b><i :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans'></i></b>
-          <i class='icon ico2'></i>
-          </span>
+          <span>仅粉丝 <i :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i></span>
+          <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .3rem;"></i>
         </p>
       </div>
     </div>
@@ -123,18 +114,23 @@
         <button @click="toOtcFn" :class="{'btn-w': isDetail}">直接发布</button>
         <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">保存草稿</button>
     </div>
+    <showMsg :text="text" ref="showMsg"/>
   </div>
 </template>
 <script>
 import Message from 'base/message/message';
-import {getUserId, moneyFormat, getUrlParam} from 'common/js/util';
-import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising} from 'api/otc';
+import showMsg from 'base/showMsg/showMsg';
+import {getUserId, moneyFormat, getUrlParam, setTitle} from 'common/js/util';
+import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 
 const message = new Message();
 
 export default {
   data() {
     return {
+      text: 'hh',
+      lowTxt: '广告最高可成交的价格',
+      MsgList: {},
       type: '购买',
       adsCode: '',
       dayList: [
@@ -228,7 +224,8 @@ export default {
       isDetail: false,
       bbList: [],
       bbPrice: '',
-      yj_price: '',     //溢价
+      yj_price: '',     //溢价率
+      paramCKey: 'buy_ads_hint',
       config: {
         price: '',        //价格
         minTrade: '',     //最小
@@ -251,6 +248,7 @@ export default {
     };
   },
   created() {
+    
   },
   updated() {},
   mounted() {
@@ -258,13 +256,50 @@ export default {
     console.log(this.config.tradeType);
     if(this.config.tradeType == '1'){
       this.type = '出售';
+      this.lowTxt = '广告最低可成交的价格';
+      this.paramCKey = 'sell_ads_hint';
+      setTitle('出售');
     }
+    setTitle('购买');
+    getAdverMessage(this.paramCKey).then(data => {
+      console.log('信息:', data);
+      this.MsgList = data;
+      // 期限： data.payLimit
+      // 开放时间：data.displayTime
+      // 最大限额：data.maxTrade
+      // 最小限额：data.minTrade
+      // 付款期限：data.payLimit
+      // 收款方式：data.payType
+      // 溢价：data.premiumRate
+      // 价格：data.price
+      // 总量: data.totalCount
+      // 粉丝：data.trust
+    });
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
     this.getBbPrice('BTC');
     this.getAdverDetail();
   },
   computed: {},
   methods: {
+    //显示交易提示
+    showMsg(type){
+      switch(type){
+        case 'jg': this.text = this.MsgList.price;break;
+        case 'jv': this.text = this.MsgList.premiumRate;break;
+        case 'low': this.text = this.lowTxt;break;
+        case 'min': this.text = this.MsgList.minTrade;break;
+        case 'max': this.text = this.MsgList.maxTrade;break;
+        case 'ty': this.text = this.MsgList.payType;break;
+        case 'time': this.text = this.MsgList.displayTime;break;
+        case 'qx': this.text = this.MsgList.payLimit;break;
+        case 'fs': this.text = this.MsgList.trust;break;
+      }
+      this.$refs.showMsg.show();
+    },
+    //通过溢价率改变价格
+    changeYjlPrice(){
+      this.bbPrice = this.config.price + this.yj_price * this.config.price / 100;
+    },
     onlyFans(){ // 仅粉丝
       if(this.isFans){
         this.config.onlyTrust = '0';
@@ -276,6 +311,7 @@ export default {
     getBbPrice(tradeCoin){
       getAdvertisePrice(tradeCoin).then(data => {
           this.bbPrice = data.mid;
+          this.config.price = data.mid;
         });
     },
     goBack() {
@@ -330,7 +366,7 @@ export default {
       // this.config.totalCount = moneyFormat(this.config.totalCount, '', this.config.tradeCoin);
       this.config.totalCount = totalCount;
       this.config.displayTime = this.displayTime;
-      this.config.premiumRate = parseFloat(this.yj_price) / parseFloat(this.bbPrice);
+      this.config.premiumRate = this.yj_price / 100;
       if(!this.isDetail){
         let that = this;
         addAdvertising(this.config).then(data => {
@@ -390,12 +426,14 @@ export default {
           this.config.tradeCoin = data.tradeCoin;
           this.config.onlyTrust = data.onlyTrust;
           this.config.protectPrice = data.protectPrice;
-          this.yj_price = parseFloat(data.premiumRate) * parseFloat(data.marketPrice);
+          this.yj_price = parseFloat(data.premiumRate) * 100;
         })
       }
     }
   },
-  components: {}
+  components: {
+    showMsg
+  }
 };
 </script>
 <style lang="scss" scoped>

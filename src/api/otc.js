@@ -49,3 +49,8 @@ export function addAdvertising(config){
 export function ExitAdvertising(config){
     return fetch('625221', config);
 }
+
+// 获取广告提示信息
+export function getAdverMessage(type){
+    return fetch('630048', {type});
+}

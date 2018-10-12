@@ -247,7 +247,7 @@ export default new Router({
       component: securityIdentity
     },
     {
-      path: '/security-idcard',
+      path: '/security-idcard/:type',
       component: securityIdcard
     },
     {

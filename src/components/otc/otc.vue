@@ -95,7 +95,6 @@
       </div>
 
       <Footer></Footer>
-      
   </div>
   <div v-show="Show" class='release2'>
     <div class='main'>
