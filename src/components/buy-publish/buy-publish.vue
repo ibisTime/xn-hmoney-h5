@@ -253,7 +253,6 @@ export default {
   updated() {},
   mounted() {
     this.config.tradeType = getUrlParam('type');
-    console.log(this.config.tradeType);
     if(this.config.tradeType == '1'){
       this.type = '出售';
       this.lowTxt = '广告最低可成交的价格';
@@ -385,7 +384,6 @@ export default {
       }
       function cgAdver(that){
         message.show('操作成功！');
-        console.log(that.config);
         setTimeout(() => {
           that.$router.push(path);
         }, 300);
@@ -406,7 +404,6 @@ export default {
       if(this.adsCode){
         this.isDetail = true;
         getAdvertiseDetail(this.adsCode, userId).then(data => {
-          console.log(data);
           if(data.onlyTrust === '1'){
             this.isFans = true;
           }
@@ -416,6 +413,7 @@ export default {
           }else{
             blv = 1e8;
           }
+          this.bbPrice = data.truePrice;
           this.config.minTrade = data.minTrade;
           this.config.maxTrade = data.maxTrade;
           this.config.totalCount = parseFloat(data.totalCountString) / blv;

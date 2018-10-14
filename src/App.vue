@@ -40,4 +40,18 @@ import {isLogin, getUrlParam} from './common/js/util';
   .show{
     display: block !important;
   }
+  .no-data {
+    width: 100%;
+    padding: 1.6rem 0 1.2rem;
+    text-align: center;
+    img {
+        vertical-align: bottom;
+        width: 2rem;
+    }
+    p {
+        font-size: 15px;
+        color: #999;
+        margin-top: 15px;
+    }
+  }
 </style>

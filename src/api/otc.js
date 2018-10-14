@@ -54,3 +54,16 @@ export function ExitAdvertising(config){
 export function getAdverMessage(type){
     return fetch('630048', {type});
 }
+
+// 获取我的广告
+export function getUserAdver(config){
+    return fetch('625225', config);
+}
+
+//下架广告
+export function downAdvertise(adsCode) {
+    return fetch("625224", {
+        userId: getUserId(),
+        adsCode
+    });
+}

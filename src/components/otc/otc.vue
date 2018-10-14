@@ -77,10 +77,10 @@
               <div class='text'>
                 <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
                 <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}%•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
-                <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} CNY</p>
+                <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
               </div>
               <div class='number'>
-                <p class='num'>{{adverItem.truePrice.toFixed(2)}} CNY</p>
+                <p class='num'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
                 <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.payType, adverItem.code)">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
               </div>
             </div>
@@ -173,7 +173,6 @@ export default {
           this.bbDataList = [...this.bbDataList, ...data.list];
           this.start++;
         }
-        console.log(this.bbDataList);
       })
     },
     // 根据条件查询数据
@@ -257,7 +256,6 @@ export default {
     },
     // 编辑、购买或出售
     toclAdver(userId, type, code){
-      console.log(this.bbDataList)
       if(userId === this.userId){
         this.$router.push({
           path:'/buy-publish',
@@ -539,20 +537,6 @@ export default {
             color: #d53d3d;
           }
         }
-      }
-    }
-    .no-data {
-      width: 100%;
-      padding: 1.6rem 0 1.2rem;
-      text-align: center;
-      img {
-          vertical-align: bottom;
-          width: 2rem;
-      }
-      p {
-          font-size: 15px;
-          color: #999;
-          margin-top: 15px;
       }
     }
 

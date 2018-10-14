@@ -15,230 +15,164 @@
         </p>
     </div>
     <!-- 待发布 -->
-    <div v-show='show1' class='adver'>
-        <router-link to='buy-publish' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
+    <div class='adver'>
+        <Scroll 
+          ref="scroll"
+          :data="myWillAdverList"
+          :hasMore="hasMore"
+          @pullingUp="getAdverData"
+        >
+            <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
+                <div class='list1'>
+                    <div class='pic'>
+                        <i class='icon'></i>
+                    </div>
+                    <div class='text1'>
+                        <p class='txt1'><span class='name'>{{adverItem.user.nickname}}</span><span class='green'>{{payTypeList[adverItem.payType]}}</span></p>
+                        <p class='txt2'>交易{{adverItem.userStatistics.jiaoYiCount}} • 好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}% • 信任{{adverItem.userStatistics.beiXinRenCount}}</p>
+                        <p class='txt3'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
+                    </div>
+                    <div class='text2'>
+                        <p class='txt1'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
+                        <span class='txt2' :class="[show1? 'select' : '']" @click="fbAdverFn(adverItem)">发布</span>
+                    </div>
                 </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>支付宝</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2 select'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='buy-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <!-- <router-link to='buy-publish' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>银行卡</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2 select'>发布</router-link>
+                <div class='list2'>
+                    <div class='text1'>
+                        <p @click.stop="toclAdver(adverItem.user.userId, adverItem.payType, adverItem.code)"><i class='icon'></i><span>编辑</span></p>
+                    </div>
+                    <span :class="{'hidden': show1}">|</span>
+                    <div class='text2'>
+                        <p :class="{'hidden': show1}" @click="downAdverFn(adverItem.code)"><i class='icon'></i><span>下架</span></p>
+                    </div>
                 </div>
             </div>
-            <div class='list2'>
-                <router-link to='buy-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <router-link to='buy-publish' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>支付宝</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2 select'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='buy-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <router-link to='buy-publish' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>银行卡</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2 select'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='buy-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link> -->
-    </div>
-    <!-- 已发布 -->
-    <div v-show="!show1" class='has-adver'>
-        <router-link to='buy-publish?type=1' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>支付宝</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='sell-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <!-- <router-link to='buy-publish?type=1' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>银行卡</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='sell-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <router-link to='buy-publish?type=1' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>支付宝</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='sell-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link>
-        <router-link to='buy-publish?type=1' class='list-wrap'>
-            <div class='list1'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text1'>
-                    <p class='txt1'><span class='name'>FUN MVP</span><span class='green'>银行卡</span></p>
-                    <p class='txt2'>交易12 • 好评100 • 信任5</p>
-                    <p class='txt3'>限额：100-12345CNY</p>
-                </div>
-                <div class='text2'>
-                    <p class='txt1'>285600CNY</p>
-                    <router-link to='' class='txt2'>发布</router-link>
-                </div>
-            </div>
-            <div class='list2'>
-                <router-link to='sell-publish' class='text1'>
-                    <p><i class='icon'></i><span>编辑</span></p>
-                </router-link>|
-                <router-link to='' class='text2'>
-                    <p><i class='icon'></i><span>下架</span></p>
-                </router-link>
-            </div>
-        </router-link> -->
+        </Scroll>
+        <div class="no-data" :class="{'hidden': myWillAdverList.length > 0}">
+          <img src="./wu.png" />
+          <p>暂无广告</p>
+        </div>
+        <show-msg :text="textMsg" ref="showmsg" />
     </div>
   </div>
 </template>
 <script>
-import { myAdver } from "api/person";
-
+import { getUserAdver, addAdvertising, downAdvertise } from "api/otc";
+import {getUserId} from 'common/js/util';
+import ShowMsg from 'base/showMsg/showMsg';
+import Scroll from 'base/scroll/scroll';
 export default {
   data() {
     return {
+      start: 1,
+      limit: 5,
+      hasMore: true,
+      textMsg: '操作成功',
       show1: true,
+      myWillAdverList: [],
+      myAdverList: [],
+      payTypeList: {
+          '0': '支付宝',
+          '1': '微信',
+          '2': '银行卡转账'
+      },
+      config: {
+          limit: 5,
+          start: 1,
+          statusList: [0],
+          userId: getUserId()
+      },
+      fbConfig: {
+        minTrade: '',     //最小
+        maxTrade: '',     // 最大
+        totalCount: '',   // 交易总量
+        payType: '0',      // 支付方式
+        onlyCert: '1',     // 实名认证1是0否
+        onlyTrust: '0',    //0=任何人都可以交易、1=只有受信任的人可以交易
+        tradeCoin: 'BTC', //币种类型
+        tradeCurrency: 'CNY', // 货币类型
+        tradeType: '0',      //0=买币，1=卖币
+        payLimit: '',        // 超过时间
+        leaveMessage: '',    // 广告留言
+        publishType: '0',    // "0", "存草稿" "1", "直接发布"	
+        protectPrice: '',
+        truePrice: '0',
+        premiumRate: '0',   // 溢价率
+        userId: getUserId()
+      }
     };
   },
   created() {
-    //   this.myAdver1();
+    this.getAdverData();
   },
   methods: {
     change1() {
       this.show1 = true;
+      this.config.statusList = [0];
+      this.getAdverData();
     },
     change2() {
       this.show1 = false;
+      this.config.statusList = [1];
+      this.getAdverData();
     },
-    // 未发布
-    myAdver1() {
-        // myAdver('ETH').then((data) => {
-        //     console.log(data);
-        // });
+    // 获取广告数据
+    getAdverData(){
+        this.config.limit = this.limit;
+        this.config.start = this.start;
+        getUserAdver(this.config).then(data => {
+            if (data.totalPage <= this.start) {
+                this.hasMore = false;
+                this.myWillAdverList = data.list;
+            }else{
+                this.myWillAdverList = [...this.myWillAdverList, ...data.list];
+                this.start++;
+            }
+        })
+    },
+    // 发布
+    fbAdverFn(item){
+        this.fbConfig.minTrade  = item.minTrade;
+        this.fbConfig.maxTrade  = item.maxTrade;
+        this.fbConfig.totalCount  = item.totalCount;
+        this.fbConfig.payType  = item.payType;
+        this.fbConfig.onlyCert  = item.onlyCert;
+        this.fbConfig.onlyTrust  = item.onlyTrust;
+        this.fbConfig.tradeCoin  = item.tradeCoin;
+        this.fbConfig.tradeCurrency  = item.tradeCurrency;
+        this.fbConfig.tradeType  = item.tradeType;
+        this.fbConfig.payLimit  = item.payLimit;
+        this.fbConfig.leaveMessage  = item.leaveMessage;
+        this.fbConfig.publishType  = '1';
+        this.fbConfig.protectPrice  = item.protectPrice;
+        this.fbConfig.truePrice  = item.truePrice;
+        this.fbConfig.premiumRate  = item.premiumRate;
+        addAdvertising(this.fbConfig).then(data => {
+            console.log('fb', data);
+        });
+    },
+    // 编辑
+    toclAdver(userId, type, code){
+      this.$router.push({
+            path:'/buy-publish',
+            query: {
+                userId,
+                code,
+                type
+            }
+        })
+    },
+    // 下架广告
+    downAdverFn(adsCode){alert(adsCode)
+        downAdvertise(adsCode).then(data => {
+            console.log('下架：', data);
+            this.$refs.showmsg.show();
+        })
     }
+  },
+  components: {
+      ShowMsg,
+      Scroll
   }
 };
 </script>
@@ -325,6 +259,7 @@ export default {
         }
       }
       .text1 {
+          color: #333;
         .txt1 {
           margin-bottom: 0.2rem;
           span {
@@ -383,7 +318,7 @@ export default {
         display: flex;
         line-height: .6rem;
         color: #eaeaea;
-        a {
+        p {
             font-size: .24rem;
             color: #333;
         }

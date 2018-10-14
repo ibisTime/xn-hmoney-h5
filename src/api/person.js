@@ -136,13 +136,6 @@ export function otcBuy(adsCode, userId) {
   })
 }
 
-// 我的广告
-export function myAdver(nickName) {
-  return fetch(625228, {
-    nickName
-  })
-}
-
 // 钱包 -- 转出
 export function walletOut(accountNumber, amount, applyNote, applyUser, payCardInfo, payCardNo) {
   return fetch(802350, {
