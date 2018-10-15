@@ -120,7 +120,7 @@
 <script>
 import Message from 'base/message/message';
 import showMsg from 'base/showMsg/showMsg';
-import {getUserId, moneyFormat, getUrlParam, setTitle} from 'common/js/util';
+import {getUserId, getUrlParam, setTitle, formatMoneyMultiply} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 
 const message = new Message();
@@ -133,6 +133,7 @@ export default {
       MsgList: {},
       type: '购买',
       adsCode: '',
+      isCg: '',
       dayList: [
         {
           week: '星期一',
@@ -253,6 +254,7 @@ export default {
   updated() {},
   mounted() {
     this.config.tradeType = getUrlParam('type');
+    this.isCg = getUrlParam('isCg');
     if(this.config.tradeType == '1'){
       this.type = '出售';
       this.lowTxt = '广告最低可成交的价格';
@@ -261,7 +263,6 @@ export default {
     }
     setTitle('购买');
     getAdverMessage(this.paramCKey).then(data => {
-      console.log('信息:', data);
       this.MsgList = data;
       // 期限： data.payLimit
       // 开放时间：data.displayTime
@@ -280,6 +281,9 @@ export default {
   },
   computed: {},
   methods: {
+    bbFormatAmount(amount, len, coin){
+        return formatMoneyMultiply(amount, len, coin);
+    },
     //显示交易提示
     showMsg(type){
       switch(type){
@@ -357,13 +361,7 @@ export default {
       }
       this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
       let totalCount = '';
-      if(this.config.tradeCoin == 'BTC'){
-        totalCount = this.config.totalCount * 1e8;
-      }else{
-        totalCount = this.config.totalCount * 1e18;
-      }
-      // this.config.totalCount = moneyFormat(this.config.totalCount, '', this.config.tradeCoin);
-      this.config.totalCount = totalCount;
+      this.config.totalCount = this.bbFormatAmount(this.config.totalCount, '', this.config.tradeCoin);
       this.config.displayTime = this.displayTime;
       this.config.premiumRate = this.yj_price / 100;
       if(!this.isDetail){
@@ -372,7 +370,11 @@ export default {
           cgAdver(that);
         })
       }else{
-        this.config.publishType = '3';
+        if(this.isCg){
+          this.config.publishType = '2';
+        }else{
+          this.config.publishType = '3';
+        }
         this.config.adsCode = this.adsCode;
         let that = this;
         exitAdverFn(that);
@@ -383,7 +385,9 @@ export default {
         });
       }
       function cgAdver(that){
-        message.show('操作成功！');
+        message.show('操作成功');
+        sessionStorage.setItem('tradeType', that.config.publishType);
+        sessionStorage.setItem('coin', that.config.tradeCoin);
         setTimeout(() => {
           that.$router.push(path);
         }, 300);
@@ -395,8 +399,13 @@ export default {
     },
     //保存草稿
     saveOtcData(){
-      this.config.publishType = '0';
-      this.changeConfig('/my-advertising');
+      if(!this.isCg){
+        this.config.publishType = '0';
+        this.changeConfig('/my-advertising');
+      }else{
+        this.config.publishType = '2';
+        this.changeConfig('/my-advertising');
+      }
     },
     getAdverDetail(){
       this.adsCode = this.$route.query.code;

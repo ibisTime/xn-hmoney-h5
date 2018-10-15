@@ -56,6 +56,7 @@ export default {
       });
       let that = this;
       getUser().then(data => {
+        console.log('data', data);
         let userIdAuthInfo = data.userIdAuthInfo;
         if(userIdAuthInfo){
           switch(userIdAuthInfo['idKind']){
@@ -63,7 +64,7 @@ export default {
             case '2': this.isSfRz = true;this.isJzRz = true;break;
             case '3': this.isSfRz = true;this.isHzRz = true;break;
           }
-          that.isRzNum = userIdAuthInfo['status'];
+          that.isRzNum = data['idKind'];
           that.rzStatus = that.rzStatusList[userIdAuthInfo['status']];
         }
       });

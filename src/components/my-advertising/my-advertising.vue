@@ -1,11 +1,11 @@
 <template>
   <div class="order-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>我的广告</span>
         </p>
-    </header>
+    </header> -->
     <div class='tabs'>
         <p @click="change1">
             <span :class="[show1? 'select' : '']">待发布</span>
@@ -25,7 +25,8 @@
             <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
                 <div class='list1'>
                     <div class='pic'>
-                        <i class='icon'></i>
+                        <img :src="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt="">
+                        <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/>
                     </div>
                     <div class='text1'>
                         <p class='txt1'><span class='name'>{{adverItem.user.nickname}}</span><span class='green'>{{payTypeList[adverItem.payType]}}</span></p>
@@ -52,14 +53,14 @@
           <img src="./wu.png" />
           <p>暂无广告</p>
         </div>
-        <show-msg :text="textMsg" ref="showmsg" />
+        <Toast :text="textMsg" ref="toast" />
     </div>
   </div>
 </template>
 <script>
-import { getUserAdver, addAdvertising, downAdvertise } from "api/otc";
-import {getUserId} from 'common/js/util';
-import ShowMsg from 'base/showMsg/showMsg';
+import { getUserAdver, addAdvertising, downAdvertise, ExitAdvertising } from "api/otc";
+import {getUserId, formatAmount, setTitle, getAvatar, getPic} from 'common/js/util';
+import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
 export default {
   data() {
@@ -104,8 +105,16 @@ export default {
   },
   created() {
     this.getAdverData();
+    setTitle('我的广告');
   },
   methods: {
+    // 获取头像
+    getUserPic(pic){
+        return getAvatar(pic);
+    },
+    bbFormatAmount(amount, len, coin){
+        return formatAmount(amount, len, coin);
+    },
     change1() {
       this.show1 = true;
       this.config.statusList = [0];
@@ -132,28 +141,47 @@ export default {
     },
     // 发布
     fbAdverFn(item){
+        if(!this.show1){
+            return false;
+        }
+        this.fbConfig.adsCode = item.code;
         this.fbConfig.minTrade  = item.minTrade;
         this.fbConfig.maxTrade  = item.maxTrade;
-        this.fbConfig.totalCount  = item.totalCount;
+        this.fbConfig.totalCount  = item.totalCountString;
         this.fbConfig.payType  = item.payType;
-        this.fbConfig.onlyCert  = item.onlyCert;
+        this.fbConfig.onlyCert  = '1';
         this.fbConfig.onlyTrust  = item.onlyTrust;
         this.fbConfig.tradeCoin  = item.tradeCoin;
         this.fbConfig.tradeCurrency  = item.tradeCurrency;
         this.fbConfig.tradeType  = item.tradeType;
         this.fbConfig.payLimit  = item.payLimit;
         this.fbConfig.leaveMessage  = item.leaveMessage;
-        this.fbConfig.publishType  = '1';
+        this.fbConfig.publishType  = '2';
         this.fbConfig.protectPrice  = item.protectPrice;
         this.fbConfig.truePrice  = item.truePrice;
         this.fbConfig.premiumRate  = item.premiumRate;
-        addAdvertising(this.fbConfig).then(data => {
-            console.log('fb', data);
+        ExitAdvertising(this.fbConfig).then(data => {
+            this.$refs.toast.show();
+            this.getAdverData();
+            setTimeout(() => {
+                this.$refs.toast.hide();
+            }, 1500);
         });
     },
     // 编辑
     toclAdver(userId, type, code){
-      this.$router.push({
+      if(this.show1){
+        this.$router.push({
+            path:'/buy-publish',
+            query: {
+                userId,
+                code,
+                type,
+                isCg: 'ok'
+            }
+        })
+      }else{
+        this.$router.push({
             path:'/buy-publish',
             query: {
                 userId,
@@ -161,17 +189,21 @@ export default {
                 type
             }
         })
+      }
     },
     // 下架广告
-    downAdverFn(adsCode){alert(adsCode)
+    downAdverFn(adsCode){
         downAdvertise(adsCode).then(data => {
-            console.log('下架：', data);
-            this.$refs.showmsg.show();
+            this.$refs.toast.show();
+            this.getAdverData();
+            setTimeout(() => {
+                this.$refs.toast.hide();
+            }, 1500);
         })
     }
   },
   components: {
-      ShowMsg,
+      Toast,
       Scroll
   }
 };
@@ -252,10 +284,9 @@ export default {
         width: 0.76rem;
         height: 0.76rem;
         margin-right: 0.2rem;
-        .icon {
-          width: 100%;
-          height: 100%;
-          @include bg-image("头像(4)");
+        img{
+            width: 100%;
+            height: 100%;
         }
       }
       .text1 {

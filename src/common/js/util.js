@@ -130,7 +130,13 @@ export function getShareImg(imgs) {
 }
 
 // 格式化金额
-export function formatAmount(amount, len = 2) {
+export function formatAmount(amount, len = 2, coin) {
+  if(coin === 'BTC'){
+    return Number(amount) / 1e8;
+  }
+  if(coin !== 'BTC' && coin !== undefined && coin !== ''){
+    return Number(amount) / 1e18;
+  }
   if (isUnDefined(amount)) {
     return '--';
   }
@@ -138,6 +144,26 @@ export function formatAmount(amount, len = 2) {
   let reg = new RegExp('(\\.\\d{' + len + 1 + '})\\d*', 'ig');
   amount = +amount.replace(reg, '$1');
   return amount.toFixed(len);
+}
+
+// 金额乘法
+export function formatMoneyMultiply(amount, len, coin){
+  if(coin === 'BTC'){
+    return Number(amount) * 1e8;
+  }
+  if(coin !== 'BTC' && coin !== undefined && coin !== ''){
+    return Number(amount) * 1e18;
+  }
+}
+
+// 金额减法
+export function formatMoneySubtract(amount, feeAmount, coin){
+  if(coin === 'BTC'){
+    return (Number(amount) - Number(feeAmount)) / 1e8 ;
+  }
+  if(coin !== 'BTC' && coin !== undefined && coin !== ''){
+    return (Number(amount) - Number(feeAmount)) / 1e18 ;
+  }
 }
 
 // 判断是否 ios

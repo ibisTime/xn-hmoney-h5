@@ -128,14 +128,6 @@ export function myOrder(statusList, start, limit) {
   })
 }
 
-// 场外交易买卖币购买和出售详情
-export function otcBuy(adsCode, userId) {
-  return fetch(625226, {
-    adsCode,
-    userId
-  })
-}
-
 // 钱包 -- 转出
 export function walletOut(accountNumber, amount, applyNote, applyUser, payCardInfo, payCardNo) {
   return fetch(802350, {

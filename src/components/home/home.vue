@@ -21,7 +21,7 @@
             <i class="cate-icon exchange-icon"></i>
             <p>{{ $t('page.cate.exchange') }}</p>
           </div>
-          <router-link to='otc' tag="div" class="cate-item">
+          <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
             <i class="cate-icon otc-icon"></i>
             <p>{{ $t('page.cate.otc') }}</p>
           </router-link>

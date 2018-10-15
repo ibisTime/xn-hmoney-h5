@@ -81,7 +81,7 @@
               </div>
               <div class='number'>
                 <p class='num'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
-                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.payType, adverItem.code)">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
+                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
               </div>
             </div>
           </div>
@@ -91,6 +91,7 @@
           <p>暂无广告</p>
         </div>
       </div>
+      <Toast :text="textMsg" ref="toast" />
       <div  @click='relShow' class='release'>
       </div>
 
@@ -115,10 +116,12 @@
 <script>
 import Footer from 'components/footer/footer';
 import {formatImg, getUserId, getAvatar} from 'common/js/util';
+import {getUser} from 'api/user';
 import {getBannerList} from 'api/general';
 import {getAdvertisingData} from 'api/otc';
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
+import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
@@ -127,7 +130,7 @@ export default {
       userId: getUserId(),
       bbList: [],
       config: {
-        coin:'ETH',
+        coin:'',
         tradeType: '1'
       },
       bizTypeList: {
@@ -144,7 +147,8 @@ export default {
       url: 'otc-buy',
       hasMore: true,
       start: 1,
-      limit: 10
+      limit: 10,
+      textMsg: ''
     };
   },
   created() {
@@ -154,6 +158,12 @@ export default {
   },
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
+    this.config.tradeType = sessionStorage.getItem('tradeType');
+    this.config.coin = sessionStorage.getItem('coin') || 'ETH';
+    if(this.config.tradeType === '0'){
+      this.flag1 = false;
+      this.flag2 = true;
+    }
     let coin = sessionStorage.getItem('coin') || 'ETH';
     this.config.coin = coin != 'undefined' ? coin : 'ETH';
     this.getBBListData();
@@ -212,19 +222,37 @@ export default {
       this.flag1 = true;
       this.flag2 = false;
       this.advertisingFn('1');
-      this.url = 'otc-buy'
+      this.url = 'otc-buy';
+      sessionStorage.setItem('tradeType', '1');
     },
     sell() {
       this.flag1 = false;
       this.flag2 = true;
       this.advertisingFn('0');
-      this.url = 'otc-sell'
+      this.url = 'otc-sell';
+      sessionStorage.setItem('tradeType', '0');
     },
     goOtcBuy() {
       this.$router.push('otc-buy');
     },
     relShow() {
-      this.Show = true;
+      getUser().then(data => {
+        if(data.tradepwdFlag && data.realName){
+          this.Show = true;
+        }else if(!data.tradepwdFlag){
+          this.textMsg = '请设置资金密码';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/security-tradePassword');
+          }, 1500);
+        }else if(!data.realName){
+          this.textMsg = '请先进行身份验证';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/security-identity');
+          }, 1500);
+        }
+      });
     },
     relClose() {
       this.Show = false;
@@ -268,7 +296,8 @@ export default {
       }else{
         this.$router.push({path: '/otc-buy', query: {
           userId,
-          adsCode: code
+          adsCode: code,
+          type
         }});
       }
     }
@@ -276,7 +305,8 @@ export default {
   components: {
     Footer,
     Slider,
-    Scroll
+    Scroll,
+    Toast
   }
 };
 </script>

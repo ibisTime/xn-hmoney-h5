@@ -67,3 +67,27 @@ export function downAdvertise(adsCode) {
         adsCode
     });
 }
+
+// 场外交易买卖币购买和出售详情
+export function otcBuy(adsCode, userId) {
+    return fetch(625226, {
+        adsCode,
+        userId
+    })
+}
+
+// 我要购买
+export function buyETH(config) {
+    return fetch("625240", {
+        buyUser: getUserId(),
+        ...config
+    });
+}
+
+// 我要出售
+export function sellBB(config) {
+    return fetch("625241", {
+        userId: getUserId(),
+        ...config
+    });
+}

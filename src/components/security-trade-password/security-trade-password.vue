@@ -22,7 +22,7 @@
 </template>
 <script>
 import {getUser, changeTradPwd, getSmsCaptcha1} from '../../api/person';
-import {captValid, rePwdValid, tradeValid} from '../../common/js/util';
+import {captValid, rePwdValid, tradeValid, getUserId} from '../../common/js/util';
 
 export default {
   data() {
@@ -48,7 +48,7 @@ export default {
     },
     changeTradPwd() {
         if(tradeValid(this.newPayPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newPayPwd, this.surePwd).err === 0) {
-          changeTradPwd(this.newPayPwd, smsCaptcha, getUserId()).then((data) => {
+          changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
             this.$router.push('mine');
           });
         } else {

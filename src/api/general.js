@@ -68,6 +68,11 @@ export function getPageAccountSysConfig(type) {
   });
 }
 
+// 根据key查询系统参数
+export function getSysConfig(ckey) {
+  return fetch("630047", { ckey });
+}
+
 // 获取appId
 export function getAppId() {
   return getUserSystemConfig('WX_H5_ACCESS_KEY');

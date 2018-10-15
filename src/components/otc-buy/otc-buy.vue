@@ -1,16 +1,16 @@
 <template>
   <div class="otcbuy-wrapper" @click.stop>
-      <header>
+      <!-- <header>
         <i class='icon'></i><span class='title'>购买</span> 
-      </header>
+      </header> -->
       <div class='header'>
         <div class='person'>
           <div class='pic'></div>
           <div class='text'>
             <p class='name'><span class='txt1'>{{data.user.nickname}}</span><span class='icon'>{{bizTypeList[data.payType]}}</span></p>
-            <p class='num'>限额：{{data.minTrade}}-{{data.maxTrade}} CNY</p>
+            <p class='num'>限额：{{data.minTrade}}-{{data.maxTrade}} {{data.tradeCurrency}}</p>
           </div>
-          <div class='money'>{{data.truePrice.toFixed(2)}} CNY</div>
+          <div class='money'>{{truePrice}} {{data.tradeCurrency}}</div>
         </div>
         <div class='about'>
           <div>
@@ -26,7 +26,7 @@
             <span>好评率</span>
           </div>
           <div>
-            <p>{{data.userStatistics.totalTradeCount}}</p>
+            <p>{{bbFormatAmount(data.userStatistics.totalTradeCount, '', data.tradeCurrency)}}</p>
             <span>历史交易</span>
           </div>
         </div>
@@ -36,78 +36,190 @@
       </div>
       <div class='main'>
         <div class='want'>
-          <p class='txt1'><span class='icon1'></span>你想购买多少？</p>
-          <p class='txt2'>可用余额：{{data.user.tradeRate}}ETH</p>
+          <p class='txt1'><span class='icon1'></span>你想{{bText}}多少？</p>
+          <p class='txt2'>{{type == '0' ? '可用余额' : '广告剩余可交易量'}}：{{yMoney}} {{data.tradeCoin}}</p>
           <div class='text'>
-            <p class='txt3'><span class='txt'>CNY</span><input class="inp1" type="text" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
-            <p class=txt4><span class='icon2'></span><span class='txt'>ETH</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="text" placeholder="请输入数值"></p>
+            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="text" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
+            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="text" placeholder="请输入数值"></p>
           </div>
         </div>
       </div>
 
       <div class='remind'>
-          <p class='txt1'><span class='icon1'></span>交易提醒</p>
-          <p class='cont'>1.交易前请详细了解卖家的交易信息；</p>
-          <p class='cont'>2.请通过平台进行沟通约定。</p>
+          <p class='txt1'><span class='icon1'></span>{{remark}}</p>
+          <p class='cont' v-html="jyText"></p>
       </div>
       <div class='footer'>
           <router-link to='otc-contactOther' class='chat'>
             <span></span>
             联系对方
           </router-link>
-          <div class='buy' @click='show=!show'>
-              购买
+          <div class='buy' @click='showOrder'>
+              {{bText}}
           </div>
       </div>
-      <div v-show='show' class='pop-up'>
+      <div v-show='show && type === "0"' class='pop-up'>
+        <div class='up-window'>
+          <h3>资金密码</h3>
+          <div class='text'>
+            <input type="password" placeholder="请输入资金密码" v-model="userMoney">
+          </div>
+          <div class='btn'>
+            <button class='no' @click='qxMoney'>取消</button>
+            <button class='yes' @click="qrMoney">确认</button>
+            <router-link to='order-details'></router-link>
+          </div>
+        </div>
+      </div>
+      <div v-show='showBuy' class='pop-up'>
         <div class='pop-up-window'>
           <div class='ico'><span></span></div>
           <h3>下单确定</h3>
           <div class='text'>
-          <p><span class='txt1'>购买价格</span><span class='txt2'>{{data.truePrice}}CNY</span></p>
-          <p><span class='txt1'>购买金额</span><span class='txt2'>{{data.truePrice*this.Cnum}}CNY</span></p>
-          <p><span class='txt1'>购买数量</span><span class='txt2'>{{this.Cnum}}ETH</span></p>
+          <p><span class='txt1'>{{bText}}价格</span><span class='txt2'>{{truePrice}} {{data.tradeCurrency}}</span></p>
+          <p><span class='txt1'>{{bText}}金额</span><span class='txt2'>{{Cnum}} {{data.tradeCurrency}}</span></p>
+          <p><span class='txt1'>{{bText}}数量</span><span class='txt2'>{{Enum}} {{data.tradeCoin}}</span></p>
           </div>
           <div class='prompt'>
             <span class='icon'></span>
-            <span class='txt'>提醒：请确认价格再下单，下单后此交易的ETH将冻结锁定，请放心购买</span>
+            <span class='txt'>提醒：请确认价格再下单，下单后此交易的 {{data.tradeCoin}}将冻结锁定，请放心{{bText}}</span>
           </div>
           <div class='btn'>
-            <button class='no' @click='show = !show'>放弃购买</button>
-            <router-link to='order-details'><button class='yes'>确认购买</button></router-link>
+            <button class='no' @click='qxBuy'>放弃{{bText}}</button>
+            <button class='yes' @click="qrBuy">确认{{bText}}</button>
+            <router-link to='order-details'></router-link>
           </div>
         </div>
       </div>
+      <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
-import { getUrlParam } from 'common/js/util';
-import { otcBuy } from "../../api/person";
+import { formatAmount, setTitle, getUrlParam, formatMoneySubtract } from 'common/js/util';
+import { otcBuy, buyETH, sellBB } from "api/otc";
+import { getSysConfig } from "api/general";
+import { wallet } from "api/person";
+import Toast from 'base/toast/toast';
 
 
 export default {
   data() {
     return {
       show: false,
-      data: [],
+      showBuy: false,
+      textMsg: '',
+      userMoney: '',
+      yMoney: '',
+      bText: '购买',
+      data: {
+        user: {
+          nickname: ''
+        },
+        userStatistics: {
+          jiaoYiCount: '',
+          beiXinRenCount: '',
+          beiPingJiaCount: '',
+          beiHaoPingCount: '',
+          totalTradeCount: ''
+        }
+      },
       bizTypeList: {
         "0": "支付宝",
         "1": "微信",
         "2": "银行卡转账"
       },
       rate: '',
+      truePrice: '',
       Cnum: '',
-      Enum: ''
+      Enum: '',
+      jyText: '',
+      remark: '',
+      type: '',
+      config: {
+        adsCode: '',
+        count: '',
+        tradeAmount: '',
+        tradePrice: '',
+        tradePwd: ''
+      }
     };
   },
   created() {
+    this.type = getUrlParam('type');
+    this.config.adsCode = getUrlParam('adsCode');
+    if(this.type === '1'){
+      this.bText = '购买';
+      setTitle('购买');
+    }else{
+      this.bText = '出售';
+      setTitle('出售');
+    }
     this.otcBuy();
+    getSysConfig('trade_remind').then(data => {
+      this.jyText = data.cvalue.replace(/\n/g, '<br>');
+      this.remark = data.remark;
+    })
   },
   methods: {
+    configFn(){
+      this.config.count = this.Enum;
+      this.config.tradeAmount = this.Cnum;
+    },
+    // 资金密码弹框、出售
+    qrMoney(){
+      this.showBuy = true;
+      this.show = false;
+      if(this.userMoney === ''){
+        this.textMsg = '请输入资金密码';
+        this.$refs.toast.show();
+        this.showBuy = false;
+      }else{
+        this.configFn();
+        this.config.tradePwd = this.userMoney;
+        sellBB(this.config).then(data => {
+          this.userMoney = '';
+          this.showBuy = false;
+          sessionStorage.setItem('tradeType', '0');
+          this.$router.push('/otc');
+        }, (err) => {
+          this.textMsg = err;
+          this.$refs.toast.show();
+          this.showBuy = false;
+        })
+      }
+    },
+    qxMoney(){
+      this.show = false;
+      this.userMoney = '';
+    },
+    // 确认下单弹框
+    showOrder(){
+      if(this.Enum > 0 && this.Cnum > 0){
+        this.showBuy = true;
+      }else{
+        this.textMsg = '请输入购买数量与购买金额';
+        this.$refs.toast.show();
+      }
+    },
+    bbFormatAmount(amount, len, coin){
+        return formatAmount(amount, len, coin);
+    },
     otcBuy() {
       otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
         this.data = data;
-        this.rate = data.marketPrice;
+        this.config.tradePrice = data.truePrice;
+        this.truePrice = data.truePrice.toFixed(2);
+        this.rate = this.truePrice;
+        wallet().then(items => {
+          let bbMoney = items.filter(item => {
+            return data.tradeCoin === item.currency;
+          });
+          if(this.type == '0'){
+            this.yMoney = formatMoneySubtract(`${bbMoney[0].amount}`, `${bbMoney[0].frozenAmount}`, bbMoney[0].currency);
+          }else{
+            this.yMoney = this.bbFormatAmount(`${data.leftCountString}`, '', data.tradeCoin);
+          }
+        });
       });
     },
     changeEnum() {
@@ -115,7 +227,31 @@ export default {
     },
     changeCnum() {
       this.Cnum = this.Enum * this.rate;
+    },
+    // 确认购买
+    qrBuy(){
+      this.show = true;
+      this.showBuy = false;
+      this.userMoney = '';
+      if(this.type === '1'){
+        this.configFn();
+        delete this.config.tradePwd;
+        buyETH(this.config).then(data => {
+          sessionStorage.setItem('tradeType', '1');
+          this.$router.push('/otc');
+        }, (err) => {
+          this.textMsg = err;
+          this.$refs.toast.show();
+          this.showBuy = false;
+        })
+      }
+    },
+    qxBuy(){
+      this.showBuy = false;
     }
+  },
+  components: {
+    Toast
   }
 };
 </script>
@@ -394,8 +530,7 @@ export default {
     background: rgba(0,0,0,.4);
     position: fixed;
     top: 0;
-
-      .pop-up-window {
+      .pop-up-window, .up-window {
         position: absolute;
         top: 2.1rem;
         left: 50%;
@@ -479,6 +614,17 @@ export default {
           }
         }
 
+      }
+      .up-window{
+        top: 4.1rem;
+        height: 3.2rem;
+        input{
+          margin-top: 0.1rem;
+          border: 0.01rem solid #ddd;
+          width: 100%;
+          padding: 0.12rem 0.2rem;
+          border-radius: 0.04rem;
+        }
       }
   }
   
