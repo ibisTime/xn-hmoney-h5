@@ -104,13 +104,19 @@ import { getUser } from "api/person";
 export default {
   data() {
     return {
-      data: []
+      data: {
+        userStatistics: {
+          jiaoYiCount: '',
+          beiPingJiaCount: '',
+          beiHaoPingCount: '',
+          beiXinRenCount: ''
+        }
+      }
     };
   },
   created() {
     getUser().then((data) => {
       this.data = data;
-      console.log(data);
     });
   },
   computed: {},
@@ -163,7 +169,6 @@ export default {
       }
 
       .h-text {
-        width: 3.65rem;
         height: 1.16rem;
         float: left;
         margin-left: 0.3rem;
@@ -179,7 +184,6 @@ export default {
           text-overflow: ellipsis;
         }
         .intro {
-          width: 3.7rem;
           font: 0.28rem/0.48rem PingFangSC-Regular;
           color: #fff;
           letter-spacing: 0.0023rem;

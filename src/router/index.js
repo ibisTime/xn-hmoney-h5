@@ -101,6 +101,8 @@ const aboutRateExplain = () => import('components/about-rate-explain/about-rate-
 const aboutHelpCenter = () => import('components/about-help-center/about-help-center');
 // 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
+// 个人主页 homepage
+const Homepage = () => import('components/homepage/homepage');
 
 export default new Router({
   routes: [
@@ -305,6 +307,10 @@ export default new Router({
     {
       path: '/registered',
       component: Registered
+    },
+    {
+      path: '/homepage',
+      component: Homepage
     }
   ],
   mode: 'history'

@@ -59,7 +59,7 @@
 </template>
 <script>
 import { getUserAdver, addAdvertising, downAdvertise, ExitAdvertising } from "api/otc";
-import {getUserId, formatAmount, setTitle, getAvatar, getPic} from 'common/js/util';
+import {getUserId, formatAmount, setTitle, getAvatar} from 'common/js/util';
 import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
 export default {
@@ -78,7 +78,7 @@ export default {
           '2': '银行卡转账'
       },
       config: {
-          limit: 5,
+          limit: 10,
           start: 1,
           statusList: [0],
           userId: getUserId()
@@ -117,11 +117,13 @@ export default {
     },
     change1() {
       this.show1 = true;
+      this.start = 1;
       this.config.statusList = [0];
       this.getAdverData();
     },
     change2() {
       this.show1 = false;
+      this.start = 1;
       this.config.statusList = [1];
       this.getAdverData();
     },
@@ -134,7 +136,11 @@ export default {
                 this.hasMore = false;
                 this.myWillAdverList = data.list;
             }else{
-                this.myWillAdverList = [...this.myWillAdverList, ...data.list];
+                if(this.start > 1){
+                  this.list = [...this.myWillAdverList, ...data.list];
+                }else{
+                  this.myWillAdverList = data.list;
+                }
                 this.start++;
             }
         })

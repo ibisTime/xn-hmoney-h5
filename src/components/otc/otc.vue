@@ -180,7 +180,11 @@ export default {
           this.hasMore = false;
           this.bbDataList = data.list;
         }else{
-          this.bbDataList = [...this.bbDataList, ...data.list];
+          if(this.start > 1){
+            this.bbDataList = [...this.bbDataList, ...data.list];
+          }else{
+            this.bbDataList = data.list;
+          }
           this.start++;
         }
       })
@@ -221,6 +225,7 @@ export default {
     buy() {
       this.flag1 = true;
       this.flag2 = false;
+      this.start = 1;
       this.advertisingFn('1');
       this.url = 'otc-buy';
       sessionStorage.setItem('tradeType', '1');
@@ -228,6 +233,7 @@ export default {
     sell() {
       this.flag1 = false;
       this.flag2 = true;
+      this.start = 1;
       this.advertisingFn('0');
       this.url = 'otc-sell';
       sessionStorage.setItem('tradeType', '0');

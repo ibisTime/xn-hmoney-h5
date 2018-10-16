@@ -149,10 +149,10 @@ export function formatAmount(amount, len = 2, coin) {
 // 金额乘法
 export function formatMoneyMultiply(amount, len, coin){
   if(coin === 'BTC'){
-    return Number(amount) * 1e8;
+    return (Number(amount) * 1e8).toString();
   }
   if(coin !== 'BTC' && coin !== undefined && coin !== ''){
-    return Number(amount) * 1e18;
+    return (Number(amount) * 1e18).toString();
   }
 }
 
@@ -658,7 +658,7 @@ export function getUrlParam(name, locat) {
 export function getPic(pic, suffix) {
   if (!pic) {
       return "";
-  }console.log(pic)
+  }
   pic = pic.split(/\|\|/)[0];
   if (!/^http|^data:image/i.test(pic)) {
       suffix = suffix || "?imageMogr2/auto-orient/interlace/1"

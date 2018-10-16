@@ -1,27 +1,30 @@
 <template>
   <div class="order-detail-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         订单详情
         </p>
-    </header>
+    </header> -->
     <div class='order'>
         <p>
-            <i class='icon'></i>
-            <span class='num'>订单编号：123545566</span>
-            <span class='state'>{{buttonTitle[index].title}}</span>
+            <span class='num'><i class='icon'></i>订单编号：{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
+            <span class='state'>{{statusValueList[orderDetailData.status]}}</span>
         </p>
     </div>
     <div class='trading'>
-        <p class='money'><span>交易金额</span><span>34564546.8CNY</span></p>
-        <p class='number'><span>交易数量</span><span>0.34564546ETH</span></p>
-        <p class='price'><span>交易价格</span><span>34564546.8CNY</span></p>
+        <p class='money'><span>交易金额</span><span>{{orderDetailData.tradeAmount}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='number'><span>交易数量</span><span>{{countString}} {{orderDetailData.tradeCoin}}</span></p>
+        <p class='price'><span>交易价格</span><span>{{orderDetailData.tradePrice}} {{orderDetailData.tradeCurrency}}</span></p>
     </div>
     <div class='message'>
         <div class='mess'>
-            <p class='text1'><span>买家KOLO</span><span class='pay'>支付宝</span><span class='seller'>卖家：libble</span></p>
-            <p class='text2'>广告留言：支持支付宝15890989876z转账，谢谢，陈某某收.速度</p>
+            <p class='text1'>
+              <span>买家 {{orderDetailData.sellUserInfo.nickname}}</span>
+              <span class='pay'>{{payTypeList[orderDetailData.payType]}}</span>
+              <span class='seller'>卖家： {{orderDetailData.buyUserInfo.nickname}}</span>
+            </p>
+            <p class='text2'>{{orderDetailData.leaveMessage}}</p>
         </div>
         <div class='appraise' v-show='this.index == 2'>
           <p class='txt1'>评价</p>
@@ -29,8 +32,9 @@
         </div>
     </div>
     <div class='window'>
-        <p v-html="buttonTitle[index].main"></p>
-        <button @click="changeIndex">{{buttonTitle[index].btn}}</button>
+        <p v-html="yjTitle"></p>
+        <p v-html="btns" @click="operationBtn">
+        </p>
     </div>
 
     <div class='chat'>
@@ -47,64 +51,238 @@
             <i class='ico2 icon'></i>
         </p>
     </div>
-    <div v-show='show' class='prompt'>
-        <div class='appraise'>
-          <p class='text1'>交易评价</p>
-          <p class='text2'>交易有何印象？快来评价吧</p>
-          <div class='pic'>
-            <div class='box mr'>
-              <i class="icon"></i>
-              <p class="txt">好评</p>
-            </div>
-            <div class='box mr'>
-              <i class="icon icon2"></i>
-              <p class="txt">中评</p>
-            </div>
-            <div class='box'>
-              <i class="icon icon3"></i>
-              <p class="txt">差评</p>
-            </div>
-          </div>
-          <textarea>请用文字简单评价一下</textarea>
-          <p class='btn' @click="close">提交</p>
+    <div class="zc-box" v-show="zcShow">
+      <div class='up-window'>
+        <h3>仲裁理由</h3>
+        <div class='text'>
+          <textarea type="text" placeholder="请输入申请理由" v-model="reason"></textarea>
         </div>
+        <div class='btn'>
+          <button class='no' @click='qxReason'>取消</button>
+          <button class='yes' @click="qrReason">确认</button>
+        </div>
+      </div>
     </div>
-
+    <div class="zc-box" v-show="showFlag">
+      <div class='up-window'>
+        <h3>交易评价</h3>
+        <div class='pj-text'>
+          <div class="item on">
+              <div class="icon icon-good" @click="pjClick('2')">
+                <img src="./hph.png" alt="" :class="{'hidden': userHp}">
+                <img src="./hp.png" alt="" :class="{'hidden': !userHp}">
+              </div>
+              <p>好评</p>
+          </div>
+          <div class="item ml20">
+              <div class="icon icon-bad" @click="pjClick('0')">
+                <img src="./cph.png" alt="" :class="{'hidden': userCp}">
+                <img src="./cp.png" alt="" :class="{'hidden': !userCp}">
+              </div>
+              <p>差评</p>
+          </div>
+        </div>
+        <div class='btn'>
+          <button class='no' @click='qxUserPj'>取消</button>
+          <button class='yes' @click="qrUserPj">确认</button>
+        </div>
+      </div>
+    </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading"/>
   </div>
 </template>
 <script>
+import { getUrlParam, formatAmount, formatDate, getUserId, setTitle } from 'common/js/util';
+import { getOrderDetail, releaseOrder, payOrder, cancelOrder, arbitrationlOrder, commentOrder } from 'api/person';
+import { getDictList } from "api/general";
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
+
 export default {
   data() {
     return {
-      buttonTitle: [
-        {
-          'title': '待解冻',
-          'main': '比特币将解冻<span style="color: red">15</span>分钟，逾期未支付交易将自动取消',
-          'btn': '解冻比特币'
+      textMsg: '',
+      yjTitle: '',
+      orderDetailData: {
+        buyUserInfo: {
+          nickname: ''
         },
-        {
-          'title': '交易评价',
-          'main': '比特币将解冻',
-          'btn': '交易评价'
+        sellUserInfo: {
+          nickname: ''
         },
-        {
-          'title': '交易完成',
-          'main': '交易成功，以评价交易',
-          'btn': '查看钱包'
-        }
-      ],
+        code: ''
+      },
+      statusValueList: {},
+      payTypeList: {},
+      btns: '',
       index: 0,
-      show: false
+      show: true,
+      code: '',
+      countString: '',
+      reason: '',
+      zcShow: false,
+      showFlag: false,
+      userHp: false,
+      userCp: false,
+      comment: ''
     };
   },
+  created() {
+    setTitle('订单详情');
+    this.code = getUrlParam('code');
+    getDictList('pay_type').then(data => {
+      this.$refs.fullLoading.show();
+      data.forEach((item) => {
+          this.payTypeList[item.dkey] = item.dvalue;
+      });
+    });
+    getDictList('trade_order_status').then(data => {
+        data.forEach((item) => {
+            this.statusValueList[item.dkey] = item.dvalue
+        });
+        this.orderMessage();
+    })
+  },
   methods: {
-    changeIndex() {
-      this.index === 1 ? this.show = true : this.show = false;
-      this.index === 2 ? this.index = 0 : this.index++;
+    // 评价
+    pjClick(value){
+      if(value == '0'){ // 差评
+        this.userHp = false;
+        this.userCp = !this.userCp;
+      }
+      if(value == '2'){ // 好评
+        this.userCp = false;
+        this.userHp = !this.userHp;
+      }
+      this.comment = value;
     },
-    close() {
-      this.show = false;
+    qxUserPj(){
+      this.showFlag = false;
+    },
+    qrUserPj(){
+      if(this.comment == ''){
+        this.textMsg = '请点评';
+        this.$refs.toast.show();
+        return;
+      }
+      this.$refs.fullLoading.show();
+      this.showFlag = false;
+      commentOrder(this.code, this.comment).then(data => {
+        this.textMsg = '评价成功';
+        this.$refs.toast.show();
+        this.orderMessage();
+      }, () => {
+        this.$refs.fullLoading.hide();
+      })
+    },
+    orderMessage(){
+      getOrderDetail(this.code).then(data => {
+        this.zcShow = false;
+        this.orderDetailData = data;
+        this.countString = formatAmount(data.countString, '', data.tradeCoin);
+        this.yjTitle = "订单將在拖管中保持至<i>" + formatDate(data.invalidDatetime, "hh:mm:ss") + "</i>，逾期未支付交易將自动取消";
+        // 当前用户为买家
+        if (data.buyUser == getUserId()) {
+          if(data.status == 0){
+            this.btns = `<button class="o-btn payBtn">
+                          标记付款
+                        </button>
+                        <button class="o-btn qx-btn cancelBtn">
+                          取消交易
+                        </button>`;
+          }else if(data.status == "2"){
+            if (data.bsComment != "0" && data.bsComment != "2") {
+              this.btns = `<button class="o-btn pjBtn">交易评价</button>`
+            }
+          }
+          if (data.status == "1") {
+            this.btns = `<button class="o-btn qx-btn sqBtn">申请仲裁</button>`
+          }
+        }else{  // 当前用户为卖家
+          //待支付
+          if (data.status == "1") {
+              this.btns = `<button class="o-btn releaseBtn">释放货币</button>
+                          <button class="o-btn qx-btn sqBtn">申请仲裁</button>`;
+          } else if (data.status == "2") {
+              if (data.sbComment != "0" && data.sbComment != "2") {
+                this.btns = `<button class="o-btn pjBtn">交易评价</button>`
+              }
+          }
+        }
+
+        // 系统自动取消
+        if( data.status == '4' || data.status == '5' || data.status == '3'){
+          this.yjTitle = data.remark;
+          this.btns = '';
+        }
+
+        this.$refs.fullLoading.hide();
+      });
+    },
+    operationBtn(){
+      let target = event.target;
+      let toast = this.$refs.toast;
+      if(target.localName === 'button'){
+        this.$refs.fullLoading.show();
+        // 标记付款 payOrder
+        if(target.classList.contains('payBtn')){
+          payOrder(this.code).then(data => {
+            this.orderMessage();
+          }, () => {
+            this.$refs.fullLoading.hide();
+          });
+        }
+        // 取消订单 cancelOrder 
+        if(target.classList.contains('cancelBtn')){
+          cancelOrder(this.code).then(data => {
+            this.orderMessage();
+          }, () => {
+            this.$refs.fullLoading.hide();
+          });
+        }
+        // 申请仲裁 arbitrationlOrder
+        if(target.classList.contains('sqBtn')){
+          this.zcShow = true;
+        }
+        // 释放货币 releaseOrder 
+        if(target.classList.contains('releaseBtn')){
+          releaseOrder(this.code).then(data => {
+            this.orderMessage();
+          }, () => {
+            this.$refs.fullLoading.hide();
+          });
+        }
+
+        // 评价 
+        if(target.classList.contains('pjBtn')){
+          this.$refs.fullLoading.hide();
+          this.showFlag = true;
+        }
+      }
+    },
+    qxReason(){
+      this.zcShow = false;
+    },
+    qrReason(){
+      if(this.reason == ''){
+        this.textMsg = '申请理由不能为空';
+        this.$refs.toast.show();
+      }
+      let config = {
+        code: this.code,
+        reason: this.reason
+      };
+      arbitrationlOrder(config).then(data => {
+        this.textMsg = '仲裁发起成功';
+        this.$refs.toast.show();
+        this.orderMessage();
+      });
     }
+  },
+  components: {
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -118,7 +296,7 @@ export default {
   position: fixed;
   left: 0;
   top: 0;
-  
+  width: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -147,10 +325,9 @@ export default {
 
   .order {
     width: 100%;
-    padding: 0 0.3rem;
-    background: #fff;
+    padding: 0.15rem 0.3rem;
+    background: #fff;    
     line-height: 1rem;
-
     p {
       border-bottom: 0.01rem solid #e5e5e5;
       .icon {
@@ -163,6 +340,11 @@ export default {
         float: right;
         font-size: 0.32rem;
         color: #d53d3d;
+      }
+      .num{
+        display: inline-block;
+        max-width: 4rem;
+        line-height: 0.4rem;
       }
     }
   }
@@ -238,16 +420,6 @@ export default {
       font-size: 0.24rem;
       color: #999;
       padding: 0.3rem 0 0.34rem;
-    }
-    button {
-      width: 3rem;
-      height: 0.88rem;
-      background: #d53d3d;
-      border-radius: 0.44rem;
-      margin-bottom: 0.36rem;
-      font-size: 0.32rem;
-      line-height: 0.88rem;
-      color: #fff;
     }
   }
 
@@ -336,58 +508,6 @@ export default {
         margin-bottom: .62rem;
       }
 
-      .pic {
-        display: flex;
-        width: 4.16rem;
-        margin: 0 auto;
-
-        .mr {
-          margin-right: 1.32rem;
-        }
-
-        .box {
-          margin-bottom: .4rem;
-          .icon {
-            width: .54rem;
-            height: .58rem;
-            @include bg-image("好评灰");
-            margin-bottom: .22rem;
-          }
-
-          .ico1 {
-            @include bg-image("好评");
-          }
-
-          .icon2 {
-            @include bg-image("中评灰");
-          }
-
-          .ico2 {
-            @include bg-image("中评红拷贝");
-          }
-
-          .icon3 {
-            @include bg-image("差评灰");
-          }
-
-          .ico3 {
-            @include bg-image("差评红");
-          }
-
-
-          .txt {
-            font-size: .24rem;
-            color: #b3b3b3;
-          }
-
-          .txt1 {
-            color: #d53d3d;
-          }
-
-        }
-
-      }
-
       textarea {
         width: 5rem;
         height: 1.3rem;
@@ -406,6 +526,80 @@ export default {
 
     }
     
+  }
+
+  .zc-box{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 110%;
+    background-color: rgba(0,0,0,.5);
+  }
+  .up-window{
+    position: absolute;
+    top: 4.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6.14rem;
+    height: 4.2rem;
+    background: #fff;
+    border-radius: .2rem;
+    padding: .4rem .6rem .34rem;
+    .ico,h3 {
+      text-align: center;
+      font-size: .32rem;
+      color: #333;
+    }
+    .btn {
+      button {
+        width: 2.2rem;
+        height: .7rem;
+        border-radius: .1rem;
+        color: #fff;
+        line-height: .7rem;
+        font-size: .28rem;
+      }
+      .no {
+        background: #dedede;
+        margin-right: .45rem;
+      }
+      .yes {
+        background: #d53d3d;
+      }
+    }
+    .text{
+      margin-top: .4rem;
+      margin-bottom: .3rem;
+    }
+    textarea{
+      width: 100%;
+      height: 1.3rem;
+      border: 1px solid #ddd;
+      border-radius: 0.06rem;
+      padding: .12rem 0.18rem;
+    }
+    .pj-text{
+      display: flex;
+      margin-top: .2rem;
+      margin-bottom: .2rem;
+      justify-content: space-between;
+      >div{
+        width: 40%;
+        height: 2rem;
+        text-align: center;
+        padding-top: 0.5rem;
+        box-sizing: border-box;
+        img{
+          width: 100%;
+        }
+        .icon{
+          width: 1rem;
+          height: 1rem;
+          margin-bottom: 0.2rem;
+        }
+      }
+    }
   }
 
 }

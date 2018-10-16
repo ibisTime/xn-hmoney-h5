@@ -92,14 +92,16 @@
         </div>
       </div>
       <Toast :text="textMsg" ref="toast" />
+      <FullLoading ref="fullLoading"/>
   </div>
 </template>
 <script>
-import { formatAmount, setTitle, getUrlParam, formatMoneySubtract } from 'common/js/util';
+import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply } from 'common/js/util';
 import { otcBuy, buyETH, sellBB } from "api/otc";
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
 import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 
 
 export default {
@@ -146,6 +148,7 @@ export default {
   },
   created() {
     this.type = getUrlParam('type');
+    this.$refs.fullLoading.show();
     this.config.adsCode = getUrlParam('adsCode');
     if(this.type === '1'){
       this.bText = '购买';
@@ -158,12 +161,13 @@ export default {
     getSysConfig('trade_remind').then(data => {
       this.jyText = data.cvalue.replace(/\n/g, '<br>');
       this.remark = data.remark;
+      this.$refs.fullLoading.hide();
     })
   },
   methods: {
     configFn(){
-      this.config.count = this.Enum;
-      this.config.tradeAmount = this.Cnum;
+      this.config.count = formatMoneyMultiply(this.Enum, '', this.data.tradeCoin);
+      this.config.tradeAmount = this.Cnum.toString();
     },
     // 资金密码弹框、出售
     qrMoney(){
@@ -176,15 +180,21 @@ export default {
       }else{
         this.configFn();
         this.config.tradePwd = this.userMoney;
+        this.showBuy = false;
+        this.$refs.fullLoading.show();
         sellBB(this.config).then(data => {
           this.userMoney = '';
-          this.showBuy = false;
           sessionStorage.setItem('tradeType', '0');
-          this.$router.push('/otc');
+          this.textMsg = '订单提交成功';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/otc');
+          }, 1500);
         }, (err) => {
           this.textMsg = err;
           this.$refs.toast.show();
           this.showBuy = false;
+          this.$refs.fullLoading.hide();
         })
       }
     },
@@ -205,6 +215,7 @@ export default {
         return formatAmount(amount, len, coin);
     },
     otcBuy() {
+      this.$refs.fullLoading.show();
       otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
         this.data = data;
         this.config.tradePrice = data.truePrice;
@@ -219,7 +230,12 @@ export default {
           }else{
             this.yMoney = this.bbFormatAmount(`${data.leftCountString}`, '', data.tradeCoin);
           }
+          this.$refs.fullLoading.hide();
         });
+      }, () => {
+        this.$refs.fullLoading.hide();
+      }, () => {
+        this.$refs.fullLoading.hide();
       });
     },
     changeEnum() {
@@ -236,13 +252,19 @@ export default {
       if(this.type === '1'){
         this.configFn();
         delete this.config.tradePwd;
+        this.$refs.fullLoading.show();
         buyETH(this.config).then(data => {
           sessionStorage.setItem('tradeType', '1');
-          this.$router.push('/otc');
+          this.textMsg = '订单提交成功';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/otc');
+          }, 1500);
         }, (err) => {
           this.textMsg = err;
           this.$refs.toast.show();
           this.showBuy = false;
+          this.$refs.fullLoading.hide();
         })
       }
     },
@@ -251,7 +273,8 @@ export default {
     }
   },
   components: {
-    Toast
+    Toast,
+    FullLoading
   }
 };
 </script>

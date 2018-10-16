@@ -1,5 +1,5 @@
 <template>
-  <div class="full-loading-wrapper">
+  <div class="full-loading-wrapper" v-show="showFlag">
     <div class="full-loading">
       <div class="inner-loading">
         <img src="./loading.gif">
@@ -10,10 +10,23 @@
 </template>
 <script type="text/ecmascript-6">
   export default {
+    data(){
+      return {
+        showFlag: false
+      }
+    },
     props: {
       title: {
         type: String,
         default: '正在载入...'
+      }
+    },
+    methods: {
+      show(){
+        this.showFlag = true;
+      },
+      hide(){
+        this.showFlag = false;
       }
     }
   };

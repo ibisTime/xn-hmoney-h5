@@ -54,4 +54,20 @@ import {isLogin, getUrlParam} from './common/js/util';
         margin-top: 15px;
     }
   }
+  .o-btn {
+    width: 3rem;
+    height: 0.88rem;
+    background: #d53d3d;
+    border-radius: 0.44rem;
+    margin-bottom: 0.36rem;
+    font-size: 0.32rem;
+    line-height: 0.88rem;
+    color: #fff;
+  }
+  .qx-btn{
+    background-color: #fff;
+    margin-left: 0.5rem;
+    color: #d53d3d;
+    border: 1px solid #d53d3d;
+  }
 </style>

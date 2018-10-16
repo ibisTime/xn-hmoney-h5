@@ -4,9 +4,9 @@ import {getUserId} from 'common/js/util';
 /**
  * 获取用户详情
  */
-export function getUser() {
+export function getUser(userId) {
   return fetch(805121, {
-    userId: getUserId()
+    userId: userId || getUserId()
   });
 }
 
@@ -17,6 +17,15 @@ export function getUserList() {
   return fetch(805120, {
     start: '0',
     limit: '100'
+  });
+}
+
+// 查询用户信任关系
+export function getUserRelation(currency, master) {
+  return fetch("625256", {
+      visitor: base.getUserId(),
+      currency,
+      master,
   });
 }
 
@@ -126,6 +135,54 @@ export function myOrder(statusList, start, limit) {
     start,
     limit
   })
+}
+
+// 获取订单详情
+export function getOrderDetail(code) {
+    return fetch("625251", {
+        code
+    }, true);
+}
+
+// 订单-释放以太币
+export function releaseOrder(code) {
+  return fetch("625244", {
+      updater: getUserId(),
+      code
+  });
+}
+
+// 订单-取消交易
+export function cancelOrder(code) {
+  return fetch("625242", {
+      updater: getUserId(),
+      code
+  });
+}
+
+// 订单-标记打款
+export function payOrder(code) {
+  return fetch("625243", {
+      updater: getUserId(),
+      code
+  });
+}
+
+// 申请仲裁
+export function arbitrationlOrder(config) {
+  return fetch("625246", {
+      applyUser: getUserId(),
+      ...config
+  });
+}
+
+//订单-评价
+export function commentOrder(code, comment) {
+  return fetch("625245", {
+      updater: getUserId(),
+      code,
+      comment
+  });
 }
 
 // 钱包 -- 转出
