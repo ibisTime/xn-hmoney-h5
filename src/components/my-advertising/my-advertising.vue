@@ -20,11 +20,12 @@
           ref="scroll"
           :data="myWillAdverList"
           :hasMore="hasMore"
+          v-show="myWillAdverList.length > 0"
           @pullingUp="getAdverData"
         >
             <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
                 <div class='list1'>
-                    <div class='pic'>
+                    <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
                         <img :src="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt="">
                         <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/>
                     </div>
@@ -54,6 +55,7 @@
           <p>暂无广告</p>
         </div>
         <Toast :text="textMsg" ref="toast" />
+        <FullLoading ref="fullLoading" v-show="isLoading"/> 
     </div>
   </div>
 </template>
@@ -62,12 +64,16 @@ import { getUserAdver, addAdvertising, downAdvertise, ExitAdvertising } from "ap
 import {getUserId, formatAmount, setTitle, getAvatar} from 'common/js/util';
 import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
-      start: 1,
+      start1: 1,
+      start2: 1,
       limit: 5,
+      type: 's',
       hasMore: true,
+      isLoading: true,
       textMsg: '操作成功',
       show1: true,
       myWillAdverList: [],
@@ -78,7 +84,7 @@ export default {
           '2': '银行卡转账'
       },
       config: {
-          limit: 10,
+          limit: 5,
           start: 1,
           statusList: [0],
           userId: getUserId()
@@ -117,33 +123,57 @@ export default {
     },
     change1() {
       this.show1 = true;
-      this.start = 1;
+      this.start1 = 1;
+      this.type = 's';
+      this.myWillAdverList = [];
       this.config.statusList = [0];
       this.getAdverData();
     },
     change2() {
       this.show1 = false;
-      this.start = 1;
+      this.start2 = 1;
+      this.type = 'e';
+      this.myWillAdverList = [];
       this.config.statusList = [1];
       this.getAdverData();
     },
     // 获取广告数据
     getAdverData(){
+        let that = this;
         this.config.limit = this.limit;
-        this.config.start = this.start;
-        getUserAdver(this.config).then(data => {
-            if (data.totalPage <= this.start) {
-                this.hasMore = false;
-                this.myWillAdverList = data.list;
-            }else{
-                if(this.start > 1){
-                  this.list = [...this.myWillAdverList, ...data.list];
-                }else{
-                  this.myWillAdverList = data.list;
-                }
-                this.start++;
+        if(this.type == 's'){
+            this.config.start = this.start1;
+            getUserAdver(this.config).then(data => {
+                clData(data, that, this.start1, 's');
+                that.isLoading = false;
+            }, () => {
+                that.isLoading = false;
+            });
+        }else{
+            this.config.start = this.start2;
+            getUserAdver(this.config).then(data => {
+                clData(data, that, this.start2, 'e');
+                that.isLoading = false;
+            }, () => {
+                that.isLoading = false;
+            });
+        }
+
+        function clData(data, that, start, type){
+            that.hasMore = true;
+            if(data.totalPage < start){
+                that.myWillAdverList = [];
             }
-        })
+            if (data.totalPage <= start) {
+                that.hasMore = false;
+            }
+            that.myWillAdverList = [...that.myWillAdverList, ...data.list];
+            if(type == 's'){
+                that.start1 ++;
+            }else{
+                that.start2 ++;
+            }
+        }
     },
     // 发布
     fbAdverFn(item){
@@ -206,11 +236,16 @@ export default {
                 this.$refs.toast.hide();
             }, 1500);
         })
+    },
+    // 个人主页
+    toHomePage(userId, tradeCoin){
+      this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
     }
   },
   components: {
       Toast,
-      Scroll
+      Scroll,
+      FullLoading
   }
 };
 </script>
@@ -242,10 +277,14 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fhui.png');
       float: left;
       margin-top: 0.31rem;
     }
+  }
+  .adver{
+      height: 12rem;
+      overflow: scroll;
   }
 
   .tabs {

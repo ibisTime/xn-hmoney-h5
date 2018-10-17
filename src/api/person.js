@@ -23,10 +23,34 @@ export function getUserList() {
 // 查询用户信任关系
 export function getUserRelation(currency, master) {
   return fetch("625256", {
-      visitor: base.getUserId(),
+      visitor: getUserId(),
       currency,
       master,
   });
+}
+
+/**
+ * 修改信任关系(建立)
+ * @param config {limit, start, userId, type}
+ * type=1 信任，type=0，屏蔽
+ */
+export function addUserRelation(config, refresh) {
+  return fetch("805150", {
+      userId: getUserId(),
+      ...config
+  }, refresh);
+}
+
+/**
+ * 修改信任关系(解除）
+ * @param config {limit, start, userId, type}
+ * type=1 信任，type=0，屏蔽
+ */
+export function removeUserRelation(config, refresh) {
+  return fetch("805151", {
+      userId: getUserId(),
+      ...config
+  }, refresh);
 }
 
 // 登陆

@@ -1,12 +1,12 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
-      <header>
+      <!-- <header>
         我的资产
-      </header>
+      </header> -->
       <div class='banner'>
-        <p class='txt1'><span class='icon ico'></span>总资产X币</p>
+        <p class='txt1'><span class='icon ico'></span>总资产 {{cdInfo[0].currency}} 币</p>
         <div class='txt2' style='margin-top:.3rem;'>
-          <p class='t1'>{{info[1].amount}}</p>
+          <p class='t1'>{{cdInfo[0].amount}}</p>
           <!-- <p class='t1'>{{amount}}</p> -->
           <!-- <p class='t2'>≈60000.00 CNY</p> -->
         </div>
@@ -23,51 +23,25 @@
       </div>
       <div class='dollar'>
         <i class='icon ico1'></i>
-        <span>$1≈¥6.6079</span>
+        <span>$1 ≈ ¥6.6079</span>
         <i class='icon ico2'></i>
         <i class='icon ico3'></i>   
       </div>
-      <div class='my-assets'>
-        <i class="icon ico1"></i>
+      <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
+        <i class="icon" :class="[{'ico1': infoItem.currency == 'X'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
         <div class='my'>
-          <p class='txt1'>自己币种资产({{info[1].currency}})</p>
-          <p class='txt2'>{{info[1].amount}}</p>
-          <p class='txt3'><span>冻结{{info[1].frozenAmount}}</span><span>可用{{info[1].amount - info[1].frozenAmount}}{{info[1].currency}}</span><span></span></p>
+          <p class='txt1'>{{infoItem.currency}}币种资产({{infoItem.currency}})</p>
+          <p class='txt2'>{{infoItem.amount}}</p>
+          <p class='txt3'><span>冻结{{infoItem.frozenAmount}}</span><span>可用{{infoItem.amount - infoItem.frozenAmount}} {{infoItem.currency}}</span><span></span></p>
         </div>
         <div class='datil'>
-          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[1].address + '&currency=' + info[1].currency + '&accountNumber=' + info[1].accountNumber ">转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link :to="'wallet-out' + '?currency=' + info[1].currency + '&amount=' + info[1].amount + '&accountNumber=' + info[1].accountNumber ">转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[1].accountNumber">账单</router-link></div>
+          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">转入</router-link></div>|
+          <div class='box'><i class='icon ico2'></i><router-link :to="'wallet-out' + '?currency=' + infoItem.currency + '&amount=' + infoItem.amount + '&accountNumber=' + infoItem.accountNumber ">转出</router-link></div>|
+          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link></div>
         </div>
-        <div class='operate'>
+        <div class='operate' v-show="infoItem.currency == 'X'">
           <router-link to='wallet-top-up' class='txt1'>充值</router-link>|
           <router-link to='wallet-top-up' class='txt2'>提现</router-link>
-        </div>
-      </div>
-      <div class='my-assets my-assets1'>
-        <i class="icon ico1 icon1"></i>
-        <div class='my'>
-          <p class='txt1'>比特币资产({{info[2].currency}})</p>
-          <p class='txt2'>{{info[2].amount}}</p>
-          <p class='txt3'><span>冻结{{info[2].frozenAmount}}</span><span>可用{{info[2].amount - info[2].frozenAmount}}{{info[2].currency}}</span><span></span></p>
-        </div>
-        <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[2].address + '&currency=' + info[2].currency + '&accountNumber=' + info[2].accountNumber ">转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link :to="'wallet-out' + '?currency=' + info[2].currency + '&amount=' + info[2].amount + '&accountNumber=' + info[2].accountNumber ">转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[2].accountNumber">账单</router-link></div>
-        </div>
-      </div>
-      <div class='my-assets my-assets1'>
-        <i class="icon ico1 icon2"></i>
-        <div class='my'>
-          <p class='txt1'>以太币资产({{info[0].currency}})</p>
-          <p class='txt2'>{{info[0].amount}}</p>
-          <p class='txt3'><span>冻结{{info[0].frozenAmount}}</span><span>可用{{info[0].amount - info[0].frozenAmount}}{{info[0].currency}}</span><span></span></p>
-        </div>
-        <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+info[0].address + '&currency=' + info[0].currency + '&accountNumber=' + info[0].accountNumber ">转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link :to="'wallet-out' + '?currency=' + info[0].currency + '&amount=' + info[0].amount + '&accountNumber=' + info[0].accountNumber ">转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+info[0].accountNumber">账单</router-link></div>
         </div>
       </div>
       <Footer></Footer>
@@ -76,25 +50,30 @@
 <script>
 import Footer from 'components/footer/footer';
 import {wallet} from '../../api/person';
-import jquery from 'jquery';
-import {getUserId, moneyFormat, moneyParse, moneyReplaceComma, moneyFormatSubtract, getCoinList, setCoinData } from '../../common/js/util';
+import {getUserId, formatAmount, moneyParse, moneyReplaceComma, moneyFormatSubtract, getCoinList, setCoinData, setTitle } from '../../common/js/util';
 
 export default {
   data() {
     return {
-      info: [{}, {}, {}]
+      info: [{}, {}, {}],
+      cdInfo: [{}]
     };
   },
   computed: {},
   created() {
+    setTitle('我的资产');
     this.wallet();
   },
   methods: {
     wallet() {
       wallet().then(v => {
         v.map( v => {
-          v.amount = moneyFormat(v.amount, 8);
+          v.amount = formatAmount(v.amount, '', v.currency);
+          v.frozenAmount = formatAmount(v.frozenAmount, '', v.currency);
         } )
+        this.cdInfo = v.filter(item => {
+          return item.currency == 'X';
+        });
         this.info = v;
       });
     }
@@ -158,7 +137,7 @@ export default {
       .ico {
         width: .22rem;
         height: .24rem;
-        @include bg-image("资产");
+      background-image: url('./uzc.png');
         vertical-align: middle;
         margin-right: .083rem;
       }
@@ -199,18 +178,18 @@ export default {
       height: .3rem;
     }
     .ico1 {
-      @include bg-image("美国");
+      background-image: url('./mg.png');
       margin: 0 .22rem 0 .1rem ;
     }
     .ico2 {
-      @include bg-image("中国");
+      background-image: url('./zg.png');
       margin-left: .21rem;
       margin-right: 3.2rem;
     }
     .ico3 {
       width: .148rem;
       height: .255rem;
-      @include bg-image("更多");
+      background-image: url('./gd.png');
     }
   }
 
@@ -222,13 +201,19 @@ export default {
     border-radius: .14rem;
     position: relative;
     margin-bottom: .2rem;
-    .ico1 {
+    .ico1, .ico2, .ico3 {
       width: 1.2rem;
       height: 1.2rem;
       @include bg-image("x");
       position: absolute;
       top: .3rem;
       right: .4rem;
+    }
+    .ico2 {
+      background-image: url('./yt.png');
+    }
+    .ico3 {
+      background-image: url('./bt.png');
     }
     .my {
       padding: .3rem .62rem .3rem .2rem;
@@ -275,13 +260,13 @@ export default {
         .ico1 {
           width: .29rem;
           height: .26rem;
-          @include bg-image("转入");
+          background-image: url('./zr.png');
           margin-right: 1.1rem;
         }
         .ico2 {
           width: .3rem;
           height: .3rem;
-          @include bg-image("转出");
+          background-image: url('./zc.png');
           margin-right: .1rem;
           vertical-align: middle;
         }
@@ -289,7 +274,7 @@ export default {
         .ico3 {
           width: .26rem;
           height: .3rem;
-          @include bg-image("账单");
+          background-image: url('./zd.png');
           margin-right: .1rem;
           vertical-align: middle;
         }
@@ -315,16 +300,6 @@ export default {
       border-bottom: none;
     }
 
-  }
-
-  .my-assets1 {
-    height: 3rem;
-    .icon1 {
-      @include bg-image("比特");
-    }
-    .icon2 {
-      @include bg-image("以太");
-    }
   }
 
 

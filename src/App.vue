@@ -11,8 +11,6 @@ import {isLogin, getUrlParam} from './common/js/util';
 
   export default {
     created() {
-      let url = location.href;
-      console.log(url);
       if(!isLogin()) {
         this.$router.push('login');
       }

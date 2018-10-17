@@ -89,7 +89,7 @@
       </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading"/>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -125,6 +125,7 @@ export default {
       showFlag: false,
       userHp: false,
       userCp: false,
+      isLoading: true,
       comment: ''
     };
   },
@@ -132,7 +133,6 @@ export default {
     setTitle('订单详情');
     this.code = getUrlParam('code');
     getDictList('pay_type').then(data => {
-      this.$refs.fullLoading.show();
       data.forEach((item) => {
           this.payTypeList[item.dkey] = item.dvalue;
       });
@@ -166,14 +166,14 @@ export default {
         this.$refs.toast.show();
         return;
       }
-      this.$refs.fullLoading.show();
+      this.isLoading = true;
       this.showFlag = false;
       commentOrder(this.code, this.comment).then(data => {
         this.textMsg = '评价成功';
         this.$refs.toast.show();
         this.orderMessage();
       }, () => {
-        this.$refs.fullLoading.hide();
+        this.isLoading = false;
       })
     },
     orderMessage(){
@@ -217,20 +217,20 @@ export default {
           this.btns = '';
         }
 
-        this.$refs.fullLoading.hide();
+        this.isLoading = false;
       });
     },
     operationBtn(){
       let target = event.target;
       let toast = this.$refs.toast;
       if(target.localName === 'button'){
-        this.$refs.fullLoading.show();
+        this.isLoading = true;
         // 标记付款 payOrder
         if(target.classList.contains('payBtn')){
           payOrder(this.code).then(data => {
             this.orderMessage();
           }, () => {
-            this.$refs.fullLoading.hide();
+            this.isLoading = false;
           });
         }
         // 取消订单 cancelOrder 
@@ -238,7 +238,7 @@ export default {
           cancelOrder(this.code).then(data => {
             this.orderMessage();
           }, () => {
-            this.$refs.fullLoading.hide();
+            this.isLoading = false;
           });
         }
         // 申请仲裁 arbitrationlOrder
@@ -250,13 +250,13 @@ export default {
           releaseOrder(this.code).then(data => {
             this.orderMessage();
           }, () => {
-            this.$refs.fullLoading.hide();
+            this.isLoading = false;
           });
         }
 
         // 评价 
         if(target.classList.contains('pjBtn')){
-          this.$refs.fullLoading.hide();
+          this.isLoading = false;
           this.showFlag = true;
         }
       }

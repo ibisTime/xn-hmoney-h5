@@ -88,7 +88,7 @@ const myInviteFriends = () => import('components/my-invite-friends/my-invite-fri
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
 // 关于我们 -- 平台介绍
-const aboutPlatformIntroduced = () => import('components/about-platform-introduced/about-platform-introduced');
+const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 用户协议
 const aboutUserAgreement = () => import('components/about-user-agreement/about-user-agreement');
 // 关于我们 -- 隐私条款

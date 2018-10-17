@@ -1,5 +1,5 @@
 <template>
-  <div class="full-loading-wrapper" v-show="showFlag">
+  <div class="full-loading-wrapper">
     <div class="full-loading">
       <div class="inner-loading">
         <img src="./loading.gif">

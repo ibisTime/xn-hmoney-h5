@@ -5,10 +5,11 @@
     <div class="container">
         <div class="con-user">
             <div class="user-left">
-                <img src="./user.png" alt="">
+                <img :src="getUserPic(userDataList.photo)" :class="{'hidden': !(userDataList.photo)}" alt="">
+                <img src="./user.png" :class="{'hidden': (userDataList.photo)}" alt="">
             </div>
             <div class="user-right">
-                <h5>kylong</h5>
+                <h5>{{userDataList.nickname}}</h5>
                 <p>和他交易过 <span>0</span> 次</p>
             </div>
         </div>
@@ -26,24 +27,28 @@
                 <p>好评率</p>
             </div>
             <div class="ls-box">
-                <h5>100</h5>
+                <h5>{{totalTradeCount}}</h5>
                 <p>历史交易</p>
             </div>
         </div>
         <div class="user-btns">
-            <p class="xr-p">
-                + 信任
+            <p class="xr-p" @click="xrClickFn">
+                {{xrText}}
             </p>
-            <p class="lh-p">
-                + 黑名单
+            <p class="lh-p" @click="lhClickFn">
+                {{lhText}}
             </p>
         </div>
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
+    <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
-import Scroll from 'base/scroll/scroll';
-import { getUser, getUserRelation } from "api/person";
+import { getUrlParam, setTitle, formatAmount, getAvatar } from 'common/js/util';
+import { getUser, getUserRelation, addUserRelation, removeUserRelation } from "api/person";
+import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 
 export default {
   data() {
@@ -55,22 +60,99 @@ export default {
                 beiHaoPingCount: '',
                 beiPingJiaCount: '',
             }
-        }
+        },
+        textMsg: '操作成功',
+        isLoading: true,
+        totalTradeCount: '',
+        xrText: '+ 信任',
+        lhText: '+ 黑名单',
+        trust: '',
+        addBlack: '',
+        userId: '',
+        currency: ''
     };
   },
   created() {
+      setTitle('个人主页');
+      this.currency = getUrlParam('currency');
+      this.userId = getUrlParam('userId');
       // currency: 币种; userId：查询用户的ID
-    //   getUserRelation(currency, userId).then(data => {
-
-    //   });
-      getUser().then(data => {
+      this.getGxFn();
+      getUser(this.userId).then(data => {
+          this.isLoading = false;
           this.userDataList = data;
-          var totalTradeCount = data.totalTradeCount == '0' ? '0' : base.formatMoney(data.totalTradeCount, '0', currency) + '+';
+      }, () => {
+          this.isLoading = false;
       });
   },
   computed: {},
-  methods: {},
+  methods: {
+      // 获取头像
+      getUserPic(pic){
+          return getAvatar(pic);
+      },
+      getGxFn(){
+          getUserRelation(this.currency, this.userId).then(data => {
+            this.trust = data.isTrust;
+            this.addBlack = data.isAddBlackList;
+            // 查询与用户信任关系
+            if(data.isTrust == '0'){
+                this.xrText = '+ 信任';
+            }else{
+                this.xrText = '已信任';
+            }
+            if(data.isAddBlackList == '0'){
+                this.lhText = '+ 黑名单';
+            }else{
+                this.lhText = '已拉黑';
+            }
+            this.totalTradeCount = data.totalTradeCount == '0' ? '0' : formatAmount(data.totalTradeCount, '0', this.currency) + this.currency + ' +';
+        });
+      },
+      xrClickFn(){
+          this.isLoading = true;
+          if(this.trust == '0'){
+              this.jlFn('1');
+          }else{
+              this.jcFn('1');
+          }
+      },
+      lhClickFn(){
+          this.isLoading = true;
+          if(this.addBlack == '0'){
+              this.jlFn('0');
+          }else{
+              this.jcFn('0');
+          }
+      },
+      jcFn(type){
+        removeUserRelation({
+            toUser: this.userId,
+            type
+        }).then(data => {
+            this.isLoading = false;
+            this.$refs.toast.show();
+            this.getGxFn();
+        }, () => {
+            this.isLoading = false;
+        })
+      },
+      jlFn(type){
+        addUserRelation({
+            type,
+            toUser: this.userId
+        }).then(data => {
+            this.isLoading = false;
+            this.$refs.toast.show();
+            this.getGxFn();
+        }, () => {
+            this.isLoading = false;
+        });
+      }
+  },
   components: {
+      FullLoading,
+      Toast
   }
 };
 </script>
@@ -111,6 +193,7 @@ export default {
                 margin-right: 0.2rem;
                 img{
                     width: 100%;
+                    height: 100%;
                 }
             }
             .user-right{

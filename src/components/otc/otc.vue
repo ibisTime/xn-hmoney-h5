@@ -61,14 +61,13 @@
           ref="scroll"
           :data="bbDataList"
           :hasMore="hasMore"
+          v-show="bbDataList.length"
           @pullingUp="getBBListData"
         >
           <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
-            <router-link :to=" url + '?adsCode=' + adverItem.code + '&userId=' + adverItem.userId">
-            </router-link>
             <div class='cont'>
               <div class='preson'>
-                <div class='pic'>
+                <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
                   <img :src="getAvatar(adverItem.user.photo)" alt="">
                   <span class='green color'></span>
                 </div>
@@ -146,9 +145,11 @@ export default {
       flag2: false,
       url: 'otc-buy',
       hasMore: true,
-      start: 1,
+      start1: 1,
+      start2: 2,
       limit: 10,
-      textMsg: ''
+      textMsg: '',
+      type: 's'
     };
   },
   created() {
@@ -159,7 +160,6 @@ export default {
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
     this.config.tradeType = sessionStorage.getItem('tradeType');
-    this.config.coin = sessionStorage.getItem('coin') || 'ETH';
     if(this.config.tradeType === '0'){
       this.flag1 = false;
       this.flag2 = true;
@@ -173,21 +173,36 @@ export default {
   methods: {
     // 请求列表数据
     getBBListData(){
-      this.config.start = this.start;
+      let that = this;
       this.config.limit = this.limit;
-      getAdvertisingData(this.config).then(data => {
-        if (data.totalPage <= this.start) {
-          this.hasMore = false;
-          this.bbDataList = data.list;
-        }else{
-          if(this.start > 1){
-            this.bbDataList = [...this.bbDataList, ...data.list];
-          }else{
-            this.bbDataList = data.list;
-          }
-          this.start++;
+      if(this.type == 's'){
+        this.config.start = this.start1;
+        getAdvertisingData(this.config).then(data => {
+          clData(data, that, this.start1, 's');
+        })
+      }else{
+        this.config.start = this.start2;
+        getAdvertisingData(this.config).then(data => {
+          clData(data, that, this.start2, 'e');
+        })
+      }
+
+      function clData(data, that, start, type){
+        that.hasMore = true;
+        if(data.totalPage < start){
+          that.bbDataList = [];
         }
-      })
+        if (data.totalPage <= start) {
+          that.hasMore = false;
+        }
+        that.bbDataList = [...that.bbDataList, ...data.list];
+        if(type == 's'){
+          that.start1 ++;
+        }else{
+          that.start2 ++;
+        }
+      }
+
     },
     // 根据条件查询数据
     selHbName(){
@@ -201,8 +216,10 @@ export default {
     //根据币种请求数据
     getAdverFn(){
       sessionStorage.setItem('coin', this.config.coin);
-      this.start = 1;
+      this.start1 = 1;
+      this.start2 = 1;
       this.limit = 10;
+      this.bbDataList = [];
       this.getBBListData();
     },
     getInitData() {
@@ -225,15 +242,19 @@ export default {
     buy() {
       this.flag1 = true;
       this.flag2 = false;
-      this.start = 1;
+      this.start1 = 1;
+      this.type = 's';
+      this.bbDataList = [];
       this.advertisingFn('1');
       this.url = 'otc-buy';
       sessionStorage.setItem('tradeType', '1');
     },
     sell() {
+      this.type = 'e';
       this.flag1 = false;
       this.flag2 = true;
-      this.start = 1;
+      this.start2 = 1;
+      this.bbDataList = [];
       this.advertisingFn('0');
       this.url = 'otc-sell';
       sessionStorage.setItem('tradeType', '0');
@@ -306,6 +327,10 @@ export default {
           type
         }});
       }
+    },
+    // 个人主页
+    toHomePage(userId, tradeCoin){
+      this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
     }
   },
   components: {
@@ -462,6 +487,8 @@ export default {
   }
 
   .main {
+    height: 7.5rem;
+    overflow: scroll;
     .content {
       width: 92%;
       margin: 0 auto;

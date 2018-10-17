@@ -92,7 +92,7 @@
         </div>
       </div>
       <Toast :text="textMsg" ref="toast" />
-      <FullLoading ref="fullLoading"/>
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -109,6 +109,7 @@ export default {
     return {
       show: false,
       showBuy: false,
+      isLoading: true,
       textMsg: '',
       userMoney: '',
       yMoney: '',
@@ -148,7 +149,6 @@ export default {
   },
   created() {
     this.type = getUrlParam('type');
-    this.$refs.fullLoading.show();
     this.config.adsCode = getUrlParam('adsCode');
     if(this.type === '1'){
       this.bText = '购买';
@@ -161,7 +161,7 @@ export default {
     getSysConfig('trade_remind').then(data => {
       this.jyText = data.cvalue.replace(/\n/g, '<br>');
       this.remark = data.remark;
-      this.$refs.fullLoading.hide();
+      this.isLoading = false;
     })
   },
   methods: {
@@ -181,7 +181,7 @@ export default {
         this.configFn();
         this.config.tradePwd = this.userMoney;
         this.showBuy = false;
-        this.$refs.fullLoading.show();
+        this.isLoading = true;
         sellBB(this.config).then(data => {
           this.userMoney = '';
           sessionStorage.setItem('tradeType', '0');
@@ -194,7 +194,7 @@ export default {
           this.textMsg = err;
           this.$refs.toast.show();
           this.showBuy = false;
-          this.$refs.fullLoading.hide();
+          this.isLoading = false;
         })
       }
     },
@@ -215,7 +215,7 @@ export default {
         return formatAmount(amount, len, coin);
     },
     otcBuy() {
-      this.$refs.fullLoading.show();
+      this.isLoading = true;
       otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
         this.data = data;
         this.config.tradePrice = data.truePrice;
@@ -230,12 +230,12 @@ export default {
           }else{
             this.yMoney = this.bbFormatAmount(`${data.leftCountString}`, '', data.tradeCoin);
           }
-          this.$refs.fullLoading.hide();
+          this.isLoading = false;
         });
       }, () => {
-        this.$refs.fullLoading.hide();
+        this.isLoading = false;
       }, () => {
-        this.$refs.fullLoading.hide();
+        this.isLoading = false;
       });
     },
     changeEnum() {
@@ -252,7 +252,7 @@ export default {
       if(this.type === '1'){
         this.configFn();
         delete this.config.tradePwd;
-        this.$refs.fullLoading.show();
+        this.isLoading = true;
         buyETH(this.config).then(data => {
           sessionStorage.setItem('tradeType', '1');
           this.textMsg = '订单提交成功';
@@ -264,7 +264,7 @@ export default {
           this.textMsg = err;
           this.$refs.toast.show();
           this.showBuy = false;
-          this.$refs.fullLoading.hide();
+          this.isLoading = false;
         })
       }
     },

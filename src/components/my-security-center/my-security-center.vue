@@ -63,12 +63,13 @@
         </router-link>
     </div>
     <div class="footer">
-        <button>退出登录</button>
+        <button @click="quitLogin">退出登录</button>
     </div>
   </div>
 </template>
 <script>
 import {getUser} from '../../api/person';
+import { clearUser } from 'common/js/util';
 
 export default {
   data() {
@@ -81,15 +82,20 @@ export default {
   },
   created() {
     getUser().then((data) => {
-      console.log(data);
-      console.log(data.emailBindFlag);
       this.mobile = data.mobile;
       this.email = data.email;
       data.emailBindFlag === false ? this.show = true : this.show = false;
       this.mobile === '' ? this.show1 = true : this.show1 = false;
     });
   },
-  methods: {}
+  methods: {
+    quitLogin(){
+      clearUser();
+      setTimeout( () => {
+        this.$router.push('/login');
+      }, 500 );
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

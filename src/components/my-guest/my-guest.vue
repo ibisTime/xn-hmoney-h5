@@ -1,114 +1,88 @@
 <template>
   <div class="guest-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>我的获客</span>
         </p>
-    </header>
-    <div class='main'>
-        <router-link to='mine' class='list-wrap' v-for='(item,index) in list' :key="index">
-            <div class='list'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text'>
-                    <div class='text1'>
-                        <p class='txt1'><span class='name'>{{item.user.realName}}</span><span class='slogn1' :class="[item.user.idNO ? 'slogn1' : 'slogn2']">{{item.user.idNO ? '已认证' : '未认证'}}</span></p>
-                        <p class='txt2 gray'>{{item.user.createDatetime}}</p>
+    </header> -->
+    <div class='main' >
+        <div class='list-wrap'>
+            <Scroll 
+            ref="scroll"
+            :data="list"
+            :hasMore="hasMore"
+            v-show="list.length > 0"
+            @pullingUp="myGuest"
+            >
+                <div class='list' v-for='(item,index) in list' :key="index">
+                    <div class='pic'>
+                        <img :src="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt="">
+                        <img :class="{'hidden': item.photo}" src="./txiang.png"/>
                     </div>
-                    <div class='text2'>
-                        <p class='txt1'>交易金额：{{item.tradeCount}}</p>
-                        <p class='txt2'>{{item.regAwardCount ? '待获佣：' : '获佣：'}}<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.tradeCount}}{{item.tradeCount ? 'X' : ''}}</span></p>
+                    <div class='text'>
+                        <div class='text1'>
+                            <p class='txt1'><span class='name'>{{item.nickname}}</span><span class='slogn1' :class="[item.idNO ? 'slogn1' : 'slogn2']">{{item.idNO ? '已认证' : '未认证'}}</span></p>
+                            <p class='txt2 gray'>{{item.createDatetime}}</p>
+                        </div>
+                        <div class='text2'>
+                            <p class='txt1'>交易金额：{{item.tradeCount}}</p>
+                            <p class='txt2'>获佣(注册佣金 + 交易佣金)：<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.regAwardCount + item.tradeAwardCount}} {{item.tradeCount ? 'X' : ''}}</span></p>
+                        </div>
                     </div>
                 </div>
+            </Scroll>
+            <div class="no-data" :class="{'hidden': len > 0}">
+                <img src="./wu.png" />
+                <p>暂无获客</p>
             </div>
-        </router-link>
-        <!-- <router-link to='mine' class='list-wrap'>
-            <div class='list'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text'>
-                    <div class='text1'>
-                        <p class='txt1'><span class='name'>FUN MVP</span><span class='slogn2'>未认证</span></p>
-                        <p class='txt2 gray'>2018-09-03</p>
-                    </div>
-                    <div class='text2'>
-                        <p class='txt1'>交易金额：26890.00CNY</p>
-                        <p class='txt2 red'>获佣：45X</p>
-                    </div>
-
-                </div>
-            </div>
-        </router-link> -->
-        <!-- <router-link to='mine' class='list-wrap'>
-            <div class='list'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text'>
-                    <div class='text1'>
-                        <p class='txt1'><span class='name'>不懂</span><span class='slogn1'>已认证</span></p>
-                        <p class='txt2 gray'>2018-09-03</p>
-                    </div>
-                    <div class='text2'>
-                        <p class='txt1'>交易金额：26890.00</p>
-                        <p class='txt2'>获佣：<span class='red'>200X</span></p>
-                    </div>
-
-                </div>
-            </div>
-        </router-link>
-        <router-link to='mine' class='list-wrap'>
-            <div class='list'>
-                <div class='pic'>
-                    <i class='icon'></i>
-                </div>
-                <div class='text'>
-                    <div class='text1'>
-                        <p class='txt1'><span class='name'>Sting</span><span class='slogn1'>已认证</span></p>
-                        <p class='txt2 gray'>2018-09-03</p>
-                    </div>
-                    <div class='text2'>
-                        <p class='txt1'>交易金额：26890.00</p>
-                        <p class='txt2'>获佣：<span class='red'>200X</span></p>
-                    </div>
-
-                </div>
-            </div>
-        </router-link> -->
+        </div>
 
     </div>
   </div>
 </template>
 <script>
 import { myGuest } from "../../api/person";
-import { getUser, formatDate, moneyFormat, isUnDefined } from "../../common/js/util";
+import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle } from "../../common/js/util";
+import Scroll from 'base/scroll/scroll';
 
 export default {
   data() {
     return {
       list: [],
       start: 1,
-      limit: 10
+      limit: 10,
+      hasMore: true,
+      len: ''
     };
   },
   created() {
+      setTitle('我的获客');
       this.myGuest();
   },
   methods: {
+    // 获取头像
+    getUserPic(pic){
+      return getAvatar(pic);
+    },
     myGuest() {
       myGuest(this.start, this.limit).then(data => {
-        console.log(data);
         data.list.map( v => {
-            v.tradeCount = moneyFormat(v.tradeCount);
-            v.regAwardCount = isUnDefined(v.regAwardCount);
-            v.user.createDatetime = formatDate(v.user.createDatetime, 'yyyy-MM-dd');
+            v.tradeCount = formatAmount(`${v.tradeCount}`, '', 'X');
+            v.tradeAwardCount = parseFloat(formatAmount(`${v.tradeAwardCount}`, '', 'X'));
+            v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
         });
-        this.list = data.list;
+        if (data.totalPage <= this.start) {
+          this.hasMore = false;
+        }
+        this.list = [...this.list, ...data.list];
+        this.len = this.list.length;
+        this.start++;
       });
     }
+  },
+  components: {
+      Scroll
   }
 };
 </script>
@@ -154,25 +128,25 @@ export default {
   }
   .main {
     width: 100%;
+    height: 12rem;
+    overflow: scroll;
     background: #fff;
     .list-wrap {
       display: block;
       width: 100%;
-      padding: 0.4rem 0;
-      border-bottom: 0.01rem solid #e5e5e5;
       .list {
         width: 100%;
-        padding: 0 0.3rem;
         display: flex;
+        padding: 0.4rem 0.3rem;
+        border-bottom: 0.01rem solid #e5e5e5;
         .pic {
           width: 1rem;
           height: 1rem;
           border-radius: 50%;
           margin-right: 0.22rem;
-          .icon {
-            width: 100%;
-            height: 100%;
-            @include bg-image("头像(4)");
+          img{
+              width: 100%;
+              height: 100%;
           }
         }
         .text {

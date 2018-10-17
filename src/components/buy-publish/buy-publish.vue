@@ -39,8 +39,8 @@
           <span class='ico' @click.stop="showMsg('max')"></span>
         </p>
         <p>
-          <span class='txt1'>{{type}}总量<i></i></span>
-          <input type="text" v-model="config.totalCount" placeholder="请输入售卖币的总量">
+          <span class='txt1'>{{type}}总量<i class="wallet">余额：{{walletMon}}</i></span>
+          <input type="text" v-model="count" placeholder="请输入售卖币的总量">
           <span class='txt2'>{{config.tradeCoin}}</span>
         </p>
         <p>
@@ -120,15 +120,18 @@
 <script>
 import Message from 'base/message/message';
 import showMsg from 'base/showMsg/showMsg';
-import {getUserId, getUrlParam, setTitle, formatMoneyMultiply} from 'common/js/util';
+import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
+import { wallet } from 'api/person';
 
 const message = new Message();
 
 export default {
   data() {
     return {
-      text: 'hh',
+      text: '',
+      count: '',
+      walletMon: '', // 余额
       lowTxt: '广告最高可成交的价格',
       MsgList: {},
       type: '购买',
@@ -249,7 +252,7 @@ export default {
     };
   },
   created() {
-    
+    this.getUserWallet();
   },
   updated() {},
   mounted() {
@@ -281,6 +284,15 @@ export default {
   },
   computed: {},
   methods: {
+    // 查询余额
+    getUserWallet(){
+      wallet().then(data => {
+        let wallet = data.filter(item => {
+          return item.currency == this.config.tradeCoin;
+        });
+        this.walletMon = formatMoneySubtract(`${wallet[0].amount}`, `${wallet[0].frozenAmount}`, wallet[0].currency);
+      })
+    },
     bbFormatAmount(amount, len, coin){
         return formatMoneyMultiply(amount, len, coin);
     },
@@ -341,6 +353,7 @@ export default {
     },
     changePrice(){
       this.getBbPrice(this.config.tradeCoin);
+      this.getUserWallet();
     },
     changeConfig(path){
       if(!this.select){
@@ -361,7 +374,7 @@ export default {
       }
       this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
       let totalCount = '';
-      this.config.totalCount = this.bbFormatAmount(this.config.totalCount, '', this.config.tradeCoin);
+      this.config.totalCount = this.bbFormatAmount(this.count, '', this.config.tradeCoin);
       this.config.displayTime = this.displayTime;
       this.config.premiumRate = this.yj_price / 100;
       if(!this.isDetail){
@@ -425,7 +438,7 @@ export default {
           this.bbPrice = data.truePrice;
           this.config.minTrade = data.minTrade;
           this.config.maxTrade = data.maxTrade;
-          this.config.totalCount = parseFloat(data.totalCountString) / blv;
+          this.count = parseFloat(data.totalCountString) / blv;
           this.config.payType = data.payType;
           this.config.payLimit = data.payLimit;
           this.$refs.leaveMessage.value = data.leaveMessage;
@@ -519,6 +532,7 @@ export default {
         border-bottom: 0.01rem solid #e5e5e5;
         display: flex;
         align-items: center;
+        position: relative;
     }
 
     p:last-child {
@@ -537,6 +551,16 @@ export default {
           display: inline-block;
           width: 100%;
           height: 0;
+      }
+      .wallet{
+        position: absolute;
+        width: 100%;
+        bottom: 0%;
+        left: 0;
+        height: 0.3rem;
+        line-height: 0.4rem;
+        color: #d53d3d;
+        font-size: 0.1rem;
       }
     }
     .txt2 {

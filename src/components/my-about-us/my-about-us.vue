@@ -1,37 +1,37 @@
 <template>
   <div class="aboutus-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>关于我们</span>
         </p>
-    </header>
+    </header> -->
     <div class='content cont1'>
-        <router-link class='tag mb20' to='about-platformIntroduced'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=about_us'>
             <p>
             <span>平台介绍</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='about-userAgreement'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=reg_protocol'>
             <p>
             <span>用户协议</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='about-privacyPolicy'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=privacy'>
             <p>
             <span>隐私条款</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='about-legalNotices'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=raw_note'>
             <p>
             <span>法律申明</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='about-rateExplain'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=fee_note'>
             <p>
             <span>费率说明</span>
             <i class='icon'></i>
@@ -49,10 +49,14 @@
   </div>
 </template>
 <script>
+import { setTitle } from "common/js/util";
 export default {
   data() {
     return {
     };
+  },
+  created() {
+    setTitle('关于我们');
   },
   methods: {}
 };

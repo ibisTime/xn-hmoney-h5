@@ -4,7 +4,12 @@
       <router-link v-show="show2" to=''><i class='icon' @click="showTwo"></i></router-link>
       <router-link v-show="!show2" to=''><i></i></router-link>
 
-      <p v-show='show2'><span>X/ETH</span><i class='icon'></i></p>
+      <p v-show='show2'>
+        <select name="" id="" v-model="symNumber" @change="changeSymBaz">
+          <option :value="index" v-for="(symItem, index) in symBazList" :key="index">{{symItem.symbol}}/{{symItem.toSymbol}}</option>
+        </select>
+        <i class='icon'></i>
+      </p>
       <p v-show='!show2'>币币交易</p>
       <router-link to='otc'>场外交易</router-link>
     </div>
@@ -14,7 +19,10 @@
         <p>
           <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">买入</span>
           <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">卖出</span>
-          <span class='txt3'>限价</span>
+          <select name="" id="" class='txt3'>
+            <option value="0">限价</option>
+            <option value="1">市价</option>
+          </select>
           <i class='icon'></i>
           <span class='txt4'>盘口</span>
           <span class='txt5'>价格</span>
@@ -25,36 +33,36 @@
         <!-- 买入 -->
         <div v-show="show1" class="left">
           <p class='he9'>
-            <input type="text" placeholder="委托价格">
-            <span class='black'>X</span>
+            <input type="text" placeholder="委托价格" v-model="xjPrice">
+            <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
           <p class='text2'>
             <span>折合CNY</span>
-            <span class='red'>￥0.00</span>
+            <span class='red'>￥{{(Math.floor((xjPrice * syMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
-            <input type="text" placeholder="委托数量">
-            <span class='black'>ETH</span>
+            <input type="text" placeholder="委托数量" v-model="wetNumber">
+            <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <p class='he9'>
-            <input type="text" placeholder="交易额">
-            <span class='black'>X</span>
+          <p class='he9 no-bor'>
+            <span>交易额：{{}}</span>
+            <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <button class='buy'>买入X</button>
+          <button class='buy'>买入{{setBazDeal.symbol}}</button>
           <p class='he9 red'>
-            <span>可用X</span>
+            <span>可用 {{setBazDeal.symbol}}</span>
             <span>0.04</span>
           </p>
           <p class='he9 btn red'>
-            <span>可买ETH</span>
+            <span>可买 {{setBazDeal.toSymbol}}</span>
             <span>0</span>
           </p>
           <p class='he9 btn'>
-            <span>可用ETH</span>
+            <span>可用 {{setBazDeal.toSymbol}}</span>
             <span class='black'>12.5</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结X</span>
+            <span>冻结 {{setBazDeal.symbol}}</span>
             <span class='black'>0</span>
           </p>
         </div>
@@ -62,56 +70,41 @@
         <div v-show="!show1" class="left">
           <p class='he9'>
             <input type="text" placeholder="委托价格">
-            <span class='black'>X</span>
+            <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
           <p class='text2'>
-            <span>折合CNY</span>
+            <span>折合 CNY</span>
             <span class='red'>￥0.00</span>
           </p>
           <p class='he9 mb20'>
             <input type="text" placeholder="委托数量">
-            <span class='black'>ETH</span>
+            <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <p class='he9'>
             <input type="text" placeholder="交易额">
-            <span class='black'>X</span>
+            <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
-          <button class='sell'>卖出X</button>
+          <button class='sell'>卖出 {{setBazDeal.symbol}}</button>
           <p class='he9 green'>
-            <span>可用X</span>
+            <span>可用 {{setBazDeal.symbol}}</span>
             <span>0.04</span>
           </p>
           <p class='he9 btn green'>
-            <span>可买ETH</span>
+            <span>可买{{setBazDeal.toSymbol}}</span>
             <span>0</span>
           </p>
           <p class='he9 btn'>
-            <span>可用ETH</span>
+            <span>可用{{setBazDeal.toSymbol}}</span>
             <span class='black'>12.5</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结X</span>
+            <span>冻结 {{setBazDeal.symbol}}</span>
             <span class='black'>0</span>
           </p>
         </div>
 
         <div class="right">
           <div class='one'>
-            <p class='text1'>
-              <span class='green txt1'>卖10</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖9</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖8</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
             <p class='text1'>
               <span class='green txt1'>卖7</span>
               <span class='txt2'>9015.71</span>
@@ -150,21 +143,6 @@
           </div>
           <p class='middle'><span class='red'>￥ 8022.00</span><i class='icon'></i></p>
           <div class='one two'>
-            <p class='text1'>
-              <span class='red txt1'>买10</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买9</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买8</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
             <p class='text1'>
               <span class='red txt1'>买7</span>
               <span class='txt2'>9015.71</span>
@@ -219,7 +197,7 @@
             </p>
             <div class='text2'>
               <div class='txt1'>
-                <p>价格(ETH)</p>
+                <p>价格({{setBazDeal.toSymbol}})</p>
                 <p class='black'>13.60</p>
               </div>
               <div class='txt2'>
@@ -240,7 +218,7 @@
             </p>
             <div class='text2'>
               <div class='txt1'>
-                <p>价格(ETH)</p>
+                <p>价格({{setBazDeal.toSymbol}})</p>
                 <p class='black'>13.60</p>
               </div>
               <div class='txt2'>
@@ -354,6 +332,7 @@
 <script>
 import Footer from 'components/footer/footer';
 import {dishMouth} from 'api/person';
+import {getBazaarData, getBBExchange} from 'api/bb';
 
 export default {
   data() {
@@ -361,17 +340,46 @@ export default {
       show1: true,
       show2: true,
       show3: false,
-      data: []
+      xjPrice: '',      // 委托价格
+      wetNumber: '',    // 限价-委托数量
+      toSyMid: '',      // toSymbol换算价
+      syMid: '',        // symbol换算价
+      symNumber: '0',
+      setBazDeal: {},    // 选中的交易对
+      symBazList: [],    // 交易对
+      bazDealList: [] 
     };
   },
   created() {
     this.dishMouth();
-  },
-  updated() {
+    getBazaarData().then(data => {  // 查询交易对
+      this.syMid = data.list[0].currencyPrice;
+      this.setBazDeal.symbol = data.list[0].symbol;
+      this.setBazDeal.toSymbol = data.list[0].toSymbol;
+      data.list.forEach(item => {
+        this.symBazList.push({
+          'symbol' : item.symbol,
+          'toSymbol': item.toSymbol
+        });
+      });
+      getBBExchange('CNY', this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
+        this.toSyMid = data[0].mid;
+      });
+    });
   },
   computed: {
   },
   methods: {
+    aboutCnyData(){
+      
+    },
+    changeSymBaz(){ // 选择交易对 this.symNumber : 0  X/BTC    1  X/ETH
+      this.setBazDeal = {
+        symbol: this.symBazList[this.symNumber].symbol,
+        toSymbol: this.symBazList[this.symNumber].toSymbol
+      }
+      console.log(this.setBazDeal);
+    },
     buy() {
       this.show1 = true;
     },
@@ -388,11 +396,10 @@ export default {
       this.show2 = false;
     },
     dishMouth() {
-      dishMouth('BTC', 'ETH').then((data) => {
-        this.data = data;
-        // console.log(this.data);
-        // console.log(this.data.asks);
-      });
+      // 查盘口
+      // dishMouth('BTC', 'ETH').then((data) => {
+        
+      // });
     }
   },
   components: {
@@ -400,6 +407,7 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 @import "~common/scss/mixin";
 @import "~common/scss/variable";
@@ -544,6 +552,9 @@ export default {
             line-height: .87rem;
           }
         }
+        .no-bor{
+          border: none;
+        }
         .mb20 {
           margin-bottom: .2rem;
         }
@@ -577,7 +588,7 @@ export default {
           .text1 {
             font-size: .2rem;
             color: #484848;
-            line-height: .43rem;
+            line-height: .55rem;
             .txt1 {
               margin-right: .2rem;
               display: inline-block;

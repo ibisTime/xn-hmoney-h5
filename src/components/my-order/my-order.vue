@@ -19,6 +19,7 @@
           ref="scroll"
           :data="list"
           :hasMore="hasMore"
+          v-show="list.length > 0"
           @pullingUp="getOrderData"
         >
             <div class='list' @click='goDetails(item.code)' v-for='(item,index) in list' :key="index">
@@ -58,14 +59,16 @@ export default {
       show: true,
       hasMore: true,
       list: [],
-      start: 1,
+      start1: 1,
+      start2: 1,
       limit: 10,
       typeList: {
         "sell": "购买",
         "buy": "出售"
       },
       statusValueList: {},
-      userType: []
+      type: 's',
+      statusList: ['0', '-1', '1', '5']
     };
   },
   created() {
@@ -78,12 +81,12 @@ export default {
     })
   },
   methods: {
-      // 获取头像
+    // 获取头像
     getUserPic(pic){
         return getAvatar(pic);
     },
     getOrderData(){
-        this.getOrderList(['0', '-1', '1', '5'], this.start, this.limit);
+        this.getOrderList(this.type);
     },
     goBack() {
       this.$router.go(-1);
@@ -93,31 +96,50 @@ export default {
     },
     starting() {
       this.show = true;
-      this.start = 1;
-      this.getOrderList(['0', '-1', '1', '5'], this.start, this.limit);
+      this.type = 's';
+      this.start1 = 1;
+      this.list = [];
+      this.statusList = ['0', '-1', '1', '5'];
+      this.getOrderList(this.type);
     },
     ended() {
       this.show = false;
-      this.start = 1;
-      this.getOrderList(['2', '3', '4'], this.start, this.limit);
+      this.type = 'e';
+      this.start2 = 1;
+      this.list = [];
+      this.statusList = ['2', '3', '4'];
+      this.getOrderList(this.type);
     },
-    getOrderList(statusList, start, limit){
-        myOrder(statusList, start, limit).then( data => {
-            data.list.map( v => {
-                v.countString = formatAmount(v.countString, '', v.tradeCoin);
-            });
-            if (data.totalPage <= this.start) {
-                this.hasMore = false;
-                this.list = data.list;
-            }else{
-                if(this.start > 1){
-                  this.list = [...this.list, ...data.list];
-                }else{
-                  this.list = data.list;
-                }
-                this.start++;
-            }
+    getOrderList(type){
+      let that = this;
+      if(type == 's'){
+        myOrder(this.statusList, this.start1, this.limit).then( data => {
+          clData(data, that, this.start1, 's');
         })
+      }else{
+        myOrder(this.statusList, this.start2, this.limit).then( data => {
+          clData(data, that, this.start2, 'e');
+        })
+      }
+
+      function clData(data, that, start, type){
+        data.list.map( v => {
+          v.countString = formatAmount(v.countString, '', v.tradeCoin);
+        });
+        that.hasMore = true;
+        if(data.totalPage < start){
+          that.list = [];
+        }
+        if (data.totalPage <= start) {
+          that.hasMore = false;
+        }
+        that.list = [...that.list, ...data.list];
+        if(type == 's'){
+          that.start1 ++;
+        }else{
+          that.start2 ++;
+        }
+      }
     }
   },
   components: {
@@ -153,7 +175,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -260,6 +282,8 @@ export default {
   }
 
   .list-start {
+    height: 12rem;
+    overflow: scroll;
       .list {
           .text1 {
               .txt1 {
