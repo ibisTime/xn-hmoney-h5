@@ -124,6 +124,7 @@ export default {
     change1() {
       this.show1 = true;
       this.start1 = 1;
+      this.isLoading = true;
       this.type = 's';
       this.myWillAdverList = [];
       this.config.statusList = [0];
@@ -131,6 +132,7 @@ export default {
     },
     change2() {
       this.show1 = false;
+      this.isLoading = true;
       this.start2 = 1;
       this.type = 'e';
       this.myWillAdverList = [];

@@ -1,30 +1,29 @@
 <template>
   <div class="bill-details-wrapper" @click.stop>
       <div class='header'>
-            <p>
-                <i class='icon'></i>
+            <!-- <p>
                 <span class='title'>账单详情</span>
-            </p>
+            </p> -->
       </div>
       <div class='box'>
             <div class='mess'>
-                <p class='name'>转出</p>
-                <p class='num'>{{data.transAmount}}{{data.currency}}</p>
+                <p class='name'>{{type}}</p>
+                <p class='num'>{{data.transAmountString}} {{data.currency}}</p>
             </div>
       </div>
       <div class='main'>
           <div class='list'>
               <span class='txt1'>变动前金额</span>
-              <span class='txt2'>{{data.preAmount}}{{data.currency}}</span>
+              <span class='txt2'>{{data.preAmountString}} {{data.currency}}</span>
           </div>
           <div class='list'>
               <span class='txt1'>变动后金额</span>
-              <span class='txt2'>{{data.postAmount}}{{data.currency}}</span>
+              <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
-          <div class='list'>
+          <!-- <div class='list'>
               <span class='txt1'>手续费用</span>
-              <span class='txt2'>0.0002{{data.currency}}</span>
-          </div>
+              <span class='txt2'>{{fee}} {{data.currency}}</span>
+          </div> -->
           <div class='list'>
               <span class='txt1'>变动时间</span>
               <span class='txt2'>{{data.createDatetime}}</span>
@@ -33,30 +32,41 @@
               <span class='txt1'>明细状态</span>
               <span class='txt2'>{{data.bizNote}}</span>
           </div>
-          <div class='list'>
+          <!-- <div class='list'>
               <span class='txt1'>明细摘要</span>
               <span class='txt3'>转出至239120320190djkfdsahf djfafk djfafk djfafk</span>
-          </div>
+          </div> -->
       </div>
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate } from 'common/js/util';
+import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
 import { billDetails } from 'api/person';
+import {getSysConfig} from 'api/general';
 
 export default {
     data() {
         return {
-            data: []
+            data: [],
+            type: '',
+            fee: ''
         }
     },
     created() {
+        setTitle('账单详情');
+        this.type = getUrlParam('type');
         this.billDetails();
+        getSysConfig('trade_fee_rate').then(data => {
+            this.fee = data.cvalue;
+        })
     },
     methods: {
         billDetails() {
             billDetails(getUrlParam('code')).then((data) => {
-                this.data = data.list;
+                data.transAmountString = formatAmount(data.transAmountString, '', data.currency);
+                data.postAmountString = formatAmount(data.postAmountString, '', data.currency);
+                data.preAmountString = formatAmount(data.preAmountString, '', data.currency);
+                this.data = data;
                 this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd');
             });
         }

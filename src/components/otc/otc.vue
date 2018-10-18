@@ -159,7 +159,7 @@ export default {
   },
   mounted() {
     this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
-    this.config.tradeType = sessionStorage.getItem('tradeType');
+    this.config.tradeType = sessionStorage.getItem('tradeType') || '1';
     if(this.config.tradeType === '0'){
       this.flag1 = false;
       this.flag2 = true;

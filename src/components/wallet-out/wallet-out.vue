@@ -1,69 +1,109 @@
 <template>
   <div class="wallet-out-wrapper" @click.stop>
-    <header>
-      <p>
-      <i class='icon'></i>
-      <span class='txt1'>转出</span>
-      <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link>
-      </p>
-    </header>
     <div class='main'>
       <p class='text'>
         <span>可用余额</span>
         <input type="text" class='dis' readonly v-model="value">
+        <router-link :to="'wallet-bill'+'?accountNumber=' + config.accountNumber" style="margin-left: 0.6rem;">记录</router-link>
       </p>
       <p class='text'>
         <span>接受地址</span>
-        <input type="text" placeholder="请输入付币地址或扫码">
-        <i class='icon'></i>
+        <input type="text" placeholder="请输入转币地址" v-model="config.payCardNo">
       </p>
       <p class='text'>
         <span>转账数量</span>
-        <input type="text" placeholder="请输入付币数量">
+        <input type="text" placeholder="请输入转币数量" v-model="config.amount">
       </p>
+      <p class='text'>
+        <span>资金密码</span>
+        <input type="password" placeholder="请输入资金密码" v-model="config.tradePwd">
+      </p>
+      <!-- <p class='text'>
+        <span>谷歌验证码</span>
+        <input type="text" placeholder="请输入谷歌验证码" v-model="config.tradePwd">
+      </p> -->
+      <p class='text'>
+        <span>提现说明</span>
+      </p>
+      <div class="tx-box">
+        <textarea type="text" placeholder="请输入提现说明" v-model="config.applyNote"></textarea>
+      </div>
 
     </div>
     <div class='plan'>
-      <p class='text1'>
-        <span class='txt1'>矿工费</span>
-        <span class='txt2'>矿工费将在可用余额中扣除，余额不足将从转账金额扣除</span>
+      <p class='kgfee'>
+        矿工费：{{feeAmount}}
       </p>
-      <div class='progress'>
-        <div class='pro'>
-        </div>
-      </div>
       <p class='text2'>
-        <span>慢</span>
-        <span class='txt'>0 {{currency}}</span>
-        <span>快</span>
+        矿工费将在可用余额中扣除，余额不足将从转账金额扣除
+        <br>
+        在平台内相互转账是实时到账且免费的。
       </p>
     </div>
-    <button>确认转账</button>
+    <button @click="walletOut">确认转账</button>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
-import {walletOut} from '../../api/person';
-import { getUrlParam } from 'common/js/util';
+import {walletOut} from 'api/person';
+import {getSysConfig} from 'api/general';
+import { getUrlParam, getUserId, setTitle } from 'common/js/util';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
     return {
+      textMsg: '',
+      isLoading: false,
       currency: '',
       amount: '',
+      feeAmount: '',
       value: '',
-      accountNumber: ''
+      site:'',
+      paw: '',
+      bbNumber: '',
+      config: {
+        accountNumber: '',
+        amount: '',
+        applyNote: '',
+        applyUser: getUserId(),
+        payCardInfo: '',
+        payCardNo: '',
+        tradePwd: ''
+      }
     }
   },
   created() {
+    setTitle('转出');
     this.currency = getUrlParam('currency');
     this.amount = getUrlParam('amount');
     this.value = this.amount + this.currency;
-    this.accountNumber = getUrlParam('accountNumber');
+    this.config.accountNumber = getUrlParam('accountNumber');
+    this.config.payCardInfo = this.currency;
+    getSysConfig('withdraw_fee').then(data => {
+      this.feeAmount = data.cvalue;
+    })
   },
   methods: {
     walletOut() {
-      walletOut()
+      this.isLoading = true;
+      walletOut(this.config).then(data => {
+        this.isLoading = false;
+        this.textMsg = '操作成功';
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push(`/wallet-bill?accountNumber=${this.config.accountNumber}`);
+        }, 1500);
+      }, () => {
+        this.isLoading = false;
+      })
     }
+  },
+  components: {
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -122,13 +162,22 @@ export default {
       padding: 0 .3rem;
       background: #fff;
       margin-bottom: .2rem;
-
+      .tx-box{
+        text-align: left;
+        textarea{
+          width: 100%;
+          height: 2rem;
+          padding: .2rem .2rem;
+          border: 1px solid #eee;
+        }
+      }
       .text {
         width: 100%;
         height: 1rem;
         border-bottom: .01rem solid #E5E5E5;
         line-height: 1rem;
         display: flex;
+        position: relative;
         span {
           display: inline-block;
           float: left;
@@ -141,11 +190,17 @@ export default {
           font-size: .3rem;
           color: #d53d3d;
           line-height: 1rem;
-          
+        }
+        .error-tip {
+          position: absolute;
+          font-size: 0.3rem;
+          color:red;
+          right: .3rem;
+          top: .6rem;
         }
 
         input {
-          width: 2.8rem;
+          width: 4rem;
           height: .42rem;
           margin-top: .3rem;
           font-size: .28rem;
@@ -157,7 +212,7 @@ export default {
           height: .36rem;
           @include bg-image("扫一扫-黑色");
           margin-top: .34rem;
-          margin-left: 1.78rem;
+          margin-left: 0.78rem;
         }
       }
     }
@@ -165,10 +220,14 @@ export default {
     .plan {
       width: 100%;
       padding: 0 .3rem;
-      height: 2.7rem;
       background: #fff;
       margin-bottom: .8rem;
-
+      padding-bottom: 0.3rem;
+      .kgfee{
+          text-align: left;
+          padding-top: 0.4rem;
+          padding-bottom: 0.2rem;
+        }
       .text1 {
         padding-top: .34rem;
         padding-bottom: .82rem;
@@ -185,8 +244,6 @@ export default {
           font-size: .22rem;
           color: #b5b5b5;
         }
-
-        
       }
 
       .progress {

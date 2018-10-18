@@ -1,17 +1,10 @@
 <template>
   <div class="wallet-into-wrapper" @click.stop>
-    <header>
-      <p>
-      <i class='icon'></i>
-      <span class='txt1'>转入</span>
-      <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link>
-      </p>
-    </header>
-    <div class='prompt'>
+    <div class='prompt' v-show="txtShow">
         <p class='text'>
-            {{currency}}钱包地址禁止充值除BTC之外额其他资产，任何{{currency}}资产充值将不可找回
+            {{currency}}钱包地址禁止充值除{{currency}}之外其他资产，任何{{currency}}资产充值将不可找回
         </p>
-        <i class='icon'></i>
+        <i class='icon' @click="txtShow = false"></i>
     </div>
     <p class='my-address'>
         我的转入地址
@@ -22,24 +15,26 @@
         </div>
     </div>
     <div class='address'>
-        <p class='txt'>地址</p>
+        <p class='txt'>地址 <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link></p>
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
     <button @click='CopyUrl'>复制收款地址</button>
   </div>
 </template>
 <script>
-import { getUrlParam } from 'common/js/util';
+import { getUrlParam, setTitle } from 'common/js/util';
 const QRCode = require('js-qrcode');
 export default {
   data() {
     return {
+      txtShow: true,
       adress: '',
       currency: '',
       accountNumber: ''
     };
   },
   created() {
+    setTitle('转入');
     this.adress = getUrlParam('adress');
     this.currency = getUrlParam('currency');
     this.accountNumber = getUrlParam('accountNumber');
@@ -52,14 +47,13 @@ export default {
     }
   },
   mounted() {
-    this.wxUrl = 'http://www.baidu.com';
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,
       correctLevel: 2,
       foreground: '#000000'
     });
-    qr.make(this.wxUrl);
+    qr.make(this.adress);
   }
 };
 </script>
@@ -108,14 +102,15 @@ export default {
       }
     }
   }
-
+  .txt2{
+      float: right;
+    }
   .prompt {
     width: 100%;
     height: 1rem;
     background: #fff6eb;
     padding: 0.16rem 0.3rem 0.18rem;
     position: relative;
-
     .text {
       width: 6.26rem;
       display: inline-block;

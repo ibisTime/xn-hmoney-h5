@@ -36,7 +36,7 @@
             </router-link>           
           </div>
           <div class="tabCar bibi">
-            <router-link to=''>
+            <router-link to='trading'>
               <div class="tab-text">
                 <p class="tit">币币交易</p>
                 <p class="con">24h全球实时行情</p>
@@ -52,7 +52,7 @@
             </router-link>
           </div>
           <div class="tabCar introduce">
-            <router-link to=''>
+            <router-link to='about-platformIntroduced?ckey=about_us'>
               <div class="tab-text">
                 <p class="tit">平台介绍</p>
                 <p class="con">让你更加的了解我们</p>
@@ -63,6 +63,7 @@
     </scroll>
     <div class="foot"></div>
     <Footer></Footer>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -70,6 +71,7 @@
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
   import Scroll from 'base/scroll/scroll';
+  import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
   import {getBbListData} from 'api/otc';
@@ -79,7 +81,8 @@
         banners: [
           './banner@2x.png'
           // './banner@2x.png'
-        ]
+        ],
+        isLoading: true
       };
     },
     created() {
@@ -90,6 +93,9 @@
     mounted() {
       getBbListData().then(data => {
         sessionStorage.setItem('coinData', JSON.stringify(data));
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
       });
     },
     computed: {
@@ -120,7 +126,8 @@
     components: {
       Slider,
       Scroll,
-      Footer
+      Footer,
+      FullLoading
     }
     // beforeRouteLeave(to, from, next) {
     //   if(to.path === '/login' || to.path === '/registered') {

@@ -72,6 +72,7 @@ export function clearUser() {
   delCookie('__sig__');
   delCookie('__accountType__');
   delCookie('__txAppCode__');
+  sessionStorage.clear();
 }
 
 // 是否登录

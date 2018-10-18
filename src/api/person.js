@@ -73,13 +73,8 @@ export function reistered(mobile, loginPwd, smsCaptcha ,nickname) {
 }
 
 // 邮箱注册
-export function reisteredEamil(captcha, email, loginPwd, nickname) {
-  return fetch(805043, {
-    captcha,
-    email,
-    loginPwd,
-    nickname
-  });
+export function reisteredEamil(config) {
+  return fetch(805043, config);
 }
 
 // 获取手机验证码
@@ -99,7 +94,7 @@ export function getSmsCaptcha2(bizType, email) {
 }
 
 // 钱包
-export function wallet(userId) {
+export function wallet() {
   return fetch(802301, {
     userId: getUserId()
   });
@@ -140,6 +135,32 @@ export function changeTradPwd(newTradePwd, smsCaptcha, userId) {
     smsCaptcha,
     userId
   })
+}
+
+//获取谷歌密码
+export function getGooglePwd() {
+  return fetch("630094");
+}
+
+/**
+ * 开启谷歌验证
+ * @param config {googleCaptcha, secret, smsCaptcha}
+ */
+export function openGoogle(config) {
+  return fetch("805088", {
+      userId: getUserId(),
+      ...config
+  });
+}
+/**
+ * 关闭谷歌验证
+ */
+export function closeGoogle(googleCaptcha, smsCaptcha) {
+    return fetch("805089", {
+        googleCaptcha,
+        smsCaptcha,
+        userId: getUserId()
+    });
 }
 
 // 我的获客
@@ -210,24 +231,13 @@ export function commentOrder(code, comment) {
 }
 
 // 钱包 -- 转出
-export function walletOut(accountNumber, amount, applyNote, applyUser, payCardInfo, payCardNo) {
-  return fetch(802350, {
-    accountNumber,
-    amount,
-    applyNote,
-    applyUser,
-    payCardInfo,
-    payCardNo
-  })
+export function walletOut(config) {
+  return fetch(802350, config)
 }
 
 // 钱包 -- 账单
-export function walletBill(accountNumber, start = 0, limit = 10) {
-  return fetch(802322, {
-    accountNumber,
-    start,
-    limit
-  })
+export function walletBill(config) {
+  return fetch(802322, config);
 }
 
 // 钱包 -- 账单 -- 账单详情
@@ -237,10 +247,16 @@ export function billDetails(code) {
   })
 }
 
-// 查盘口
-export function dishMouth(symbol, toSymbol) {
-  return fetch(650065, {
-    symbol,
-    toSymbol
+// 获取银行卡
+export function getBankData() {
+  return fetch('802026', {
+      status: '1'
+  })
+}
+
+// 获取银行渠道
+export function getGmBankData() {
+  return fetch('802116', {
+      status: '1'
   })
 }

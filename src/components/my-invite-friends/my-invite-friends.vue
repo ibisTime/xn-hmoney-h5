@@ -19,7 +19,6 @@
           <div class='text'>
               <p class='txt1'>梵蒂冈</p>
               <p class='txt2'>邀请你加入FUN MVP</p>
-              <p class='txt3'>长按识别二维码</p>
           </div>
           <div id='qrcode'></div>
       </div>
@@ -37,14 +36,13 @@ export default {
   mounted() {
     this.userId = getUserId();
     this.wxUrl = window.location.origin + '/registered' + '?invitecode=' + getUserId();
-    this.Url = this.wxUrl+this.userId;
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,
       correctLevel: 2,
       foreground: '#000000'
     });
-    qr.make(this.Url);
+    qr.make(this.wxUrl);
   }
 };
 </script>

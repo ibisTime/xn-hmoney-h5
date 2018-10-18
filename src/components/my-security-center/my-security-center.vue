@@ -21,10 +21,11 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to=''>
+        <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
             <p>
             <span>谷歌认证</span>
             <i class='icon'></i>
+            <span class='tel'>{{googleAuthFlag == false ? '' : '已开启'}}</span>
             </p>
         </router-link>
         <router-link v-show="show" class='tag' to='security-bindingEmail'>
@@ -77,7 +78,8 @@ export default {
       show: true,
       show1: true,
       email: '',
-      mobile: ''
+      mobile: '',
+      googleAuthFlag: false
     };
   },
   created() {
@@ -86,6 +88,7 @@ export default {
       this.email = data.email;
       data.emailBindFlag === false ? this.show = true : this.show = false;
       this.mobile === '' ? this.show1 = true : this.show1 = false;
+      this.googleAuthFlag = data.googleAuthFlag;
     });
   },
   methods: {

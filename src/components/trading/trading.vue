@@ -34,36 +34,36 @@
         <div v-show="show1" class="left">
           <p class='he9'>
             <input type="text" placeholder="委托价格" v-model="xjPrice">
-            <span class='black'>{{setBazDeal.symbol}}</span>
+            <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <p class='text2'>
             <span>折合CNY</span>
-            <span class='red'>￥{{(Math.floor((xjPrice * syMid) * 100) / 100).toFixed(2)}}</span>
+            <span class='red'>￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
             <input type="text" placeholder="委托数量" v-model="wetNumber">
-            <span class='black'>{{setBazDeal.toSymbol}}</span>
+            <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
           <p class='he9 no-bor'>
-            <span>交易额：{{}}</span>
+            <span>交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <button class='buy'>买入{{setBazDeal.symbol}}</button>
           <p class='he9 red'>
             <span>可用 {{setBazDeal.symbol}}</span>
-            <span>0.04</span>
+            <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red'>
-            <span>可买 {{setBazDeal.toSymbol}}</span>
-            <span>0</span>
+            <span>可买{{setBazDeal.symbol}}</span>
+            <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
             <span>可用 {{setBazDeal.toSymbol}}</span>
-            <span class='black'>12.5</span>
+            <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn'>
             <span>冻结 {{setBazDeal.symbol}}</span>
-            <span class='black'>0</span>
+            <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
           </p>
         </div>
         <!-- 卖出 -->
@@ -105,78 +105,18 @@
 
         <div class="right">
           <div class='one'>
-            <p class='text1'>
-              <span class='green txt1'>卖7</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖6</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖5</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖4</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖3</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖2</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='green txt1'>卖1</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
+            <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index">
+              <span class='green txt1'>卖{{7 - index}}</span>
+              <span class='txt2'>{{sellItem.price}}</span>
+              <span class='txt3'>{{sellItem.count}}</span>
             </p>
           </div>
           <p class='middle'><span class='red'>￥ 8022.00</span><i class='icon'></i></p>
           <div class='one two'>
-            <p class='text1'>
-              <span class='red txt1'>买7</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买6</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买5</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买4</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买3</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买2</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
-            </p>
-            <p class='text1'>
-              <span class='red txt1'>买1</span>
-              <span class='txt2'>9015.71</span>
-              <span class='txt3'>0.0014</span>
+            <p class='text1' v-for="(buyItem, index) in bbBids" :key="index">
+              <span class='red txt1'>买{{index}}</span>
+              <span class='txt2'>{{buyItem.price}}</span>
+              <span class='txt3'>{{buyItem.count}}</span>
             </p>
           </div>
 
@@ -331,8 +271,9 @@
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {dishMouth} from 'api/person';
-import {getBazaarData, getBBExchange} from 'api/bb';
+import { formatAmount, setTitle } from "common/js/util";
+import {dishMouth, wallet} from 'api/person';
+import {getBazaarData, getBBExchange, getHandicapData} from 'api/bb';
 
 export default {
   data() {
@@ -347,10 +288,15 @@ export default {
       symNumber: '0',
       setBazDeal: {},    // 选中的交易对
       symBazList: [],    // 交易对
-      bazDealList: [] 
+      bazDealList: [],
+      symWallet: {},     // symbol资产
+      toSymWallet: {},   // toSymbol资产
+      bbAsks: [],        // 卖盘
+      bbBids: [],        // 买盘
     };
   },
   created() {
+    setTitle('币币交易');
     this.dishMouth();
     getBazaarData().then(data => {  // 查询交易对
       this.syMid = data.list[0].currencyPrice;
@@ -365,20 +311,54 @@ export default {
       getBBExchange('CNY', this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
         this.toSyMid = data[0].mid;
       });
+      this.getUserWalletData();
+      this.handicapData();
     });
   },
   computed: {
   },
   methods: {
-    aboutCnyData(){
-      
+    getUserWalletData(){
+      // 查询用户资产
+      wallet().then(data => {
+        data.map( item => {
+          item.amount = formatAmount(`${item.amount}`, '', item.currency);
+          item.frozenAmount = formatAmount(`${item.frozenAmount}`, '', item.currency);
+        })
+        data.forEach( item => {
+          if(item.currency == this.setBazDeal.symbol){
+            this.symWallet = item;
+          }
+          if(item.currency == this.setBazDeal.toSymbol){
+            this.toSymWallet = item;
+          }
+        });
+        this.symWallet.kyAmount = this.symWallet.amount - this.symWallet.frozenAmount;
+        this.toSymWallet.kyAmount = this.toSymWallet.amount - this.toSymWallet.frozenAmount;
+      });
     },
     changeSymBaz(){ // 选择交易对 this.symNumber : 0  X/BTC    1  X/ETH
       this.setBazDeal = {
         symbol: this.symBazList[this.symNumber].symbol,
         toSymbol: this.symBazList[this.symNumber].toSymbol
       }
-      console.log(this.setBazDeal);
+      this.getUserWalletData();
+      this.handicapData();
+    },
+    handicapData(){
+      // 查询盘口
+      getHandicapData(this.setBazDeal).then(data => {
+        this.bbAsks = data.asks.sort( (a, b) => (b - a) );
+        this.bbBids = data.bids;
+        this.bbAsks.map(item => {
+          item.price = formatAmount(`${item.price}`, '', this.setBazDeal.symbol);
+          item.count = formatAmount(`${item.count}`, '', this.setBazDeal.toSymbol);
+        });
+        this.bbBids.map(item => {
+          item.price = formatAmount(`${item.price}`, '', this.setBazDeal.symbol);
+          item.count = formatAmount(`${item.count}`, '', this.setBazDeal.toSymbol);
+        });
+      });
     },
     buy() {
       this.show1 = true;
@@ -615,6 +595,11 @@ export default {
         }
       }
     }
+    .max-len{
+      max-width: 2.3rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     .entrust {
       width: 100%;
@@ -705,7 +690,7 @@ export default {
         .ico1 {
           width: .2rem;
           height: .36rem;
-          @include bg-image("返回白色");
+          background-image: url('./fbai.png');
           margin-top: .21rem;
         }
         .ico2 {
@@ -802,6 +787,7 @@ export default {
           }
         }
       }
+      
 
     }
   }

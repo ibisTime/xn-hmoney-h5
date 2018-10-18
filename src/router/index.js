@@ -57,6 +57,8 @@ const Mine = () => import('components/mine/mine');
 const MyCurrency = () => import('components/my-currency/my-currency');
 // 我的 -- 安全中心
 const mySecurityCenter = () => import('components/my-security-center/my-security-center');
+// 安全中心 -- 谷歌认证
+const securityGoogle = () => import('components/security-google-certification/security-google');
 // 安全中心 -- 交易密码 
 const securityTradePassword = () => import('components/security-trade-password/security-trade-password');
 // 安全中心 -- 身份认证 
@@ -239,6 +241,10 @@ export default new Router({
     {
       path: '/security-center',
       component: mySecurityCenter
+    },
+    {
+      path: '/security-google',
+      component: securityGoogle
     },
     {
       path: '/security-tradePassword',

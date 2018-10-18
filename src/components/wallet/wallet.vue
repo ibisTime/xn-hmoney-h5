@@ -7,18 +7,8 @@
         <p class='txt1'><span class='icon ico'></span>总资产 {{cdInfo[0].currency}} 币</p>
         <div class='txt2' style='margin-top:.3rem;'>
           <p class='t1'>{{cdInfo[0].amount}}</p>
-          <!-- <p class='t1'>{{amount}}</p> -->
-          <!-- <p class='t2'>≈60000.00 CNY</p> -->
         </div>
         <div class='txt3'>
-          <!-- <div class='left'>
-            <p>币币资产 0.000987</p>
-            <p>≈60000.00 CNY</p>
-          </div>
-          <div class='right'>
-            <p>场外资产 0.000987</p>
-            <p>≈60000.00 CNY</p>
-          </div> -->
         </div>
       </div>
       <div class='dollar'>
@@ -32,11 +22,11 @@
         <div class='my'>
           <p class='txt1'>{{infoItem.currency}}币种资产({{infoItem.currency}})</p>
           <p class='txt2'>{{infoItem.amount}}</p>
-          <p class='txt3'><span>冻结{{infoItem.frozenAmount}}</span><span>可用{{infoItem.amount - infoItem.frozenAmount}} {{infoItem.currency}}</span><span></span></p>
+          <p class='txt3'><span :title="infoItem.frozenAmount">冻结{{infoItem.frozenAmount}}</span><span :title="infoItem.amount - infoItem.frozenAmount">可用{{infoItem.amount - infoItem.frozenAmount}} {{infoItem.currency}}</span></p>
         </div>
         <div class='datil'>
           <div class='box'><i class='icon ico1'></i><router-link :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link :to="'wallet-out' + '?currency=' + infoItem.currency + '&amount=' + infoItem.amount + '&accountNumber=' + infoItem.accountNumber ">转出</router-link></div>|
+          <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i class='icon ico2'></i><span>转出</span></div>|
           <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link></div>
         </div>
         <div class='operate' v-show="infoItem.currency == 'X'">
@@ -45,16 +35,22 @@
         </div>
       </div>
       <Footer></Footer>
+      <Toast :text="textMsg" ref="toast" />
+      <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {wallet} from '../../api/person';
-import {getUserId, formatAmount, moneyParse, moneyReplaceComma, moneyFormatSubtract, getCoinList, setCoinData, setTitle } from '../../common/js/util';
+import {wallet, getUser} from 'api/person';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
+import {getUserId, formatAmount, moneyParse, moneyReplaceComma, moneyFormatSubtract, getCoinList, setCoinData, setTitle } from 'common/js/util';
 
 export default {
   data() {
     return {
+      textMsg: '',
+      isLoading: true,
       info: [{}, {}, {}],
       cdInfo: [{}]
     };
@@ -64,7 +60,7 @@ export default {
     setTitle('我的资产');
     this.wallet();
   },
-  methods: {
+  methods: {//:to=""
     wallet() {
       wallet().then(v => {
         v.map( v => {
@@ -75,11 +71,35 @@ export default {
           return item.currency == 'X';
         });
         this.info = v;
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
+    },
+    zcMoneyFn(currency, amount, accountNumber){
+      getUser().then(data => {
+        if (data.tradepwdFlag && data.realName) {
+          this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
+        } else if(!data.realName) {
+          this.textMsg = '请先进行身份验证';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/security-center');
+          }, 1500);
+        } else if(!data.tradepwdFlag){
+          this.textMsg = '请先设置资金密码';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/security-center');
+          }, 1500);
+        }
       });
     }
   },
   components: {
-    Footer
+    Footer,
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -237,6 +257,12 @@ export default {
         color: #999;
         display: flex;
         justify-content: space-between;
+        span{
+          width: 49%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
     .datil {

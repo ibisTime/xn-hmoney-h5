@@ -15,3 +15,8 @@ export function getBBExchange(ex_type, toSymbol) {
         referCurrency: ex_type
     });
 }
+
+// 盘口查询
+export function getHandicapData(setBazDeal) {
+    return fetch("650065", setBazDeal, true);
+}

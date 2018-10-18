@@ -25,8 +25,9 @@
             <p class="yzm">
             <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
-            <input type="button" class="getYam" @click="getSca1" value="获取验证码">
-            <input v-show="!flag" type="button" class="getYam" @click="getSca2" value="获取验证码">
+            <input v-show="!fscg" type="button" class="getYam" @click="getSca1(type)" value="获取验证码">
+            <!-- <input v-show="!flag" v-if="fscg" type="button" class="getYam" @click="getSca2" value="获取验证码"> -->
+            <span class="cxfs" v-if="fscg">重新发送({{time}}s)</span>
             </p>
             <p>
             <input required v-model="password1" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合不少于6位">
@@ -37,7 +38,7 @@
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p class="check">
-            <span click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span>我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
+            <span click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="showZcxyTxt">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
             <input type="submit" @click="regist" value="注册">
           </div>
@@ -50,14 +51,17 @@ import {
   reisteredEamil,
   getSmsCaptcha1,
   getSmsCaptcha2
-} from "../../api/person";
-import { rePwdValid } from "../../common/js/util";
+} from "api/person";
+import { rePwdValid, getUrlParam } from "common/js/util";
 
 export default {
   props: {},
   data() {
     return {
+      fscg: false,
       flag: true,
+      type:'0',         // 0 手机注册   1 邮箱注册
+      time: 60,
       phone: "",
       email: "",
       smsCaptcha: "",
@@ -66,37 +70,80 @@ export default {
       password2: "",
       bizType1: "805041",
       bizType2: "805043",
-      checked: true
+      checked: true,
+      inviteCode: '',
+      config: {}
     };
+  },
+  created() {
+    this.inviteCode = getUrlParam('inviteCode');
   },
   computed: {},
   methods: {
     changeFlag1() {
+      this.type = '0';
       this.flag = true;
     },
     changeFlag2() {
+      this.type = '1';
       this.flag = false;
     },
     goBack() {
       this.$router.go(-1);
     },
     getSca1() {
-      getSmsCaptcha1(this.bizType1, this.phone).then(data => {});
-    },
-    getSca2() {
-      getSmsCaptcha2(this.bizType2, this.email).then(data => {});
-    },
-    regist() {
-      if(this.flag == false) {
-        reisteredEamil( this.smsCaptcha, this.email, this.password1, this.nickname).then(data => {
-          this.$router.push('login');
+      if(this.type == '0'){
+        getSmsCaptcha1(this.bizType1, this.phone).then(data => {
+          this.fscg = true;
+          let phTime = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(phTime);
+              this.fscg = false;
+              this.time = 60;
+            }
+          }, 1000);
         });
-      } else {
-        reistered(this.phone, this.password1, this.smsCaptcha, this.nickname).then(data => {
-          this.$router.push('login');
+      }else{
+        getSmsCaptcha2(this.bizType2, this.email).then(data => {
+          this.fscg = true;
+          let phTime = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(phTime);
+              this.fscg = false;
+              this.time = 60;
+            }
+          }, 1000);
         });
       }
-    }
+    },
+    regist() {
+      if(this.errors.items.length == 0 && this.nickname && this.password1 && this.password2 && smsCaptcha){
+        this.config = {
+          captcha: this.smsCaptcha,
+          email: this.email,
+          phone: this.phone,
+          loginPwd: this.password1,
+          nickname: this.nickname
+        }
+        if(this.inviteCode != '' && this.inviteCode != undefined){
+          this.config.inviteCode = this.inviteCode;
+        }
+        if(this.flag == false) {
+          delete this.config.phone;
+          reisteredEamil(this.config).then(data => {
+            this.$router.push('login');
+          });
+        } else {
+          delete this.config.email;
+          reistered(this.config).then(data => {
+            this.$router.push('login');
+          });
+        }
+      }
+    },
+    showZcxyTxt(){}
   },
   components: {}
 };
@@ -189,9 +236,9 @@ export default {
       position: relative;
     }
 
-    .getYam {
+    .getYam{
       position: absolute;
-      top: 0.5rem;
+      top: 0.3rem;
       width: 2.1rem;
       height: 0.68rem;
       border: 0.02rem solid #d53d3d;
@@ -234,6 +281,20 @@ export default {
           color: #d53d3d;
         }
       }
+    }
+    .cxfs{
+      position: absolute;
+      top: 0.3rem;
+      right: 0;
+      font: 0.26rem/.68rem PingFangSC-Regular;
+      font-size: 0.32rem;
+      width: 2.45rem;
+      text-align: center;
+      height: 0.78rem;
+      line-height: 0.78rem;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 0.04rem;
     }
   }
 }

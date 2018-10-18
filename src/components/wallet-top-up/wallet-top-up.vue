@@ -10,10 +10,10 @@
     </header>
     <div class='tabs'>
         <p>
-            <span :class="[ show ? 'select' : '' ]" @click='buy'>买入</span>
+            <span :class="[ show ? 'select' : '' ]" @click='toBuy'>买入</span>
         </p>
         <p>
-            <span :class="[ !show ? 'select' : '' ]" @click='sell'>卖出</span>
+            <span :class="[ !show ? 'select' : '' ]" @click='toSell'>卖出</span>
         </p>
     </div>
     <div class='public'>
@@ -22,39 +22,39 @@
             <span class='txt1'>单价：<i class='txt2'>￥</i></span>
             <span class='txt3'>44315</span>
         </p>
-        <i class='icon'></i>
+        <!-- <i class='icon'></i> -->
     </div>
 
     <div class='main'> 
         <!-- 买入显示内容 -->
         <div v-show='show' class='area'>
             <p class='tab'>
-                <span :class="[ show ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !show ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
             </p>
             <p class='inp'>
-                <input type="text" placeholder="输入购买金额">
+                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'">
                 <span class='txt1'>CNY</span>
             </p>
             <p class='money'>
                 <span class='txt1'>≈0.0000 X</span>
-                <span class=txt2>手续费：<i class=txt3>0.2%</i></span>
+                <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
             </p>
         </div>
         <!-- 卖出显示内容 -->
         <div v-show="!show" class='area'>
             <p class='tab'>
-                <span :class="[ show ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !show ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
                 <span class='text3'>可用<i>0.000000</i>X</span>
             </p>
             <p class='inp'>
-                <input type="text" placeholder="输入卖出数量">
+                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'">
                 <span class='txt1'><i class='txt'>x</i>全部</span>
             </p>
             <p class='money'>
                 <span class='txt1'>≈0.0000 CNY</span>
-                <span class=txt2>手续费：<i class=txt3>0.2%</i></span>
+                <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
             </p>
         </div>
 
@@ -66,24 +66,68 @@
                 <i class='icon icon2'></i>
             </span>
         </div>
+        <div class="payNum" v-show="!show">
+          <input type="text" placeholder="请输入账号或卡号">
+        </div>
+        <div class="payPaw" v-show="!show">
+          <p>资金密码</p>
+          <input type="text" placeholder="请输入资金密码">
+        </div>
         <button v-show='show'>确认购买</button>
         <button v-show='!show'>确认出售</button>
-
     </div>
   </div>
 </template>
 <script>
+import {getAdverMessage} from 'api/otc';
+import {getUserId} from 'common/js/util';
+import {getBankData, getGmBankData} from 'api/person';
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      showDet: true,
+      fvData: '',
+      buyConfig: {
+        tradeCurrency: 'CNY',
+        tradePrice: '',
+        userId: getUserId(),
+        count: '',
+        receiveType: '',
+        tradeAmount: ''
+      },
+      zfType: {},      // 去购买支付方式
+      zfNumber: {},
+      gmType: {}       // 去出售支付方式
     };
+  },
+  created() {
+    getAdverMessage('simu_order_rule').then(data => {
+      this.fvData = parseFloat(data.simu_order_fee_rate) * 100;
+    });
+    getBankData().then(data => {
+      data.forEach(item => {
+        this.zfType[item.bankName] = item.bankCode;
+        this.zfNumber[item.bankName] = item.bankcardNumber;
+      })
+    });
+    getGmBankData().then(data => {
+      data.forEach(item => {
+        this.gmType[item.bankName] = item.bankCode;
+      })
+    });
   },
   methods: {
     buy() {
-      this.show = true;
+      this.showDet = true;
     },
     sell() {
+      this.showDet = false;
+    },
+    toBuy() {
+      this.show = true;
+    },
+    toSell() {
       this.show = false;
     }
   }
@@ -307,6 +351,36 @@ export default {
         @include bg-image("更多");
         vertical-align: middle;
         margin-left: 0.12rem;
+      }
+    }
+    .payNum{
+      width: 100%;
+      padding: 0.1rem 0.3rem;
+      background-color: #fff;
+      line-height: 1.1rem;
+      color: #323232;
+      input{
+        width: 100%;
+        padding: 0.1rem 0.3rem;
+        border: 1px solid #eee;
+        border-radius: 0.08rem;
+        height: 0.8rem;
+      }
+    }
+    .payPaw{
+      width: 100%;
+      padding: 0.1rem 0.3rem;
+      background-color: #fff;
+      color: #323232;
+      p{
+        margin-bottom: 0.2rem;
+      }
+      input{
+        width: 100%;
+        padding: 0.1rem 0.3rem;
+        border: 1px solid #eee;
+        border-radius: 0.08rem;
+        height: 0.8rem;
       }
     }
 
