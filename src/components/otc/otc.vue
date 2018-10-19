@@ -146,7 +146,7 @@ export default {
       url: 'otc-buy',
       hasMore: true,
       start1: 1,
-      start2: 2,
+      start2: 1,
       limit: 10,
       textMsg: '',
       type: 's'
@@ -207,9 +207,15 @@ export default {
     // 根据条件查询数据
     selHbName(){
       this.config.tradeCurrency = this.$refs.select_hb.value;
+      this.start1 = 1;
+      this.start2 = 1;
+      this.bbDataList = [];
       this.getBBListData();
     },
     selPayType(){
+      this.start1 = 1;
+      this.start2 = 1;
+      this.bbDataList = [];
       this.config.payType = this.$refs.select_pay.value;
       this.getBBListData();
     },

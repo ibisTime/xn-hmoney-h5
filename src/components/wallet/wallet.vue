@@ -30,8 +30,8 @@
           <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link></div>
         </div>
         <div class='operate' v-show="infoItem.currency == 'X'">
-          <router-link to='wallet-top-up' class='txt1'>充值</router-link>|
-          <router-link to='wallet-top-up' class='txt2'>提现</router-link>
+          <router-link to='wallet-top-up?type=buy' class='txt1'>充值</router-link>|
+          <router-link to='wallet-top-up?type=sell' class='txt2'>提现</router-link>
         </div>
       </div>
       <Footer></Footer>

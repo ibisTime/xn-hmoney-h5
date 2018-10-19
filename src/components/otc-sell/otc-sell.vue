@@ -82,7 +82,7 @@
 </template>
 <script>
 import { getUrlParam } from 'common/js/util';
-import { otcBuy } from "../../api/person";
+import { otcBuy } from "api/otc";
 
 export default {
   data() {

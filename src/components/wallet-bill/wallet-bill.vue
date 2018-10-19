@@ -1,27 +1,19 @@
 <template>
   <div class="bill-wrapper" @click.stop>
-    <header>
+    <!-- <header>
       <p>
       <i class='icon'></i>
       <span class='txt1'>账单</span>
       <span class='txt2'>筛选
-        <!-- <select name="" id="" v-model="billType" @change="walletTypeFn">
-          <option value="">全部</option>
-          <option value="charge">充币</option>
-          <option value="withdraw">提币</option>
-          <option value="ccorder_buy">交易买入</option>
-          <option value="ccorder_sell">交易卖出</option>
-          <option value="accept_buy">场外承兑商购买</option>
-          <option value="accept_sell">场外承兑商出售</option>
-          <option value="ccorder_fee">交易手续费</option>
-          <option value="withdraw_fee">提现手续费</option>
-          <option value="award_reg">邀请好友收入</option>
-          <option value="">冻结记录</option>
-        </select> -->
+        
       </span>
       </p>
-    </header>
+    </header> -->
     <div class='list-wrap'>
+      <p class="wallet-p"></p>
+      <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
+        <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
+        </select>
       <Scroll 
         ref="scroll"
         :data="list"
@@ -62,7 +54,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate, formatAmount } from 'common/js/util';
+import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
 import { walletBill } from 'api/person';
 import { getDictList } from 'api/general';
 import Scroll from 'base/scroll/scroll';
@@ -75,6 +67,39 @@ export default {
       hasMore: true,
       billType: '',
       list: [],
+      watlleType: [
+        {
+          key: '',
+          value: '全部'
+        },{
+          key: 'charge',
+          value: '充币'
+        },{
+          key: 'withdraw',
+          value: '提币'
+        },{
+          key: 'ccorder_buy',
+          value: '交易买入'
+        },{
+          key:'ccorder_sell',
+          value: '交易卖出'
+        },{
+          key: 'accept_buy',
+          value: '场外承兑商购买'
+        },{
+          key: 'accept_sell',
+          value: '场外承兑商出售'
+        },{
+          key: 'ccorder_fee',
+          value: '交易手续费'
+        },{
+          key: 'withdraw_fee',
+          value: '提现手续费'
+        },{
+          key: 'award_reg',
+          value: '邀请好友收入'
+        }
+      ],
       code: '12345',
       start: 1,
       limit: 10,
@@ -88,6 +113,7 @@ export default {
     }
   },
   created() {
+    setTitle('币币交易账单');
     this.config.accountNumber = getUrlParam('accountNumber');
     getDictList('jour_biz_type_user').then(data => {
       data.forEach((item) => {
@@ -99,7 +125,10 @@ export default {
   methods: {
     walletTypeFn(){
       // 筛选
+      this.FullLoading = true;
       this.config.bizType = this.billType;
+      this.start = 1;
+      this.list = [];
       this.walletBill();
     },
     walletBill() { // 充币：charge     提币：withdraw
@@ -270,8 +299,28 @@ export default {
   }
 
   .list-wrap{
-    height: 12rem;
+    position: relative;
+    height: 13rem;
     overflow: scroll;
+    .wallet-p{
+      position: absolute;
+      right: 15%;
+      bottom: 0.4rem;
+      z-index: 5;
+      height: 1rem;
+      width: 1rem;
+      background-image: url('./sxuan.png');
+      background-size: 100%;
+    }
+    #wallet-set{
+      position: absolute;
+      opacity: 0;
+      right: 15%;
+      bottom: 0.4rem;
+      z-index: 9;
+      height: 1rem;
+      width: 1rem;
+    }
   }
 
 

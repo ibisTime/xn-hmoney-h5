@@ -319,5 +319,8 @@ export default new Router({
       component: Homepage
     }
   ],
-  mode: 'history'
+  mode: 'history',
+  scrollBehavior(to, from, savedPosition) { // vue滚动行为
+      return { x: 0, y: 0 };
+  }
 });

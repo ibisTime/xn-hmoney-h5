@@ -260,3 +260,41 @@ export function getGmBankData() {
       status: '1'
   })
 }
+
+// 数字货币折合
+export function getNumberMoney(symbol, referCurrency){
+  return fetch('650102', {
+      symbol,
+      referCurrency
+  })
+}
+
+// 购买X币
+export function buyX(config) {
+  return fetch('625270', config);
+}
+
+// 出售X币
+export function sellX(config) {
+  return fetch('625271', config);
+}
+
+//分页查询我的承兑商信息
+export function getCTSData(config) {
+  return fetch('625287', config);
+}
+
+//详情查询我的承兑商信息
+export function getCTSDetail(config) {
+  return fetch('625286', config);
+}
+
+// 标记付款
+export function bjPlayfo(config) {
+  return fetch('625273', config);
+}
+
+// 取消订单
+export function qxOrder(config) {
+  return fetch('625272', config);
+}

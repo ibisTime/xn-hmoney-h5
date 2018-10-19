@@ -115,6 +115,7 @@
         <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">保存草稿</button>
     </div>
     <showMsg :text="text" ref="showMsg"/>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -123,12 +124,14 @@ import showMsg from 'base/showMsg/showMsg';
 import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 import { wallet } from 'api/person';
+import FullLoading from 'base/full-loading/full-loading';
 
 const message = new Message();
 
 export default {
   data() {
     return {
+      isLoading: true,
       text: '',
       count: '',
       walletMon: '', // 余额
@@ -291,6 +294,9 @@ export default {
           return item.currency == this.config.tradeCoin;
         });
         this.walletMon = formatMoneySubtract(`${wallet[0].amount}`, `${wallet[0].frozenAmount}`, wallet[0].currency);
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
       })
     },
     bbFormatAmount(amount, len, coin){
@@ -399,8 +405,10 @@ export default {
       }
       function cgAdver(that){
         message.show('操作成功');
-        sessionStorage.setItem('tradeType', that.config.publishType);
-        sessionStorage.setItem('coin', that.config.tradeCoin);
+        if(that.config.publishType != '3'){
+          sessionStorage.setItem('tradeType', that.config.publishType);
+          sessionStorage.setItem('coin', that.config.tradeCoin);
+        }
         setTimeout(() => {
           that.$router.push(path);
         }, 300);
@@ -421,6 +429,7 @@ export default {
       }
     },
     getAdverDetail(){
+      this.isLoading = true;
       this.adsCode = this.$route.query.code;
       let userId = this.$route.query.userId;
       if(this.adsCode){
@@ -447,12 +456,16 @@ export default {
           this.config.onlyTrust = data.onlyTrust;
           this.config.protectPrice = data.protectPrice;
           this.yj_price = parseFloat(data.premiumRate) * 100;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
         })
       }
     }
   },
   components: {
-    showMsg
+    showMsg,
+    FullLoading
   }
 };
 </script>

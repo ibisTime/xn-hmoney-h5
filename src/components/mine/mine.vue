@@ -12,11 +12,11 @@
     </div>
     <div class="mine-main">
       <div class="trading item">
-        <router-link to="wallet-top-up" class="buy item-0">
+        <router-link to="wallet-top-up?type=buy" class="buy item-0">
           <i></i>
           <span>我要购买</span>
         </router-link>
-        <router-link to="trading" class="sell item-1">
+        <router-link to="wallet-top-up?type=sell" class="sell item-1">
           <i></i>
           <span>我要出售</span>
         </router-link>

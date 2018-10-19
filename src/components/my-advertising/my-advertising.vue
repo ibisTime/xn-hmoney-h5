@@ -14,7 +14,6 @@
             <span :class="[!show1? 'select' : '']">已发布</span>
         </p>
     </div>
-    <!-- 待发布 -->
     <div class='adver'>
         <Scroll 
           ref="scroll"

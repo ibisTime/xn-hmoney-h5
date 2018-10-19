@@ -2,7 +2,7 @@
   <div class="top-up-wrapper" @click.stop>
     <header>
       <p>
-        <i class='icon'></i>
+        <!-- <i class='icon'></i> -->
         <span v-show="show" class='txt1'>购买X币</span>
         <span v-show="!show" class='txt1'>出售X币</span>
         <router-link to='wallect-orderRecord' class='icon ico1'></router-link>
@@ -20,7 +20,7 @@
         <p class='text1'>自己币种（X）</p>
         <p class='text2'>
             <span class='txt1'>单价：<i class='txt2'>￥</i></span>
-            <span class='txt3'>44315</span>
+            <span class='txt3'>{{cnyMon}}</span>
         </p>
         <!-- <i class='icon'></i> -->
     </div>
@@ -33,11 +33,11 @@
                 <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'">
-                <span class='txt1'>CNY</span>
+                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="buyMonNumber">
+                <span class='txt1'>{{showDet ? 'CNY' : 'X'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈0.0000 X</span>
+                <span class='txt1'>≈ {{showDet ? ((Math.floor((buyMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(buyMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
                 <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
             </p>
         </div>
@@ -46,75 +46,140 @@
             <p class='tab'>
                 <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
                 <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
-                <span class='text3'>可用<i>0.000000</i>X</span>
+                <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>X</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'">
-                <span class='txt1'><i class='txt'>x</i>全部</span>
+                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="sellMonNumber">
+                <span class='txt1'>{{showDet ? 'CNY' : 'X'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈0.0000 CNY</span>
+                <span class='txt1'>≈ {{showDet ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
                 <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
             </p>
         </div>
-
-        <div class='pay'>
+        <!-- 去购买 -->
+        <div class='pay' v-show="show">  
             <span>付款方式</span>
             <span class='txt2'>
-                <i class='icon icon1'></i>
-                支付宝
+                <!-- <i class='icon icon1'></i> -->
+                <select name="" id="" v-model="buyConfig.receiveType" @change="selBankcar">
+                  <option 
+                    :value="buyItem.bankCode" 
+                    v-for="(buyItem, index) in zfBankList" 
+                    :key="index"
+                  >{{buyItem.bankName}}</option>
+                </select>
+                <i class='icon icon2'></i>
+            </span>
+        </div>
+        <div class="payNum" v-show="show">
+          <p>账号：{{bankcardNumber}}</p>
+        </div>
+        <!-- 去出售 -->
+        <div class='pay' v-show="!show">
+            <span>付款方式</span>
+            <span class='txt2'>
+                <!-- <i class='icon icon1'></i> -->
+                <!-- <i class="xz-i">请选择</i> -->
+                <select name="" id="" v-model="sellConfig.receiveType">
+                  <option :value="sellItem.bankCode" v-for="(sellItem, index) in gmBankList" :key="index">{{sellItem.bankName}}</option>
+                </select>
                 <i class='icon icon2'></i>
             </span>
         </div>
         <div class="payNum" v-show="!show">
-          <input type="text" placeholder="请输入账号或卡号">
+          <input type="text" placeholder="请输入账号或卡号" v-model="sellConfig.receiveCardNo">
         </div>
         <div class="payPaw" v-show="!show">
           <p>资金密码</p>
-          <input type="text" placeholder="请输入资金密码">
+          <input type="password" placeholder="请输入资金密码" v-model="sellConfig.tradePwd">
         </div>
-        <button v-show='show'>确认购买</button>
-        <button v-show='!show'>确认出售</button>
+        <button v-show='show' @click="toBuyClick">确认购买</button>
+        <button v-show='!show' @click="toSellClick">确认出售</button>
     </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
 import {getAdverMessage} from 'api/otc';
-import {getUserId} from 'common/js/util';
-import {getBankData, getGmBankData} from 'api/person';
+import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam} from 'common/js/util';
+import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
+      textMsg: '操作成功',
+      type: '',
+      isLoading: true,
       show: true,
       showDet: true,
+      buyMonNumber: '',
+      bankcardNumber: '',
+      sellMonNumber: '',
       fvData: '',
+      cnyMon: '',
       buyConfig: {
         tradeCurrency: 'CNY',
         tradePrice: '',
         userId: getUserId(),
         count: '',
-        receiveType: '',
+        receiveType: '支付宝',
         tradeAmount: ''
+      },
+      sellConfig: {
+        userId: getUserId(),
+        tradeCurrency: 'CNY',
+        tradePrice: '',
+        count: '',
+        receiveCardNo: '',
+        receiveType: '支付宝',
+        tradeAmount: '',
+        tradePwd: ''       // 资金密码
       },
       zfType: {},      // 去购买支付方式
       zfNumber: {},
-      gmType: {}       // 去出售支付方式
+      gmType: {},       // 去出售支付方式
+      zfBankList: [],   // 去购买账号列表
+      gmBankList: [],   // 去出售账号列表
+      cdsMoney: ''
     };
   },
   created() {
+    this.type = getUrlParam('type');
+    this.show = this.type == 'buy' ? true : false;
+    let text = this.type == 'buy' ? '购买' : '出售';
+    setTitle(text);
     getAdverMessage('simu_order_rule').then(data => {
       this.fvData = parseFloat(data.simu_order_fee_rate) * 100;
     });
     getBankData().then(data => {
+      this.zfBankList = data;
       data.forEach(item => {
         this.zfType[item.bankName] = item.bankCode;
         this.zfNumber[item.bankName] = item.bankcardNumber;
-      })
+      });
     });
-    getGmBankData().then(data => {
-      data.forEach(item => {
-        this.gmType[item.bankName] = item.bankCode;
-      })
+    // 数字货币折合
+    getNumberMoney('X', 'CNY').then(data => {
+      this.cnyMon = (Math.floor(parseFloat(data) * 100) / 100).toFixed(2);
+      this.buyConfig.tradePrice = this.cnyMon;
+      this.sellConfig.tradePrice = this.cnyMon;
+    });
+    // 账户
+    wallet().then(res => {
+      let cdsList = res.filter(item => item.currency == 'X')[0];
+      this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'X');
+      getGmBankData().then(data => {
+        this.gmBankList = data;
+        data.forEach(item => {
+          this.gmType[item.bankName] = item.bankCode;
+        });
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
     });
   },
   methods: {
@@ -129,7 +194,55 @@ export default {
     },
     toSell() {
       this.show = false;
+    },
+    selBankcar(){
+      let list = this.zfBankList.filter(item => item.bankCode == this.buyConfig.receiveType);
+      this.bankcardNumber = list[0].bankcardNumber;
+    },
+    toBuyClick(){
+      this.isLoading = true;
+      if(this.showDet){
+        this.buyConfig.tradeAmount = this.buyMonNumber;
+        let count = ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8));
+        this.buyConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
+      }else{
+        this.buyConfig.count = formatMoneyMultiply(`${this.buyMonNumber}`, '', 'X');
+        this.buyConfig.tradeAmount = ((Math.floor(this.buyMonNumber * this.cnyMon * 100))/ 100).toFixed(2);
+      }
+      buyX(this.buyConfig).then(data => {
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push('wallect-orderRecord')
+        }, 1000);
+        this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+      });
+    },
+    toSellClick(){
+      this.isLoading = true;
+      if(this.showDet){ // 金额
+        this.sellConfig.tradeAmount = this.sellMonNumber;
+        let count = ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8));
+        this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
+      }else{ // 数量
+        this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'X');
+        this.sellConfig.tradeAmount = ((Math.floor(this.sellMonNumber * this.cnyMon * 100))/ 100).toFixed(2);
+      }
+      sellX(this.sellConfig).then(data => {
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push('wallect-orderRecord')
+        }, 1000);
+        this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+      });
     }
+  },
+  components: {
+    FullLoading,
+    Toast
   }
 };
 </script>
@@ -158,7 +271,7 @@ export default {
       .icon {
         width: 0.2rem;
         height: 0.36rem;
-        @include bg-image("返回");
+        background-image: url('./fhui.png');
         margin-top: 0.28rem;
         float: left;
       }
@@ -166,7 +279,7 @@ export default {
       .ico1 {
         width: .26rem;
         height: .3rem;
-        @include bg-image("账单");
+        background-image: url('./zdan.png');
         float: right;
       }
 
@@ -245,7 +358,7 @@ export default {
     .icon {
       width: 0.16rem;
       height: 0.26rem;
-      @include bg-image("更多");
+      background-image: url('./gduo.png');
       position: absolute;
       top: 1.07rem;
       right: 0.3rem;
@@ -272,6 +385,10 @@ export default {
             float: right;
             font-size: .28rem;
             color: #999;
+            max-width: 3.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             i {
                 color: #151515;
                 margin: 0 .1rem;
@@ -335,20 +452,30 @@ export default {
       justify-content: space-between;
       color: #323232;
       font-weight: bold;
+      position: relative;
+      .xz-i{
+        position: absolute;
+        right: 2rem;
+        top: 0%;
+      }
       .txt2 {
         font-size: 0.28rem;
+        width: 80%;
+        select{
+          width: 90%;
+        }
       }
       .icon1 {
         width: 0.48rem;
         height: 0.46rem;
-        @include bg-image("支付宝");
+        background-image: url('./zfb.png');
         vertical-align: middle;
         margin-right: 0.12rem;
       }
       .icon2 {
         width: 0.17rem;
         height: 0.26rem;
-        @include bg-image("更多");
+        background-image: url('./gduo.png');
         vertical-align: middle;
         margin-left: 0.12rem;
       }
