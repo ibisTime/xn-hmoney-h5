@@ -7,10 +7,11 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {zendesk} from './common/js/zendesk';
 import {isLogin, getUrlParam} from './common/js/util';
-
   export default {
     created() {
+      zendesk();
       if(!isLogin()) {
         this.$router.push('login');
       }
@@ -18,6 +19,9 @@ import {isLogin, getUrlParam} from './common/js/util';
   };
 </script>
 <style lang="scss">
+  #app{
+    overflow-x: hidden;
+  }
   .loading-container {
     position: absolute;
     top: 0;

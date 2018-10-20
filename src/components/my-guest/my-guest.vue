@@ -17,7 +17,7 @@
             >
                 <div class='list' v-for='(item,index) in list' :key="index">
                     <div class='pic'>
-                        <img :src="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt="">
+                        <p :style="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt=""></p>
                         <img :class="{'hidden': item.photo}" src="./txiang.png"/>
                     </div>
                     <div class='text'>
@@ -144,6 +144,12 @@ export default {
           height: 1rem;
           border-radius: 50%;
           margin-right: 0.22rem;
+          p{
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+            border-radius: 100%;
+          }
           img{
               width: 100%;
               height: 100%;

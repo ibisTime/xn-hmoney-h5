@@ -4,13 +4,12 @@
       <p class="title">{{ $t('page.navbar.title') }}</p>
       <span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>
     </div>
-    <scroll>
-      <div class="slider-wrapper">
-        <slider>
-          <div class="home-slider" v-for="item in banners" :key="item.code">
-            <a :href="item.url||'javascript:void(0)'" :style="getImgSyl(item.pic)"></a>
+    <div class="slider-wrapper">
+        <slider v-if="banners.length">
+          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)">
           </div>
         </slider>
+        <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
       </div>
       <div class="cates-wrapper">
           <div tag="div" class="cate-item">
@@ -30,7 +29,7 @@
           <div class="tabCar fun">
             <router-link to=''>
               <div class="tab-text">
-                <p class="tit">FUN MVP</p>
+                <p class="tit">FUNMVP</p>
                 <p class="con">混乱世界、精彩画面</p>
               </div>
             </router-link>           
@@ -60,8 +59,6 @@
             </router-link>
           </div>
       </div>
-    </scroll>
-    <div class="foot"></div>
     <Footer></Footer>
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
@@ -70,7 +67,7 @@
   import {isLogin, formatImg} from 'common/js/util';
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
-  import Scroll from 'base/scroll/scroll';
+  // import Swiper from 'base/swiper/swiper';
   import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
@@ -78,15 +75,15 @@
   export default {
     data() {
       return {
-        banners: [
-          './banner@2x.png'
-          // './banner@2x.png'
-        ],
-        isLoading: true
+        banners: [],
+        isLoading: true,
+        data: ''
       };
     },
     created() {
-      this.getInitData();
+      getBannerList().then((data) => {
+          this.banners = data;
+        });
     },
     updated() {
     },
@@ -107,14 +104,6 @@
         locale === 'zh' ? this.$i18n.locale = 'en' : this.$i18n.locale = 'zh';
         LangStorage.setLang(this.$i18n.locale);// 将用户习惯存储到本地浏览器
       },
-      getInitData() {
-        this.getBannerList();
-      },
-      getBannerList() {
-        return getBannerList().then((data) => {
-          this.banners = data;
-        });
-      },
       getImgSyl(imgs) {
         return {
           backgroundImage: `url(${formatImg(imgs)})`
@@ -125,7 +114,7 @@
     },
     components: {
       Slider,
-      Scroll,
+      // Swiper,
       Footer,
       FullLoading
     }
@@ -144,11 +133,7 @@
   @import "~common/scss/variable";
 
   .home-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    bottom: 1rem;
     background: #fff;
     font-size: 0;
 
@@ -179,13 +164,12 @@
       width: 100%;
       padding: 0 .3rem;
       border-radius: .08rem;
-
+      overflow: hidden;
       .slider, .home-slider {
         height: 100%;
         width: 100%;
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        @include bg-image('banner');
       }
 
     }

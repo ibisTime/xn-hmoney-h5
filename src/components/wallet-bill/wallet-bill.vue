@@ -305,7 +305,7 @@ export default {
     .wallet-p{
       position: absolute;
       right: 15%;
-      bottom: 0.4rem;
+      top: 0.6rem;
       z-index: 5;
       height: 1rem;
       width: 1rem;
@@ -316,7 +316,7 @@ export default {
       position: absolute;
       opacity: 0;
       right: 15%;
-      bottom: 0.4rem;
+      top: 0.6rem;
       z-index: 9;
       height: 1rem;
       width: 1rem;

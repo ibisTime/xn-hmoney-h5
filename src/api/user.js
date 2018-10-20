@@ -334,3 +334,22 @@ export function editIntroduce (introduce) {
 export function userAttestation (config) {
   return fetch(805160, config);
 }
+
+// 修改头像
+export function changePhoto(photo) {
+  return fetch("805080", {
+      photo,
+      userId: getUserId()
+  });
+}
+
+/**
+ * 忘記密码/重置密码
+ * @param config {mobile, newLoginPwd, smsCaptcha}
+ */
+export function resetPwd(config) {
+  return fetch('805063', {
+      kind: 'C',
+      ...config
+  });
+}

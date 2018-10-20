@@ -1,11 +1,11 @@
 <template>
   <div class="security-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>安全中心</span>
         </p>
-    </header>
+    </header> -->
     <div class='content cont1'>
         <router-link class='tag' to='security-tradePassword'>
             <p>
@@ -70,7 +70,7 @@
 </template>
 <script>
 import {getUser} from '../../api/person';
-import { clearUser } from 'common/js/util';
+import { clearUser, setTitle } from 'common/js/util';
 
 export default {
   data() {
@@ -83,6 +83,7 @@ export default {
     };
   },
   created() {
+    setTitle('我的广告');
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;

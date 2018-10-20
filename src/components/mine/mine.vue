@@ -3,10 +3,22 @@
     <div class="mine-header">
       <h4>我的</h4>
       <div class="my">
-        <div class="pic"></div>
+        <div class="pic" :style="getAvatar()">
+            <qiniu
+              ref="qiniu"
+              style="visibility: hidden;position: absolute;"
+              :token="token"
+              :uploadUrl="uploadUrl"></qiniu>
+            <input class="input-file"
+                   type="file"
+                   :multiple="multiple"
+                   ref="fileInput"
+                   @change="fileChange($event)"
+                   accept="image/*"/>
+        </div>
         <div class="h-text">
           <p class="name">{{data.nickname}}</p>
-          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{data.userStatistics.beiPingJiaCount != 0 ?(data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100 : '0'}}% | 信用 {{data.userStatistics.beiXinRenCount}}</p>
+          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{data.userStatistics.beiPingJiaCount != 0 ?((data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100).toFixed(2) : '0'}}% | 信用 {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>
@@ -94,12 +106,19 @@
     </div>
     <div style="height: 1.1rem;"></div>
     <Footer></Footer>
+    <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
 import Scroll from 'base/scroll/scroll';
 import Footer from 'components/footer/footer';
 import { getUser } from "api/person";
+import { changePhoto } from "api/user";
+import { setTitle, formatImg, getImgData } from 'common/js/util';
+import EXIF from 'exif-js';
+import Qiniu from 'base/qiniu/qiniu';
+import { getQiniuToken } from 'api/general';
+import Toast from 'base/toast/toast';
 
 export default {
   data() {
@@ -111,19 +130,99 @@ export default {
           beiHaoPingCount: '',
           beiXinRenCount: ''
         }
-      }
+      },
+      textMsg:'',
+      photos: [],
+      token: '',
+      uploadUrl: '',
+      multiple: false
     };
   },
   created() {
+    setTitle('个人中心');
     getUser().then((data) => {
       this.data = data;
     });
   },
+  mounted() {
+    this.uploadUrl = 'http://up-z0.qiniu.com';
+    getQiniuToken().then(data => {
+      this.token = data.uploadToken;
+    })
+  },
   computed: {},
-  methods: {},
+  methods: {
+    getAvatar() {
+      if(this.photos.length || this.data.photo) {
+        return {
+          backgroundImage: `url(${formatImg(this.photos.length ? this.photos[0].key : this.data.photo)})`
+        }
+      }
+    },
+    /**
+     * 从相册中选择图片
+     * */
+    fileChange(e) {
+      let files;
+      if (e.dataTransfer) {
+        files = e.dataTransfer.files;
+      } else if (e.target) {
+        files = e.target.files;
+      }
+      let self = this;
+      let file = files[0];
+      let orientation;
+      EXIF.getData(file, function() {
+        orientation = EXIF.getTag(this, 'Orientation');
+      });
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        getImgData(file.type, this.result, orientation, function(data) {
+          let _url = URL.createObjectURL(file);
+          let item = {
+            preview: data,
+            ok: false,
+            type: file.type,
+            key: _url.split('/').pop() + '.' + file.name.split('.').pop()
+          };
+          self.uploadPhoto(data, item.key).then(() => {
+            item = {
+              ...item,
+              ok: true
+            };
+            if(item.ok === true) {
+              self.photos = [item];
+              changePhoto(self.photos[0].key).then(() => {
+                self.textMsg = '更换成功';
+                self.$refs.toast.show();
+              })
+            }
+            self.updatePhotos(item);
+          }).catch(err => {
+            self.onUploadError(err);
+          });
+          self.$refs.fileInput.value = null;
+        });
+      };
+      reader.readAsDataURL(file);
+    },
+    updatePhotos(item) {
+      for (let i = 0; i < this.photos.length; i++) {
+        if (this.photos[i].key === item.key) {
+          this.photos.splice(i, 1, item);
+          break;
+        }
+      }
+    },
+    uploadPhoto(base64, key) {
+      return this.$refs.qiniu.uploadByBase64(base64, key);
+    }
+  },
   components: {
     Scroll,
-    Footer
+    Footer,
+    Qiniu,
+    Toast
   }
 };
 </script>
@@ -159,13 +258,23 @@ export default {
       left: 0.34rem;
 
       .pic {
+        position: relative;
         width: 1.16rem;
         height: 1.16rem;
+        border-radius: 100%;
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("tou");
+        background-image: url('./tou.png');
         float: left;
+        .input-file {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+        }
       }
 
       .h-text {

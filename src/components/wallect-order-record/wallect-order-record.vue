@@ -75,15 +75,15 @@ export default {
     getOrderData(){
       this.config.start = this.start;
       getCTSData(this.config).then(res => {
+        res.list.map(item => {
+          item.count = formatAmount(`${item.count}`, '', item.tradeCoin);
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh-mm-ss');
+        });
         if (res.totalPage <= this.start) {
           this.hasMore = false;
         }
         this.orderDataList = [...this.orderDataList, ...res.list];
         this.start ++;
-        this.orderDataList.map(item => {
-          item.count = formatAmount(`${item.count}`, '', item.tradeCoin);
-          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh-mm-ss');
-        });
         this.isLoading = false;
       }, () => {
         this.isLoading = false;

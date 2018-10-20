@@ -1,11 +1,11 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>绑定邮箱</span>
         </p>
-    </header>
+    </header> -->
     <div class="main">
       <p><input v-model="email" pattern="[a-zA-Z0-9]{5,12}@qq.com" type="text" placeholder="请输入邮箱"></p>
       <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import {getUserId,CheckMail} from '../../common/js/util';
+import {getUserId,CheckMail, setTitle} from '../../common/js/util';
 import {bindingEmail, getSmsCaptcha2} from '../../api/person';
 
 export default {
@@ -30,6 +30,9 @@ export default {
       captcha: '',
       bizType: '805086'
     };
+  },
+  created() {
+    setTitle('绑定邮箱');
   },
   methods: {
     get() {

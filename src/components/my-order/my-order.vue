@@ -24,7 +24,11 @@
         >
             <div class='list' @click='goDetails(item.code)' v-for='(item,index) in list' :key="index">
                 <div class='pic'>
-                    <img :src="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)" :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}" alt="">
+                    <p 
+                      :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)" 
+                      :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
+                    >
+                    </p>
                     <img :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}" src="./txiang.png"/>
                 </div>
                 <div class='text1'>
@@ -218,6 +222,12 @@ export default {
       height: 1rem;
       border-radius: 50%;
       margin-right: 0.22rem;
+      p{
+        width: 100%;
+        height: 100%;
+        background-size: 100% 100%;
+        border-radius: 100%;
+      }
       img {
         width: 100%;
         height: 100%;

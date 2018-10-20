@@ -18,7 +18,8 @@
       <div class='main'>
           <div class='text'>
               <p class='txt1'>梵蒂冈</p>
-              <p class='txt2'>邀请你加入FUN MVP</p>
+              <p class='txt2'>邀请你加入FUNMVP</p>
+              <p class='txt2'>长按识别二维码</p>
           </div>
           <div id='qrcode'></div>
       </div>

@@ -573,7 +573,7 @@ export default {
         height: 0.3rem;
         line-height: 0.4rem;
         color: #d53d3d;
-        font-size: 0.1rem;
+        font-size: 0.2rem;
       }
     }
     .txt2 {

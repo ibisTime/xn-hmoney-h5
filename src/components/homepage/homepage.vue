@@ -5,7 +5,7 @@
     <div class="container">
         <div class="con-user">
             <div class="user-left">
-                <img :src="getUserPic(userDataList.photo)" :class="{'hidden': !(userDataList.photo)}" alt="">
+                <p :style="getUserPic(userDataList.photo)" :class="{'hidden': !(userDataList.photo)}" alt=""></p>
                 <img src="./user.png" :class="{'hidden': (userDataList.photo)}" alt="">
             </div>
             <div class="user-right">
@@ -23,7 +23,7 @@
                 <p>信任次数</p>
             </div>
             <div class="hp-box">
-                <h5>{{userDataList.userStatistics.beiHaoPingCount / userDataList.userStatistics.beiPingJiaCount * 100}}%</h5>
+                <h5>{{(userDataList.userStatistics.beiHaoPingCount / userDataList.userStatistics.beiPingJiaCount * 100).toFixed(2)}}%</h5>
                 <p>好评率</p>
             </div>
             <div class="ls-box">
@@ -161,7 +161,7 @@ export default {
 @import "~common/scss/variable";
 .home-wrapper{
     width: 100%;
-    height: 100%;
+    height: 12rem;
     background-color: #fff;
     h5{
         font-weight: 600;
@@ -176,7 +176,7 @@ export default {
         font-size: 0.22rem;
         padding-top: 0.5rem;
         border-radius: 0.08rem;
-        margin: -1.5rem auto 0;
+        margin: -0.8rem auto 0;
         background-color: #fff;
         box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.1);
         .con-user{
@@ -191,6 +191,12 @@ export default {
             .user-left{
                 width: 1.3rem;
                 margin-right: 0.2rem;
+                p{
+                    width: 100%;
+                    height: 100%;
+                    background-size: 100% 100%;
+                    border-radius: 100%;
+                }
                 img{
                     width: 100%;
                     height: 100%;

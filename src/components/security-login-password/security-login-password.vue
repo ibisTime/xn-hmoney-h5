@@ -1,11 +1,11 @@
 <template>
   <div class="login-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>修改登录密码</span>
         </p>
-    </header>
+    </header> -->
     <div class="main">
       <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p>{{mobile}}</p>
@@ -22,7 +22,7 @@
 </template>
 <script>
 import {getUser, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
-import { rePwdValid, tradeValid} from '../../common/js/util';
+import { rePwdValid, tradeValid, setTitle} from '../../common/js/util';
 
 export default {
   data() {
@@ -36,6 +36,7 @@ export default {
     };
   },
   created() {
+    setTitle('修改登录密码');
     getUser().then((data) => {
       this.mobile = data.mobile;
     });

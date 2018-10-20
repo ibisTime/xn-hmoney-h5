@@ -665,7 +665,9 @@ export function getPic(pic, suffix) {
       suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
       pic = PIC_PREFIX + pic + suffix;
   }
-  return pic;
+  return {
+    backgroundImage: `url(${pic})`
+  };
 }
 //图片格式化-头像
 var PHOTO_SUFFIX = '?imageMogr2/auto-orient/thumbnail/!150x150r';

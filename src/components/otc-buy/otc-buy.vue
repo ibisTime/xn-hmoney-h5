@@ -5,7 +5,10 @@
       </header> -->
       <div class='header'>
         <div class='person'>
-          <div class='pic'></div>
+          <div class='pic'>
+            <p :style="getUserPic(photo)" :class="{'hidden': !(photo)}" alt=""></p>
+            <img :class="{'hidden': photo}" src="./txiang.png"/>
+          </div>
           <div class='text'>
             <p class='name'><span class='txt1'>{{data.user.nickname}}</span><span class='icon'>{{bizTypeList[data.payType]}}</span></p>
             <p class='num'>限额：{{data.minTrade}}-{{data.maxTrade}} {{data.tradeCurrency}}</p>
@@ -39,8 +42,8 @@
           <p class='txt1'><span class='icon1'></span>你想{{bText}}多少？</p>
           <p class='txt2'>{{type == '0' ? '可用余额' : '广告剩余可交易量'}}：{{yMoney}} {{data.tradeCoin}}</p>
           <div class='text'>
-            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="text" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
-            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="text" placeholder="请输入数值"></p>
+            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="number" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
+            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="number" placeholder="请输入数值"></p>
           </div>
         </div>
       </div>
@@ -96,8 +99,9 @@
   </div>
 </template>
 <script>
-import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply } from 'common/js/util';
+import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar } from 'common/js/util';
 import { otcBuy, buyETH, sellBB } from "api/otc";
+import {getUser} from 'api/user';
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
 import Toast from 'base/toast/toast';
@@ -144,7 +148,8 @@ export default {
         tradeAmount: '',
         tradePrice: '',
         tradePwd: ''
-      }
+      },
+      photo: ''
     };
   },
   created() {
@@ -157,6 +162,9 @@ export default {
       this.bText = '出售';
       setTitle('出售');
     }
+    getUser().then(data => {
+      this.photo = data.photo;
+    });
     this.otcBuy();
     getSysConfig('trade_remind').then(data => {
       this.jyText = data.cvalue.replace(/\n/g, '<br>');
@@ -165,6 +173,10 @@ export default {
     })
   },
   methods: {
+    // 获取头像
+    getUserPic(pic){
+      return getAvatar(pic);
+    },
     configFn(){
       this.config.count = formatMoneyMultiply(this.Enum, '', this.data.tradeCoin);
       this.config.tradeAmount = this.Cnum.toString();
@@ -330,10 +342,19 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("头像(4)");
         margin-top: 0.26rem;
         margin-right: 0.2rem;
         margin-bottom: 0.46rem;
+        p{
+          width: 100%;
+          height: 100%;
+          background-size: 100% 100%;
+          border-radius: 100%;
+        }
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
 
       .text {
@@ -457,6 +478,7 @@ export default {
             border: none;
             font-size: 0.28rem;
             height: 0.3rem;
+            line-height: 0.3rem;
           }
         }
         .txt4 {
@@ -480,6 +502,7 @@ export default {
             border: none;
             font-size: 0.28rem;
             height: 0.3rem;
+            line-height: 0.3rem;
           }
         }
       }
@@ -517,8 +540,9 @@ export default {
   .footer {
     height: 1rem;
     width: 100%;
-    position: fixed;
-    bottom: 0;
+    // position: fixed;
+    // bottom: 0;
+    // z-index: 99999;
     background: #fff;
     display: flex;
     line-height: 1rem;
@@ -630,7 +654,7 @@ export default {
           }
           .no {
             background: #dedede;
-            margin-right: .45rem;
+            margin-right: .25rem;
           }
           .yes {
             background: #d53d3d;

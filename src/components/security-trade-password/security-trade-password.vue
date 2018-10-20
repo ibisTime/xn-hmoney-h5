@@ -1,14 +1,15 @@
 <template>
   <div class="password-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>修改交易密码</span>
         </p>
-    </header>
+    </header> -->
     <div class="main">
       <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>{{mobile}}</p>
+      <p v-show="mobile">{{mobile}}</p>
+      <p v-show="!mobile"><input type="number" v-model="config.mobile" placeholder="手机号"></p>
       <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
       <p><input type="password" v-model="newPayPwd" pattern="^\d{6,}$" placeholder="新密码(不少于6位)"></p>
       <p><input type="password" v-model="surePwd" pattern="^\d{6,}$" placeholder="确认密码"></p>
@@ -17,44 +18,79 @@
       <button @click="changeTradPwd">确 定</button>
     </div>
    
-
+  <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
 import {getUser, changeTradPwd, getSmsCaptcha1} from '../../api/person';
-import {captValid, rePwdValid, tradeValid, getUserId} from '../../common/js/util';
-
+import {captValid, rePwdValid, tradeValid, getUserId, setTitle} from '../../common/js/util';
+import { resetPwd } from 'api/user';
+import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
+      textMsg: '',
       show: true,
       bizType: '805067',
       mobile: '',
       smsCaptcha: '',
       newPayPwd: '',
-      surePwd: ''
+      surePwd: '',
+      config: {
+        mobile: '',
+        newLoginPwd: '',
+        smsCaptcha: ''
+      }
     };
   },
   created() {
-    getUser().then((data) => {
-      this.mobile = data.mobile;
-    });
+    setTitle('修改交易密码');
+    if(getUserId()){
+      getUser().then((data) => {
+        this.mobile = data.mobile;
+      });
+    }
   },
   methods: {
     get() {
       this.show = false;
-      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+      let mobile = this.mobile;
+      if(!this.mobile){
+        this.bizType = '805063';
+        mobile = this.config.mobile;
+      }
+      getSmsCaptcha1(this.bizType, mobile).then(data => {
       });
     },
     changeTradPwd() {
         if(tradeValid(this.newPayPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newPayPwd, this.surePwd).err === 0) {
-          changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
-            this.$router.push('mine');
-          });
+          if(this.mobile){
+            changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
+              this.textMsg = '修改密码成功';
+              this.$refs.toast.show();
+              setTimeout(() => {
+                this.$router.push('mine');
+              }, 1500);
+            });
+          }else{
+            this.config.newLoginPwd = this.newPayPwd;
+            this.config.smsCaptcha = this.smsCaptcha;
+            resetPwd(this.config).then(data => {
+              this.textMsg = '重置密码成功';
+              this.$refs.toast.show();
+              setTimeout(() => {
+                this.$router.push('login');
+              }, 1500);
+            })
+          }
         } else {
-          alert('密码不一致，请重新输入');
+          this.textMsg = '密码不一致，请重新输入';
+          this.$refs.toast.show();
         }
     }
+  },
+  components: {
+    Toast
   }
 };
 </script>
@@ -66,6 +102,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
+  height: 12rem;
   background: #fff;
 
   .icon {

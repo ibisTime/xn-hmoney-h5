@@ -49,7 +49,7 @@
     font:.22rem/.3rem PingFangSC-Regular;
     color: #B3B3B3;
     text-align: center;
-    z-index: 10;
+    z-index: 99999;
 
     .foot-item {
       position: relative;

@@ -94,8 +94,10 @@
           <p>资金密码</p>
           <input type="password" placeholder="请输入资金密码" v-model="sellConfig.tradePwd">
         </div>
-        <button v-show='show' @click="toBuyClick">确认购买</button>
-        <button v-show='!show' @click="toSellClick">确认出售</button>
+        <div class="btn-box">
+          <button v-show='show' @click="toBuyClick">确认购买</button>
+          <button v-show='!show' @click="toSellClick">确认出售</button>
+        </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -514,7 +516,7 @@ export default {
     button {
       width: 6.9rem;
       height: 1rem;
-      margin: 1.05rem 0.3rem 0;
+      margin: 0.65rem 0.3rem 0;
       background: #d53d3d;
       border-radius: 0.08rem;
       font-weight: bold;
@@ -522,6 +524,10 @@ export default {
       font-size: 0.32rem;
       line-height: 1.1rem;
     }
+  }
+  .btn-box{
+    background-color: #fff;
+    padding-bottom: 0.5rem;
   }
 }
 </style>

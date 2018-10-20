@@ -66,6 +66,7 @@
     <div class="zc-box" v-show="showFlag">
       <div class='up-window'>
         <h3>交易评价</h3>
+        <p>交易有何印象？快來评价吧</p>
         <div class='pj-text'>
           <div class="item on">
               <div class="icon icon-good" @click="pjClick('2')">
@@ -542,10 +543,14 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 6.14rem;
-    height: 4.2rem;
+    height: 5.2rem;
     background: #fff;
     border-radius: .2rem;
     padding: .4rem .6rem .34rem;
+    p{
+      margin-top: 0.3rem;
+      text-align: center;
+    }
     .ico,h3 {
       text-align: center;
       font-size: .32rem;
@@ -562,7 +567,7 @@ export default {
       }
       .no {
         background: #dedede;
-        margin-right: .45rem;
+        margin-right: .25rem;
       }
       .yes {
         background: #d53d3d;
@@ -588,7 +593,7 @@ export default {
         width: 40%;
         height: 2rem;
         text-align: center;
-        padding-top: 0.5rem;
+        padding-top: 0.2rem;
         box-sizing: border-box;
         img{
           width: 100%;

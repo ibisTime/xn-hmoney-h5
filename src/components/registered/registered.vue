@@ -1,8 +1,5 @@
 <template>
   <div class="regist-wrapper" @click.stop>
-      <div class="header">
-        <i></i>
-      </div>
       <div class="card">
           <h3 class="title" @click="goBack">注册</h3>
           <p calss="tabs" id="tabs">
@@ -52,7 +49,7 @@ import {
   getSmsCaptcha1,
   getSmsCaptcha2
 } from "api/person";
-import { rePwdValid, getUrlParam } from "common/js/util";
+import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
 
 export default {
   props: {},
@@ -76,6 +73,7 @@ export default {
     };
   },
   created() {
+    setTitle('注册');
     this.inviteCode = getUrlParam('inviteCode');
   },
   computed: {},
@@ -179,6 +177,10 @@ export default {
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
       color: #999;
+      padding: 0.3rem 0;
+      box-sizing: border-box;
+      height: 1.2rem;
+      line-height: 1.2rem;
       letter-spacing: 0.0027rem;
     }
 

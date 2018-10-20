@@ -25,7 +25,7 @@
             <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
                 <div class='list1'>
                     <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
-                        <img :src="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt="">
+                        <p :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt=""></p>
                         <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/>
                     </div>
                     <div class='text1'>
@@ -230,6 +230,8 @@ export default {
     },
     // 下架广告
     downAdverFn(adsCode){
+        this.start2 = 1;
+        this.myWillAdverList = [];
         downAdvertise(adsCode).then(data => {
             this.$refs.toast.show();
             this.getAdverData();
@@ -330,6 +332,12 @@ export default {
         width: 0.76rem;
         height: 0.76rem;
         margin-right: 0.2rem;
+        p{
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+            border-radius: 100%;
+        }
         img{
             width: 100%;
             height: 100%;

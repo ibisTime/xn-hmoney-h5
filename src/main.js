@@ -12,6 +12,7 @@ import LangStorage from './common/js/cookie';
 // import vConsole from 'vconsole';
 
 import 'common/scss/index.scss';
+import 'swiper/dist/css/swiper.css';
 
 fastclick.attach(document.body);
 

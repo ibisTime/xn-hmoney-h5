@@ -49,9 +49,8 @@
       </div> -->
       <!-- banner -->
       <div class="slider-wrapper">
-        <slider>
-          <div class="home-slider" v-for="item in banners" :key="item.code">
-            <a :href="item.url||'javascript:void(0)'" :style="getImgSyl(item.pic)"></a>
+        <slider v-if="banners.length">
+          <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)">
           </div>
         </slider>
       </div>
@@ -68,7 +67,7 @@
             <div class='cont'>
               <div class='preson'>
                 <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
-                  <img :src="getAvatar(adverItem.user.photo)" alt="">
+                  <p class="pic-p" :style="getAvatar(adverItem.user.photo)" alt=""></p>
                   <span class='green color'></span>
                 </div>
                 <span class='name'>已实名</span>
@@ -86,7 +85,7 @@
           </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': bbDataList.length > 0}">
-          <img src="./暂无明细.png" />
+          <img src="./wu.png" />
           <p>暂无广告</p>
         </div>
       </div>
@@ -114,7 +113,7 @@
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {formatImg, getUserId, getAvatar} from 'common/js/util';
+import {formatImg, getUserId, getAvatar, setTitle} from 'common/js/util';
 import {getUser} from 'api/user';
 import {getBannerList} from 'api/general';
 import {getAdvertisingData} from 'api/otc';
@@ -153,7 +152,10 @@ export default {
     };
   },
   created() {
-    this.getInitData();
+    setTitle('场外交易');
+    getBannerList().then((data) => {
+      this.banners = data;
+    });
   },
   updated() {
   },
@@ -231,11 +233,6 @@ export default {
     getInitData() {
       this.getBannerList();
     },
-    getBannerList() {
-      return getBannerList().then((data) => {
-        this.banners = data;
-      });
-    },
     getImgSyl(imgs) {
       return {
         backgroundImage: `url(${formatImg(imgs)})`
@@ -305,7 +302,7 @@ export default {
           suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
           pic = this.PIC_PREFIX + pic + suffix;
       }
-      return pic;
+      return {backgroundImage: `url(${pic})`};
     },
     getAvatar(pic, suffix) {
       var defaultAvatar = '';
@@ -357,7 +354,7 @@ export default {
   color: #333;
   height: 100%;
   background: #fafafa;
-  overflow: auto;
+  overflow-x: hidden;
   z-index: 10;
 
   .header {
@@ -367,8 +364,6 @@ export default {
     line-height: .98rem;
     display: flex;
     justify-content: space-between;
-    position: fixed;
-    top:0;
 
     select {
       font-weight: bold;
@@ -380,7 +375,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("下拉白色");
+        background-image: url('./xlabai.png');
 
       }
     }
@@ -418,8 +413,6 @@ export default {
     padding:0;
     height: .64rem;
     background: #fafafa;
-    position: fixed;
-    top: .98rem;
 
     .top-main {
       width: 100%;
@@ -436,7 +429,7 @@ export default {
       .act {
         color: #d53d3d;
         span {
-          @include bg-image("排序上啦");
+          background-image: url('./sla.png');
         }
       }
 
@@ -447,7 +440,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("限价下拉");
+        background-image: url('./xla.png');
         vertical-align: middle;
         margin-left: .14rem;
       }
@@ -479,7 +472,7 @@ export default {
   }
 
   .slider-wrapper {
-    margin: 1.82rem auto .2rem auto;
+    margin: 0.3rem auto .2rem auto;
     height: 2.8rem;
     width: 91%;
     border-radius: .08rem;
@@ -489,7 +482,6 @@ export default {
     width: 100%;
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    @include bg-image('banner');
   }
 
   .main {
@@ -516,12 +508,13 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            @include bg-image("头像(4)");
+            background-image: url('./tou.png');
             position: relative;
-            img{
+            .pic-p{
               height: 100%;
               width: 100%;
               border-radius: 50%;
+              background-size: 100% 100%;
             }
             .color {
               display: inline-block;
@@ -618,10 +611,10 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("发布");
+    background-image: url('./fb.png');
     position: fixed;
-    right: .3rem;
-    bottom: 1.52rem;
+    right: 1.3rem;
+    bottom: 2.52rem;
 
   }
 }

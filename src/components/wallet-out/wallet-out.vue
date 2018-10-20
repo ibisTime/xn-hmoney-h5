@@ -12,7 +12,7 @@
       </p>
       <p class='text'>
         <span>转账数量</span>
-        <input type="text" placeholder="请输入转币数量" v-model="config.amount">
+        <input type="number" placeholder="请输入转币数量" v-model="config.amount">
       </p>
       <p class='text'>
         <span>资金密码</span>
@@ -190,6 +190,8 @@ export default {
           font-size: .3rem;
           color: #d53d3d;
           line-height: 1rem;
+          height: 1rem;
+          margin-top: 0;
         }
         .error-tip {
           position: absolute;
