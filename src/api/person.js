@@ -63,13 +63,8 @@ export function login(loginName, loginPwd) {
 }
 
 // 手机注册
-export function reistered(mobile, loginPwd, smsCaptcha ,nickname) {
-  return fetch(805041, {
-    mobile,
-    loginPwd,
-    smsCaptcha,
-    nickname
-  });
+export function reistered(config) {
+  return fetch(805041, config);
 }
 
 // 邮箱注册

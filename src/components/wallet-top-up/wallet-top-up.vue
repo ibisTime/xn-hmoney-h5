@@ -53,7 +53,7 @@
                 <span class='txt1'>{{showDet ? 'CNY' : 'X'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈ {{showDet ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
+                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
                 <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
             </p>
         </div>
@@ -172,7 +172,9 @@ export default {
     // 账户
     wallet().then(res => {
       let cdsList = res.filter(item => item.currency == 'X')[0];
-      this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'X');
+      if(cdsList){
+        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'X');
+      }
       getGmBankData().then(data => {
         this.gmBankList = data;
         data.forEach(item => {
@@ -205,11 +207,11 @@ export default {
       this.isLoading = true;
       if(this.showDet){
         this.buyConfig.tradeAmount = this.buyMonNumber;
-        let count = ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8));
+        let count = this.cnyMon > 0 ? ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
         this.buyConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
       }else{
         this.buyConfig.count = formatMoneyMultiply(`${this.buyMonNumber}`, '', 'X');
-        this.buyConfig.tradeAmount = ((Math.floor(this.buyMonNumber * this.cnyMon * 100))/ 100).toFixed(2);
+        this.buyConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(this.buyMonNumber * this.cnyMon * 100))/ 100).toFixed(2) : '0';
       }
       buyX(this.buyConfig).then(data => {
         this.$refs.toast.show();
@@ -225,11 +227,11 @@ export default {
       this.isLoading = true;
       if(this.showDet){ // 金额
         this.sellConfig.tradeAmount = this.sellMonNumber;
-        let count = ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8));
+        let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
         this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
       }else{ // 数量
         this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'X');
-        this.sellConfig.tradeAmount = ((Math.floor(this.sellMonNumber * this.cnyMon * 100))/ 100).toFixed(2);
+        this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(this.sellMonNumber * this.cnyMon * 100))/ 100).toFixed(2) : '0';
       }
       sellX(this.sellConfig).then(data => {
         this.$refs.toast.show();

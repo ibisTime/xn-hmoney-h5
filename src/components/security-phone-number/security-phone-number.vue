@@ -76,7 +76,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -107,7 +107,7 @@ export default {
       .icon {
         width: .18rem;
         height: .14rem;
-        @include bg-image("下啦");
+        background-image: url('./xl.png');
       }
     }
     .text3 {
@@ -141,7 +141,7 @@ export default {
       .icon {
           width: .34rem;
           height: .34rem;
-          @include bg-image("删除");
+          background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
       }
@@ -172,7 +172,7 @@ export default {
     .icon {
       width: .26rem;
       height: .26rem;
-      @include bg-image("提示");
+      background-image: url('./ts.png');
       vertical-align: middle;
       margin-right: .13rem;
     }

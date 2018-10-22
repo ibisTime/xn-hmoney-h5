@@ -315,7 +315,7 @@ export default {
           background-size: 100% 100%;
           width: 0.21rem;
           height: 0.36rem;
-          @include bg-image("返回");
+          background-image: url('./fh.png');
           float: left;
           margin-top: .26rem;
       }
@@ -450,7 +450,7 @@ export default {
           background-repeat: no-repeat;
           background-position: center;
           background-size: 100% 100%;
-          @include bg-image("购买多少");
+          background-image: url('./gmds.png');
           margin-right: 0.14rem;
         }
       }
@@ -491,7 +491,7 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            @include bg-image("转换");
+            background-image: url('./z_h.png');
             margin-right: .4rem;
             vertical-align: middle;
            
@@ -525,7 +525,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("交易提醒");
+        background-image: url('./jytx.png');
         margin-right: .14rem;
       }
     }
@@ -559,7 +559,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("聊天");
+        background-image: url('./ltian.png');
         margin: 0 .16rem 0 .3rem;
       }
     }
@@ -601,7 +601,7 @@ export default {
           background-repeat: no-repeat;
           background-position: center;
           background-size: 100% 100%;
-          @include bg-image("下单确定");
+          background-image: url('./xdqr.png');
           margin-bottom: .24rem;
         }
 
@@ -631,7 +631,7 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            @include bg-image("提示");
+            background-image: url('./ts.png');
             margin-bottom: 0.2rem;
           }
           .txt {

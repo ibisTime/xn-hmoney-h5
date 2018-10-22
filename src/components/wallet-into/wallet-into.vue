@@ -89,7 +89,7 @@ export default {
       .icon {
         width: 0.2rem;
         height: 0.36rem;
-        @include bg-image("返回");
+        background-image: url('./fh.png');
         margin-top: 0.28rem;
       }
 
@@ -121,7 +121,7 @@ export default {
     .icon {
       width: 0.28rem;
       height: 0.28rem;
-      @include bg-image("删 除");
+      background-image: url('./sc.png');
       position: absolute;
       right: 0.3rem;
       top: 0.36rem;
@@ -142,7 +142,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("二维码 框");
+    background-image: url('./ewm.png');
     position: relative;
     .ewm-wrap {
       width: 4.42rem;

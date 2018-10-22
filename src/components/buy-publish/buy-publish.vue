@@ -505,7 +505,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100% 100%;
-      @include bg-image("返回");
+      background-image: url('./fhui.png');
       margin-top: 0.2rem;
     }
     .txt1 {
@@ -587,7 +587,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100% 100%;
-      @include bg-image("问号");
+      background-image: url('./whao.png');
       float: right;
     }
     .icon {
@@ -597,7 +597,7 @@ export default {
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100% 100%;
-      @include bg-image("更多");
+      background-image: url('./more.png');
       float: right;
       margin-right: 0.14rem;
     }
@@ -634,7 +634,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("限价下拉");
+        background-image: url('./xjxl.png');
         float: right;
         margin-top: 0.5rem;
       }
@@ -646,10 +646,9 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("限价下拉");
+        background-image: url('./gjsl.png');
         float: right;
         margin-top: 0.5rem;
-        @include bg-image("高级设置上拉");
 
       }
     }
@@ -670,7 +669,7 @@ export default {
         .icon {
           width: .3rem;
           height: .3rem;
-          @include bg-image("未选择");
+          background-image: url('./wxz.png');
           vertical-align: middle;
           margin-right: .14rem;
         }
@@ -678,7 +677,7 @@ export default {
         .icon1 {
           width: .3rem;
           height: .3rem;
-          @include bg-image("选中");
+          background-image: url('./xz.png');
    
         }
 
@@ -693,7 +692,7 @@ export default {
         }
 
         .ico2 {
-          @include bg-image("问号");
+          background-image: url('./whao.png');
           margin-right: 0;
           margin-left: .2rem;
         }
@@ -719,7 +718,7 @@ export default {
         .icon {
           width: .24rem;
           height: .24rem;
-          @include bg-image("添加时间段");
+          background-image: url('./tjsj.png');
           vertical-align: middle;
         }
       }
@@ -744,10 +743,10 @@ export default {
           height: .3rem;
         }
         .ico1 {
-          @include bg-image("选择");
+          background-image: url('./xz.png');
         }
         .ico2 {
-          @include bg-image("问号");
+          background-image: url('./whao.png');
           margin-left: .2rem;
         }
         b{

@@ -194,7 +194,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("账单详情");
+    background-image: url('./zdxq.png');
     .top {
         line-height: 0.88rem;
         width: 100%;
@@ -204,7 +204,7 @@ export default {
         .icon {
             width: 0.2rem;
             height: 0.36rem;
-            @include bg-image("返回白色");
+            background-image: url('./fhbs.png');
             margin-top: 0.28rem;
             float: left;
         }
@@ -235,12 +235,12 @@ export default {
             .icon {
                 width: .36rem;
                 height: .36rem;
-                 @include bg-image("待支付");
+                background-image: url('./dzf.png');
                  margin-right: .12rem;
                  vertical-align: baseline;
             }
             .ico1 {
-                @include bg-image("已取消");
+                background-image: url('./yqx.png');
                 vertical-align: baseline;
             }
             span {
@@ -347,7 +347,7 @@ export default {
           .icon {
               width: .2rem;
               height: .24rem;
-               @include bg-image("认证");
+              background-image: url('./rz.png');
                margin-right: .1rem;
           }
       }

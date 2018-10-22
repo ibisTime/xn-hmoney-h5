@@ -121,7 +121,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fhui.png');
       float: left;
       margin-top: 0.31rem;
     }

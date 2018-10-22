@@ -35,11 +35,13 @@
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p class="check">
-            <span click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="showZcxyTxt">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
+            <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="showZcxyTxt">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
             <input type="submit" @click="regist" value="注册">
           </div>
       </div>
+      <Toast :text="textMsg" ref="toast" />
+      <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -50,11 +52,14 @@ import {
   getSmsCaptcha2
 } from "api/person";
 import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
-
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   props: {},
   data() {
     return {
+      textMsg: '',
+      isLoading: false,
       fscg: false,
       flag: true,
       type:'0',         // 0 手机注册   1 邮箱注册
@@ -69,7 +74,8 @@ export default {
       bizType2: "805043",
       checked: true,
       inviteCode: '',
-      config: {}
+      config: {},
+      isSms: false
     };
   },
   created() {
@@ -90,8 +96,14 @@ export default {
       this.$router.go(-1);
     },
     getSca1() {
+      if(this.isSms){
+        return;
+      }
+      this.isLoading = true;
       if(this.type == '0'){
         getSmsCaptcha1(this.bizType1, this.phone).then(data => {
+          this.isLoading = false;
+          this.isSms = true;
           this.fscg = true;
           let phTime = setInterval(() => {
             this.time --;
@@ -99,51 +111,83 @@ export default {
               clearInterval(phTime);
               this.fscg = false;
               this.time = 60;
+              this.isSms = false;
             }
           }, 1000);
+        }, () => {
+          this.isLoading = false;
         });
       }else{
         getSmsCaptcha2(this.bizType2, this.email).then(data => {
+          this.isLoading = false;
           this.fscg = true;
+          this.isSms = true;
           let phTime = setInterval(() => {
             this.time --;
             if(this.time < 0){
               clearInterval(phTime);
               this.fscg = false;
+              this.isSms = false;
               this.time = 60;
             }
           }, 1000);
+        }, () => {
+          this.isLoading = false;
         });
       }
     },
     regist() {
-      if(this.errors.items.length == 0 && this.nickname && this.password1 && this.password2 && smsCaptcha){
+      if(this.errors.items.length == 0 && this.nickname && this.password1 && this.password2 && this.smsCaptcha){
         this.config = {
           captcha: this.smsCaptcha,
+          smsCaptcha: this.smsCaptcha,
           email: this.email,
-          phone: this.phone,
+          mobile: this.phone,
           loginPwd: this.password1,
           nickname: this.nickname
         }
         if(this.inviteCode != '' && this.inviteCode != undefined){
           this.config.inviteCode = this.inviteCode;
         }
+        this.isLoading = true;
         if(this.flag == false) {
-          delete this.config.phone;
+          delete this.config.mobile;
+          delete this.config.smsCaptcha;
           reisteredEamil(this.config).then(data => {
-            this.$router.push('login');
+            this.isLoading = false;
+            this.textMsg = '注册成功';
+            this.$refs.toast.show();
+            setTimeout(() => {
+              this.$router.push('login');
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
           });
         } else {
           delete this.config.email;
+          delete this.config.captcha;
           reistered(this.config).then(data => {
-            this.$router.push('login');
+            this.isLoading = false;
+            this.textMsg = '注册成功';
+            this.$refs.toast.show();
+            setTimeout(() => {
+              this.$router.push('login');
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
           });
         }
       }
     },
-    showZcxyTxt(){}
+    showZcxyTxt(){},
+    changeBg(){
+      this.checked = !this.checked;
+    }
   },
-  components: {}
+  components: {
+    Toast,
+    FullLoading
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -270,7 +314,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("打勾");
+        background-image: url('./dgou.png');
       }
 
       span {

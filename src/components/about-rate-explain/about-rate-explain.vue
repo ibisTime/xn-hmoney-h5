@@ -53,13 +53,13 @@ export default {
       .ico1 {
         width: .45rem;
         height: .3rem;
-        @include bg-image("美国");
+        background-image: url('./mguo.png');
         margin-right: .34rem;
       }
       .ico2 {
         width: .45rem;
         height: .3rem;
-        @include bg-image("中国");
+        background-image: url('./zguo.png');
         margin-left: .34rem;
       }
     }

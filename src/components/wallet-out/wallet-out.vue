@@ -141,7 +141,7 @@ export default {
         .icon {
             width: .2rem;
             height: .36rem;
-            @include bg-image("返回");
+            background-image: url('./fh.png');
             margin-top: .28rem;
         }
 
@@ -212,7 +212,7 @@ export default {
         .icon {
           width: .36rem;
           height: .36rem;
-          @include bg-image("扫一扫-黑色");
+          background-image: url('./sys.png');
           margin-top: .34rem;
           margin-left: 0.78rem;
         }

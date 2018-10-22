@@ -10,7 +10,7 @@
             </div>
             <div class="user-right">
                 <h5>{{userDataList.nickname}}</h5>
-                <p>和他交易过 <span>0</span> 次</p>
+                <!-- <p>和他交易过 <span>0</span> 次</p> -->
             </div>
         </div>
         <div class="user-list">

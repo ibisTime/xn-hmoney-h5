@@ -96,7 +96,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("账单详情");
+        background-image: url('./zdxq.png');
         text-align: center;
         font-size: .36rem;
         line-height: .5rem ;
@@ -115,7 +115,7 @@ export default {
                 float: left;
                 width: .2rem;
                 height: .36rem;
-                @include bg-image("返回白色");
+                background-image: url('./fhbs.png');
             }
         }
 
@@ -134,7 +134,7 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            @include bg-image("详情");
+            background-image: url('./xq.png');
             text-align: center;
 
             .name {

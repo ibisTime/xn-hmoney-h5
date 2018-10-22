@@ -56,7 +56,6 @@ export default {
       });
       let that = this;
       getUser().then(data => {
-        console.log('data', data);
         let userIdAuthInfo = data.userIdAuthInfo;
         if(userIdAuthInfo){
           switch(userIdAuthInfo['idKind']){
@@ -108,7 +107,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -136,7 +135,7 @@ export default {
         height: 0.26rem;
         float: right;
         margin-top: 0.37rem;
-        @include bg-image("更多");
+        background-image: url('./more.png');
       }
       .tel {
         float: right;

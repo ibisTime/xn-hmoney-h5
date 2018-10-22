@@ -45,7 +45,7 @@ export default {
             background-size: 100% 100%;
             width: 0.21rem;
             height: 0.36rem;
-            @include bg-image("返回");
+            background-image: url('./fh.png');
             float: left;
             margin-top: .26rem;
         }
@@ -57,7 +57,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("即将推出");
+        background-image: url('./jjtc.png');
     }
 
 }

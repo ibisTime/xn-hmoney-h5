@@ -187,7 +187,7 @@ export default {
       .icon {
         width: .2rem;
         height: .36rem;
-        @include bg-image("返回");
+        background-image: url('./fh.png');
         margin-top: .28rem;
       }
 
@@ -226,24 +226,24 @@ export default {
         .icon {
           width: .6rem;
           height: .6rem;
-          @include bg-image("收款");
+          background-image: url('./sk.png');
           margin-right: .32rem;
         }
 
         .ico1 {
-          @include bg-image("充值");
+          background-image: url('./cz.png');
         }
 
         .ico2 {
-          @include bg-image("转出");
+          background-image: url('./zc.png');
         }
 
         .ico3 {
-          @include bg-image("转入");
+          background-image: url('./zr.png');
         }
 
         .ico4 {
-          @include bg-image("提现");
+          background-image: url('./tx.png');
         }
 
       }

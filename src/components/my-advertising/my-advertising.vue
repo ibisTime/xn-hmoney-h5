@@ -419,10 +419,10 @@ export default {
             }
         }
         .text1 .icon {
-            @include bg-image("编辑");
+            background-image: url('./bj.png');
         }
         .text2 .icon {
-            @include bg-image("矩形51");
+            background-image: url('./jx.png');
         }
     }
   }

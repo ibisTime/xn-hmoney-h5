@@ -63,7 +63,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -84,7 +84,7 @@ export default {
         .icon {
           width: .6rem;
           height: .6rem;
-          @include bg-image("公告");
+          background-image: url('./gg.png');
           vertical-align: middle;
           margin-right: .18rem;
         }

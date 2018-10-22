@@ -318,7 +318,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -334,7 +334,7 @@ export default {
       .icon {
         width: 0.23rem;
         height: 0.26rem;
-        @include bg-image("订单编号");
+        background-image: url('./ddbh.png');
         margin-right: 0.12rem;
       }
       .state {
@@ -470,11 +470,11 @@ export default {
       }
 
       .ico1 {
-        @include bg-image("表情(1)");
+        background-image: url('./bq1.png');
         right: 1rem;
       }
       .ico2 {
-        @include bg-image("添加(2)");
+        background-image: url('./tj2.png');
         right: 0.3rem;
       }
     }

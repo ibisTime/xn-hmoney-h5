@@ -10,7 +10,7 @@
       <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p v-show="mobile">{{mobile}}</p>
       <p v-show="!mobile"><input type="number" v-model="config.mobile" placeholder="手机号"></p>
-      <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
       <p><input type="password" v-model="newPayPwd" pattern="^\d{6,}$" placeholder="新密码(不少于6位)"></p>
       <p><input type="password" v-model="surePwd" pattern="^\d{6,}$" placeholder="确认密码"></p>
     </div>
@@ -29,6 +29,7 @@ import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
+      time: 60,
       textMsg: '',
       show: true,
       bizType: '805067',
@@ -44,11 +45,13 @@ export default {
     };
   },
   created() {
-    setTitle('修改交易密码');
     if(getUserId()){
+      setTitle('修改交易密码');
       getUser().then((data) => {
         this.mobile = data.mobile;
       });
+    }else{
+      setTitle('找回密码');
     }
   },
   methods: {
@@ -60,13 +63,20 @@ export default {
         mobile = this.config.mobile;
       }
       getSmsCaptcha1(this.bizType, mobile).then(data => {
+        let times = setInterval(() => {
+          this.time --;
+          if(this.time < 0){
+            clearInterval(times);
+            this.show = true;
+          }
+        }, 1000);
       });
     },
     changeTradPwd() {
         if(tradeValid(this.newPayPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newPayPwd, this.surePwd).err === 0) {
           if(this.mobile){
             changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
-              this.textMsg = '修改密码成功';
+              this.textMsg = '操作成功';
               this.$refs.toast.show();
               setTimeout(() => {
                 this.$router.push('mine');
@@ -125,7 +135,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -156,7 +166,7 @@ export default {
       .icon {
         width: .18rem;
         height: .14rem;
-        @include bg-image("下啦");
+        background-image: url('./xl.png');
       }
     }
     .text3 {
@@ -190,7 +200,7 @@ export default {
       .icon {
           width: .34rem;
           height: .34rem;
-          @include bg-image("删除");
+          background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
       }

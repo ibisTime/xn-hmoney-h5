@@ -20,3 +20,13 @@ export function getBBExchange(ex_type, toSymbol) {
 export function getHandicapData(setBazDeal) {
     return fetch("650065", setBazDeal, true);
 }
+
+// 下订单
+export function downBBOrder(config){
+    return fetch('650050', config);
+}
+
+// 分页查询我的委托单
+export function getMyorderTicket(config) {
+    return fetch('650058', config);
+}

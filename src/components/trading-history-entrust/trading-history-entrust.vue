@@ -91,7 +91,7 @@ export default {
             float: left;
             width: .2rem;
             height: .36rem;
-            @include bg-image("返回");
+            background-image: url('./fh.png');
             margin-top: .26rem;
         }
     }

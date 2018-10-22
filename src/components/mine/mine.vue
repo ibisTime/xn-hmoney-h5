@@ -145,7 +145,7 @@ export default {
     });
   },
   mounted() {
-    this.uploadUrl = 'http://up-z0.qiniu.com';
+    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     })
@@ -205,6 +205,10 @@ export default {
         });
       };
       reader.readAsDataURL(file);
+    },
+    onUploadError(error) {
+      this.text = (error.body && error.body.error) || `${error.message}:10M` || '图片上传出错';
+      this.$refs.toast.show();
     },
     updatePhotos(item) {
       for (let i = 0; i < this.photos.length; i++) {
@@ -356,7 +360,7 @@ export default {
 
       .item-0 {
         i {
-          @include bg-image("我要购买");
+          background-image: url('./wbuy.png');
         }
         span {
           border-right: 0.01rem solid #ccc;
@@ -366,7 +370,7 @@ export default {
 
       .item-1 {
         i {
-          @include bg-image("我要出售");
+          background-image: url('./wsell.png');
         }
       }
     }
@@ -394,12 +398,12 @@ export default {
       }
 
       .icon {
-        @include bg-image("更多");
+        background-image: url('./more.png');
       }
 
       .item-2 {
         i {
-          @include bg-image("选择货币");
+          background-image: url('./xzhb.png');
         }
       }
 
@@ -407,7 +411,7 @@ export default {
         i {
           width: 0.36rem;
           height: 0.33rem;
-          @include bg-image("我的广告");
+          background-image: url('./wdgg.png');
         }
       }
 
@@ -415,19 +419,19 @@ export default {
         i {
           width: 0.36rem;
           height: 0.36rem;
-          @include bg-image("我的订单");
+          background-image: url('./wddd.png');
         }
       }
 
       .item-5 {
         i {
-          @include bg-image("交易对手");
+          background-image: url('./jyds.png');
         }
       }
 
       .item-6 {
         i {
-          @include bg-image("邀请好友");
+          background-image: url('./yqhy.png');
         }
       }
 
@@ -435,13 +439,13 @@ export default {
         i {
           width: 0.34rem;
           height: 0.4rem;
-          @include bg-image("安全中心");
+          background-image: url('./aqzx.png');
         }
       }
 
       .item-8 {
         i {
-          @include bg-image("关于我们");
+          background-image: url('./gywm.png');
         }
       }
 

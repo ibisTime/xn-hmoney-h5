@@ -124,7 +124,6 @@ export default {
   data() {
     return {
       PHOTO_SUFFIX: '?imageMogr2/auto-orient/thumbnail/!150x150r',
-      PIC_PREFIX: 'http://ounm8iw2d.bkt.clouddn.com/',
       userId: getUserId(),
       bbList: [],
       config: {
@@ -300,7 +299,7 @@ export default {
       pic = pic.split(/\|\|/)[0];
       if (!/^http|^data:image/i.test(pic)) {
           suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
-          pic = this.PIC_PREFIX + pic + suffix;
+          pic = PIC_PREFIX + pic + suffix;
       }
       return {backgroundImage: `url(${pic})`};
     },
@@ -653,14 +652,14 @@ export default {
     .buy {
         text-align: center;
         span {
-        @include bg-image("发布购买");
+          background-image: url('./fbbuy.png');
       }
     }
 
     .sell {
       text-align: center;
         span {
-        @include bg-image("发布卖出");
+          background-image: url('./fbsell.png');
       }
     }
 

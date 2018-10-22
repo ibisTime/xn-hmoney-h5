@@ -72,7 +72,7 @@ export default {
     .friends {
         width: 100%;
         height: 10.96rem;
-        @include bg-image("邀请背景");
+        background-image: url('./yqbj.png');
         position: relative;
         .content {
             width: 100%;
@@ -104,7 +104,7 @@ export default {
                 width: .24rem;
                 margin: .8rem auto .6rem;
                 height: .12rem;
-                @include bg-image("邀请好友三角形箭头");
+                background-image: url('./yqhysjx.png');
             }
             .text2 {
                 font-size: .34rem;
