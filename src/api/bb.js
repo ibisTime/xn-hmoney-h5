@@ -30,3 +30,18 @@ export function downBBOrder(config){
 export function getMyorderTicket(config) {
     return fetch('650058', config);
 }
+
+// 分页查询我的历史委托单
+export function getMyHistoryData(config) {
+    return fetch('650059', config);
+}
+
+// 深度图 数据
+export function getDepthData(config) {
+    return fetch('650064', config)
+}
+
+// 分页查询成交明细 （实时成交）
+export function getRealTimeData(config) {
+    return fetch('650057', config)
+}

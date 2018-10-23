@@ -93,7 +93,6 @@ export default {
     }
   },
   created() {
-    setTitle('身份证认证');
     this.rzType = this.$route.params.type;
     switch(this.rzType){
       case 'sfz': 
@@ -109,6 +108,7 @@ export default {
         this.config.idKind = '3';
         break;
     };
+    setTitle(this.rzText + '认证');
   },
   mounted() {
     this.uploadUrl = 'http://up-z0.qiniu.com';

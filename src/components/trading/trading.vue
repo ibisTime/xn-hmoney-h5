@@ -2,14 +2,13 @@
   <div class="trading-wrapper" @click.stop>
     <div class='header'>
       <router-link v-show="show2" to=''><i class='icon' @click="showTwo"></i></router-link>
-      <router-link v-show="!show2" to=''><i></i></router-link>
-      <p v-show='show2'>
+      <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
+      <p>
         <select name="" id="" v-model="symNumber" @change="changeSymBaz">
           <option :value="index" v-for="(symItem, index) in symBazList" :key="index">{{symItem.symbol}}/{{symItem.toSymbol}}</option>
         </select>
         <i class='icon'></i>
       </p>
-      <p v-show='!show2'>币币交易</p>
       <router-link to='otc'>场外交易</router-link>
     </div>
       
@@ -32,13 +31,19 @@
         <!-- 买入 -->
         <div v-show="show1" class="left">
           <p class='he9'>
-            <input type="number" :placeholder="downConfig.type == '0' ? '以市场上最优价格买入' : '委托价格'" v-model="xjPrice" :disabled="downConfig.type == '0'">
+            <input 
+              type="number" 
+              :placeholder="downConfig.type == '0' ? '以市场上最优价格买入' : '委托价格'" 
+              v-model="xjPrice" 
+              :disabled="downConfig.type == '0'"
+              @keyup="qrLength"
+            >
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
           <p class='text2' v-show="downConfig.type == '1'">
             <span>折合CNY</span>
-            <span class='red'>￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
+            <span class='red max-len' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
             <input type="number" placeholder="委托数量" v-model="wetNumber">
@@ -54,7 +59,7 @@
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可买{{setBazDeal.symbol}}</span>
+            <span>可买 {{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
@@ -69,7 +74,13 @@
         <!-- 卖出 -->
         <div v-show="!show1" class="left">
           <p class='he9'>
-            <input type="number" :placeholder="downConfig.type == '0' ? '以市场上最优价格卖出' : '委托价格'" v-model="xjPrice" :disabled="downConfig.type == '0'">
+            <input 
+              type="number" 
+              :placeholder="downConfig.type == '0' ? '以市场上最优价格卖出' : '委托价格'" 
+              v-model="xjPrice" 
+              :disabled="downConfig.type == '0'"
+              @keyup="qrLength"
+            >
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
@@ -91,7 +102,7 @@
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可卖{{setBazDeal.symbol}}</span>
+            <span>可卖 {{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
@@ -112,7 +123,10 @@
               <span class='txt3'>{{sellItem ? sellItem.count : '--'}}</span>
             </p>
           </div>
-          <p class='middle'><span class='red'>￥ 8022.00</span><i class='icon'></i></p>
+          <p class='middle'>
+            <span class='red max-len_r'>{{bb_zxj + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}}</span>
+            <!-- <i class='icon'></i> -->
+          </p>
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index">
               <span class='red txt1'>买{{index + 1}}</span>
@@ -123,87 +137,47 @@
 
         </div>
       </div>
-      <div class='entrust'>
+      <div class='entrust' v-show="history">
         <div class='tabs'>
           <p @click="showCurr" class='current'>当前委托</p>
           <p @click='showHisto' class='history'><i class='icon'></i>
           <router-link to='trading-historyEntrust'>历史</router-link></p>
         </div>
         <div v-show="!show3" class='current-history'>
-          <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
-            <p class='text1'>
-              <span class='green'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
-              <span>{{myItem.createDatetime}}</span>
-              <span class='red' v-show="myItem.tradedCount == 0">撤销</span>
-            </p>
-            <div class='text2'>
-              <div class='txt1'>
-                <p>价格({{setBazDeal.toSymbol}})</p>
-                <p class='black'>{{myItem.price}}</p>
-              </div>
-              <div class='txt2'>
-                <p>数量({{setBazDeal.symbol}})</p>
-                <p class='black'>{{myItem.totalCount}}</p>
-              </div>
-              <div class='txt3'>
-                <p>实际成交({{setBazDeal.symbol}})</p>
-                <p class='black'>{{myItem.tradedCount}}</p>
+          <Scroll 
+            ref="scroll"
+            :data="myOrderData"
+            :hasMore="hasMore"
+            v-show="myOrderData.length > 0"
+            @pullingUp="myOrderTicket"
+          >
+            <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
+              <p class='text1'>
+                <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
+                <span>{{myItem.createDatetime}}</span>
+                <span class='red' v-show="myItem.tradedCount == 0">撤销</span>
+              </p>
+              <div class='text2'>
+                <div class='txt1'>
+                  <p>价格({{setBazDeal.toSymbol}})</p>
+                  <p class='black'>{{myItem.type == 0 ? '市价' : myItem.price}}</p>
+                </div>
+                <div class='txt2'>
+                  <p>数量({{setBazDeal.symbol}})</p>
+                  <p class='black'>{{myItem.totalCount}}</p>
+                </div>
+                <div class='txt3'>
+                  <p>实际成交({{setBazDeal.symbol}})</p>
+                  <p class='black'>{{myItem.tradedCount}}</p>
+                </div>
               </div>
             </div>
+          </Scroll>
+          <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
+            <img src="./zwdata.png" />
+            <p>暂无订单</p>
           </div>
-
         </div>
-        <!-- 无记录时显示 -->
-        <div v-show="show3" class='history-main'>
-          <i class='icon'></i>
-          <p>暂无记录</p>
-        </div>
-        <!-- 有记录时显示 -->
-        <!-- <div v-show="show3" class='current-history'>
-          <div class='list'>
-            <p class='text1'>
-              <span class='green'>买入</span>
-              <span>2018-04-12:00</span>
-              <span class='red'>已完成</span>
-            </p>
-            <div class='text2'>
-              <div class='txt1'>
-                <p>价格(ETH)</p>
-                <p class='black'>13.60</p>
-              </div>
-              <div class='txt2'>
-                <p>数量(X)</p>
-                <p class='black'>7.4569</p>
-              </div>
-              <div class='txt3'>
-                <p>实际成交(X)</p>
-                <p class='black'>7.0430</p>
-              </div>
-            </div>
-          </div>
-          <div class='list'>
-            <p class='text1'>
-              <span class='green'>买入</span>
-              <span>2018-04-12:00</span>
-              <span class='red'>已完成</span>
-            </p>
-            <div class='text2'>
-              <div class='txt1'>
-                <p>价格(ETH)</p>
-                <p class='black'>13.60</p>
-              </div>
-              <div class='txt2'>
-                <p>数量(X)</p>
-                <p class='black'>7.4569</p>
-              </div>
-              <div class='txt3'>
-                <p>实际成交(X)</p>
-                <p class='black'>7.0430</p>
-              </div>
-            </div>
-          </div>
-
-        </div> -->
 
       </div>
     </div>
@@ -211,12 +185,7 @@
     <div v-show="!show2" class='Two'>
       <div class="top-mian">
         <div class='top'>
-          <i class='icon ico1'></i>
-          <p>
-            <span>X/BTC</span>
-            <i class='icon ico2'></i>
-          </p>
-          <i class='icon ico3'></i>
+          
         </div>
         <p class='text1'><span class='txt1'>BTC</span><span>现价</span><span class='red txt3'>0.045678</span><span class='red txt4'>折合≈1911.567CNY</span></p>
         <div class='text2'>
@@ -241,17 +210,17 @@
         <TradingSynopsis v-show="tShow === '1'" />
         <TradingPutUp v-show="tShow === '2'" />
         <TradingClinchadeal v-show="tShow === '3'" />
-        <TradingDepthMap v-show="tShow === '4'" />
+        <TradingDepthMap v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
-          <button class='buy'><router-link to=''>买入X</router-link></button>
-          <button class='sell'><router-link to=''>卖出X</router-link></button>
+          <button class='buy'><router-link to=''>买入FMVP</router-link></button>
+          <button class='sell'><router-link to=''>卖出FMVP</router-link></button>
         </div>
 
       </div>
     </div>
-      <Footer></Footer>
-      <Toast :text="textMsg" ref="toast" />
-      <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <Footer></Footer>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -265,16 +234,18 @@ import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchade
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
 import { formatAmount, setTitle, getUserId, formatMoneyMultiply, formatDate } from "common/js/util";
 import {wallet} from 'api/person';
-import {getBazaarData, getBBExchange, getHandicapData, downBBOrder, getMyorderTicket} from 'api/bb';
+import {getBazaarData, getBBExchange, getHandicapData, downBBOrder, getMyorderTicket, getRealTimeData} from 'api/bb';
 export default {
   data() {
     return {
       textMsg: '',
+      hasMore: true,
       isLoading: true,
       isLogin: false,
       show1: true,
       show2: true,
       show3: false,
+      history: false,
       tShow: '1',
       xjPrice: '',      // 委托价格
       wetNumber: '',    // 限价-委托数量
@@ -298,15 +269,20 @@ export default {
         toSymbol: ''
       },
       start: '1',
-      limit: '5',
       myOrderConfig: {             // 我的委托单config
         start: '1',
-        limit: '5',
+        limit: '3',
         userId: getUserId(),
         symbol: '',
         toSymbol: '',
       },
-      myOrderData: []
+      myOrderData: [],
+      bazDeal: {},
+      realTimeConfig: {
+        start: 1,
+        limit: 1
+      },                    // 实时成交参数
+      bb_zxj: ''            // 最新价
     };
   },
   created() {
@@ -318,6 +294,9 @@ export default {
         symbol: data.list[0].symbol,
         toSymbol: data.list[0].toSymbol
       };
+      if(!setBazDeal){
+        sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
+      }
       if(this.setBazDeal.toSymbol == 'ETH'){
         this.symNumber = '1';
       }
@@ -332,13 +311,11 @@ export default {
       });
       this.getUserWalletData();
       this.handicapData();
+      this.realTimeData();
 
       if(getUserId()){
         this.isLogin = true;
-        this.myOrderConfig = {
-          ...this.myOrderConfig,
-          ...this.setBazDeal
-        };
+        this.history = true;
         this.myOrderTicket();
       }
 
@@ -382,6 +359,10 @@ export default {
       sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
       this.getUserWalletData();
       this.handicapData();
+      this.realTimeData();
+      if(this.isLogin){
+        this.myOrderTicket();
+      }
     },
     handicapData(){
       // 查询盘口
@@ -414,16 +395,39 @@ export default {
       });
     },
     myOrderTicket(){
+      this.isLoading = true;
+      this.myOrderConfig.start = this.start;
+      this.myOrderConfig = {
+        ...this.myOrderConfig,
+        ...this.setBazDeal
+      };
       getMyorderTicket(this.myOrderConfig).then(data => {
-          this.myOrderData = data.list;
-          this.myOrderData.map(item => {
+          data.list.map(item => {
             let showTotalCount = item.direction == 0 && item.type == 0;
             item.createDatetime = formatDate(item.createDatetime, 'yy-MM-dd hh:mm:ss');
             item.price = item.type == 0 ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
             item.totalCount = showTotalCount ? '-' : (formatAmount(`${item.totalCount}`, '', item.symbol));
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol)
           });
+          if (data.totalPage <= this.start) {
+              this.hasMore = false;
+            }
+          this.myOrderData = [...this.myOrderData, ...data.list];
+          this.start ++;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
         });
+    },
+    realTimeData(){
+      // 实时成交数据
+      this.realTimeConfig = {
+        ...this.realTimeConfig,
+        ...this.setBazDeal
+      }
+      getRealTimeData(this.realTimeConfig).then(data => {
+        this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
+      });
     },
     buy() {
       this.downConfig.direction = '0';
@@ -477,9 +481,11 @@ export default {
         }else if(this.xjPrice == ''){
           this.textMsg = '价格不能为空或小于等于零';
           this.$refs.toast.show();
+          this.isLoading = false;
         }else if(this.wetNumber == ''){
           this.textMsg = '数量不能为空或小于等于零';
           this.$refs.toast.show();
+          this.isLoading = false;
         }
       }else{
         this.downConfig.price = '';
@@ -505,6 +511,7 @@ export default {
         }else if(this.wetNumber == ''){
           this.textMsg = '数量不能为空或小于零';
           this.$refs.toast.show();
+          this.isLoading = false;
         }
       }
     },
@@ -526,16 +533,37 @@ export default {
         // 深度图
         this.tShow = '4';
       }
+    },
+    qrLength(){
+      let numLeft = this.xjPrice.split('.')[0];
+      let numRight = this.xjPrice.split('.')[1];
+      if(numRight){
+        if(numRight.length > 8){
+          this.textMsg = '小数部分不得大于8位';
+          this.$refs.toast.show();
+          numRight = numRight.substring(0, 8);
+          this.xjPrice = numLeft + '.' + numRight;
+        }
+      }
     }
   },
   components: {
     Footer,
     Toast,
+    Scroll,
     FullLoading,
     TradingSynopsis,
     TradingPutUp,
     TradingClinchadeal,
     TradingDepthMap
+  },
+  watch: {  // 监听深度图
+    setBazDeal: {
+      handler(val, oldVal){
+        this.bazDeal = val;
+      },
+      deep: true
+    }
   }
 };
 </script>
@@ -545,6 +573,7 @@ export default {
 @import "~common/scss/variable";
 .trading-wrapper {
   width: 100%;
+  padding-bottom: 0.3rem;
   background: #fff;
   font-size: .28rem;
   color: #999;
@@ -600,7 +629,12 @@ export default {
       height: .28rem;
       background-image: url('./k.png');
     }
-
+    .ico1 {
+      width: .2rem;
+      height: .30rem;
+      background-image: url('./fhui.png');
+      margin-top: .25rem;
+    }
   }
 
 // 币币交易页面
@@ -683,6 +717,9 @@ export default {
             font-size: .28rem;
             line-height: .87rem;
           }
+          span{
+            word-spacing: normal;
+          }
         }
         .no-bor{
           border: none;
@@ -748,9 +785,15 @@ export default {
       }
     }
     .max-len{
-      max-width: 2.3rem;
+      max-width: 2.1rem;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    .max-len_r{
+      width: 95%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-spacing: normal;
     }
 
     .entrust {
@@ -790,6 +833,8 @@ export default {
 
       .current-history {
         width: 100%;
+        height: 5rem;
+        overflow: scroll;
         .list {
           width: 100%;
           padding: .4rem 0;
@@ -801,6 +846,9 @@ export default {
             }
             .red {
               float: right;
+            }
+            .red1{
+              color: #d53d3d;
             }
           }
           .text2 {
@@ -836,15 +884,9 @@ export default {
       padding: 0 .3rem;
       background: #1c2b3f;
       .top {
-        line-height: .78rem;
+        height: .3rem;
         display: flex;
         justify-content: space-between;
-        .ico1 {
-          width: .2rem;
-          height: .36rem;
-          background-image: url('./fbai.png');
-          margin-top: .21rem;
-        }
         .ico2 {
           width: .24rem;
           height: .15rem;
@@ -920,8 +962,8 @@ export default {
       }
       .foot {
         width: 100%;
-        position: fixed;
-        bottom: .96rem;
+        // position: fixed;
+        // bottom: .96rem;
         display: flex;
         .buy {
           background: #d53d3d;

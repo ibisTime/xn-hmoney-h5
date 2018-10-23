@@ -680,3 +680,11 @@ export function getAvatar(pic, suffix) {
   return getPic(pic, suffix);
 }
 
+//计算百分比
+export function getPercentum(n1, n2) {
+  if (n1 == '0' && n2 == '0') {
+      return '0';
+  }
+  var n = n1 / n2 * 100
+  return parseInt(n) + "%"
+}

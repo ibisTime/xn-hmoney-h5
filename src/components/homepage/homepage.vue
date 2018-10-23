@@ -23,7 +23,7 @@
                 <p>信任次数</p>
             </div>
             <div class="hp-box">
-                <h5>{{(userDataList.userStatistics.beiHaoPingCount / userDataList.userStatistics.beiPingJiaCount * 100).toFixed(2)}}%</h5>
+                <h5>{{getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
                 <p>好评率</p>
             </div>
             <div class="ls-box">
@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, setTitle, formatAmount, getAvatar } from 'common/js/util';
+import { getUrlParam, setTitle, formatAmount, getAvatar, getPercentum } from 'common/js/util';
 import { getUser, getUserRelation, addUserRelation, removeUserRelation } from "api/person";
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
@@ -87,6 +87,10 @@ export default {
   },
   computed: {},
   methods: {
+      // 计算百分比
+      getPercentum(num1, num2){
+          return getPercentum(num1, num2);
+      },
       // 获取头像
       getUserPic(pic){
           return getAvatar(pic);

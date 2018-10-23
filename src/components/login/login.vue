@@ -6,7 +6,7 @@
       <div class="card">
           <div class="main">
               <h3>欢迎回来</h3>
-              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" placeholder="请输入账号">
+              <input type="number" v-model="username" name="phone|email" v-validate="'required|phone|email'" placeholder="请输入账号">
               <input type="password" v-model="password" placeholder="请输入密码（6～16个字符或字母组成）">
               <input type="submit" value="登  录" @click='login'>
               <p>
@@ -90,7 +90,7 @@ export default {
         color: #2d2d2d;
       }
 
-      input[type='text'], input[type='password'] {
+      input[type='number'], input[type='password'] {
         width: 6.1rem;
         border-bottom: 0.02rem solid #e3e3e3;
         font: 0.32rem/1.28rem PingFangSC-Medium;

@@ -3,8 +3,8 @@
     <header>
       <p>
         <!-- <i class='icon'></i> -->
-        <span v-show="show" class='txt1'>购买X币</span>
-        <span v-show="!show" class='txt1'>出售X币</span>
+        <span v-show="show" class='txt1'>购买FMVP币</span>
+        <span v-show="!show" class='txt1'>出售FMVP币</span>
         <router-link to='wallect-orderRecord' class='icon ico1'></router-link>
       </p>
     </header>
@@ -17,7 +17,7 @@
         </p>
     </div>
     <div class='public'>
-        <p class='text1'>自己币种（X）</p>
+        <p class='text1'>自己币种（FMVP）</p>
         <p class='text2'>
             <span class='txt1'>单价：<i class='txt2'>￥</i></span>
             <span class='txt3'>{{cnyMon}}</span>
@@ -34,11 +34,11 @@
             </p>
             <p class='inp'>
                 <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="buyMonNumber">
-                <span class='txt1'>{{showDet ? 'CNY' : 'X'}}</span>
+                <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈ {{showDet ? ((Math.floor((buyMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(buyMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
-                <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
+                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((buyMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(buyMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
+                <span class=txt2>手续费：<i class=txt3>{{buyFvData}}%</i></span>
             </p>
         </div>
         <!-- 卖出显示内容 -->
@@ -46,15 +46,15 @@
             <p class='tab'>
                 <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
                 <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
-                <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>X</span>
+                <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
                 <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="sellMonNumber">
-                <span class='txt1'>{{showDet ? 'CNY' : 'X'}}</span>
+                <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'X'}}</span>
-                <span class=txt2>手续费：<i class=txt3>{{fvData}}%</i></span>
+                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
+                <span class=txt2>手续费：<i class=txt3>{{sellFvData}}%</i></span>
             </p>
         </div>
         <!-- 去购买 -->
@@ -120,7 +120,8 @@ export default {
       buyMonNumber: '',
       bankcardNumber: '',
       sellMonNumber: '',
-      fvData: '',
+      buyFvData: '',
+      sellFvData: '',
       cnyMon: '',
       buyConfig: {
         tradeCurrency: 'CNY',
@@ -145,7 +146,8 @@ export default {
       gmType: {},       // 去出售支付方式
       zfBankList: [],   // 去购买账号列表
       gmBankList: [],   // 去出售账号列表
-      cdsMoney: ''
+      cdsMoney: '',
+      fmvpTypeData: {}   // 承兑商参数
     };
   },
   created() {
@@ -153,8 +155,17 @@ export default {
     this.show = this.type == 'buy' ? true : false;
     let text = this.type == 'buy' ? '购买' : '出售';
     setTitle(text);
-    getAdverMessage('simu_order_rule').then(data => {
-      this.fvData = parseFloat(data.simu_order_fee_rate) * 100;
+    getAdverMessage('accept_rule').then(data => {
+      this.fmvpTypeData = data;
+      this.fmvpTypeData.accept_order_max_cny_amount = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
+      this.fmvpTypeData.accept_order_max_usd_amount = parseFloat(this.fmvpTypeData.accept_order_max_usd_amount);
+      this.fmvpTypeData.accept_order_min_cny_amount = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
+      this.fmvpTypeData.accept_order_min_usd_amount = parseFloat(this.fmvpTypeData.accept_order_min_usd_amount);
+      this.cnyMon = data.accept_cny_price;
+      this.buyConfig.tradePrice = data.accept_cny_price;
+      this.sellConfig.tradePrice = data.accept_cny_price;
+      this.buyFvData = parseFloat(data.accept_order_buy_fee_rate) * 100;
+      this.sellFvData = parseFloat(data.accept_order_sell_fee_rate) * 100;
     });
     getBankData().then(data => {
       this.zfBankList = data;
@@ -164,16 +175,16 @@ export default {
       });
     });
     // 数字货币折合
-    getNumberMoney('X', 'CNY').then(data => {
-      this.cnyMon = (Math.floor(parseFloat(data) * 100) / 100).toFixed(2);
-      this.buyConfig.tradePrice = this.cnyMon;
-      this.sellConfig.tradePrice = this.cnyMon;
-    });
+    // getNumberMoney('FMVP', 'CNY').then(data => {
+    //   this.cnyMon = (Math.floor(parseFloat(data) * 100) / 100).toFixed(2);
+    //   this.buyConfig.tradePrice = this.cnyMon;
+    //   this.sellConfig.tradePrice = this.cnyMon;
+    // });
     // 账户
     wallet().then(res => {
-      let cdsList = res.filter(item => item.currency == 'X')[0];
+      let cdsList = res.filter(item => item.currency == 'FMVP')[0];
       if(cdsList){
-        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'X');
+        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'FMVP');
       }
       getGmBankData().then(data => {
         this.gmBankList = data;
@@ -206,12 +217,25 @@ export default {
     toBuyClick(){
       this.isLoading = true;
       if(this.showDet){
-        this.buyConfig.tradeAmount = this.buyMonNumber;
-        let count = this.cnyMon > 0 ? ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
-        this.buyConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.buyMonNumber) && parseFloat(this.buyMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.buyConfig.tradeAmount = this.buyMonNumber;
+          let count = this.cnyMon > 0 ? ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
+          this.buyConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
+        }else{
+          this.scopeMoney();
+          this.isLoading = false;
+          return;
+        }
       }else{
-        this.buyConfig.count = formatMoneyMultiply(`${this.buyMonNumber}`, '', 'X');
-        this.buyConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(this.buyMonNumber * this.cnyMon * 100))/ 100).toFixed(2) : '0';
+        let buyMon = this.buyMonNumber * this.cnyMon;
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= buyMon && buyMon <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.buyConfig.count = formatMoneyMultiply(`${this.buyMonNumber}`, '', 'FMVP');
+          this.buyConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(buyMon * 100))/ 100).toFixed(2) : '0';
+        }else{
+          this.isLoading = false;
+          this.scopeMoney();
+          return;
+        }
       }
       buyX(this.buyConfig).then(data => {
         this.$refs.toast.show();
@@ -226,12 +250,25 @@ export default {
     toSellClick(){
       this.isLoading = true;
       if(this.showDet){ // 金额
-        this.sellConfig.tradeAmount = this.sellMonNumber;
-        let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
-        this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'X');
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.sellMonNumber) && parseFloat(this.sellMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.sellConfig.tradeAmount = this.sellMonNumber;
+          let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
+          this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
+        }else{
+          this.isLoading = false;
+          this.scopeMoney();
+          return;
+        }
       }else{ // 数量
-        this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'X');
-        this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(this.sellMonNumber * this.cnyMon * 100))/ 100).toFixed(2) : '0';
+        let sellMon = this.sellMonNumber * this.cnyMon;
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= sellMon && sellMon <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'FMVP');
+          this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(sellMon * 100))/ 100).toFixed(2) : '0';
+        }else{
+          this.isLoading = false;
+          this.scopeMoney();
+          return;
+        }
       }
       sellX(this.sellConfig).then(data => {
         this.$refs.toast.show();
@@ -242,6 +279,10 @@ export default {
         }, () => {
           this.isLoading = false;
       });
+    },
+    scopeMoney(){
+      this.textMsg = `金额应在${this.fmvpTypeData.accept_order_min_cny_amount}与${this.fmvpTypeData.accept_order_max_cny_amount}之间`;
+      this.$refs.toast.show();
     }
   },
   components: {
@@ -292,7 +333,7 @@ export default {
         font-weight: bold;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateFMVP(-50%);
       }
     }
   }

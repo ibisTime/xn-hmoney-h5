@@ -74,7 +74,7 @@
               </div>
               <div class='text'>
                 <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
-                <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}%•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
+                <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount)}}•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
                 <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
               </div>
               <div class='number'>
@@ -113,7 +113,7 @@
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {formatImg, getUserId, getAvatar, setTitle} from 'common/js/util';
+import {formatImg, getUserId, getAvatar, setTitle, getPercentum} from 'common/js/util';
 import {getUser} from 'api/user';
 import {getBannerList} from 'api/general';
 import {getAdvertisingData} from 'api/otc';
@@ -172,6 +172,10 @@ export default {
   computed: {
   },
   methods: {
+    // 计算百分比
+    getPercentum(num1, num2){
+        return getPercentum(num1, num2);
+    },
     // 请求列表数据
     getBBListData(){
       let that = this;

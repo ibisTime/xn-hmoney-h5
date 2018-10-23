@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-    <div>
+    <div class="">
       <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+//@touchmove.prevent
 import {zendesk} from './common/js/zendesk';
 import {isLogin, getUrlParam} from './common/js/util';
   export default {
@@ -21,6 +22,8 @@ import {isLogin, getUrlParam} from './common/js/util';
 <style lang="scss">
   #app{
     overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
   }
   .loading-container {
     position: absolute;

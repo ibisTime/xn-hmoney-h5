@@ -8,11 +8,14 @@ import VueLazyLoad from 'vue-lazyload';
 import 'common/js/validate';
 import VueI18n from 'vue-i18n';
 import LangStorage from './common/js/cookie';
+import echarts from 'echarts';
 /* eslint-disable no-unused-vars */
 // import vConsole from 'vconsole';
 
 import 'common/scss/index.scss';
 import 'swiper/dist/css/swiper.css';
+
+Vue.prototype.$echarts = echarts;
 
 fastclick.attach(document.body);
 

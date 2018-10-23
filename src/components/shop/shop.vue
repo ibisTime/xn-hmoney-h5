@@ -46,6 +46,7 @@ export default {
   background: #fff;
   font-size: .24rem;
   color: #fff;
+  height: 13rem;
 
   header {
       width: 100%;

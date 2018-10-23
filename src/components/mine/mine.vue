@@ -18,7 +18,7 @@
         </div>
         <div class="h-text">
           <p class="name">{{data.nickname}}</p>
-          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{data.userStatistics.beiPingJiaCount != 0 ?((data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100).toFixed(2) : '0'}}% | 信用 {{data.userStatistics.beiXinRenCount}}</p>
+          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | 信用 {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ import Scroll from 'base/scroll/scroll';
 import Footer from 'components/footer/footer';
 import { getUser } from "api/person";
 import { changePhoto } from "api/user";
-import { setTitle, formatImg, getImgData } from 'common/js/util';
+import { setTitle, formatImg, getImgData, getPercentum } from 'common/js/util';
 import EXIF from 'exif-js';
 import Qiniu from 'base/qiniu/qiniu';
 import { getQiniuToken } from 'api/general';
@@ -152,6 +152,10 @@ export default {
   },
   computed: {},
   methods: {
+    // 计算百分比
+    getPercentum(num1, num2){
+        return getPercentum(num1, num2);
+    },
     getAvatar() {
       if(this.photos.length || this.data.photo) {
         return {

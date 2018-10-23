@@ -64,7 +64,7 @@
   </div>
 </template>
 <script>
-  import {isLogin, formatImg} from 'common/js/util';
+  import {isLogin, formatImg, setTitle} from 'common/js/util';
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
   // import Swiper from 'base/swiper/swiper';
@@ -81,6 +81,7 @@
       };
     },
     created() {
+      setTitle('首页');
       getBannerList().then((data) => {
           this.banners = data;
         });
@@ -220,6 +221,7 @@
     .tab-wrapper {
       width: 92%;
       margin: .4rem auto .5rem;
+      padding-bottom: 1rem;
       display: flex;
       flex-wrap: wrap;
       justify-content:space-around ;

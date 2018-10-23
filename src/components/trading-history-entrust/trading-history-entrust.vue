@@ -1,67 +1,107 @@
 <template>
   <div class="publish-wrapper" @click.stop>
-    <div class='header'>
+    <!-- <div class='header'>
         <i class='icon'></i>
         <span class='txt1'>历史委托</span>
-    </div>
+    </div> -->
     <div class='main'>
-        <div class='list'>
-            <p class='text1'>
-                <span class='green'>买入</span>
-                <span>2018-04-12:00</span>
-                <span class='red'>已完成</span>
-            </p>
-            <div class='text2'>
-                <div class='txt1'>
-                <p>价格(ETH)</p>
-                <p class='black'>13.60</p>
-                </div>
-                <div class='txt2'>
-                <p>数量(X)</p>
-                <p class='black'>7.4569</p>
-                </div>
-                <div class='txt3'>
-                <p>实际成交(X)</p>
-                <p class='black'>7.0430</p>
-                </div>
-            </div>
-        </div>
-        <div class='list'>
-            <p class='text1'>
-                <span class='green'>买入</span>
-                <span>2018-04-12:00</span>
-                <span class='red'>已完成</span>
-            </p>
-            <div class='text2'>
-                <div class='txt1'>
-                <p>价格(ETH)</p>
-                <p class='black'>13.60</p>
-                </div>
-                <div class='txt2'>
-                <p>数量(X)</p>
-                <p class='black'>7.4569</p>
-                </div>
-                <div class='txt3'>
-                <p>实际成交(X)</p>
-                <p class='black'>7.0430</p>
+        <Scroll 
+          ref="scroll"
+          :data="hisDataList"
+          :hasMore="hasMore"
+          v-show="hisDataList.length > 0"
+          @pullingUp="getHistory"
+        >
+            <div class='list' v-for="(item, index) in hisDataList" :key="index">
+                <p class='text1'>
+                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? '买入' : '卖出'}}</span>
+                    <span>{{item.createDatetime}}</span>
+                    <span class='red'>{{item.status}}</span>
+                </p>
+                <div class='text2'>
+                    <div class='txt1'>
+                    <p>价格({{item.toSymbol}})</p>
+                    <p class='black'>{{item.type == 0 ? '市价' : item.price}}</p>
+                    </div>
+                    <div class='txt2'>
+                    <p>数量({{item.symbol}})</p>
+                    <p class='black'>{{item.totalCount}}</p>
+                    </div>
+                    <div class='txt3'>
+                    <p>实际成交({{item.symbol}})</p>
+                    <p class='black'>{{item.tradedCount}}</p>
+                    </div>
                 </div>
             </div>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': hisDataList.length > 0}">
+          <img src="./wu.png" />
+          <p>暂无订单</p>
         </div>
     </div>
+    <FullLoading  ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
+import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading';
+import { formatAmount, setTitle, formatDate, getUserId } from "common/js/util";
+import { getMyHistoryData } from "api/bb";
+import { getDictList } from 'api/general';
 export default {
   data() {
     return {
+        isLoading: true,
+        hasMore: true,
+        start: 1,
+        limit: 10,
+        hisConfig: {
+            userId: getUserId(),
+            start: 1,
+            limit: 10
+        },
+        hisDataList: [],
+        statusValueList: {}
     };
   },
-  created() {},
+  created() {
+    setTitle('历史委托订单');
+    getDictList('simu_order_status').then(data => {
+        data.forEach((item) => {
+            this.statusValueList[item.dkey] = item.dvalue;
+        });
+        this.getHistory();
+    });
+  },
   updated() {},
   computed: {},
   methods: {
+    getHistory(){
+        this.hisConfig.start = this.start;
+        this.hisConfig.limit = this.limit;
+        getMyHistoryData(this.hisConfig).then(data => {
+            data.list.map(item => {
+                item.createDatetime = formatDate(item.createDatetime, 'yy-MM-dd hh:mm:ss');
+                item.price = formatAmount(`${item.price}`, '', item.toSymbol);
+                item.totalCount = formatAmount(`${item.totalCount}`, '', item.symbol);
+                item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
+                item.status = this.statusValueList[item.status];
+            });
+            if (data.totalPage <= this.start) {
+                this.hasMore = false;
+            }
+            this.hisDataList = [...this.hisDataList, ...data.list];
+            this.start ++;
+            this.isLoading = false;
+        }, () => {
+            this.isLoading = false;
+        });
+    }
   },
-  components: {}
+  components: {
+    Scroll,
+    FullLoading
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -98,6 +138,9 @@ export default {
 
     .main {
         width: 100%;
+        height: 13rem;
+        overflow: scroll;
+        background-color: #fff;
         padding: 0 .3rem;
         .red {
             color: #d53d3d;
@@ -123,6 +166,9 @@ export default {
                 }
                 .red {
                 float: right;
+                }
+                .red1{
+                    color: #d53d3d;
                 }
             }
             .text2 {

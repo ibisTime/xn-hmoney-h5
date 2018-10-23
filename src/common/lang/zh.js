@@ -16,7 +16,7 @@ module.exports = {
   // page页
   page: {
     navbar: {
-      title: 'FUN MVP'
+      title: 'FUNMVP'
     },
     cate: {
       game: '游戏',

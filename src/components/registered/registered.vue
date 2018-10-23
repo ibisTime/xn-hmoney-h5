@@ -137,7 +137,7 @@ export default {
       }
     },
     regist() {
-      if(this.errors.items.length == 0 && this.nickname && this.password1 && this.password2 && this.smsCaptcha){
+      if(!this.errors.any()){
         this.config = {
           captcha: this.smsCaptcha,
           smsCaptcha: this.smsCaptcha,

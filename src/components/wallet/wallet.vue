@@ -18,7 +18,7 @@
         <i class='icon ico3'></i>   
       </div>
       <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
-        <i class="icon" :class="[{'ico1': infoItem.currency == 'X'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
+        <i class="icon" :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
         <div class='my'>
           <p class='txt1'>{{infoItem.currency}}币种资产({{infoItem.currency}})</p>
           <p class='txt2'>{{infoItem.amount}}</p>
@@ -29,7 +29,7 @@
           <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i class='icon ico2'></i><span>转出</span></div>|
           <div class='box'><i class='icon ico3'></i><router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link></div>
         </div>
-        <div class='operate' v-show="infoItem.currency == 'X'">
+        <div class='operate' v-show="infoItem.currency == 'FMVP'">
           <router-link to='wallet-top-up?type=buy' class='txt1'>充值</router-link>|
           <router-link to='wallet-top-up?type=sell' class='txt2'>提现</router-link>
         </div>
@@ -68,7 +68,7 @@ export default {
           v.frozenAmount = formatAmount(v.frozenAmount, '', v.currency);
         } )
         this.cdInfo = v.filter(item => {
-          return item.currency == 'X';
+          return item.currency == 'FMVP';
         });
         this.info = v;
         this.isLoading = false;
