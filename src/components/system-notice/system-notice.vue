@@ -1,19 +1,21 @@
 <template>
   <div class="idcard-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>系统公告</span>
-        </p>
-    </header>
     <div class='main'>
-      <div class="list">
-        <div class='text1'><i class='icon'></i><span class='txt1'>FUN MVP</span><span class='txt2'>2015-10-10</span></div>
-        <p class="text2">V1.0.0版本正式上线,如遇问题欢迎使用智能客服,谢谢！</p>
-      </div>
-      <div class="list">
-        <div class='text1'><i class='icon'></i><span class='txt1'>FUN MVP</span><span class='txt2'>2015-10-10</span></div>
-        <p class="text2">V1.0.0版本正式上线,如遇问题欢迎使用智能客服,谢谢！</p>
+      <Scroll 
+        ref="scroll"
+        :data="noticeData"
+        :hasMore="hasMore"
+        v-show="noticeData.length > 0"
+        @pullingUp="getNotice"
+      >
+        <div class="list" v-for="(item, index) in noticeData" :key="index">
+          <div class='text1'><i class='icon'></i><span class='txt1'>FUNMVP</span><span class='txt2'>{{item.createDatetime}}</span></div>
+          <p class="text2">{{item.content}}</p>
+        </div>
+      </Scroll>
+      <div class="no-data" :class="{'hidden': noticeData.length > 0}">
+        <img src="./wu.png" />
+        <p>暂无公告</p>
       </div>
     </div>
     
@@ -21,16 +23,34 @@
   </div>
 </template>
 <script>
+import { setTitle } from 'common/js/util';
+import { notice } from 'api/general';
+import Scroll from 'base/scroll/scroll';
 export default {
   data() {
     return {
-      show: true
+      start: 1,
+      hasMore: true,
+      noticeData: []
     };
   },
+  created() {
+    setTitle('公告');
+    this.getNotice();
+  },
   methods: {
-    get() {
-      this.show = false;
+    getNotice(){
+      notice(this.start).then(data => {
+        if(data.totalPage < this.start){
+          this.hasMore = false;
+        }
+        this.noticeData = [...this.noticeData, ...data.list];
+        this.start ++;
+      });
     }
+  },
+  components: {
+    Scroll
   }
 };
 </script>
@@ -71,6 +91,7 @@ export default {
 
   .main {
     width: 100%;
+    height: 12rem;
     padding: 0 .3rem;
     .list {
       width: 100%;

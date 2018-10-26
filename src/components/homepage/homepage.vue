@@ -27,7 +27,9 @@
                 <p>好评率</p>
             </div>
             <div class="ls-box">
-                <h5>{{totalTradeCount}}</h5>
+                <h5>
+                    {{totalTradeCount}}{{currency}}
+                </h5>
                 <p>历史交易</p>
             </div>
         </div>
@@ -110,7 +112,8 @@ export default {
             }else{
                 this.lhText = '已拉黑';
             }
-            this.totalTradeCount = data.totalTradeCount == '0' ? '0' : formatAmount(data.totalTradeCount, '0', this.currency) + this.currency + ' +';
+            let tradeCount =  ((Math.floor(parseFloat(formatAmount(data.totalTradeCount, '0', this.currency)) * 10000)) / 10000).toFixed(4);
+            this.totalTradeCount = data.totalTradeCount == '0' ? '0' : tradeCount;
         });
       },
       xrClickFn(){
@@ -227,10 +230,13 @@ export default {
             margin-bottom: 0.7rem;
             div{
                 text-align: center;
-                width: 24%;
+                width: 20%;
                 h5{
                     font-size: 0.36rem;
                     margin-bottom: 0.2rem;
+                }
+                &:nth-of-type(4){
+                    width: 36%;
                 }
             }
         }

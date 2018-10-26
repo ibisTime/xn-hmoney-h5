@@ -19,15 +19,18 @@
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
     <button @click='CopyUrl'>复制收款地址</button>
+    <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
 import { getUrlParam, setTitle } from 'common/js/util';
+import Toast from 'base/toast/toast';
 const QRCode = require('js-qrcode');
 export default {
   data() {
     return {
       txtShow: true,
+      textMsg: '',
       adress: '',
       currency: '',
       accountNumber: ''
@@ -43,7 +46,10 @@ export default {
     CopyUrl() {
       let url = document.querySelector('#copyObj');
       url.select(); // 选择对象
-      document.execCommand('Copy');
+      if(!document.execCommand('Copy')){
+        this.textMsg = '该机型不支持点击复制，请长按文本复制';
+        this.$refs.toast.show();
+      }
     }
   },
   mounted() {
@@ -54,6 +60,9 @@ export default {
       foreground: '#000000'
     });
     qr.make(this.adress);
+  },
+  components: {
+    Toast
   }
 };
 </script>

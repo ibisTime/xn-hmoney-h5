@@ -10,37 +10,41 @@
         </p>
         <p>
           <span class='txt1'>价格<i></i></span>
-          <input type="text" readonly v-model="bbPrice">
+          <input type="number" readonly v-model="bbPrice">
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('jg')"></span>
         </p>
         <p>
           <span class='txt1'>溢价率<i></i></span>
-          <input type="text" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice">
+          <input type="number" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice">
           <span class='txt2'>%</span>
           <span class='ico' @click.stop="showMsg('jv')"></span>
         </p>
         <p>
           <span class='txt1'>{{type !== '购买' ? '最低价' : '最高价'}}<i></i></span>
-          <input type="text" v-model="config.protectPrice" :placeholder="type !== '购买' ? '广告可交易的最低价' : '广告可交易的最高价'">
+          <input type="number" name="protectPrice" v-validate="'required'" v-model="config.protectPrice" :placeholder="type !== '购买' ? '广告可交易的最低价' : '广告可交易的最高价'">
+          <span v-show="errors.has('protectPrice')" class="error-tip">{{errors.first('protectPrice')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('low')"></span>
         </p>
         <p>
           <span class='txt1'>最小价<i></i></span>
-          <input type="text" v-model="config.minTrade" placeholder="单笔交易的最小额度">
+          <input type="number" name="minTrade" v-validate="'required'" v-model="config.minTrade" placeholder="单笔交易的最小额度">
+          <span v-show="errors.has('minTrade')" class="error-tip">{{errors.first('minTrade')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('min')"></span>
         </p>
         <p>
           <span class='txt1'>最大价<i></i></span>
-          <input type="text" v-model="config.maxTrade" placeholder="单笔交易的最大额度">
+          <input type="number" name="maxTrade" v-validate="'required'" v-model="config.maxTrade" placeholder="单笔交易的最大额度">
+          <span v-show="errors.has('maxTrade')" class="error-tip">{{errors.first('maxTrade')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('max')"></span>
         </p>
         <p>
           <span class='txt1'>{{type}}总量<i class="wallet">余额：{{walletMon}}</i></span>
-          <input type="text" v-model="count" placeholder="请输入售卖币的总量">
+          <input type="number" name="count" v-validate="'required'" v-model="count" placeholder="请输入售卖币的总量">
+          <span v-show="errors.has('count')" class="error-tip">{{errors.first('count')}}</span>
           <span class='txt2'>{{config.tradeCoin}}</span>
         </p>
         <p>
@@ -56,14 +60,15 @@
         </p>
         <p>
           <span class='txt1'>付款期限<i></i></span>
-          <input type="text" placeholder="请输入付款期限" v-model="config.payLimit">
+          <input type="text" name="payLimit" v-validate="'required'" placeholder="请输入付款期限" v-model="config.payLimit">
+          <span v-show="errors.has('payLimit')" class="error-tip">{{errors.first('payLimit')}}</span>
           <span class='txt2'>分钟</span>
           <span class='ico' @click.stop="showMsg('qx')"></span>
         </p>
     </div>
-    <textarea class='message' placeholder="请写下您的广告留言吧" ref="leaveMessage">
-        
+    <textarea class='message' name="leaveMessage" v-validate="'required'" placeholder="请写下您的广告留言吧" ref="leaveMessage">  
     </textarea>
+    <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
     <div class='select' @click="show = !show">
         <p class='text'>
             <span>高级设置</span>
@@ -89,10 +94,6 @@
                 <option :value="eItem" v-for="(eItem, eIndex) in endTimeList" :key="eIndex">{{eItem}}</option>
               </select>
             </p>
-            <!-- <p class='text3'>
-              <i class='icon'></i>
-              <span>添加时间段</span>
-            </p> -->
           </div>
       </div>
       <!-- <div class='select-time'>
@@ -116,6 +117,7 @@
     </div>
     <showMsg :text="text" ref="showMsg"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 <script>
@@ -124,6 +126,7 @@ import showMsg from 'base/showMsg/showMsg';
 import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 import { wallet } from 'api/person';
+import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
 const message = new Message();
@@ -131,6 +134,7 @@ const message = new Message();
 export default {
   data() {
     return {
+      textMsg: '',
       isLoading: true,
       text: '',
       count: '',
@@ -405,8 +409,8 @@ export default {
       }
       function cgAdver(that){
         message.show('操作成功');
-        if(that.config.publishType != '3'){
-          sessionStorage.setItem('tradeType', that.config.publishType);
+        if(that.config.publishType != '0'){
+          sessionStorage.setItem('tradeType', that.config.tradeType);
           sessionStorage.setItem('coin', that.config.tradeCoin);
         }
         setTimeout(() => {
@@ -416,6 +420,11 @@ export default {
     },
     toOtcFn(){
       this.config.publishType = '1';
+      if(this.errors.any() || this.config.protectPrice == ''){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
       this.changeConfig('/otc');
     },
     //保存草稿
@@ -465,7 +474,8 @@ export default {
   },
   components: {
     showMsg,
-    FullLoading
+    FullLoading,
+    Toast
   }
 };
 </script>
@@ -601,6 +611,11 @@ export default {
       float: right;
       margin-right: 0.14rem;
     }
+  }
+  .error-tip{
+    font-size: 0.24rem;
+    width: 1.5rem;
+    color: #d53d3d;
   }
 
   .message {

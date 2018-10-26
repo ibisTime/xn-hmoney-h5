@@ -22,7 +22,7 @@
             <span>信任次数</span>
           </div>
           <div>
-            <p>{{data.userStatistics.beiPingJiaCount != 0 ?(data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100 : '0'}}%</p>
+            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}</p>
             <span>好评率</span>
           </div>
           <div>
@@ -103,6 +103,9 @@ export default {
     this.otcBuy();
   },
   methods: {
+    getPercentum(num1, num2){
+      return getPercentum(num1, num2);
+    },
     otcBuy() {
       otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
         this.data = data;

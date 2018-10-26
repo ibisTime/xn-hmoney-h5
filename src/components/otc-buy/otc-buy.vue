@@ -25,7 +25,7 @@
             <span>信任次数</span>
           </div>
           <div>
-            <p>{{data.userStatistics.beiPingJiaCount != 0 ?(data.userStatistics.beiHaoPingCount / data.userStatistics.beiPingJiaCount) * 100 : '0'}}%</p>
+            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}%</p>
             <span>好评率</span>
           </div>
           <div>
@@ -99,9 +99,9 @@
   </div>
 </template>
 <script>
-import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar } from 'common/js/util';
+import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar, getPercentum } from 'common/js/util';
 import { otcBuy, buyETH, sellBB } from "api/otc";
-import {getUser} from 'api/user';
+import {getUser} from 'api/person';
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
 import Toast from 'base/toast/toast';
@@ -149,11 +149,13 @@ export default {
         tradePrice: '',
         tradePwd: ''
       },
-      photo: ''
+      photo: '',
+      userId: ''
     };
   },
   created() {
     this.type = getUrlParam('type');
+    this.userId = getUrlParam('userId');
     this.config.adsCode = getUrlParam('adsCode');
     if(this.type === '1'){
       this.bText = '购买';
@@ -162,7 +164,7 @@ export default {
       this.bText = '出售';
       setTitle('出售');
     }
-    getUser().then(data => {
+    getUser(this.userId).then(data => {
       this.photo = data.photo;
     });
     this.otcBuy();
@@ -173,6 +175,9 @@ export default {
     })
   },
   methods: {
+    getPercentum(num1, num2){
+      return getPercentum(num1, num2);
+    },
     // 获取头像
     getUserPic(pic){
       return getAvatar(pic);
@@ -483,7 +488,6 @@ export default {
         }
         .txt4 {
           width: 3.6rem;
-
           .icon2 {
             display: inline-block;
             width: .49rem;
@@ -492,7 +496,7 @@ export default {
             background-position: center;
             background-size: 100% 100%;
             background-image: url('./z_h.png');
-            margin-right: .4rem;
+            margin-right: .1rem;
             vertical-align: middle;
            
           }

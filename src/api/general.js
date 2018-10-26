@@ -131,3 +131,11 @@ export function getTradeIconRule(key) {
     key
   });
 }
+// 系统公告
+export function notice(start) {
+  return fetch('805305', {
+      start,
+      limit: '10',
+      status: '1'
+  });
+}

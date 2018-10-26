@@ -35,7 +35,7 @@
   @import "~common/scss/variable";
 
   .full-loading-wrapper {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 99999;

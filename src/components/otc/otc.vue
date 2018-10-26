@@ -22,7 +22,6 @@
               <span></span>
             </p>
             <p>
-              <!-- 支付方式<span></span> -->
               <select name="bbPayType" @change="selPayType" ref="select_pay">
                 <option value="">请选择</option>
                 <option value="0">支付宝</option>
@@ -31,23 +30,8 @@
               </select>
               <span></span>
             </p>
-            <!-- <p :class="[show3 ? 'act' : '']" @click="show = !show3" >排序<span></span></p> -->
         </div>
       </div>
-      <!-- 下拉选择 -->
-      <!-- <div v-show='show3' class='select3'>
-        <div class='main'>
-          <p>单价从低到高</p>
-          <p>单价从高到低</p>
-          <p>数量从低到高</p>
-          <p>数量从高到低</p>
-          <p>总额从低到高</p>
-          <p>总额从高到低</p>
-          <p>发布时间从早到晚</p>
-          <p>发布时间从晚到早</p>
-        </div>
-      </div> -->
-      <!-- banner -->
       <div class="slider-wrapper">
         <slider v-if="banners.length">
           <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)">
@@ -70,7 +54,7 @@
                   <p class="pic-p" :style="getAvatar(adverItem.user.photo)" alt=""></p>
                   <span class='green color'></span>
                 </div>
-                <span class='name'>已实名</span>
+                <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? '已实名' : '未实名'}}</span>
               </div>
               <div class='text'>
                 <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
@@ -90,7 +74,14 @@
         </div>
       </div>
       <Toast :text="textMsg" ref="toast" />
-      <div  @click='relShow' class='release'>
+      <div   
+        class='release'
+        ref="touchDemo"
+        @click='relShow'
+        @touchstart.stop="fbTouchStartFn"
+        @touchmove.stop="fbTouchMoveFn"
+        @touchend.stop="fbTouchEndFn"
+      >
       </div>
 
       <Footer></Footer>
@@ -147,7 +138,18 @@ export default {
       start2: 1,
       limit: 10,
       textMsg: '',
-      type: 's'
+      type: 's',
+      flags: '',
+      position: {x: '', y: ''},
+      demoX: '',
+      demoY: '',
+      moveX: '',
+      moveY: '',
+      xPum: '',
+      yPum: '',
+      touchDemo: '',
+      docuWidth: '',
+      docuHeight: ''
     };
   },
   created() {
@@ -193,6 +195,7 @@ export default {
       }
 
       function clData(data, that, start, type){
+        console.log(data)
         that.hasMore = true;
         if(data.totalPage < start){
           that.bbDataList = [];
@@ -270,19 +273,13 @@ export default {
     },
     relShow() {
       getUser().then(data => {
-        if(data.tradepwdFlag && data.realName){
+        if(data.tradepwdFlag){
           this.Show = true;
         }else if(!data.tradepwdFlag){
           this.textMsg = '请设置资金密码';
           this.$refs.toast.show();
           setTimeout(() => {
             this.$router.push('/security-tradePassword');
-          }, 1500);
-        }else if(!data.realName){
-          this.textMsg = '请先进行身份验证';
-          this.$refs.toast.show();
-          setTimeout(() => {
-            this.$router.push('/security-identity');
           }, 1500);
         }
       });
@@ -337,6 +334,59 @@ export default {
     // 个人主页
     toHomePage(userId, tradeCoin){
       this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
+    },
+    // 实现 发布 拖动
+    fbTouchStartFn(){
+      this.touchDemo = this.$refs.touchDemo;
+      this.flags = true;
+      let touch = '';
+      if(event.touchs){
+        touch = event.touchs[0];
+      }else{
+        touch = event.changedTouches[0];
+      }
+      
+      this.docuWidth = document.body.clientWidth - 50;
+      this.docuHeight = document.body.clientHeight - 150;
+      this.position.x = touch.clientX;
+      this.position.y = touch.clientY;
+      this.demoX = this.touchDemo.offsetLeft;
+      this.demoY = this.touchDemo.offsetTop;
+    },
+    fbTouchMoveFn(){
+      event.preventDefault();
+      if(this.flags){
+        var touch ;
+        if(event.touches){
+            touch = event.touches[0];
+        }else {
+            touch = event.changedTouches[0];
+        }
+        this.moveX = touch.clientX - this.position.x;
+        this.moveY = touch.clientY - this.position.y;
+        this.xPum = this.demoX + this.moveX;
+        this.yPum = this.demoY + this.moveY;
+
+        // 判断边界
+        if(this.xPum > this.docuWidth){
+          this.xPum = this.docuWidth;
+        }
+        if(this.xPum < 0){
+          this.xPum = 0;
+        }
+        if(this.yPum > this.docuHeight){
+          this.yPum = this.docuHeight;
+        }
+        if(this.yPum < 0){
+          this.yPum = 0;
+        }
+
+        this.touchDemo.style.left = this.xPum / 50 + 'rem';
+        this.touchDemo.style.top = this.yPum / 50 + 'rem';
+      }
+    },
+    fbTouchEndFn(){
+      this.flags = false;
     }
   },
   components: {
@@ -488,7 +538,8 @@ export default {
   }
 
   .main {
-    height: 7.5rem;
+    height: 7rem;
+    padding-bottom: 0.2rem;
     overflow: scroll;
     .content {
       width: 92%;
@@ -551,7 +602,11 @@ export default {
             color:#d53d3d;
             margin-top: .1rem;
             text-align: center;
-            line-height: .3rem;
+            line-height: .2rem;
+          }
+          .wname{
+            color: #777;
+            border-color: #777;
           }
         }
 
@@ -606,7 +661,6 @@ export default {
     }
 
   }
-
   .release {
     width: 1.06rem;
     height:1.06rem;
@@ -616,8 +670,9 @@ export default {
     background-size: 100% 100%;
     background-image: url('./fb.png');
     position: fixed;
-    right: 1.3rem;
-    bottom: 2.52rem;
+    left: 6.3rem;
+    top: 7.52rem;
+    opacity: 0.8;
 
   }
 }

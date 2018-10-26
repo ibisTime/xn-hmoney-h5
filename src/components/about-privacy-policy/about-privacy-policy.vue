@@ -3,17 +3,20 @@
     <div class="container" v-html="cvalue">
 
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
 import { setTitle, getUrlParam } from "common/js/util";
-import { getSysConfig } from "api/general"
+import { getSysConfig } from "api/general";
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
       tit: '',
       ckey: '',
-      cvalue: ''
+      cvalue: '',
+      isLoading: true
     };
   },
   created() {
@@ -28,9 +31,12 @@ export default {
     setTitle(this.tit);
     getSysConfig(this.ckey).then(data => {
       this.cvalue = data.cvalue;
+      this.isLoading = false;
     })
   },
-  methods: {}
+  components: {
+    FullLoading
+  }
 };
 </script>
 <style lang="scss" scoped>

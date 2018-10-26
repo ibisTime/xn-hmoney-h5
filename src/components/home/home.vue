@@ -12,14 +12,14 @@
         <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
       </div>
       <div class="cates-wrapper">
-          <div tag="div" class="cate-item">
+          <router-link to="shop" tag="div" class="cate-item">
             <i class="cate-icon game-icon"></i>
             <p>{{ $t('page.cate.game') }}</p>
-          </div>
-          <div tag="div" class="cate-item">
+          </router-link>
+          <router-link to="shop-usedCar" class="cate-item">
             <i class="cate-icon exchange-icon"></i>
             <p>{{ $t('page.cate.exchange') }}</p>
-          </div>
+          </router-link>
           <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
             <i class="cate-icon otc-icon"></i>
             <p>{{ $t('page.cate.otc') }}</p>
@@ -27,7 +27,7 @@
       </div>
       <div class="tab-wrapper">
           <div class="tabCar fun">
-            <router-link to=''>
+            <router-link to='shop'>
               <div class="tab-text">
                 <p class="tit">FUNMVP</p>
                 <p class="con">混乱世界、精彩画面</p>

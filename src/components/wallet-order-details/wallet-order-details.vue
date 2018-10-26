@@ -56,7 +56,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, getUserId, formatDate, formatAmount, setTitle } from 'common/js/util';
+import { getUrlParam, getUserId, formatAmount, setTitle } from 'common/js/util';
 import { bjPlayfo, qxOrder, getGmBankData, getCTSDetail } from 'api/person';
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';

@@ -30,7 +30,7 @@
                     </div>
                     <div class='text1'>
                         <p class='txt1'><span class='name'>{{adverItem.user.nickname}}</span><span class='green'>{{payTypeList[adverItem.payType]}}</span></p>
-                        <p class='txt2'>交易{{adverItem.userStatistics.jiaoYiCount}} • 好评{{adverItem.userStatistics.beiPingJiaCount != 0 ?(adverItem.userStatistics.beiHaoPingCount / adverItem.userStatistics.beiPingJiaCount) * 100 : '0'}}% • 信任{{adverItem.userStatistics.beiXinRenCount}}</p>
+                        <p class='txt2'>交易{{adverItem.userStatistics.jiaoYiCount}} • 好评{{adverItem.userStatistics.beiPingJiaCount != 0 ? getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount) : '0'}} • 信任{{adverItem.userStatistics.beiXinRenCount}}</p>
                         <p class='txt3'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
                     </div>
                     <div class='text2'>
@@ -40,7 +40,7 @@
                 </div>
                 <div class='list2'>
                     <div class='text1'>
-                        <p @click.stop="toclAdver(adverItem.user.userId, adverItem.payType, adverItem.code)"><i class='icon'></i><span>编辑</span></p>
+                        <p @click.stop="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)"><i class='icon'></i><span>编辑</span></p>
                     </div>
                     <span :class="{'hidden': show1}">|</span>
                     <div class='text2'>
@@ -60,7 +60,7 @@
 </template>
 <script>
 import { getUserAdver, addAdvertising, downAdvertise, ExitAdvertising } from "api/otc";
-import {getUserId, formatAmount, setTitle, getAvatar} from 'common/js/util';
+import {getUserId, formatAmount, setTitle, getAvatar, getPercentum} from 'common/js/util';
 import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
@@ -113,6 +113,9 @@ export default {
     setTitle('我的广告');
   },
   methods: {
+    getPercentum(num1, num2){
+        return getPercentum(num1, num2);
+    },
     // 获取头像
     getUserPic(pic){
         return getAvatar(pic);

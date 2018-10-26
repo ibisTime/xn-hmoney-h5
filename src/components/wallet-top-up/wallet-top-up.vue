@@ -59,21 +59,23 @@
         </div>
         <!-- 去购买 -->
         <div class='pay' v-show="show">  
-            <span>付款方式</span>
-            <span class='txt2'>
-                <!-- <i class='icon icon1'></i> -->
-                <select name="" id="" v-model="buyConfig.receiveType" @change="selBankcar">
-                  <option 
-                    :value="buyItem.bankCode" 
-                    v-for="(buyItem, index) in zfBankList" 
-                    :key="index"
-                  >{{buyItem.bankName}}</option>
-                </select>
-                <i class='icon icon2'></i>
-            </span>
+            <p>
+              <span>付款方式</span>
+              <span class='txt2 fr'>
+                  支付宝
+              </span>
+            </p>
         </div>
-        <div class="payNum" v-show="show">
-          <p>账号：{{bankcardNumber}}</p>
+        <div class="pay-img" v-show="show">
+          <p :style="{backgroundImage: zfPic}"></p>
+        </div>
+        <div class="pay-note" v-show="show">
+          <div>
+            <textarea name="" id="" v-model="buyConfig.remark" placeholder="请输入自己的支付宝账号（以便确认）"></textarea>
+          </div>
+          <div class="pay-tis" v-show="show">
+            <p>付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。</p>
+          </div>
         </div>
         <!-- 去出售 -->
         <div class='pay' v-show="!show">
@@ -105,7 +107,7 @@
 </template>
 <script>
 import {getAdverMessage} from 'api/otc';
-import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam} from 'common/js/util';
+import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam, getPic} from 'common/js/util';
 import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -128,8 +130,9 @@ export default {
         tradePrice: '',
         userId: getUserId(),
         count: '',
-        receiveType: '支付宝',
-        tradeAmount: ''
+        receiveType: 'alipay',
+        tradeAmount: '',
+        remark: ''
       },
       sellConfig: {
         userId: getUserId(),
@@ -147,7 +150,8 @@ export default {
       zfBankList: [],   // 去购买账号列表
       gmBankList: [],   // 去出售账号列表
       cdsMoney: '',
-      fmvpTypeData: {}   // 承兑商参数
+      fmvpTypeData: {},   // 承兑商参数
+      zfPic: ''
     };
   },
   created() {
@@ -168,6 +172,7 @@ export default {
       this.sellFvData = parseFloat(data.accept_order_sell_fee_rate) * 100;
     });
     getBankData().then(data => {
+      this.zfPic = getPic(data[0].pic).backgroundImage;
       this.zfBankList = data;
       data.forEach(item => {
         this.zfType[item.bankName] = item.bankCode;
@@ -298,6 +303,7 @@ export default {
 .top-up-wrapper {
   font-size: 0.32rem;
   color: #333;
+  background-color: #f7f7f7;
 
   .icon {
     display: inline-block;
@@ -333,7 +339,7 @@ export default {
         font-weight: bold;
         position: absolute;
         left: 50%;
-        transform: translateFMVP(-50%);
+        transform: translateX(-50%);
       }
     }
   }
@@ -424,7 +430,7 @@ export default {
         color: #999;
         margin-bottom: 0.24rem;
         .text1 {
-          margin-right: 1.25rem;
+          margin-right: 0.6rem;
         }
         .text3 {
             float: right;
@@ -455,7 +461,9 @@ export default {
         border-bottom: .01rem solid #ebebeb;
 
         input {
+          padding: 0.1rem 0.3rem;
           color: #999;
+          border-bottom: .01rem solid #ebebeb;
         }
         .txt1 {
           font-weight: bold;
@@ -503,12 +511,12 @@ export default {
         right: 2rem;
         top: 0%;
       }
+      p{
+        width: 100%;
+      }
       .txt2 {
         font-size: 0.28rem;
-        width: 80%;
-        select{
-          width: 90%;
-        }
+        float: right;
       }
       .icon1 {
         width: 0.48rem;
@@ -539,6 +547,36 @@ export default {
         height: 0.8rem;
       }
     }
+    .pay-img{
+      padding: 0.1rem 0.3rem;
+      text-align: right;
+      margin: 0.2rem 0;
+      background-color: #fff;
+      p{
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+    }
+    .pay-note{
+      background-color: #fff;
+      padding: 0.3rem;
+      margin-bottom: 0.2rem;
+      textarea{
+        font-size: 0.3rem;
+        width: 100%;
+        height: 1.4rem;
+        padding: 0.1rem 0.12rem;
+        border: 1px solid #ccc;
+        border-radius: 0.02rem;
+      }
+    }
+    .pay-tis{
+      padding: 0.1rem 0;
+      font-size: 0.2rem;
+    }
     .payPaw{
       width: 100%;
       padding: 0.1rem 0.3rem;
@@ -559,7 +597,7 @@ export default {
     button {
       width: 6.9rem;
       height: 1rem;
-      margin: 0.65rem 0.3rem 0;
+      margin: 0.1rem 0.3rem 0;
       background: #d53d3d;
       border-radius: 0.08rem;
       font-weight: bold;

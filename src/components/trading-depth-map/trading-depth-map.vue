@@ -1,5 +1,5 @@
 <template>
-  <div class="map-wrapper" @click.stop>
+  <div class="map-wrapper" @click.stop @touchmove.prevent>
      <div class='main'>
        <div id="charts" :style="{width: '7rem', height: '6rem'}"></div>
      </div>
@@ -151,8 +151,6 @@ import { formatAmount } from "common/js/util";
         };
         myChart.setOption(option);
       }
-    },
-    components: {
     },
     watch: {
         bazDeal: {

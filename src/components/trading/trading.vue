@@ -23,8 +23,8 @@
           </select>
           <i class='icon'></i>
           <span class='txt4'>盘口</span>
-          <span class='txt5'>价格</span>
-          <span class='txt6'>数量</span>
+          <span class='txt5'>价格({{setBazDeal.toSymbol}})</span>
+          <span class='txt6'>数量({{setBazDeal.symbol}})</span>
         </p>
       </div>
       <div class="main">
@@ -124,7 +124,7 @@
             </p>
           </div>
           <p class='middle'>
-            <span class='red max-len_r'>{{bb_zxj + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}}</span>
+            <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
             <!-- <i class='icon'></i> -->
           </p>
           <div class='one two'>
@@ -137,7 +137,7 @@
 
         </div>
       </div>
-      <div class='entrust' v-show="history">
+      <div class='entrust' v-show="isLogin">
         <div class='tabs'>
           <p @click="showCurr" class='current'>当前委托</p>
           <p @click='showHisto' class='history'><i class='icon'></i>
@@ -155,7 +155,7 @@
               <p class='text1'>
                 <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
                 <span>{{myItem.createDatetime}}</span>
-                <span class='red' v-show="myItem.tradedCount == 0">撤销</span>
+                <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">撤销</span>
               </p>
               <div class='text2'>
                 <div class='txt1'>
@@ -207,15 +207,14 @@
           <span class='tab-item cj' :class="{'on': tShow === '3'}">成交</span>
           <span class='tab-item sd' :class="{'on': tShow === '4'}">深度图</span>
         </div>
-        <TradingSynopsis v-show="tShow === '1'" />
-        <TradingPutUp v-show="tShow === '2'" />
-        <TradingClinchadeal v-show="tShow === '3'" />
+        <TradingSynopsis v-show="tShow === '1'" :bazDeal="bazDeal"/>
+        <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
+        <TradingClinchadeal v-show="tShow === '3'" :bazDeal="bazDeal"/>
         <TradingDepthMap v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
-          <button class='buy'><router-link to=''>买入FMVP</router-link></button>
-          <button class='sell'><router-link to=''>卖出FMVP</router-link></button>
+          <button class='buy'><router-link to='wallet-top-up?type=buy'>买入FMVP</router-link></button>
+          <button class='sell'><router-link to='wallet-top-up?type=sell'>卖出FMVP</router-link></button>
         </div>
-
       </div>
     </div>
     <Footer></Footer>
@@ -232,12 +231,27 @@ import TradingSynopsis from 'components/trading-synopsis/trading-synopsis';
 import TradingPutUp from 'components/trading-put-up/trading-put-up';
 import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchadeal';
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
-import { formatAmount, setTitle, getUserId, formatMoneyMultiply, formatDate } from "common/js/util";
+import { 
+  formatAmount, 
+  setTitle, 
+  getUserId, 
+  formatMoneyMultiply, 
+  formatDate 
+} from "common/js/util";
 import {wallet} from 'api/person';
-import {getBazaarData, getBBExchange, getHandicapData, downBBOrder, getMyorderTicket, getRealTimeData} from 'api/bb';
+import {
+  getBazaarData, 
+  getBBExchange, 
+  getHandicapData, 
+  downBBOrder, 
+  getMyorderTicket, 
+  getRealTimeData, 
+  repOrder
+} from 'api/bb';
 export default {
   data() {
     return {
+      referCurrency: 'CNY',
       textMsg: '',
       hasMore: true,
       isLoading: true,
@@ -282,7 +296,8 @@ export default {
         start: 1,
         limit: 1
       },                    // 实时成交参数
-      bb_zxj: ''            // 最新价
+      bb_zxj: '',            // 最新价
+      symbolData: {}
     };
   },
   created() {
@@ -306,14 +321,14 @@ export default {
           'toSymbol': item.toSymbol
         });
       });
-      getBBExchange('CNY', this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
+      getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
         this.toSyMid = data[0].mid;
       });
-      this.getUserWalletData();
       this.handicapData();
       this.realTimeData();
 
       if(getUserId()){
+        this.getUserWalletData();
         this.isLogin = true;
         this.history = true;
         this.myOrderTicket();
@@ -326,8 +341,6 @@ export default {
     // var handTime = setInterval(() => {
     //   this.handicapData();
     // }, 3000);
-  },
-  computed: {
   },
   methods: {
     getUserWalletData(){
@@ -357,10 +370,12 @@ export default {
         toSymbol: this.symBazList[this.symNumber].toSymbol
       }
       sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
-      this.getUserWalletData();
       this.handicapData();
       this.realTimeData();
       if(this.isLogin){
+        this.getUserWalletData();
+        this.start = 1;
+        this.myOrderData = [];
         this.myOrderTicket();
       }
     },
@@ -381,11 +396,15 @@ export default {
           });
           this.bbAsks.map(item => {
             item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
+            item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
+            item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
           this.bbBids.map(item => {
             item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
+            item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
+            item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
         }
         this.isLoading = false;
@@ -404,14 +423,14 @@ export default {
       getMyorderTicket(this.myOrderConfig).then(data => {
           data.list.map(item => {
             let showTotalCount = item.direction == 0 && item.type == 0;
-            item.createDatetime = formatDate(item.createDatetime, 'yy-MM-dd hh:mm:ss');
+            item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
             item.price = item.type == 0 ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
             item.totalCount = showTotalCount ? '-' : (formatAmount(`${item.totalCount}`, '', item.symbol));
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol)
           });
           if (data.totalPage <= this.start) {
-              this.hasMore = false;
-            }
+            this.hasMore = false;
+          }
           this.myOrderData = [...this.myOrderData, ...data.list];
           this.start ++;
           this.isLoading = false;
@@ -426,7 +445,11 @@ export default {
         ...this.setBazDeal
       }
       getRealTimeData(this.realTimeConfig).then(data => {
-        this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
+        if(data.list.length > 0){
+          this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
+        }else{
+          this.bb_zxj = 0;
+        }
       });
     },
     buy() {
@@ -545,6 +568,21 @@ export default {
           this.xjPrice = numLeft + '.' + numRight;
         }
       }
+    },
+    repealOrder(code){  // 撤销委托单
+      this.isLoading = true;
+      repOrder(code).then(data => {
+        this.textMsg = '操作成功';
+        this.$refs.toast.show();
+        this.isLoading = false;
+        setTimeout(() => {
+          this.start = 1;
+          this.myOrderData = [];
+          this.myOrderTicket();
+        }, 1500);
+      }, () => {
+        this.isLoading = false;
+      })
     }
   },
   components: {
@@ -643,7 +681,7 @@ export default {
       line-height: 1rem;
       height: 1rem;
       width: 100%;
-      padding: 0 .3rem;
+      padding: 0 .1rem;
       border-bottom: .01rem solid #e5e5e5;
       font-size: .3rem;
       margin-bottom: .2rem;
@@ -659,7 +697,7 @@ export default {
 
       .txt1 {
         color: #d53d3d;
-        margin-right: .8rem;
+        margin-right: .5rem;
       }
 
       .txt2 {
@@ -684,11 +722,13 @@ export default {
       }
 
       .txt4 {
-        margin-right: .38rem;
+        margin-right: .1rem;
       }
       .txt6 {
         float: right;
-        margin-top: .06rem;
+      }
+      p{
+        padding-left: 0.3rem;
       }
     }
 
@@ -938,7 +978,7 @@ export default {
     }
     .main2 {
       width: 100%;
-      margin-bottom: 1.85rem;
+      margin-bottom: 1.55rem;
       .tabs {
         width: 100%;
         padding: 0 .3rem;
@@ -962,8 +1002,8 @@ export default {
       }
       .foot {
         width: 100%;
-        // position: fixed;
-        // bottom: .96rem;
+        position: fixed;
+        bottom: .96rem;
         display: flex;
         .buy {
           background: #d53d3d;

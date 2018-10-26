@@ -309,6 +309,7 @@ export default {
       z-index: 5;
       height: 1rem;
       width: 1rem;
+      opacity: 0.7;
       background-image: url('./sxuan.png');
       background-size: 100%;
     }

@@ -192,6 +192,7 @@ export default {
           line-height: 1rem;
           height: 1rem;
           margin-top: 0;
+          border-bottom: .01rem solid #E5E5E5;
         }
         .error-tip {
           position: absolute;

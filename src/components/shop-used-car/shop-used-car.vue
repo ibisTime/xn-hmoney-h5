@@ -1,11 +1,11 @@
 <template>
   <div class="usedCar-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>二手车</span>
         </p>
-    </header>
+    </header> -->
     <div class='main'>
 
     </div>
@@ -14,9 +14,11 @@
   
 </template>
 <script>
+import { setTitle } from "common/js/util";
 export default {
-  methods: {
-  }
+  created() {
+      setTitle('二手车兑换');
+  },
 
 };
 </script>

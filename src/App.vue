@@ -3,27 +3,56 @@
     <div class="">
       <router-view></router-view>
     </div>
+    <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 //@touchmove.prevent
-import {zendesk} from './common/js/zendesk';
+import Toast from 'base/toast/toast';
 import {isLogin, getUrlParam} from './common/js/util';
   export default {
-    created() {
-      zendesk();
-      if(!isLogin()) {
-        this.$router.push('login');
+    data(){
+      return {
+        textMsg: ''
       }
     },
+    created() {
+      this.$router.beforeEach((to, from ,next) => {
+        if(isLogin()){
+          next();
+        }else{
+          if(to.path == '/' ||
+            to.path == '/page' || 
+            to.path == '/system-notice' || 
+            to.path == '/about-platformIntroduced?ckey=about_us' || 
+            to.path == '/trading' ||
+            to.path == '/otc' ||
+            to.path == '/login' ||
+            to.path == '/registered' ||
+            to.path == '/security-tradePassword'){
+              next();
+          }else{
+            this.textMsg = '请先登录';
+            this.$refs.toast.show();
+            setTimeout(() => {
+              next('/login');
+            }, 1500);
+          }
+        }
+      })
+    },
+    components: {
+      Toast
+    }
   };
 </script>
 <style lang="scss">
   #app{
     overflow-x: hidden;
-    overflow-y: scroll;
     position: relative;
+    background-color: #fff;
+    -webkit-overflow-scrolling: auto;    // 阻止元素滑动回弹
   }
   .loading-container {
     position: absolute;

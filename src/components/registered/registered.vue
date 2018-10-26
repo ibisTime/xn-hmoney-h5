@@ -1,7 +1,7 @@
 <template>
   <div class="regist-wrapper" @click.stop>
       <div class="card">
-          <h3 class="title" @click="goBack">注册</h3>
+          <h3 class="title">注册</h3>
           <p calss="tabs" id="tabs">
               <span :class="[flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag1">手机注册</span>
               <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">邮箱注册</span>
@@ -22,12 +22,13 @@
             <p class="yzm">
             <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
-            <input v-show="!fscg" type="button" class="getYam" @click="getSca1(type)" value="获取验证码">
-            <!-- <input v-show="!flag" v-if="fscg" type="button" class="getYam" @click="getSca2" value="获取验证码"> -->
-            <span class="cxfs" v-if="fscg">重新发送({{time}}s)</span>
+            <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" value="获取验证码">
+            <span class="cxfs" v-if="fscg && type== '0'">重新发送({{time1}}s)</span>
+            <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" value="获取验证码">
+            <span class="cxfs" v-if="fscg1 && type== '1'">重新发送({{time2}}s)</span>
             </p>
             <p>
-            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合不少于6位">
+            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合6位-16位">
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p>
@@ -35,10 +36,18 @@
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p class="check">
-            <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="showZcxyTxt">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
+            <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="isLook = true">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
             <input type="submit" @click="regist" value="注册">
           </div>
+      </div>
+      <!-- 注册条款 -->
+      <div class="clause-box" v-show="isLook">
+        <div class="clause-tit">
+          <h5>注册协议</h5>
+          <span class="close" @click="isLook = false"></span>
+        </div>
+        <div class="cla-contant" v-html="clauseText"></div>
       </div>
       <Toast :text="textMsg" ref="toast" />
       <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -52,6 +61,7 @@ import {
   getSmsCaptcha2
 } from "api/person";
 import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
+import { getSysConfig } from 'api/general';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 export default {
@@ -59,11 +69,15 @@ export default {
   data() {
     return {
       textMsg: '',
+      clauseText: '',
+      isLook: false,
       isLoading: false,
       fscg: false,
+      fscg1: false,
       flag: true,
       type:'0',         // 0 手机注册   1 邮箱注册
-      time: 60,
+      time1: 60,
+      time2: 60,
       phone: "",
       email: "",
       smsCaptcha: "",
@@ -74,13 +88,15 @@ export default {
       bizType2: "805043",
       checked: true,
       inviteCode: '',
-      config: {},
-      isSms: false
+      config: {}
     };
   },
   created() {
     setTitle('注册');
     this.inviteCode = getUrlParam('inviteCode');
+    getSysConfig('reg_protocol').then(data => {
+      this.clauseText = data.cvalue;
+    });
   },
   computed: {},
   methods: {
@@ -92,43 +108,44 @@ export default {
       this.type = '1';
       this.flag = false;
     },
-    goBack() {
-      this.$router.go(-1);
-    },
     getSca1() {
-      if(this.isSms){
-        return;
-      }
-      this.isLoading = true;
       if(this.type == '0'){
+        if(this.errors.has('phone')){
+          this.textMsg = this.errors.collect('phone')[0];
+          this.$refs.toast.show();
+          return;
+        }
+        this.isLoading = true;
+        this.fscg = true;
         getSmsCaptcha1(this.bizType1, this.phone).then(data => {
           this.isLoading = false;
-          this.isSms = true;
-          this.fscg = true;
           let phTime = setInterval(() => {
-            this.time --;
-            if(this.time < 0){
+            this.time1 --;
+            if(this.time1 < 0){
               clearInterval(phTime);
               this.fscg = false;
-              this.time = 60;
-              this.isSms = false;
+              this.time1 = 60;
             }
           }, 1000);
         }, () => {
           this.isLoading = false;
         });
       }else{
+        if(this.errors.has('email')){
+          this.textMsg = this.errors.collect('email')[0];
+          this.$refs.toast.show();
+          return;
+        }
+        this.isLoading = true;
+        this.fscg1 = true;
         getSmsCaptcha2(this.bizType2, this.email).then(data => {
           this.isLoading = false;
-          this.fscg = true;
-          this.isSms = true;
           let phTime = setInterval(() => {
-            this.time --;
-            if(this.time < 0){
+            this.time2 --;
+            if(this.time2 < 0){
               clearInterval(phTime);
-              this.fscg = false;
-              this.isSms = false;
-              this.time = 60;
+              this.fscg1 = false;
+              this.time2 = 60;
             }
           }, 1000);
         }, () => {
@@ -179,7 +196,6 @@ export default {
         }
       }
     },
-    showZcxyTxt(){},
     changeBg(){
       this.checked = !this.checked;
     }
@@ -195,6 +211,7 @@ export default {
 @import "~common/scss/variable";
 
 .regist-wrapper {
+  position: relative;
   background: #fff;
   .header {
     width: 100%;
@@ -341,6 +358,43 @@ export default {
       display: inline-block;
       border: 1px solid #ccc;
       border-radius: 0.04rem;
+    }
+  }
+
+  .clause-box{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    padding: 0.2rem 0.2rem;
+    .clause-tit{
+      position: relative;
+      height: 0.6rem;
+      line-height: 0.6rem;
+      font-size: 0.5rem;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 0.6rem;
+      .close{
+        position: absolute;
+        right: 0;
+        top: 0rem;
+        display: inline-block;
+        width: 0.4rem;
+        height: 0.4rem;
+        background-image: url('./popup-close.png');
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+    }
+    .cla-contant{
+      width: 100%;
+      height: 10rem;
+      line-height: 1.7;
+      font-size: 0.32rem;
+      overflow-y: scroll;
     }
   }
 }

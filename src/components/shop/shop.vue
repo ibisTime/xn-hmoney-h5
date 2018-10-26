@@ -8,28 +8,50 @@
     </header>
     <div class="banner">
       <p class='text1'>游戏余额</p>
-      <p class='text2'>100.00 X</p>
-      <p class='text3'>可用余额：100.00 X</p>
-      <router-link to='shop-turn' class='btn'>
-        转币
-      </router-link>
+      <p class='text2'>{{gMon}}</p>
+      <p class='text3'></p>
+      <a :href='gUrl' target="view_window" class='btn' _brank>
+        进入游戏
+      </a>
     </div>
     <div class="main">
     </div>
       <Footer></Footer>
+      <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
   
 </template>
 <script>
+import { gramUrl, gramMoney } from 'api/store';
+import { setTitle } from "common/js/util";
 import Footer from 'components/footer/footer';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
-    return {};
+    return {
+      gUrl: '',
+      gMon: '',
+      isLoading: true
+    };
   },
-  computed: {},
+  created() {
+    setTitle('商城');
+  },
+  mounted() {
+    gramUrl().then(data => {
+      this.gUrl = `${data.gameUrl}?userId=${data.userId}&phone=${data.phone}&hashID=${data.hashID}&sign=${data.sign}`;
+    });
+    gramMoney().then(data => {
+      this.gMon = (Math.floor(parseFloat(data.balance) * 100000000) / 100000000).toFixed(8) + data.currency;
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
+    });
+  },
   methods: {},
   components: {
-    Footer
+    Footer,
+    FullLoading
   }
 };
 </script>
@@ -99,11 +121,9 @@ export default {
     }
     .btn {
       display: inline-block;
-      width: 1.3rem;
-      height: .5rem;
+      padding: 0.1rem 0.4rem 0.12rem;
       font-size: .28rem;
       color: #fff;
-      line-height: .5rem;
       border-radius: .06rem;
       border: .01rem solid #fff;
     }
@@ -112,8 +132,9 @@ export default {
 
   .main {
     width: 100%;
-    height: 5.2rem;
-    margin-top: .2rem;
+    height: 6.2rem;
+    margin-top: 0.6rem;
+    background-image: url('./95650.jpg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;

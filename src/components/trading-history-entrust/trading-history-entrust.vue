@@ -35,7 +35,7 @@
             </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': hisDataList.length > 0}">
-          <img src="./wu.png" />
+          <img src="./zwdata.png" />
           <p>暂无订单</p>
         </div>
     </div>
@@ -154,8 +154,7 @@ export default {
         .gray {
             color: #a0a0a2;
         }
-
-            .list {
+        .list {
             width: 100%;
             padding: .4rem 0;
             border-top: .01rem solid #e5e5e5;
@@ -189,7 +188,7 @@ export default {
                 text-align: right;
                 }
             }
-            }
+        }
 
     }
 

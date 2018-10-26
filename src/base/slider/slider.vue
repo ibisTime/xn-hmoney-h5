@@ -45,14 +45,16 @@
     },
     mounted() {
       setTimeout(() => {
-        this._setSliderWidth();
-        if (this.showDots) {
-          this._initDots();
-        }
-        this._initSlider();
+        if(this.dots.length > 1){
+          this._setSliderWidth();
+          if (this.showDots) {
+            this._initDots();
+          }
+          this._initSlider();
 
-        if(this.autoPlay) {
-          this._play();
+          if(this.autoPlay) {
+            this._play();
+          }
         }
       }, 20);
 
@@ -149,11 +151,15 @@
       }
     },
     beforeDestroy() {
-      this.slider.disable();
+      if(this.dots.length > 1){
+        this.slider.disable();
+      }
       clearTimeout(this.timer);
     },
     deactivated() {
-      this.slider.disable();
+      if(this.dots.length > 1){
+        this.slider.disable();
+      }
       clearTimeout(this.timer);
     },
     activated() {

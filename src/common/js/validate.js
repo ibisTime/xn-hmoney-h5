@@ -50,7 +50,7 @@ Validator.extend('phone', {
 Validator.extend('email', {
   getMessage: field => '邮箱格式错误',
   validate: value => {
-    var isIDCard1 = /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
+    var isIDCard1 = /^[a-z0-9._%-]+@([a-z0-9-]+\.)+[a-z]{2,4}$/;
     return isIDCard1.test(value);
   }
 });
@@ -59,16 +59,16 @@ Validator.extend('email', {
 Validator.extend('password', {
   getMessage: field => '密码格式不正确',
   validate: value => {
-    var isIDCard1 = /^[a-zA-Z0-9]{6,21}$/;
+    var isIDCard1 = /^[a-zA-Z0-9]{6,16}$/;
     return isIDCard1.test(value);
   }
 });
 
 // 昵称校验
 Validator.extend('nickname', {
-  getMessage: field => '昵称不能大于10位',
+  getMessage: field => '昵称4-10位',
   validate: value => {
-    return value.length < 11;
+    return 3 < value.length && value.length < 11;
   }
 });
 
