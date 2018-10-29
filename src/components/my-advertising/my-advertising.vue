@@ -24,7 +24,8 @@
         >
             <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
                 <div class='list1'>
-                    <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
+                    <!--  @click="toHomePage(adverItem.userId, adverItem.tradeCoin)" -->
+                    <div class='pic'>
                         <p :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt=""></p>
                         <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/>
                     </div>
@@ -244,9 +245,9 @@ export default {
         })
     },
     // 个人主页
-    toHomePage(userId, tradeCoin){
-      this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
-    }
+    // toHomePage(userId, tradeCoin){
+    //   this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
+    // }
   },
   components: {
       Toast,

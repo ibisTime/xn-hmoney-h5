@@ -68,6 +68,7 @@ export default {
     myGuest() {
       myGuest(this.start, this.limit).then(data => {
         data.list.map( v => {
+            v.regAwardCount = formatAmount(`${v.regAwardCount}`, '', 'X');
             v.tradeCount = formatAmount(`${v.tradeCount}`, '', 'X');
             v.tradeAwardCount = parseFloat(formatAmount(`${v.tradeAwardCount}`, '', 'X'));
             v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');

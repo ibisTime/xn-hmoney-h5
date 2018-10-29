@@ -2,16 +2,16 @@
   <div class="shop-wrapper" @click.stop>
     <header>
         <p>
-        <span class='title'>区块链游戏</span>
-        <router-link to='shop-usedCar' class="car">二手车</router-link>
+        <span class='title'>{{ $t('shop.navbar.txt') }}</span>
+        <router-link to='shop-usedCar' class="car">{{ $t('shop.navbar.car') }}</router-link>
         </p>
     </header>
     <div class="banner">
-      <p class='text1'>游戏余额</p>
+      <p class='text1'>{{ $t('shop.subject.yxye') }}</p>
       <p class='text2'>{{gMon}}</p>
       <p class='text3'></p>
       <a :href='gUrl' target="view_window" class='btn' _brank>
-        进入游戏
+        {{ $t('shop.subject.jryx') }}
       </a>
     </div>
     <div class="main">
@@ -35,7 +35,7 @@ export default {
     };
   },
   created() {
-    setTitle('商城');
+    setTitle(this.$t('shop.navbar.title'));
   },
   mounted() {
     gramUrl().then(data => {

@@ -3,7 +3,7 @@
   <div :class = "[Show ? 'filter otc-wrapper': 'otc-wrapper' ]" @click.stop>
       <div class='header'>
         <select name="bbName" v-model="config.coin" @change="getAdverFn">
-          <option :value="item.symbol" v-for="(item, index) in bbList" :key="index">{{item.symbol}}<span :class="{sicon: index == 0}"></span></option>
+          <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}<span :class="{sicon: index == 0}"></span></option>
         </select>
         <p class="buySell">
         <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>买币</span>
@@ -99,7 +99,7 @@
     </div>
     <div @click='relClose' class='close'></div>
 </div>
-
+<FullLoading ref="fullLoading" v-show="isLoading"/>
 </div>
 </template>
 <script>
@@ -111,11 +111,13 @@ import {getAdvertisingData} from 'api/otc';
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
       PHOTO_SUFFIX: '?imageMogr2/auto-orient/thumbnail/!150x150r',
       userId: getUserId(),
+      isLoading: true,
       bbList: [],
       config: {
         coin:'',
@@ -161,7 +163,8 @@ export default {
   updated() {
   },
   mounted() {
-    this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
+    let coinList = JSON.parse(sessionStorage.getItem('coinData'));
+    this.bbList = Object.keys(coinList);
     this.config.tradeType = sessionStorage.getItem('tradeType') || '1';
     if(this.config.tradeType === '0'){
       this.flag1 = false;
@@ -186,16 +189,20 @@ export default {
         this.config.start = this.start1;
         getAdvertisingData(this.config).then(data => {
           clData(data, that, this.start1, 's');
-        })
+        }, () => {
+          this.isLoading = false;
+        });
       }else{
         this.config.start = this.start2;
         getAdvertisingData(this.config).then(data => {
           clData(data, that, this.start2, 'e');
-        })
+        }, () => {
+          this.isLoading = false;
+        });
       }
 
       function clData(data, that, start, type){
-        console.log(data)
+        that.isLoading = false;
         that.hasMore = true;
         if(data.totalPage < start){
           that.bbDataList = [];
@@ -393,7 +400,8 @@ export default {
     Footer,
     Slider,
     Scroll,
-    Toast
+    Toast,
+    FullLoading
   }
 };
 </script>

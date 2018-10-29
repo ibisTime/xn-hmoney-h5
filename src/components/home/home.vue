@@ -29,32 +29,32 @@
           <div class="tabCar fun">
             <router-link to='shop'>
               <div class="tab-text">
-                <p class="tit">FUNMVP</p>
-                <p class="con">混乱世界、精彩画面</p>
+                <p class="tit">{{ $t('page.navbar.title') }}</p>
+                <p class="con">{{ $t('page.cate.splendid') }}</p>
               </div>
             </router-link>           
           </div>
           <div class="tabCar bibi">
             <router-link to='trading'>
               <div class="tab-text">
-                <p class="tit">币币交易</p>
-                <p class="con">24h全球实时行情</p>
+                <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
+                <p class="con">{{ $t('page.cate.realTime') }}</p>
               </div>
             </router-link>           
           </div>
           <div class="tabCar notice">
             <router-link to='system-notice'>
               <div class="tab-text">
-                <p class="tit">系统公告</p>
-                <p class="con">实时推送精彩内容</p>
+                <p class="tit">{{ $t('page.cate.xtgg') }}</p>
+                <p class="con">{{ $t('page.cate.sstsjcnr') }}</p>
               </div>
             </router-link>
           </div>
           <div class="tabCar introduce">
             <router-link to='about-platformIntroduced?ckey=about_us'>
               <div class="tab-text">
-                <p class="tit">平台介绍</p>
-                <p class="con">让你更加的了解我们</p>
+                <p class="tit">{{ $t('page.cate.ptjs') }}</p>
+                <p class="con">{{ $t('page.cate.ljwm') }}</p>
               </div>
             </router-link>
           </div>
@@ -77,20 +77,29 @@
       return {
         banners: [],
         isLoading: true,
-        data: ''
+        data: '',
+        coinData: {}
       };
     },
     created() {
-      setTitle('首页');
+      setTitle(this.$t('footer.navbar.page'));
       getBannerList().then((data) => {
-          this.banners = data;
-        });
-    },
-    updated() {
+        this.banners = data;
+      });
     },
     mounted() {
       getBbListData().then(data => {
-        sessionStorage.setItem('coinData', JSON.stringify(data));
+        data.forEach(item => {
+          this.coinData[item.symbol] = {
+            coin: item.symbol,
+            id: item.id,
+            cname: item.cname,
+            ename: item.ename,
+            type: 1,
+            unit: item.unit.toString()
+          }
+        })
+        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
         this.isLoading = false;
       }, () => {
         this.isLoading = false;
@@ -104,6 +113,7 @@
         let locale = this.$i18n.locale;
         locale === 'zh' ? this.$i18n.locale = 'en' : this.$i18n.locale = 'zh';
         LangStorage.setLang(this.$i18n.locale);// 将用户习惯存储到本地浏览器
+        setTitle(this.$t('footer.navbar.page'));
       },
       getImgSyl(imgs) {
         return {
@@ -111,22 +121,12 @@
         };
       }
     },
-    watch: {
-    },
     components: {
       Slider,
       // Swiper,
       Footer,
       FullLoading
     }
-    // beforeRouteLeave(to, from, next) {
-    //   if(to.path === '/login' || to.path === '/registered') {
-    //     next();
-    //   } else {
-    //     alert('还没有登陆，请先登录！');
-    //     next('/login');
-    //   }
-    // }
   };
 </script>
 <style lang="scss" scoped>

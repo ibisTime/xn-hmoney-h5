@@ -107,6 +107,7 @@
     <div style="height: 1.1rem;"></div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -119,10 +120,12 @@ import EXIF from 'exif-js';
 import Qiniu from 'base/qiniu/qiniu';
 import { getQiniuToken } from 'api/general';
 import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
     return {
+      isLoading: true,
       data: {
         userStatistics: {
           jiaoYiCount: '',
@@ -141,14 +144,17 @@ export default {
   created() {
     setTitle('个人中心');
     getUser().then((data) => {
+      this.isLoading = false;
       this.data = data;
+    }, () => {
+      this.isLoading = false;
     });
   },
   mounted() {
     this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
-    })
+    });
   },
   computed: {},
   methods: {
@@ -230,7 +236,8 @@ export default {
     Scroll,
     Footer,
     Qiniu,
-    Toast
+    Toast,
+    FullLoading
   }
 };
 </script>

@@ -59,8 +59,8 @@ Validator.extend('email', {
 Validator.extend('password', {
   getMessage: field => '密码格式不正确',
   validate: value => {
-    var isIDCard1 = /^[a-zA-Z0-9]{6,16}$/;
-    return isIDCard1.test(value);
+    var isIDCard1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/;
+    return isIDCard1.test(value) && 5 < value.length && value.length < 16;
   }
 });
 

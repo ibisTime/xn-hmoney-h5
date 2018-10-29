@@ -20,10 +20,10 @@
               <span class='txt1'>变动后金额</span>
               <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
-          <!-- <div class='list'>
-              <span class='txt1'>手续费用</span>
-              <span class='txt2'>{{fee}} {{data.currency}}</span>
-          </div> -->
+          <div class='list'>
+              <span class='txt1'>手续费</span>
+              <span class='txt2'>{{fee}} %</span>
+          </div>
           <div class='list'>
               <span class='txt1'>变动时间</span>
               <span class='txt2'>{{data.createDatetime}}</span>

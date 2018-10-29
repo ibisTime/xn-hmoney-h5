@@ -57,6 +57,7 @@ export default {
   }
   .container{
     padding: 0.2rem 0.3rem;
+    line-height: 1.7;
   }
 }
   

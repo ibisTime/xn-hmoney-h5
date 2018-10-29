@@ -127,6 +127,7 @@ export default {
       // 筛选
       this.FullLoading = true;
       this.config.bizType = this.billType;
+      this.hasMore = true;
       this.start = 1;
       this.list = [];
       this.walletBill();

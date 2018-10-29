@@ -535,23 +535,30 @@ export function formatChatDate(timeStamp, param) {
  * @param coin 币种
  * @param isRe 是否千分位转化
  */
-export function moneyFormat(money, format, coin, isRe = false) {
+export function formatAmount1(money, format, coin, isRe = false) {
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
   let flag = false;// 是否是负数
-  if (isNaN(money)) {
+  if (isNaN(money) || money === '') {
       return '-';
+  }
+  if (format == '' || format == null || format == undefined || typeof format == 'object') {
+    if(coin === 'CNY' || coin === 'USD') {
+      format = 2;
+    } else {
+      format = 8;
+    }
   }
   if (money < 0) {
       money = -1 * money;
       flag = true;
   }
   // 默认格式为2位小数
-  if (isUnDefined(format) || typeof format === 'object') {
-      format = 2;
-  }
-  if (coin) {
-      format = 8;
-  }
+  // if (isUnDefined(format) || typeof format === 'object') {
+  //     format = 2;
+  // }
+  // if (coin) {
+  //     format = 8;
+  // }
   // 金额格式化 金额除以unit并保留format位小数
   money = new BigDecimal(money.toString());
   money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
@@ -573,10 +580,10 @@ export function moneyFormat(money, format, coin, isRe = false) {
 * @param format
 * @param coin 币种
 */
-export function moneyParse(money, rate, coin) {
+export function formatMoneyMultiply1(money, rate, coin) {
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
 
-  if (isUndefined(money)) {
+  if (isUndefined(money) || money === '') {
       return '-';
   }
   rate = rate || new BigDecimal(unit);
@@ -600,8 +607,8 @@ export function moneyReplaceComma(money) {
  * @param coin 币种
  * @param coinList 币种列表
  */
-export function moneyFormatSubtract(s1, s2, format, coin, coinList) {
-  if (!isNumeric(s1) || !isNumeric(s2)) {
+export function formatMoneySubtract1(s1, s2, format, coin, coinList) {
+  if (isUndefined(s1) || isUndefined(s2) || s1 === '' || s2 === '') {
       return '-';
   }
   let num1 = new BigDecimal(s1.toString());

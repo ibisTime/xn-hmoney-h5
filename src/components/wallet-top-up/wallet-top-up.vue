@@ -221,6 +221,14 @@ export default {
     },
     toBuyClick(){
       this.isLoading = true;
+      if(this.show){
+        if(this.buyConfig.remark === ''){
+          this.isLoading = false;
+          this.textMsg = '请填写打款说明';
+          this.$refs.toast.show();
+          return;
+        }
+      }
       if(this.showDet){
         if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.buyMonNumber) && parseFloat(this.buyMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
           this.buyConfig.tradeAmount = this.buyMonNumber;
@@ -423,7 +431,7 @@ export default {
       margin-bottom: 0.2rem;
       .tab {
         width: 100%;
-        padding: 0 .3rem 0 0.78rem;
+        padding: 0 .3rem 0 0.38rem;
         line-height: 0.87rem;
         box-shadow: 0 0.01rem 0 0 #ebebeb;
         background: rgba(242, 242, 242, 0);
@@ -461,7 +469,6 @@ export default {
         border-bottom: .01rem solid #ebebeb;
 
         input {
-          padding: 0.1rem 0.3rem;
           color: #999;
           border-bottom: .01rem solid #ebebeb;
         }

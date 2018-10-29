@@ -13,9 +13,9 @@
         </p>
     </div>
     <div class='trading'>
-        <p class='money'><span>交易金额</span><span>{{orderDetailData.tradeAmount}} {{orderDetailData.tradeCurrency}}</span></p>
-        <p class='number'><span>交易数量</span><span>{{countString}} {{orderDetailData.tradeCoin}}</span></p>
-        <p class='price'><span>交易价格</span><span>{{orderDetailData.tradePrice}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='money'><span>交易金额</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='number'><span>交易数量</span><span>{{countString ? countString : '0'}} {{orderDetailData.tradeCoin}}</span></p>
+        <p class='price'><span>交易价格</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
     </div>
     <div class='message'>
         <div class='mess'>
@@ -182,7 +182,7 @@ export default {
         this.zcShow = false;
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
-        this.yjTitle = "订单將在拖管中保持至<i>" + formatDate(data.invalidDatetime, "hh:mm:ss") + "</i>，逾期未支付交易將自动取消";
+        this.yjTitle = `订单將在拖管中保持至<i>${data.invalidDatetime ? formatDate(data.invalidDatetime, "hh:mm:ss") : '--'}</i>，逾期未支付交易將自动取消`;
         // 当前用户为买家
         if (data.buyUser == getUserId()) {
           if(data.status == 0){
@@ -210,6 +210,12 @@ export default {
                 this.btns = `<button class="o-btn pjBtn">交易评价</button>`
               }
           }
+        }
+
+        if(data.status == '-1'){
+          this.btns = `<button class="o-btn qx-btn cancelBtn">
+                          取消交易
+                        </button>`;
         }
 
         // 系统自动取消

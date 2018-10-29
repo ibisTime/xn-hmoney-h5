@@ -1,13 +1,13 @@
 <template>
-  <div class="trading-wrapper" @click.stop>
-    <div class='header'>
-      <router-link v-show="show2" to=''><i class='icon' @click="showTwo"></i></router-link>
+  <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
+    <div class='header' :class="{'col-header': !show2}">
+      <span v-show="show2" to=''><i class='icon' @click="showTwo"></i></span>
       <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
       <p>
         <select name="" id="" v-model="symNumber" @change="changeSymBaz">
           <option :value="index" v-for="(symItem, index) in symBazList" :key="index">{{symItem.symbol}}/{{symItem.toSymbol}}</option>
         </select>
-        <i class='icon'></i>
+        <i class='icon' :class="{'icon-bai': !show2}"></i>
       </p>
       <router-link to='otc'>场外交易</router-link>
     </div>
@@ -117,7 +117,7 @@
 
         <div class="right">
           <div class='one'>
-            <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index">
+            <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
               <span class='green txt1'>卖{{7 - index}}</span>
               <span class='txt2'>{{sellItem ? sellItem.price : '--'}}</span>
               <span class='txt3'>{{sellItem ? sellItem.count : '--'}}</span>
@@ -128,7 +128,7 @@
             <!-- <i class='icon'></i> -->
           </p>
           <div class='one two'>
-            <p class='text1' v-for="(buyItem, index) in bbBids" :key="index">
+            <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
               <span class='red txt1'>买{{index + 1}}</span>
               <span class='txt2'>{{buyItem ? buyItem.price : '--'}}</span>
               <span class='txt3'>{{buyItem ? buyItem.count : '--'}}</span>
@@ -202,15 +202,15 @@
       <!-- 主要内容区 -->
       <div class='main2'>
         <div class='tabs' @click="changeMain">
-          <span class='tab-item jj' :class="{'on': tShow === '1'}">简介</span>
+          <span class='tab-item cj' :class="{'on': tShow === '1'}">成交</span>
           <span class='tab-item gd' :class="{'on': tShow === '2'}">挂单</span>
-          <span class='tab-item cj' :class="{'on': tShow === '3'}">成交</span>
-          <span class='tab-item sd' :class="{'on': tShow === '4'}">深度图</span>
+          <span class='tab-item sd' :class="{'on': tShow === '3'}">深度图</span>
+          <span class='tab-item jj' :class="{'on': tShow === '4'}">简介</span>
         </div>
-        <TradingSynopsis v-show="tShow === '1'" :bazDeal="bazDeal"/>
+        <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
         <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
-        <TradingClinchadeal v-show="tShow === '3'" :bazDeal="bazDeal"/>
-        <TradingDepthMap v-show="tShow === '4'" :bazDeal="bazDeal"/>
+        <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
+        <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
           <button class='buy'><router-link to='wallet-top-up?type=buy'>买入FMVP</router-link></button>
           <button class='sell'><router-link to='wallet-top-up?type=sell'>卖出FMVP</router-link></button>
@@ -326,7 +326,12 @@ export default {
       });
       this.handicapData();
       this.realTimeData();
-
+      clearInterval(usTime);
+      var usTime = setInterval(() => {
+        this.getUserWalletData();
+        this.handicapData();
+        this.realTimeData();
+      }, 5000);
       if(getUserId()){
         this.getUserWalletData();
         this.isLogin = true;
@@ -337,10 +342,7 @@ export default {
     });
   },
   mounted() {
-    // clearInterval(handTime);
-    // var handTime = setInterval(() => {
-    //   this.handicapData();
-    // }, 3000);
+    
   },
   methods: {
     getUserWalletData(){
@@ -368,16 +370,23 @@ export default {
       this.setBazDeal = {
         symbol: this.symBazList[this.symNumber].symbol,
         toSymbol: this.symBazList[this.symNumber].toSymbol
-      }
+      };
       sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
       this.handicapData();
       this.realTimeData();
       if(this.isLogin){
         this.getUserWalletData();
+        this.hasMore = true;
         this.start = 1;
         this.myOrderData = [];
         this.myOrderTicket();
       }
+      clearInterval(handTime);
+      var handTime = setInterval(() => {
+        this.getUserWalletData();
+        this.handicapData();
+        this.realTimeData();
+      }, 5000);
     },
     handicapData(){
       // 查询盘口
@@ -498,6 +507,10 @@ export default {
             this.$refs.toast.show();
             this.xjPrice = '';
             this.wetNumber = '';
+            this.hasMore = true;
+            this.start = 1;
+            this.myOrderData = [];
+            this.myOrderTicket();
           }, () => {
             this.isLoading = false;
           });
@@ -542,7 +555,7 @@ export default {
       let target = event.target;
       if(target.classList.contains('jj')){
         // 简介
-        this.tShow = '1';
+        this.tShow = '4';
       }
       if(target.classList.contains('gd')){
         // 挂单
@@ -550,21 +563,21 @@ export default {
       }
       if(target.classList.contains('cj')){
         // 成交
-        this.tShow = '3';
+        this.tShow = '1';
       }
       if(target.classList.contains('sd')){
         // 深度图
-        this.tShow = '4';
+        this.tShow = '3';
       }
     },
     qrLength(){
       let numLeft = this.xjPrice.split('.')[0];
       let numRight = this.xjPrice.split('.')[1];
       if(numRight){
-        if(numRight.length > 8){
-          this.textMsg = '小数部分不得大于8位';
+        if(numRight.length > 4){
+          this.textMsg = '小数部分不得大于4位';
           this.$refs.toast.show();
-          numRight = numRight.substring(0, 8);
+          numRight = numRight.substring(0, 4);
           this.xjPrice = numLeft + '.' + numRight;
         }
       }
@@ -576,6 +589,7 @@ export default {
         this.$refs.toast.show();
         this.isLoading = false;
         setTimeout(() => {
+          this.hasMore = true;
           this.start = 1;
           this.myOrderData = [];
           this.myOrderTicket();
@@ -583,6 +597,16 @@ export default {
       }, () => {
         this.isLoading = false;
       })
+    },
+    selectAsksPrice(index){  // 卖盘选中
+      if(this.show1){
+        this.xjPrice = this.bbAsks[index] ? this.bbAsks[index].price : '0';
+      }
+    },
+    selectBidsPrice(index){  // 买盘选中
+      if(!this.show1){
+        this.xjPrice = this.bbBids[index] ? this.bbBids[index].price : '0';
+      }
     }
   },
   components: {
@@ -646,6 +670,9 @@ export default {
     font-size: .32rem;
     color: #333;
     border-bottom: .01rem solid #dedede;
+    span{
+      padding: 0 0.3rem;
+    }
     a {
       font-size: .32rem;
       color: #333;
@@ -660,6 +687,9 @@ export default {
         background-image: url('./xlhs.png');
         margin-left: .2rem;
       }
+      .icon-bai{
+        background-image: url('./xlbs.png');
+      }
     }
 
     .icon {
@@ -670,10 +700,22 @@ export default {
     .ico1 {
       width: .2rem;
       height: .30rem;
-      background-image: url('./fhui.png');
+      background-image: url('./fbai.png');
       margin-top: .25rem;
     }
   }
+
+  .col-header{
+    color: #fff;
+    a{
+      color: #fff;
+    }
+    select{
+      background-color: #172143;
+    }
+  }
+
+
 
 // 币币交易页面
   .One {
@@ -1024,9 +1066,10 @@ export default {
 
     }
   }
+}
 
-
-
+.back-wrapper{
+  background-color: #172143;
 }
 
 </style>

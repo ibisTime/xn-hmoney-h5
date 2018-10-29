@@ -4,7 +4,7 @@
         <p>
           <span class='txt1'>交易币种<i></i></span>
           <select name="tradeCoin" v-model="config.tradeCoin" @change="changePrice">
-            <option :value="item.symbol" v-for="(item, index) in bbList" :key="index">{{item.symbol}}</option>
+            <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}</option>
           </select>
           <span class='icon'></span>
         </p>
@@ -58,13 +58,13 @@
           <span class='icon'></span>
           <span class='ico' @click.stop="showMsg('ty')"></span>
         </p>
-        <p>
+        <!-- <p>
           <span class='txt1'>付款期限<i></i></span>
           <input type="text" name="payLimit" v-validate="'required'" placeholder="请输入付款期限" v-model="config.payLimit">
           <span v-show="errors.has('payLimit')" class="error-tip">{{errors.first('payLimit')}}</span>
           <span class='txt2'>分钟</span>
           <span class='ico' @click.stop="showMsg('qx')"></span>
-        </p>
+        </p> -->
     </div>
     <textarea class='message' name="leaveMessage" v-validate="'required'" placeholder="请写下您的广告留言吧" ref="leaveMessage">  
     </textarea>
@@ -123,7 +123,7 @@
 <script>
 import Message from 'base/message/message';
 import showMsg from 'base/showMsg/showMsg';
-import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract} from 'common/js/util';
+import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract, formatAmount} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 import { wallet } from 'api/person';
 import Toast from 'base/toast/toast';
@@ -235,6 +235,7 @@ export default {
       isDetail: false,
       bbList: [],
       bbPrice: '',
+      bbPriceDet: '',
       yj_price: '',     //溢价率
       paramCKey: 'buy_ads_hint',
       config: {
@@ -285,7 +286,8 @@ export default {
       // 总量: data.totalCount
       // 粉丝：data.trust
     });
-    this.bbList = JSON.parse(sessionStorage.getItem('coinData'));
+    let coinList = JSON.parse(sessionStorage.getItem('coinData'));
+    this.bbList = Object.keys(coinList);
     this.getBbPrice('BTC');
     this.getAdverDetail();
   },
@@ -323,7 +325,7 @@ export default {
     },
     //通过溢价率改变价格
     changeYjlPrice(){
-      this.bbPrice = this.config.price + this.yj_price * this.config.price / 100;
+      this.bbPrice = (Math.floor((this.config.price + this.yj_price * this.config.price / 100) * 100) / 100).toFixed(2);
     },
     onlyFans(){ // 仅粉丝
       if(this.isFans){
@@ -333,27 +335,17 @@ export default {
       }
       this.isFans = !this.isFans;
     },
-    getBbPrice(tradeCoin){
+    getBbPrice(tradeCoin){  // 获取币种价格
       getAdvertisePrice(tradeCoin).then(data => {
+        if(!this.adsCode){
           this.bbPrice = data.mid;
-          this.config.price = data.mid;
+        }
+        this.config.price = data.mid;
         });
     },
     goBack() {
       this.$router.go(-1);
     },
-    // isRealFn(i){
-    //   if(this.isReal){
-    //     this.config.onlyCert = '0';
-    //   }else{
-    //     this.config.onlyCert = '1';
-    //   }
-    //   if(i == 0){
-    //     this.isReal = true;
-    //   }else{
-    //     this.isReal = false;
-    //   }
-    // },
     isSelectFn(i){
       if(i == 0){
         this.select = true;
@@ -437,7 +429,7 @@ export default {
         this.changeConfig('/my-advertising');
       }
     },
-    getAdverDetail(){
+    getAdverDetail(){   // 获取详情
       this.isLoading = true;
       this.adsCode = this.$route.query.code;
       let userId = this.$route.query.userId;
@@ -447,16 +439,10 @@ export default {
           if(data.onlyTrust === '1'){
             this.isFans = true;
           }
-          let blv = 0;
-          if(data.tradeCoin != 'BTC'){
-            blv = 1e18;
-          }else{
-            blv = 1e8;
-          }
           this.bbPrice = data.truePrice;
           this.config.minTrade = data.minTrade;
           this.config.maxTrade = data.maxTrade;
-          this.count = parseFloat(data.totalCountString) / blv;
+          this.count = formatAmount(data.totalCountString, '', data.tradeCoin);
           this.config.payType = data.payType;
           this.config.payLimit = data.payLimit;
           this.$refs.leaveMessage.value = data.leaveMessage;
@@ -465,6 +451,8 @@ export default {
           this.config.onlyTrust = data.onlyTrust;
           this.config.protectPrice = data.protectPrice;
           this.yj_price = parseFloat(data.premiumRate) * 100;
+          this.getBbPrice(this.config.tradeCoin);
+          // this.config.price = this.bbPrice * (100 - this.yj_price) / 100;
           this.isLoading = false;
         }, () => {
           this.isLoading = false;

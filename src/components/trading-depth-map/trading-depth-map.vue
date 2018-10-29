@@ -1,6 +1,6 @@
 <template>
-  <div class="map-wrapper" @click.stop @touchmove.prevent>
-     <div class='main'>
+  <div class="map-wrapper" @click.stop>
+     <div class='main' @touchmove.prevent>
        <div id="charts" :style="{width: '7rem', height: '6rem'}"></div>
      </div>
   </div>

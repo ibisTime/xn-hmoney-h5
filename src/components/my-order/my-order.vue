@@ -22,8 +22,8 @@
           v-show="list.length > 0"
           @pullingUp="getOrderData"
         >
-            <div class='list' @click='goDetails(item.code)' v-for='(item,index) in list' :key="index">
-                <div class='pic'>
+            <div class='list' @click='goDetails(item.code, item.status)' v-for='(item,index) in list' :key="index">
+                <div class='pic' @click.stop="toHomePage(item.sellUser, item.buyUser, item.tradeCoin)">
                     <p 
                       :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)" 
                       :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
@@ -33,8 +33,8 @@
                 </div>
                 <div class='text1'>
                     <p class='txt1'><span class='t1' >{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span><span :class="[item.type === 'buy' ? 'txt2 buy' : 'txt2 sell']">{{typeList[item.type]}} {{item.tradeCoin}}</span></p>
-                    <p class='txt2'>交易金额：{{item.tradePrice}} {{item.tradeCurrency}}</p>
-                    <p class='txt2'>交易数量：{{item.countString}} {{item.tradeCoin}}</p>
+                    <p class='txt2'>交易金额：{{item.tradePrice ? item.tradePrice : '0'}} {{item.tradeCurrency}}</p>
+                    <p class='txt2'>交易数量：{{item.countString ? item.countString : '0'}} {{item.tradeCoin}}</p>
                 </div>
                 <div class='text2'>
                     <p class='txt1'>{{statusValueList[item.status]}}</p>
@@ -67,8 +67,8 @@ export default {
       start2: 1,
       limit: 10,
       typeList: {
-        "sell": "购买",
-        "buy": "出售"
+        "sell": "出售",
+        "buy": "购买"
       },
       statusValueList: {},
       type: 's',
@@ -78,10 +78,18 @@ export default {
   created() {
     setTitle('我的订单');
     getDictList('trade_order_status').then(data => {
-        data.forEach((item) => {
-            this.statusValueList[item.dkey] = item.dvalue
-        });
-        this.getOrderData();
+      data.forEach((item) => {
+        this.statusValueList[item.dkey] = item.dvalue
+      });
+      let ordering = sessionStorage.getItem('ordering');
+      if(ordering == 'ended'){
+        this.show = false;
+        this.type = 'e';
+        this.start2 = 1;
+        this.list = [];
+        this.statusList = ['2', '3', '4'];
+      }
+      this.getOrderData();
     })
   },
   methods: {
@@ -90,15 +98,19 @@ export default {
         return getAvatar(pic);
     },
     getOrderData(){
-        this.getOrderList(this.type);
+      this.getOrderList(this.type);
     },
     goBack() {
       this.$router.go(-1);
     },
-    goDetails(code) {
+    goDetails(code, status) {
+      // if(status == -1){
+      //   return;
+      // }
       this.$router.push('order-details?code=' + code);
     },
     starting() {
+      sessionStorage.setItem('ordering', 'starting');
       this.show = true;
       this.type = 's';
       this.start1 = 1;
@@ -107,6 +119,7 @@ export default {
       this.getOrderList(this.type);
     },
     ended() {
+      sessionStorage.setItem('ordering', 'ended');
       this.show = false;
       this.type = 'e';
       this.start2 = 1;
@@ -144,6 +157,17 @@ export default {
           that.start2 ++;
         }
       }
+    },
+    // 个人主页
+    toHomePage(sellUser, buyUser, tradeCoin){
+      if (buyUser == getUserId()) {
+        //当前用户为买家
+        this.$router.push(`/homepage?userId=${sellUser}&currency=${tradeCoin}`);
+      } else {
+        //当前用户为卖家
+        this.$router.push(`/homepage?userId=${buyUser}&currency=${tradeCoin}`);
+      }
+      
     }
   },
   components: {

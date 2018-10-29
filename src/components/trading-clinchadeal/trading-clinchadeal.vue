@@ -48,6 +48,10 @@ import { formatDate, formatAmount } from 'common/js/util';
         default(){
           return {}
         }
+      },
+      show2: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {
@@ -78,11 +82,15 @@ import { formatDate, formatAmount } from 'common/js/util';
       bazDeal: {
         handler(val, oldVal){
             this.setBazDeal = val;
+            this.hasMore = true;
             this.start = 1;
             this.realTimeList = [];
             this.realTimeData();
         },
         deep: true
+      },
+      show2(){
+        this.realTimeData();
       }
     }
   };
@@ -101,18 +109,19 @@ import { formatDate, formatAmount } from 'common/js/util';
   .main {
     .title {
       font-size: .28rem;
-      line-height: .8rem;
+      line-height: .6rem;
       color: #fff;
       border-bottom: .01rem solid #ccc;
     }
     .t-box{
       width: 100%;
-      height: 7rem;
+      height: 6rem;
       overflow: scroll;
     }
     p {
       width: 100%;
       padding: 0 .3rem;
+      padding-top: 0.2rem;
       color: #0ec55b;
       line-height: .55rem;
       border-bottom: .01rem solid #1b2c3f;

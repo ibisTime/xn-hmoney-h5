@@ -36,7 +36,7 @@ export default {
   },
   mounted() {
     this.userId = getUserId();
-    this.wxUrl = window.location.origin + '/registered' + '?invitecode=' + getUserId();
+    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();console.log(this.wxUrl)
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,

@@ -20,7 +20,7 @@
             <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
             </p>
             <p class="yzm">
-            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="text" placeholder="请输入验证码">
+            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" placeholder="请输入验证码">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
             <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" value="获取验证码">
             <span class="cxfs" v-if="fscg && type== '0'">重新发送({{time1}}s)</span>
@@ -32,13 +32,13 @@
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p>
-            <input required v-model="password2"  name="password" v-validate="'required|password'" type="password" placeholder="请确认密码">
-            <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+            <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" placeholder="请确认密码">
+            <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
             </p>
             <p class="check">
             <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="isLook = true">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
             </p>
-            <input type="submit" @click="regist" value="注册">
+            <input type="submit" @click="regist" value="注册" :class="{'nosubmut': !checked}"/>
           </div>
       </div>
       <!-- 注册条款 -->
@@ -110,8 +110,8 @@ export default {
     },
     getSca1() {
       if(this.type == '0'){
-        if(this.errors.has('phone')){
-          this.textMsg = this.errors.collect('phone')[0];
+        if(this.errors.has('phone') || this.phone == ''){
+          this.textMsg = this.errors.collect('phone')[0] || '手机号不能为空';
           this.$refs.toast.show();
           return;
         }
@@ -131,8 +131,8 @@ export default {
           this.isLoading = false;
         });
       }else{
-        if(this.errors.has('email')){
-          this.textMsg = this.errors.collect('email')[0];
+        if(this.errors.has('email') || this.email == ''){
+          this.textMsg = this.errors.collect('email')[0] || '邮箱号不能为空';
           this.$refs.toast.show();
           return;
         }
@@ -154,7 +154,12 @@ export default {
       }
     },
     regist() {
-      if(!this.errors.any()){
+      if(!this.checked){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
+      if(!this.errors.any() || this.nickname != '' || this.smsCaptcha != '' || this.password1 != ''){
         this.config = {
           captcha: this.smsCaptcha,
           smsCaptcha: this.smsCaptcha,
@@ -164,7 +169,7 @@ export default {
           nickname: this.nickname
         }
         if(this.inviteCode != '' && this.inviteCode != undefined){
-          this.config.inviteCode = this.inviteCode;
+          this.config.userReferee = this.inviteCode;
         }
         this.isLoading = true;
         if(this.flag == false) {
@@ -194,6 +199,10 @@ export default {
             this.isLoading = false;
           });
         }
+      }else if(this.nickname == '' || this.smsCaptcha == '' || this.password1 == ''){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
       }
     },
     changeBg(){
@@ -232,6 +241,7 @@ export default {
     width: 6.3rem;
     margin: 0 auto;
 
+    input[type="number"],
     input[type="text"],
     input[type="password"] {
       width: 6.1rem;
@@ -256,6 +266,11 @@ export default {
       color: #fff;
       letter-spacing: 0.003rem;
       margin: 0.7rem 0 0.4rem;
+    }
+    .nosubmut{
+      box-shadow: none !important;
+      color: #bbb !important;
+      background-color: #ddd !important;
     }
 
     .title {
