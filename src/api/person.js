@@ -217,11 +217,12 @@ export function arbitrationlOrder(config) {
 }
 
 //订单-评价
-export function commentOrder(code, comment) {
+export function commentOrder(code, comment, content) {
   return fetch("625245", {
       updater: getUserId(),
       code,
-      comment
+      starLevel: comment,
+      content
   });
 }
 

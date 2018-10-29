@@ -24,11 +24,14 @@ Vue.use(VueLazyLoad, {
 });
 Vue.use(VueI18n);
 
+import zh from './common/lang/zh';
+import en from './common/lang/en';
+
 const i18n = new VueI18n({
   locale: LangStorage.getLang('zh'),
   messages: {
-    'zh': require('./common/lang/zh'),
-    'en': require('./common/lang/en')
+    'zh': zh,
+    'en': en
   }
 });
 

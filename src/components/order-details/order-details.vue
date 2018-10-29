@@ -83,6 +83,9 @@
               <p>差评</p>
           </div>
         </div>
+        <div class="pj-content">
+              <textarea name="" id="" placeholder="快來评价吧" v-model="content"></textarea>
+          </div>
         <div class='btn'>
           <button class='no' @click='qxUserPj'>取消</button>
           <button class='yes' @click="qrUserPj">确认</button>
@@ -127,7 +130,8 @@ export default {
       userHp: false,
       userCp: false,
       isLoading: true,
-      comment: ''
+      comment: '',
+      content: ''
     };
   },
   created() {
@@ -169,8 +173,12 @@ export default {
       }
       this.isLoading = true;
       this.showFlag = false;
-      commentOrder(this.code, this.comment).then(data => {
-        this.textMsg = '评价成功';
+      commentOrder(this.code, this.comment, this.content).then(data => {
+        if(data.filterFlag == '2'){
+          this.textMsg = '评价成功, 其中含有关键字，需平台进行审核';
+        }else{
+          this.textMsg = '评价成功';
+        }
         this.$refs.toast.show();
         this.orderMessage();
       }, () => {
@@ -193,7 +201,7 @@ export default {
                           取消交易
                         </button>`;
           }else if(data.status == "2"){
-            if (data.bsComment != "0" && data.bsComment != "2") {
+            if (data.bsComment != "0" && data.bsComment != "1") {
               this.btns = `<button class="o-btn pjBtn">交易评价</button>`
             }
           }
@@ -206,7 +214,7 @@ export default {
               this.btns = `<button class="o-btn releaseBtn">释放货币</button>
                           <button class="o-btn qx-btn sqBtn">申请仲裁</button>`;
           } else if (data.status == "2") {
-              if (data.sbComment != "0" && data.sbComment != "2") {
+              if (data.sbComment != "0" && data.sbComment != "1") {
                 this.btns = `<button class="o-btn pjBtn">交易评价</button>`
               }
           }
@@ -518,6 +526,7 @@ export default {
       textarea {
         width: 5rem;
         height: 1.3rem;
+        font-size: 0.32rem;
         border-radius: .1rem;
         border: .01rem solid #dedede;
         text-align: left;
@@ -549,7 +558,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 6.14rem;
-    height: 5.2rem;
+    height: 6.5rem;
     background: #fff;
     border-radius: .2rem;
     padding: .4rem .6rem .34rem;
@@ -610,6 +619,9 @@ export default {
           margin-bottom: 0.2rem;
         }
       }
+    }
+    .pj-content{
+      margin-bottom: 0.4rem;
     }
   }
 

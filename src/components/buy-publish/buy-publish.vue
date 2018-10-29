@@ -2,85 +2,84 @@
   <div class="publish-wrapper" @click.stop>
     <div class='publish-list'>
         <p>
-          <span class='txt1'>交易币种<i></i></span>
+          <span class='txt1'>{{ $t('buyPublish.subject.jybz') }}<i></i></span>
           <select name="tradeCoin" v-model="config.tradeCoin" @change="changePrice">
             <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}</option>
           </select>
           <span class='icon'></span>
         </p>
         <p>
-          <span class='txt1'>价格<i></i></span>
+          <span class='txt1'>{{ $t('buyPublish.subject.jg') }}<i></i></span>
           <input type="number" readonly v-model="bbPrice">
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('jg')"></span>
         </p>
         <p>
-          <span class='txt1'>溢价率<i></i></span>
+          <span class='txt1'>{{ $t('buyPublish.subject.yjl') }}<i></i></span>
           <input type="number" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice">
           <span class='txt2'>%</span>
           <span class='ico' @click.stop="showMsg('jv')"></span>
         </p>
         <p>
-          <span class='txt1'>{{type !== '购买' ? '最低价' : '最高价'}}<i></i></span>
-          <input type="number" name="protectPrice" v-validate="'required'" v-model="config.protectPrice" :placeholder="type !== '购买' ? '广告可交易的最低价' : '广告可交易的最高价'">
+          <span class='txt1'>{{type !== $t('buyPublish.subject.gm') ? $t('buyPublish.subject.zdj') : $t('buyPublish.subject.zgj')}}<i></i></span>
+          <input type="number" name="protectPrice" v-validate="'required'" v-model="config.protectPrice" :placeholder="type !== $t('buyPublish.subject.gm') ? $t('buyPublish.subject.kjyzdj') : $t('buyPublish.subject.kyjzgj')">
           <span v-show="errors.has('protectPrice')" class="error-tip">{{errors.first('protectPrice')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('low')"></span>
         </p>
         <p>
-          <span class='txt1'>最小价<i></i></span>
-          <input type="number" name="minTrade" v-validate="'required'" v-model="config.minTrade" placeholder="单笔交易的最小额度">
+          <span class='txt1'>{{ $t('buyPublish.subject.zxj') }}<i></i></span>
+          <input type="number" name="minTrade" v-validate="'required'" v-model="config.minTrade" :placeholder="$t('buyPublish.subject.zced')">
           <span v-show="errors.has('minTrade')" class="error-tip">{{errors.first('minTrade')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('min')"></span>
         </p>
         <p>
-          <span class='txt1'>最大价<i></i></span>
-          <input type="number" name="maxTrade" v-validate="'required'" v-model="config.maxTrade" placeholder="单笔交易的最大额度">
+          <span class='txt1'>{{ $t('buyPublish.subject.zdj') }}<i></i></span>
+          <input type="number" name="maxTrade" v-validate="'required'" v-model="config.maxTrade" :placeholder="$t('buyPublish.subject.zded')">
           <span v-show="errors.has('maxTrade')" class="error-tip">{{errors.first('maxTrade')}}</span>
           <span class='txt2'>CNY</span>
           <span class='ico' @click.stop="showMsg('max')"></span>
         </p>
         <p>
-          <span class='txt1'>{{type}}总量<i class="wallet">余额：{{walletMon}}</i></span>
-          <input type="number" name="count" v-validate="'required'" v-model="count" placeholder="请输入售卖币的总量">
+          <span class='txt1'>{{type}}{{ $t('buyPublish.subject.zl') }}<i class="wallet">{{ $t('buyPublish.subject.ye') }}：{{walletMon}}</i></span>
+          <input type="number" name="count" v-validate="'required'" v-model="count" :placeholder="$t('buyPublish.subject.sbzl')">
           <span v-show="errors.has('count')" class="error-tip">{{errors.first('count')}}</span>
           <span class='txt2'>{{config.tradeCoin}}</span>
         </p>
         <p>
-          <span class='txt1'>付款方式<i></i></span>
-          <!-- <input readonly type="text" placeholder="请输入付款方式"> -->
+          <span class='txt1'>{{ $t('buyPublish.subject.fkfs') }}<i></i></span>
           <select name="payType" v-model="config.payType">
-            <option value="0">支付宝</option>
-						<option value="1">微信</option>
-						<option value="2">银行卡</option>
+            <option value="0">{{ $t('buyPublish.subject.zfb') }}</option>
+						<option value="1">{{ $t('buyPublish.subject.wx') }}</option>
+						<option value="2">{{ $t('buyPublish.subject.yhk') }}</option>
           </select>
           <span class='icon'></span>
           <span class='ico' @click.stop="showMsg('ty')"></span>
         </p>
         <!-- <p>
-          <span class='txt1'>付款期限<i></i></span>
-          <input type="text" name="payLimit" v-validate="'required'" placeholder="请输入付款期限" v-model="config.payLimit">
+          <span class='txt1'>{{ $t('buyPublish.subject.fkqx') }}<i></i></span>
+          <input type="text" name="payLimit" v-validate="'required'" :placeholder="$t('buyPublish.subject.qsfkqx')" v-model="config.payLimit">
           <span v-show="errors.has('payLimit')" class="error-tip">{{errors.first('payLimit')}}</span>
-          <span class='txt2'>分钟</span>
+          <span class='txt2'>{{ $t('buyPublish.subject.fz') }}</span>
           <span class='ico' @click.stop="showMsg('qx')"></span>
         </p> -->
     </div>
-    <textarea class='message' name="leaveMessage" v-validate="'required'" placeholder="请写下您的广告留言吧" ref="leaveMessage">  
+    <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage">  
     </textarea>
     <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
     <div class='select' @click="show = !show">
         <p class='text'>
-            <span>高级设置</span>
+            <span>{{ $t('buyPublish.subject.gjsz') }}</span>
             <span :class="[!show ? 'icon' : 'ico']" ></span>
         </p>
     </div>
     <div v-show='show' class='select-box'>
       <div class='select-time'>
           <p class='text1'>
-            <span class='txt1'>开放时间</span>
-            <span class='txt2'><i :class="[select ? 'icon icon1' : 'icon']" @click='isSelectFn("0")'></i>任何时候</span>
-            <span class='txt3'><i :class="[!select ? 'icon icon1' : 'icon']" @click='isSelectFn("1")'></i>自定义</span>
+            <span class='txt1'>{{ $t('buyPublish.subject.kfsj') }}</span>
+            <span class='txt2'><i :class="[select ? 'icon icon1' : 'icon']" @click='isSelectFn("0")'></i>{{ $t('buyPublish.subject.rhsh') }}</span>
+            <span class='txt3'><i :class="[!select ? 'icon icon1' : 'icon']" @click='isSelectFn("1")'></i>{{ $t('buyPublish.subject.zdy') }}</span>
             <i class='icon ico2' @click="showMsg('time')"></i>
           </p>
           <div class="select-time" v-show="!select">
@@ -106,14 +105,14 @@
       </div> -->
       <div class='select-last'>
         <p class='text1' @click="onlyFans">
-          <span>仅粉丝 <i :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i></span>
+          <span>{{ $t('buyPublish.subject.jfs') }} <i :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i></span>
           <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .3rem;"></i>
         </p>
       </div>
     </div>
     <div class='footer'>
-        <button @click="toOtcFn" :class="{'btn-w': isDetail}">直接发布</button>
-        <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">保存草稿</button>
+        <button @click="toOtcFn" :class="{'btn-w': isDetail}">{{ $t('buyPublish.subject.zjfb') }}</button>
+        <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
     </div>
     <showMsg :text="text" ref="showMsg"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -139,38 +138,38 @@ export default {
       text: '',
       count: '',
       walletMon: '', // 余额
-      lowTxt: '广告最高可成交的价格',
+      lowTxt: this.$t('buyPublish.subject.zgcjjg'),
       MsgList: {},
-      type: '购买',
+      type: this.$t('buyPublish.subject.gm'),
       adsCode: '',
       isCg: '',
       dayList: [
         {
-          week: '星期一',
+          week: this.$t('buyPublish.subject.xqy'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期二',
+          week: this.$t('buyPublish.subject.xqe'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期三',
+          week: this.$t('buyPublish.subject.xqs'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期四',
+          week: this.$t('buyPublish.subject.xqi'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期五',
+          week: this.$t('buyPublish.subject.xqw'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期六',
+          week: this.$t('buyPublish.subject.xql'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },{
-          week: '星期天',
+          week: this.$t('buyPublish.subject.xqt'),
           dayStart: '00:00',
           dayEnd: '24:00'
         },
@@ -267,12 +266,11 @@ export default {
     this.config.tradeType = getUrlParam('type');
     this.isCg = getUrlParam('isCg');
     if(this.config.tradeType == '1'){
-      this.type = '出售';
-      this.lowTxt = '广告最低可成交的价格';
+      this.type = this.$t('buyPublish.subject.cs');
+      this.lowTxt = this.$t('buyPublish.subject.zdcjjg');
       this.paramCKey = 'sell_ads_hint';
-      setTitle('出售');
     }
-    setTitle('购买');
+    setTitle(this.type);
     getAdverMessage(this.paramCKey).then(data => {
       this.MsgList = data;
       // 期限： data.payLimit
@@ -291,7 +289,6 @@ export default {
     this.getBbPrice('BTC');
     this.getAdverDetail();
   },
-  computed: {},
   methods: {
     // 查询余额
     getUserWallet(){
@@ -400,7 +397,7 @@ export default {
         });
       }
       function cgAdver(that){
-        message.show('操作成功');
+        message.show(this.$t('common.czcg'));
         if(that.config.publishType != '0'){
           sessionStorage.setItem('tradeType', that.config.tradeType);
           sessionStorage.setItem('coin', that.config.tradeCoin);
@@ -413,7 +410,7 @@ export default {
     toOtcFn(){
       this.config.publishType = '1';
       if(this.errors.any() || this.config.protectPrice == ''){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('common.txwz');
         this.$refs.toast.show();
         return;
       }

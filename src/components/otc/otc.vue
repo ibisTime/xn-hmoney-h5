@@ -6,16 +6,16 @@
           <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}<span :class="{sicon: index == 0}"></span></option>
         </select>
         <p class="buySell">
-        <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>买币</span>
-        <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>卖币</span>
+        <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>{{ $t('otc.navbar.buyB') }}</span>
+        <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>{{ $t('otc.navbar.sellB') }}</span>
         </p>
-        <router-link to='trading' class='trading'>币币交易</router-link>
+        <router-link to='trading' class='trading'>{{ $t('otc.navbar.bbjy') }}</router-link>
       </div>
       <div class="top">
         <div class='top-main'>
             <p>
               <select name="hbName" @change="selHbName" ref="select_hb">
-                <option value="">请选择</option>
+                <option value="">{{ $t('otc.navtxt.xz') }}</option>
                 <option value="CNY">CNY</option>
                 <option value="USD">USD</option>
               </select>
@@ -23,10 +23,10 @@
             </p>
             <p>
               <select name="bbPayType" @change="selPayType" ref="select_pay">
-                <option value="">请选择</option>
-                <option value="0">支付宝</option>
-                <option value="1">微信</option>
-                <option value="2">银行卡转账</option>
+                <option value="">{{ $t('otc.navtxt.xz') }}</option>
+                <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
+                <option value="1">{{ $t('otc.navtxt.wx') }}</option>
+                <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
               </select>
               <span></span>
             </p>
@@ -44,6 +44,7 @@
           ref="scroll"
           :data="bbDataList"
           :hasMore="hasMore"
+          :pullUpLoad="pullUpLoad"
           v-show="bbDataList.length"
           @pullingUp="getBBListData"
         >
@@ -54,23 +55,23 @@
                   <p class="pic-p" :style="getAvatar(adverItem.user.photo)" alt=""></p>
                   <span class='green color'></span>
                 </div>
-                <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? '已实名' : '未实名'}}</span>
+                <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? $t('otc.subject.ysm') : $t('otc.subject.wsm')}}</span>
               </div>
               <div class='text'>
                 <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
-                <p class='disc'>交易{{adverItem.userStatistics.jiaoYiCount}}•好评{{getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount)}}•信任{{adverItem.userStatistics.beiXinRenCount}}</p>
-                <p class='limit'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
+                <p class='disc'>{{ $t('otc.subject.jy') }}{{adverItem.userStatistics.jiaoYiCount}}{{ $t('otc.subject.hp') }}{{getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount)}}{{ $t('otc.subject.xr') }}{{adverItem.userStatistics.beiXinRenCount}}</p>
+                <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
               </div>
               <div class='number'>
                 <p class='num'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
-                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">{{adverItem.user.userId == userId ? '编辑' : adverItem.tradeType == 0 ? '出售' : '购买'}}</p>
+                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">{{adverItem.user.userId == userId ? $t('otc.subject.bj') : adverItem.tradeType == 0 ? $t('otc.subject.cs') : $t('otc.subject.gm')}}</p>
               </div>
             </div>
           </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': bbDataList.length > 0}">
           <img src="./wu.png" />
-          <p>暂无广告</p>
+          <p>{{ $t('common.zwgg') }}</p>
         </div>
       </div>
       <Toast :text="textMsg" ref="toast" />
@@ -90,11 +91,11 @@
     <div class='main'>
       <div class='buy' @click.stop='goBuyPublish'>
         <span></span>
-        发布购买
+        {{ $t('otc.subject.fbgm') }}
       </div>
       <div class='sell' @click.stop='goSellPublish'>
         <span></span>
-        发布卖出
+        {{ $t('otc.subject.fbcs') }}
       </div>
     </div>
     <div @click='relClose' class='close'></div>
@@ -112,6 +113,15 @@ import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
+/* 
+  {
+            threshold: 40,
+            txt: {
+              more: this.$t('common.jzz') + '...',
+              noMore: this.$t('common.jzwb')
+            }
+          }
+ */
 export default {
   data() {
     return {
@@ -124,9 +134,9 @@ export default {
         tradeType: '1'
       },
       bizTypeList: {
-        "0": "支付宝",
-        "1": "微信",
-        "2": "银行卡转账"
+        "0": this.$t('otc.navtxt.zfb'),
+        "1": this.$t('otc.navtxt.wx'),
+        "2": this.$t('otc.navtxt.yhk')
       },
       bbDataList: [],
       banners: [],
@@ -151,7 +161,14 @@ export default {
       yPum: '',
       touchDemo: '',
       docuWidth: '',
-      docuHeight: ''
+      docuHeight: '',
+      pullUpLoad: {
+        threshold: 40,
+        txt: {
+          more: this.$t('common.jzz') + '...',
+          noMore: this.$t('common.jzwb')
+        }
+      }
     };
   },
   created() {
@@ -283,7 +300,7 @@ export default {
         if(data.tradepwdFlag){
           this.Show = true;
         }else if(!data.tradepwdFlag){
-          this.textMsg = '请设置资金密码';
+          this.textMsg = this.$t('common.szzjmm');
           this.$refs.toast.show();
           setTimeout(() => {
             this.$router.push('/security-tradePassword');
