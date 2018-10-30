@@ -190,7 +190,6 @@ export function moneyReplaceComma(money) {
 * @param coin 币种
 */
 export function formatMoneyMultiply(money, rate, coin) {
-  debugger;
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
 
   if (isUndefined(money) || money === '') {
