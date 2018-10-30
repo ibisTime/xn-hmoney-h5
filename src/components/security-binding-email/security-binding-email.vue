@@ -8,19 +8,20 @@
     </header> -->
     <div class="main">
       <p><input v-model="email" pattern="[a-zA-Z0-9]{5,12}@qq.com" type="text" placeholder="请输入邮箱"></p>
-      <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon' @click="captcha = ''"></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
 
     </div>
     <div class="foot">
       <button @click="bindEmail">确 定</button>
     </div>
     
-
+  <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
 import {getUserId,CheckMail, setTitle} from '../../common/js/util';
 import {bindingEmail, getSmsCaptcha2} from '../../api/person';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
@@ -28,7 +29,9 @@ export default {
       show: true,
       email: '',
       captcha: '',
-      bizType: '805086'
+      bizType: '805086',
+      isLoading: false,
+      time: 60
     };
   },
   created() {
@@ -38,7 +41,19 @@ export default {
     get() {
       this.show = false;
       if(CheckMail(this.email) === true) {
+        this.isLoading = true;
         getSmsCaptcha2(this.bizType, this.email).then(data => {
+          this.isLoading = false;
+          let phTime = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(phTime);
+              this.show = true;
+              this.time = 60;
+            }
+          }, 1000);
+        }, () => {
+          this.isLoading = false;
         });
       }
     },
@@ -49,6 +64,9 @@ export default {
         })
       }
     }
+  },
+  components: {
+    FullLoading
   }
 };
 </script>
