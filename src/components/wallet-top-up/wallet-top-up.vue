@@ -188,7 +188,7 @@ export default {
     wallet().then(res => {
       let cdsList = res.filter(item => item.currency == 'FMVP')[0];
       if(cdsList){
-        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, 'FMVP');
+        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, '','FMVP');
       }
       getGmBankData().then(data => {
         this.gmBankList = data;

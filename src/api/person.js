@@ -88,7 +88,7 @@ export function getSmsCaptcha2(bizType, email) {
   });
 }
 
-// 钱包
+// 列表查询用户账户
 export function wallet() {
   return fetch(802301, {
     userId: getUserId()

@@ -85,25 +85,10 @@
       setTitle(this.$t('footer.navbar.page'));
       getBannerList().then((data) => {
         this.banners = data;
+        this.isLoading = false;
       });
     },
     mounted() {
-      getBbListData().then(data => {
-        data.forEach(item => {
-          this.coinData[item.symbol] = {
-            coin: item.symbol,
-            id: item.id,
-            cname: item.cname,
-            ename: item.ename,
-            type: 1,
-            unit: item.unit.toString()
-          }
-        })
-        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-        this.isLoading = false;
-      }, () => {
-        this.isLoading = false;
-      });
     },
     computed: {
     },

@@ -296,7 +296,7 @@ export default {
         let wallet = data.filter(item => {
           return item.currency == this.config.tradeCoin;
         });
-        this.walletMon = formatMoneySubtract(`${wallet[0].amount}`, `${wallet[0].frozenAmount}`, wallet[0].currency);
+        this.walletMon = formatMoneySubtract(`${wallet[0].amount}`, `${wallet[0].frozenAmount}`, '', wallet[0].currency);
         this.isLoading = false;
       }, () => {
         this.isLoading = false;

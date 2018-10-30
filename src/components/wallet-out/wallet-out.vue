@@ -48,7 +48,7 @@
 <script>
 import {walletOut} from 'api/person';
 import {getSysConfig} from 'api/general';
-import { getUrlParam, getUserId, setTitle } from 'common/js/util';
+import { getUrlParam, getUserId, setTitle, formatAmount } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
@@ -79,7 +79,7 @@ export default {
     setTitle('转出');
     this.currency = getUrlParam('currency');
     this.amount = getUrlParam('amount');
-    this.value = this.amount + this.currency;
+    this.value = formatAmount(this.amount, '', this.currency) + this.currency;
     this.config.accountNumber = getUrlParam('accountNumber');
     this.config.payCardInfo = this.currency;
     getSysConfig('withdraw_fee').then(data => {
@@ -99,7 +99,10 @@ export default {
       }, () => {
         this.isLoading = false;
       })
-    }
+    },
+    formatAmount(money, unit, coin) {
+      return formatAmount(money, unit, coin);
+    },
   },
   components: {
     Toast,

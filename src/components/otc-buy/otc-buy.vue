@@ -29,7 +29,7 @@
             <span>好评率</span>
           </div>
           <div>
-            <p>{{bbFormatAmount(data.userStatistics.totalTradeCount, '', data.tradeCurrency)}}</p>
+            <p>{{formatAmount(data.userStatistics.totalTradeCount, '', data.tradeCurrency)}}</p>
             <span>历史交易</span>
           </div>
         </div>
@@ -107,7 +107,6 @@ import { wallet } from "api/person";
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
-
 export default {
   data() {
     return {
@@ -123,11 +122,11 @@ export default {
           nickname: ''
         },
         userStatistics: {
-          jiaoYiCount: '',
-          beiXinRenCount: '',
-          beiPingJiaCount: '',
-          beiHaoPingCount: '',
-          totalTradeCount: ''
+          jiaoYiCount: 0,
+          beiXinRenCount: 0,
+          beiPingJiaCount: 0,
+          beiHaoPingCount: 0,
+          totalTradeCount: 0
         }
       },
       bizTypeList: {
@@ -228,7 +227,7 @@ export default {
         this.$refs.toast.show();
       }
     },
-    bbFormatAmount(amount, len, coin){
+    formatAmount(amount, len, coin){
         return formatAmount(amount, len, coin);
     },
     otcBuy() {
@@ -243,9 +242,9 @@ export default {
             return data.tradeCoin === item.currency;
           });
           if(this.type == '0'){
-            this.yMoney = formatMoneySubtract(`${bbMoney[0].amount}`, `${bbMoney[0].frozenAmount}`, bbMoney[0].currency);
+            this.yMoney = formatMoneySubtract(`${bbMoney[0].amount}`, `${bbMoney[0].frozenAmount}`, '', bbMoney[0].currency);
           }else{
-            this.yMoney = this.bbFormatAmount(`${data.leftCountString}`, '', data.tradeCoin);
+            this.yMoney = this.formatAmount(`${data.leftCountString}`, '', data.tradeCoin);
           }
           this.isLoading = false;
         });
