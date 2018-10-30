@@ -129,6 +129,7 @@ export default {
           }, 1000);
         }, () => {
           this.isLoading = false;
+          this.fscg = false;
         });
       }else{
         if(this.errors.has('email') || this.email == ''){
@@ -150,6 +151,7 @@ export default {
           }, 1000);
         }, () => {
           this.isLoading = false;
+          this.fscg1 = false;
         });
       }
     },
@@ -159,7 +161,7 @@ export default {
         this.$refs.toast.show();
         return;
       }
-      if(!this.errors.any() || this.nickname != '' || this.smsCaptcha != '' || this.password1 != ''){
+      if(this.nickname != '' && this.smsCaptcha != '' && this.password1 != '' && !this.errors.any()){
         this.config = {
           captcha: this.smsCaptcha,
           smsCaptcha: this.smsCaptcha,

@@ -297,7 +297,8 @@ export default {
         limit: 1
       },                    // 实时成交参数
       bb_zxj: '',            // 最新价
-      symbolData: {}
+      symbolData: {},
+      handTime: ''
     };
   },
   created() {
@@ -326,18 +327,20 @@ export default {
       });
       this.handicapData();
       this.realTimeData();
-      clearInterval(usTime);
-      var usTime = setInterval(() => {
-        this.getUserWalletData();
-        this.handicapData();
-        this.realTimeData();
-      }, 5000);
       if(getUserId()){
         this.getUserWalletData();
         this.isLogin = true;
         this.history = true;
         this.myOrderTicket();
       }
+
+      this.handTime = setInterval(() => {
+        if(this.isLogin){
+          this.getUserWalletData();
+        }
+        this.handicapData();
+        this.realTimeData();
+      }, 5000);
 
     });
   },
@@ -381,9 +384,11 @@ export default {
         this.myOrderData = [];
         this.myOrderTicket();
       }
-      clearInterval(handTime);
-      var handTime = setInterval(() => {
-        this.getUserWalletData();
+      clearInterval(this.handTime);
+      this.handTime = setInterval(() => {
+        if(this.isLogin){
+          this.getUserWalletData();
+        }
         this.handicapData();
         this.realTimeData();
       }, 5000);

@@ -49,7 +49,7 @@
                 <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="sellMonNumber">
+                <input type="text" :placeholder="showDet ? '输入出售金额' : '输入出售数量'" v-model="sellMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
@@ -81,10 +81,9 @@
         <div class='pay' v-show="!show">
             <span>付款方式</span>
             <span class='txt2'>
-                <!-- <i class='icon icon1'></i> -->
-                <!-- <i class="xz-i">请选择</i> -->
                 <select name="" id="" v-model="sellConfig.receiveType">
-                  <option :value="sellItem.bankCode" v-for="(sellItem, index) in gmBankList" :key="index">{{sellItem.bankName}}</option>
+                  <option value="">请选择</option>
+                  <option :value="sellItem.bankName" v-for="(sellItem, index) in gmBankList" :key="index">{{sellItem.bankName}}</option>
                 </select>
                 <i class='icon icon2'></i>
             </span>
@@ -283,6 +282,7 @@ export default {
           return;
         }
       }
+      this.sellConfig.receiveType = this.gmType[this.sellConfig.receiveType];
       sellX(this.sellConfig).then(data => {
         this.$refs.toast.show();
         setTimeout(() => {
