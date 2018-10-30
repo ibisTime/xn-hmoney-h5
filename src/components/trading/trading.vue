@@ -55,19 +55,19 @@
           </p>
           <button class='buy' @click="downClickFn">买入{{setBazDeal.symbol}}</button>
           <p class='he9 red'>
-            <span>可用 {{setBazDeal.symbol}}</span>
+            <span>可用{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可买 {{setBazDeal.symbol}}</span>
+            <span>可买{{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
-            <span>可用 {{setBazDeal.toSymbol}}</span>
+            <span>可用{{setBazDeal.toSymbol}}</span>
             <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结 {{setBazDeal.symbol}}</span>
+            <span>冻结{{setBazDeal.symbol}}</span>
             <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
           </p>
         </div>
@@ -98,11 +98,11 @@
           </p>
           <button class='sell' @click="downClickFn">卖出 {{setBazDeal.symbol}}</button>
           <p class='he9 green'>
-            <span>可用 {{setBazDeal.symbol}}</span>
+            <span>可用{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可卖 {{setBazDeal.symbol}}</span>
+            <span>可卖{{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
@@ -110,7 +110,7 @@
             <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结 {{setBazDeal.symbol}}</span>
+            <span>冻结{{setBazDeal.symbol}}</span>
             <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
           </p>
         </div>
@@ -631,7 +631,10 @@ export default {
       },
       deep: true
     }
-  }
+  },
+  destroyed() {
+    clearInterval(this.handTime);
+  },
 };
 </script>
 
@@ -806,6 +809,7 @@ export default {
           }
           span{
             word-spacing: normal;
+            padding-left: 0.2rem;
           }
         }
         .no-bor{

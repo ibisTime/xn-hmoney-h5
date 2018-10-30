@@ -258,6 +258,7 @@ export default {
         }
         // 申请仲裁 arbitrationlOrder
         if(target.classList.contains('sqBtn')){
+          this.isLoading = false;
           this.zcShow = true;
         }
         // 释放货币 releaseOrder 
@@ -558,7 +559,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 6.14rem;
-    height: 6.5rem;
+    // height: 6.5rem;
     background: #fff;
     border-radius: .2rem;
     padding: .4rem .6rem .34rem;
