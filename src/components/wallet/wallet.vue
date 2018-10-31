@@ -1,7 +1,7 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
     <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>总资产 {{cdInfo.currency}} 币</p>
+      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.currency}} {{$t('wallet.subject.b')}}</p>
       <div class='txt2' style='margin-top:.3rem;'>
         <p class='t1'>{{cdInfo.symbol}} {{currency}}</p>
       </div>
@@ -18,30 +18,30 @@
       <i class="icon"
          :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
       <div class='my'>
-        <p class='txt1'>{{infoItem.currency}}币种资产({{infoItem.currency}})</p>
+        <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
         <p class='txt2'>{{formatAmount(infoItem.amount, '', infoItem.currency)}}</p>
-        <p class='txt3'><span :title="infoItem.frozenAmount">冻结{{formatAmount(infoItem.frozenAmount, '', infoItem.currency)}}</span><span
-          :title="infoItem.amount - infoItem.frozenAmount">可用{{formatMoneySubtract(infoItem.amount, infoItem.frozenAmount, '', infoItem.currency)}} {{infoItem.currency}}</span>
+        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{formatAmount(infoItem.frozenAmount, '', infoItem.currency)}}</span><span
+          :title="infoItem.amount - infoItem.frozenAmount">{{$t('wallet.subject.ky')}}{{formatMoneySubtract(infoItem.amount, infoItem.frozenAmount, '', infoItem.currency)}} {{infoItem.currency}}</span>
         </p>
       </div>
       <div class='datil'>
         <div class='box'><i class='icon ico1'></i>
           <router-link
             :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">
-            转入
+            {{$t('wallet.subject.zr')}}
           </router-link>
         </div>
         |
         <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i
-          class='icon icoz'></i><span>转出</span></div>
+          class='icon icoz'></i><span>{{$t('wallet.subject.zc')}}</span></div>
         |
         <div class='box'><i class='icon icoc'></i>
-          <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link>
+          <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}</router-link>
         </div>
       </div>
       <div class='operate' v-if="infoItem.currency === 'FMVP'">
-        <router-link to='wallet-top-up?type=buy' class='txt1'>充值</router-link>
-        <router-link to='wallet-top-up?type=sell' class='txt2'>提现</router-link>
+        <router-link to='wallet-top-up?type=buy' class='txt1'>{{$t('wallet.subject.cz')}}</router-link>
+        <router-link to='wallet-top-up?type=sell' class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
       </div>
     </div>
     <Footer></Footer>
@@ -76,7 +76,7 @@
     },
     computed: {},
     created() {
-      setTitle('我的资产');
+      setTitle(this.$t('wallet.subject.wdzc'));
       this.wallet();
       userAllMoneyX(this.currency).then(v => {
         this.cdInfo = v;
@@ -98,13 +98,13 @@
           if (data.tradepwdFlag && data.realName) {
             this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
           } else if (!data.realName) {
-            this.textMsg = '请先进行身份验证';
+            this.textMsg = this.$t('wallet.subject.xyzsf');
             this.$refs.toast.show();
             setTimeout(() => {
               this.$router.push('/security-center');
             }, 1500);
           } else if (!data.tradepwdFlag) {
-            this.textMsg = '请先设置资金密码';
+            this.textMsg = this.$t('wallet.subject.szzjmm');
             this.$refs.toast.show();
             setTimeout(() => {
               this.$router.push('/security-center');

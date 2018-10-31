@@ -9,22 +9,22 @@
         </select>
         <i class='icon' :class="{'icon-bai': !show2}"></i>
       </p>
-      <router-link to='otc'>场外交易</router-link>
+      <router-link to='otc'>{{$t('trading.bbDeal.cwjy')}}</router-link>
     </div>
       
     <div v-show="show2" class='One'>
       <div class="top">
         <p>
-          <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">买入</span>
-          <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">卖出</span>
+          <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
+          <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
           <select name="" id="" class='txt3' v-model="downConfig.type">
-            <option value="1">限价</option>
-            <option value="0">市价</option>
+            <option value="1">{{$t('trading.bbDeal.xj')}}</option>
+            <option value="0">{{$t('trading.bbDeal.sj')}}</option>
           </select>
           <i class='icon'></i>
-          <span class='txt4'>盘口</span>
-          <span class='txt5'>价格({{setBazDeal.toSymbol}})</span>
-          <span class='txt6'>数量({{setBazDeal.symbol}})</span>
+          <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
+          <span class='txt5'>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</span>
+          <span class='txt6'>{{$t('common.sl')}}({{setBazDeal.symbol}})</span>
         </p>
       </div>
       <div class="main">
@@ -33,7 +33,7 @@
           <p class='he9'>
             <input 
               type="number" 
-              :placeholder="downConfig.type == '0' ? '以市场上最优价格买入' : '委托价格'" 
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.pk') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')" 
               v-model="xjPrice" 
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
@@ -42,32 +42,32 @@
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
           <p class='text2' v-show="downConfig.type == '1'">
-            <span>折合CNY</span>
+            <span>{{$t('trading.bbDeal.zh')}}CNY</span>
             <span class='red max-len' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
-            <input type="number" placeholder="委托数量" v-model="wetNumber" @keyup="qrLength">
+            <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
             <span class='black'>{{downConfig.type == '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
           </p>
           <p class='he9 no-bor' v-show="downConfig.type == '1'">
-            <span class="he-jye">交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
+            <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <button class='sell' @click="downClickFn">买入{{setBazDeal.symbol}}</button>
+          <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
           <p class='he9 red'>
-            <span>可用{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可买{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
-            <span>可用{{setBazDeal.toSymbol}}</span>
+            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
             <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
             <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
           </p>
         </div>
@@ -76,7 +76,7 @@
           <p class='he9'>
             <input 
               type="number" 
-              :placeholder="downConfig.type == '0' ? '以市场上最优价格卖出' : '委托价格'" 
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')" 
               v-model="xjPrice" 
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
@@ -85,32 +85,32 @@
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
           <p class='text2' v-show="downConfig.type == '1'">
-            <span>折合CNY</span>
+            <span>{{$t('trading.bbDeal.zh')}}CNY</span>
             <span class='red'>￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
-            <input type="number" placeholder="委托数量" v-model="wetNumber" @keyup="qrLength">
+            <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
             <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
           <p class='he9 no-bor' v-show="downConfig.type == '1'">
-            <span>交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
+            <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <button class='buy' @click="downClickFn">卖出 {{setBazDeal.symbol}}</button>
+          <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
           <p class='he9 red'>
-            <span>可用{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>可卖{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
-            <span>可用{{setBazDeal.toSymbol}}</span>
+            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
             <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
           </p>
           <p class='he9 btn'>
-            <span>冻结{{setBazDeal.symbol}}</span>
+            <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
             <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
           </p>
         </div>
@@ -118,7 +118,7 @@
         <div class="right">
           <div class='one'>
             <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
-              <span class='red txt1'>卖{{7 - index}}</span>
+              <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
               <span class='txt2'>{{sellItem ? sellItem.price : '--'}}</span>
               <span class='txt3'>{{sellItem ? sellItem.count : '--'}}</span>
             </p>
@@ -129,7 +129,7 @@
           </p>
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
-              <span class='green txt1'>买{{index + 1}}</span>
+              <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
               <span class='txt2'>{{buyItem ? buyItem.price : '--'}}</span>
               <span class='txt3'>{{buyItem ? buyItem.count : '--'}}</span>
             </p>
@@ -139,9 +139,9 @@
       </div>
       <div class='entrust' v-show="isLogin">
         <div class='tabs'>
-          <p @click="showCurr" class='current'>当前委托</p>
+          <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
           <p @click='showHisto' class='history'><i class='icon'></i>
-          <router-link to='trading-historyEntrust'>历史</router-link></p>
+          <router-link to='trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link></p>
         </div>
         <div v-show="!show3" class='current-history'>
           <Scroll 
@@ -153,21 +153,21 @@
           >
             <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
               <p class='text1'>
-                <span :class='myItem.direction != 0 ? "green" : "red1"'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
+                <span :class='myItem.direction != 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
                 <span>{{myItem.createDatetime}}</span>
-                <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">撤销</span>
+                <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
               </p>
               <div class='text2'>
                 <div class='txt1'>
-                  <p>价格({{setBazDeal.toSymbol}})</p>
-                  <p class='black'>{{myItem.type == 0 ? '市价' : myItem.price}}</p>
+                  <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
+                  <p class='black'>{{myItem.type == 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
                 </div>
                 <div class='txt2'>
-                  <p>数量({{setBazDeal.symbol}})</p>
+                  <p>{{$t('common.sl')}}({{setBazDeal.symbol}})</p>
                   <p class='black'>{{myItem.totalCount}}</p>
                 </div>
                 <div class='txt3'>
-                  <p>实际成交({{setBazDeal.symbol}})</p>
+                  <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
                   <p class='black'>{{myItem.tradedCount}}</p>
                 </div>
               </div>
@@ -175,7 +175,7 @@
           </Scroll>
           <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
             <img src="./zwdata.png" />
-            <p>暂无订单</p>
+            <p>{{$t('trading.bbDeal.zwdd')}}</p>
           </div>
         </div>
 
@@ -187,14 +187,14 @@
         <div class='top'>
           
         </div>
-        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>现价</span><span class='red txt3'>0.045678</span><span class='red txt4'>折合≈1911.567CNY</span></p>
+        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>{{$t('trading.bbDepth.xj')}} </span><span class='red txt3'>&nbsp;&nbsp;{{ gkdsList.price}}</span><span class='red txt4'>≈ {{(Math.floor(gkdsList.currencyPrice * 100) / 100).toFixed(2)}} CNY</span></p>
         <div class='text2'>
-          <p><span class='gray txt1'>涨幅</span><span class='red txt2'>+1.17%</span></p>
-          <p><span class='gray'>最高</span><span>0.041924</span></p>
+          <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate * 100}} %</span></p>
+          <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{dayLineInfo ? dayLineInfo.high : '0'}}</span></p>
         </div>
         <div class='text3'>
-          <p><span class='gray'>成交</span><span>1.5万</span></p>
-          <p><span class='gray'>最低</span><span>0.041924</span></p>
+          <p><span class='gray'>24h </span><span>{{dayLineInfo ? dayLineInfo.volume : '0'}}</span></p>
+          <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{dayLineInfo ? dayLineInfo.low : '0'}}</span></p>
         </div>
       </div>
       <!-- k线图部分 -->
@@ -202,18 +202,18 @@
       <!-- 主要内容区 -->
       <div class='main2'>
         <div class='tabs' @click="changeMain">
-          <span class='tab-item cj' :class="{'on': tShow === '1'}">成交</span>
-          <span class='tab-item gd' :class="{'on': tShow === '2'}">挂单</span>
-          <span class='tab-item sd' :class="{'on': tShow === '3'}">深度图</span>
-          <span class='tab-item jj' :class="{'on': tShow === '4'}">简介</span>
+          <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
+          <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
+          <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
+          <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
         </div>
         <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
         <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
         <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
         <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
-          <button class='sell'><router-link to='wallet-top-up?type=buy'>买入FMVP</router-link></button>
-          <button class='buy'><router-link to='wallet-top-up?type=sell'>卖出FMVP</router-link></button>
+          <button class='sell'><router-link to='wallet-top-up?type=buy'>{{$t('trading.bbDeal.mr')}}FMVP</router-link></button>
+          <button class='buy'><router-link to='wallet-top-up?type=sell'>{{$t('trading.bbDeal.mc')}}FMVP</router-link></button>
         </div>
       </div>
     </div>
@@ -298,11 +298,13 @@ export default {
       },                    // 实时成交参数
       bb_zxj: '',            // 最新价
       symbolData: {},
-      handTime: ''
+      handTime: '',
+      gkdsList: {},           // 高、低、涨幅
+      dayLineInfo: {}
     };
   },
   created() {
-    setTitle('币币交易');
+    setTitle(this.$t('trading.bbDeal.bbjy'));
     getBazaarData().then(data => {  // 查询交易对
       this.syMid = data.list[0].currencyPrice;
       let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal'));
@@ -322,6 +324,17 @@ export default {
           'toSymbol': item.toSymbol
         });
       });
+      // 获取涨幅
+      let gkData = data.list.filter(item => {
+        return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
+      });
+      this.gkdsList = gkData[0];
+      this.dayLineInfo = this.gkdsList.dayLineInfo;
+      if(this.dayLineInfo){
+        this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
+        this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
+        this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
+      }
       this.getMidPrice();
       this.handicapData();
       this.realTimeData();
@@ -381,6 +394,19 @@ export default {
       this.handicapData();
       this.realTimeData();
       this.getMidPrice();
+      getBazaarData().then(data => {
+        // 获取涨幅
+        let gkData = data.list.filter(item => {
+          return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
+        });
+        this.gkdsList = gkData[0];
+        this.dayLineInfo = this.gkdsList.dayLineInfo;
+        if(this.dayLineInfo){
+          this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
+          this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
+          this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
+        }
+      });
       if(this.isLogin){
         this.getUserWalletData();
         this.hasMore = true;
@@ -497,7 +523,7 @@ export default {
     downClickFn(){
       // 买入X
       if(!this.isLogin){
-        this.textMsg = '请登录后操作';
+        this.textMsg = this.$t('common.qdlhcz');
         this.$refs.toast.show();
         setTimeout(() => {
           this.$router.push('/login');
@@ -515,7 +541,7 @@ export default {
           this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
           downBBOrder(this.downConfig).then(data => {
             this.isLoading = false;
-            this.textMsg = '下单成功';
+            this.textMsg = this.$t('common.xdcg');
             this.$refs.toast.show();
             this.xjPrice = '';
             this.wetNumber = '';
@@ -527,11 +553,11 @@ export default {
             this.isLoading = false;
           });
         }else if(this.xjPrice == ''){
-          this.textMsg = '价格不能为空或小于等于零';
+          this.textMsg = this.$t('common.jg') + this.$t('trading.bbDepth.bkbwl');
           this.$refs.toast.show();
           this.isLoading = false;
         }else if(this.wetNumber == ''){
-          this.textMsg = '数量不能为空或小于等于零';
+          this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
           this.$refs.toast.show();
           this.isLoading = false;
         }
@@ -553,7 +579,7 @@ export default {
           }
           downBBOrder(this.downConfig).then(data => {
             this.isLoading = false;
-            this.textMsg = '下单成功';
+            this.textMsg = this.$t('common.xdcg');
             this.$refs.toast.show();
             this.xjPrice = '';
             this.wetNumber = '';
@@ -561,7 +587,7 @@ export default {
             this.isLoading = false;
           });
         }else if(this.wetNumber == ''){
-          this.textMsg = '数量不能为空或小于零';
+          this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
           this.$refs.toast.show();
           this.isLoading = false;
         }
@@ -591,7 +617,7 @@ export default {
       let numRight = this.xjPrice.split('.')[1];
       if(numRight){
         if(numRight.length > 8){
-          this.textMsg = '小数部分不得大于8位';
+          this.textMsg = this.$t('trading.bbDepth.xsbdy');
           this.$refs.toast.show();
           numRight = numRight.substring(0, 8);
           this.xjPrice = numLeft + '.' + numRight;
@@ -601,7 +627,7 @@ export default {
     repealOrder(code){  // 撤销委托单
       this.isLoading = true;
       repOrder(code).then(data => {
-        this.textMsg = '操作成功';
+        this.textMsg = this.$t('common.czcg');
         this.$refs.toast.show();
         this.isLoading = false;
         setTimeout(() => {

@@ -12,8 +12,8 @@
                 <div v-for='(item,index) in list' :key="index">
                     <div class="list">
                         <div class='pic'>
-                            <p :style="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt=""></p>
-                            <img :class="{'hidden': item.photo}" src="./txiang.png"/>
+                            <p :style="getUserPic(item.user.photo)" :class="{'hidden': !(item.user.photo)}" alt=""></p>
+                            <img :class="{'hidden': item.user.photo}" src="./txiang.png"/>
                         </div>
                         <div class='text'>
                             <p><span class='name'>{{item.user.nickname}}</span></p>
@@ -36,8 +36,8 @@
   </div>
 </template>
 <script>
-import { userEvaluate, getPageTrust } from "../../api/person";
-import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
+import { userEvaluate } from "../../api/person";
+import { getAvatar, setTitle, getUrlParam, getUserId, formatDate } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
 
 export default {
@@ -48,9 +48,10 @@ export default {
       limit: 10,
       hasMore: true,
       len: '',
+      userId: '',
       isGood: {
-          '0': '否',
-          '2': '是'
+          '0': '差评',
+          '2': '好评'
       },
       config: {
         start: 1,
@@ -61,6 +62,8 @@ export default {
   },
   created() {
     setTitle('用户评价');
+    // this.userId = getUrlParam('userId');
+    // this.config.objectUserId = this.userId;
     this.userEvaluate();
   },
   methods: {
@@ -163,6 +166,9 @@ export default {
           p{
               width: 2rem;
           }
+          .name{
+            font-size: 0.3rem;
+          }
           .isgood{
               span{
                   padding: 0.02rem 0.25rem;
@@ -183,7 +189,9 @@ export default {
       }
       .text2{
         border-bottom: 0.01rem solid #e5e5e5;
-        padding: 0.2rem;
+        padding: 0.3rem;
+        color: #333;
+        font-size: 0.3rem;
       }
     }
   }

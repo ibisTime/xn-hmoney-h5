@@ -20,7 +20,19 @@ export default {
     jzz: '加载中',
     jzwb: '已经全部加载完毕',
     czcg: '操作成功',
-    txwz: '请填写完整'
+    txwz: '请填写完整',
+    qx: '取消',
+    qr: '确认',
+    jg: '价格',
+    je: '金额',
+    sl: '数量',
+    gm: '购买',
+    cs: '出售',
+    zfb: '支付宝',
+    wx: '微信',
+    yhkzz: '银行卡转账',
+    qdlhcz: '请登录后操作',
+    xdcg: '下单成功',
   },
   // page页
   page: {
@@ -52,7 +64,13 @@ export default {
       jryx: '进入游戏'
     }
   },
-
+  // 系统公告
+  notice: {
+    subject: {
+      zwgg: '暂无公告',
+      gg: '公告'
+    }
+  },
   // 场外交易-列表页
   otc: {
     navbar: {
@@ -124,6 +142,124 @@ export default {
       xqw: '星期五',
       xql: '星期六',
       xqt: '星期天'
+    }
+  },
+  // 购买页面
+  otcBuy: {
+    userMsg: {
+      xe: '限额',
+      jycs: '交易次数',
+      xrcs: '信任次数',
+      xrl: '好评率',
+      lsjy: '历史交易'
+    },
+    subject: {
+      ggly: '广告留言',
+      nx: '你想',
+      ds: '多少？',
+      kyye: '可用余额',
+      syjyl: '广告剩余可交易量',
+      srsz: '请输入数字',
+      srsi: '请输入数值',
+      xldf: '联系对方',
+      zjmm: '资金密码',
+      qsrzj: '请输入资金密码',
+      xdqr: '下单确定',
+      xdtxt: '提醒：请确认价格再下单，下单后此交易的',
+      xdtxw: '将冻结锁定，请放心',
+      fq: '放弃',
+      qr: '确认',
+      qszjmm: '请输入资金密码',
+      ddtjcg: '订单提交成功',
+      gmslje: '请输入购买数量与购买金额',
+      ddtjcg: '订单提交成功',
+    }
+  },
+  // 个人主页
+  homepage: {
+    subject: {
+      jycs: '交易次数',
+      xrcs: '信任次数',
+      xrl: '好评率',
+      lsjy: '历史交易',
+      xr: '信任',
+      hmd: '黑名单',
+      grzy: '个人主页',
+      yxr: '已信任',
+      ylh: '已拉黑',
+
+    }
+  },
+  // 币币交易
+  trading: {
+    bbDeal: {
+      cwjy: '场外交易',
+      bbjy: '',
+      mr: '买入',
+      mc: '卖出',
+      xj: '限价',
+      sj: '市价',
+      pk: '盘口',
+      sczjjg: '以市场上最优价格',
+      wtjg: '委托价格',
+      zh: '折合',
+      wtsl: '委托数量',
+      jye: '交易额',
+      ky: '可用',
+      km: '可买',
+      dj: '冻结',
+      kmai: '可卖',
+      mai: '卖',
+      m:'买',
+      dqwt: '当前委托',
+      ls: '历史',
+      cx: '撤销',
+      sjcj: '实际成交',
+      zwdd: '暂无订单',
+
+    },
+    bbDepth: {
+      xj: '现价',
+      zf: '涨幅',
+      zg: '最高',
+      zd: '最低',
+      cj: '成交',
+      gd: '挂单',
+      sdt: '深度图',
+      jj: '简介',
+      bkbwl: '不能为空或小于等于零',
+      xsbdy: '小数部分不得大于8位'
+    }
+  },
+  // 历史委托
+  historyEntrust: {
+    subject: {
+      mr: '买入',
+      mc: '卖出',
+      sj: '市价',
+      ze: '总额',
+      sjcj: '实际成交',
+      zwdd: '暂无订单',
+      lswt: '历史委托订单',
+    }
+  },
+  // 钱包
+  wallet: {
+    subject: {
+      zzc: '总资产',
+      b: '币',
+      bzzc: '币种资产',
+      dj: '冻结',
+      ky: '可用',
+      zr: '转入',
+      zc: '转出',
+      zd: '账单',
+      cz: '充值',
+      tx: '提现',
+      wdzc: '我的资产',
+      xyzsf: '请先进行身份验证',
+      szzjmm: '请先设置资金密码',
+      
     }
   }
 };

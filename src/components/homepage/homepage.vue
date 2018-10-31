@@ -16,21 +16,21 @@
         <div class="user-list">
             <div class="jy-box">
                 <h5>{{userDataList.userStatistics.jiaoYiCount}}</h5>
-                <p>交易次数</p>
+                <p>{{$t('homepage.subject.jycs')}}</p>
             </div>
             <div class="xr-box">
                 <h5>{{userDataList.userStatistics.beiXinRenCount}}</h5>
-                <p>信任次数</p>
+                <p>{{$t('homepage.subject.xrcs')}}</p>
             </div>
-            <div class="hp-box" @click="$router.push('userpj')">
+            <div class="hp-box" @click="$router.push('userpj?userId=' + userId)">
                 <h5>{{getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
-                <p>好评率</p>
+                <p>{{$t('homepage.subject.xrl')}}</p>
             </div>
             <div class="ls-box">
                 <h5>
                     {{totalTradeCount}}{{currency}}
                 </h5>
-                <p>历史交易</p>
+                <p>{{$t('homepage.subject.lsjy')}}</p>
             </div>
         </div>
         <div class="user-btns">
@@ -63,11 +63,11 @@ export default {
                 beiPingJiaCount: '',
             }
         },
-        textMsg: '操作成功',
+        textMsg: this.$t('common.czcg'),
         isLoading: true,
         totalTradeCount: '',
-        xrText: '+ 信任',
-        lhText: '+ 黑名单',
+        xrText: '+ ' + this.$t('homepage.subject.xr'),
+        lhText: '+ ' + this.$t('homepage.subject.hmd'),
         trust: '',
         addBlack: '',
         userId: '',
@@ -75,7 +75,7 @@ export default {
     };
   },
   created() {
-      setTitle('个人主页');
+      setTitle(this.$t('homepage.subject.grzy'));
       this.currency = getUrlParam('currency');
       this.userId = getUrlParam('userId');
       // currency: 币种; userId：查询用户的ID
@@ -103,14 +103,14 @@ export default {
             this.addBlack = data.isAddBlackList;
             // 查询与用户信任关系
             if(data.isTrust == '0'){
-                this.xrText = '+ 信任';
+                this.xrText = '+ ' + this.$t('homepage.subject.xr');
             }else{
-                this.xrText = '已信任';
+                this.xrText = this.$t('homepage.subject.yxr');
             }
             if(data.isAddBlackList == '0'){
-                this.lhText = '+ 黑名单';
+                this.lhText = '+ ' + this.$t('homepage.subject.hmd');
             }else{
-                this.lhText = '已拉黑';
+                this.lhText = this.$t('homepage.subject.ylh');
             }
             let tradeCount =  ((Math.floor(parseFloat(formatAmount(data.totalTradeCount, '0', this.currency)) * 10000)) / 10000).toFixed(4);
             this.totalTradeCount = data.totalTradeCount == '0' ? '0' : tradeCount;

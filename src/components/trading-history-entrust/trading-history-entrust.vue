@@ -14,25 +14,25 @@
         >
             <div class='list' v-for="(item, index) in hisDataList" :key="index">
                 <p class='text1'>
-                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? '买入' : '卖出'}}</span>
+                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? $t('historyEntrust.subject.mr') : $t('historyEntrust.subject.mc')}}</span>
                     <span>{{item.createDatetime}}</span>
                     <span class='red'>{{item.status}}</span>
                 </p>
                 <div class='text2'>
                     <div class='txt1'>
-                        <p>价格({{item.toSymbol}})</p>
-                        <p class='black'>{{item.type == 0 ? '市价' : item.price}}</p>
+                        <p>{{$t('common.jg')}}({{item.toSymbol}})</p>
+                        <p class='black'>{{item.type == 0 ? $t('historyEntrust.subject.sj') : item.price}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>总额({{item.toSymbol}})</p>
+                        <p>{{$t('historyEntrust.subject.ze')}}({{item.toSymbol}})</p>
                         <p class='black'>{{item.direction == 1 && item.type == 0 ? '-' : item.totalAmount}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>数量({{item.symbol}})</p>
+                        <p>{{$t('common.sl')}}({{item.symbol}})</p>
                         <p class='black'>{{item.direction == 0 && item.type == 0 ? '-' : item.totalCount}}</p>
                     </div>
                     <div class='txt3'>
-                        <p>实际成交({{item.symbol}})</p>
+                        <p>{{$t('historyEntrust.subject.sjcj')}}({{item.symbol}})</p>
                         <p class='black'>{{item.tradedCount}}</p>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
         </Scroll>
         <div class="no-data" :class="{'hidden': hisDataList.length > 0}">
           <img src="./zwdata.png" />
-          <p>暂无订单</p>
+          <p>{{$t('historyEntrust.subject.zwdd')}}</p>
         </div>
     </div>
     <FullLoading  ref="fullLoading" v-show="isLoading"/>
@@ -69,7 +69,7 @@ export default {
     };
   },
   created() {
-    setTitle('历史委托订单');
+    setTitle(this.$t('historyEntrust.subject.lswt'));
     getDictList('simu_order_status').then(data => {
         data.forEach((item) => {
             this.statusValueList[item.dkey] = item.dvalue;

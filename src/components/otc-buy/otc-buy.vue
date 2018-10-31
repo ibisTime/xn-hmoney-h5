@@ -11,39 +11,39 @@
           </div>
           <div class='text'>
             <p class='name'><span class='txt1'>{{data.user.nickname}}</span><span class='icon'>{{bizTypeList[data.payType]}}</span></p>
-            <p class='num'>限额：{{data.minTrade}}-{{data.maxTrade}} {{data.tradeCurrency}}</p>
+            <p class='num'>{{$t('otcBuy.userMsg.xe')}}：{{data.minTrade}}-{{data.maxTrade}} {{data.tradeCurrency}}</p>
           </div>
           <div class='money'>{{truePrice}} {{data.tradeCurrency}}</div>
         </div>
         <div class='about'>
           <div>
             <p>{{data.userStatistics.jiaoYiCount}}</p>
-            <span>交易次数</span>
+            <span>{{$t('otcBuy.userMsg.jycs')}}</span>
           </div>
           <div>
             <p>{{data.userStatistics.beiXinRenCount}}</p>
-            <span>信任次数</span>
+            <span>{{$t('otcBuy.userMsg.xrcs')}}</span>
           </div>
-          <div>
+          <div @click="$router.push('/userpj?userId=' + userId)">
             <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}%</p>
-            <span>好评率</span>
+            <span>{{$t('otcBuy.userMsg.xrl')}}</span>
           </div>
           <div>
             <p>{{data.userStatistics.totalTradeCount === '0' ? '0' : formatAmount(data.userStatistics.totalTradeCount, 0, data.tradeCoin) + '+' + data.tradeCoin}}</p>
-            <span>历史交易</span>
+            <span>{{$t('otcBuy.userMsg.lsjy')}}</span>
           </div>
         </div>
       </div>
       <div class='message'>
-        广告留言：{{data.leaveMessage}}
+        {{$t('otcBuy.subject.ggly')}}：{{data.leaveMessage}}
       </div>
       <div class='main'>
         <div class='want'>
-          <p class='txt1'><span class='icon1'></span>你想{{bText}}多少？</p>
-          <p class='txt2'>{{type == '0' ? '可用余额' : '广告剩余可交易量'}}：{{yMoney}} {{data.tradeCoin}}</p>
+          <p class='txt1'><span class='icon1'></span>{{$t('otcBuy.subject.nx')}}{{bText}}{{$t('otcBuy.subject.ds')}}</p>
+          <p class='txt2'>{{type == '0' ? $t('otcBuy.subject.kyye') : $t('otcBuy.subject.syjyl')}}：{{yMoney}} {{data.tradeCoin}}</p>
           <div class='text'>
-            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="number" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
-            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="number" placeholder="请输入数值"></p>
+            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="number" v-model="Cnum" @keyup="changeEnum" :placeholder="$t('otcBuy.subject.srsz')"></p>
+            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="number" :placeholder="$t('otcBuy.subject.srsi')"></p>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
       <div class='footer'>
           <div class='chat' @click='getChatOrderBuy'>
             <span></span>
-            联系对方
+            {{$t('otcBuy.subject.xldf')}}
           </div>
           <div class='buy' @click='showOrder'>
               {{bText}}
@@ -63,13 +63,13 @@
       </div>
       <div v-show='show && type === "0"' class='pop-up'>
         <div class='up-window'>
-          <h3>资金密码</h3>
+          <h3>{{$t('otcBuy.subject.zjmm')}}</h3>
           <div class='text'>
-            <input type="password" placeholder="请输入资金密码" v-model="userMoney">
+            <input type="password" :placeholder="$t('otcBuy.subject.qsrzj')" v-model="userMoney">
           </div>
           <div class='btn'>
-            <button class='no' @click='qxMoney'>取消</button>
-            <button class='yes' @click="qrMoney">确认</button>
+            <button class='no' @click='qxMoney'>{{$t('common.qx')}}</button>
+            <button class='yes' @click="qrMoney">{{$t('common.qr')}}</button>
             <router-link to='order-details'></router-link>
           </div>
         </div>
@@ -77,19 +77,19 @@
       <div v-show='showBuy' class='pop-up'>
         <div class='pop-up-window'>
           <div class='ico'><span></span></div>
-          <h3>下单确定</h3>
+          <h3>{{$t('otcBuy.subject.xdqr')}}</h3>
           <div class='text'>
-          <p><span class='txt1'>{{bText}}价格</span><span class='txt2'>{{truePrice}} {{data.tradeCurrency}}</span></p>
-          <p><span class='txt1'>{{bText}}金额</span><span class='txt2'>{{Cnum}} {{data.tradeCurrency}}</span></p>
-          <p><span class='txt1'>{{bText}}数量</span><span class='txt2'>{{Enum}} {{data.tradeCoin}}</span></p>
+          <p><span class='txt1'>{{bText}}{{$t('common.jg')}}</span><span class='txt2'>{{truePrice}} {{data.tradeCurrency}}</span></p>
+          <p><span class='txt1'>{{bText}}{{$t('common.je')}}</span><span class='txt2'>{{Cnum}} {{data.tradeCurrency}}</span></p>
+          <p><span class='txt1'>{{bText}}{{$t('common.sl')}}</span><span class='txt2'>{{Enum}} {{data.tradeCoin}}</span></p>
           </div>
           <div class='prompt'>
             <span class='icon'></span>
-            <span class='txt'>提醒：请确认价格再下单，下单后此交易的 {{data.tradeCoin}}将冻结锁定，请放心{{bText}}</span>
+            <span class='txt'>{{$t('otcBuy.subject.xdtxt')}} {{data.tradeCoin}}{{$t('otcBuy.subject.xdtxw')}}{{bText}}</span>
           </div>
           <div class='btn'>
-            <button class='no' @click='qxBuy'>放弃{{bText}}</button>
-            <button class='yes' @click="qrBuy">确认{{bText}}</button>
+            <button class='no' @click='qxBuy'>{{$t('common.fq')}}{{bText}}</button>
+            <button class='yes' @click="qrBuy">{{$t('common.qr')}}{{bText}}</button>
             <router-link to='order-details'></router-link>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default {
       textMsg: '',
       userMoney: '',
       yMoney: '',
-      bText: '购买',
+      bText: this.$t('common.gm'),
       data: {
         user: {
           nickname: ''
@@ -130,9 +130,9 @@ export default {
         }
       },
       bizTypeList: {
-        "0": "支付宝",
-        "1": "微信",
-        "2": "银行卡转账"
+        "0": this.$t('common.zfb'),
+        "1": this.$t('common.wx'),
+        "2": this.$t('common.yhkzz')
       },
       rate: '',
       truePrice: '',
@@ -157,11 +157,11 @@ export default {
     this.userId = getUrlParam('userId');
     this.config.adsCode = getUrlParam('adsCode');
     if(this.type === '1'){
-      this.bText = '购买';
-      setTitle('购买');
+      this.bText = this.$t('common.gm');
+      setTitle(this.$t('common.gm'));
     }else{
-      this.bText = '出售';
-      setTitle('出售');
+      this.bText = this.$t('common.cs');
+      setTitle(this.$t('common.cs'));
     }
     getUser(this.userId).then(data => {
       this.photo = data.photo;
@@ -203,7 +203,7 @@ export default {
       this.showBuy = true;
       this.show = false;
       if(this.userMoney === ''){
-        this.textMsg = '请输入资金密码';
+        this.textMsg = this.$t('otcBuy.subject.qszjmm');
         this.$refs.toast.show();
         this.showBuy = false;
       }else{
@@ -214,7 +214,7 @@ export default {
         sellBB(this.config).then(data => {
           this.userMoney = '';
           sessionStorage.setItem('tradeType', '0');
-          this.textMsg = '订单提交成功';
+          this.textMsg = this.$t('otcBuy.subject.ddtjcg');
           this.$refs.toast.show();
           setTimeout(() => {
             this.$router.push('/my-order');
@@ -236,7 +236,7 @@ export default {
       if(this.Enum > 0 && this.Cnum > 0){
         this.showBuy = true;
       }else{
-        this.textMsg = '请输入购买数量与购买金额';
+        this.textMsg = this.$t('otcBuy.subject.gmslje');
         this.$refs.toast.show();
       }
     },
@@ -284,7 +284,7 @@ export default {
         this.isLoading = true;
         buyETH(this.config).then(data => {
           sessionStorage.setItem('tradeType', '1');
-          this.textMsg = '订单提交成功';
+          this.textMsg = this.$t('otcBuy.subject.ddtjcg');
           this.$refs.toast.show();
           setTimeout(() => {
             this.$router.push('/my-order');

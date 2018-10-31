@@ -5,6 +5,7 @@
         ref="scroll"
         :data="noticeData"
         :hasMore="hasMore"
+        :pullUpLoad="pullUpLoad"
         v-show="noticeData.length > 0"
         @pullingUp="getNotice"
       >
@@ -15,7 +16,7 @@
       </Scroll>
       <div class="no-data" :class="{'hidden': noticeData.length > 0}">
         <img src="./wu.png" />
-        <p>暂无公告</p>
+        <p>{{ $t('notice.subject.zwgg') }}</p>
       </div>
     </div>
     
@@ -31,11 +32,18 @@ export default {
     return {
       start: 1,
       hasMore: true,
-      noticeData: []
+      noticeData: [],
+      pullUpLoad: {
+        threshold: 40,
+        txt: {
+          more: this.$t('common.jzz') + '...',
+          noMore: this.$t('common.jzwb')
+        }
+      }
     };
   },
   created() {
-    setTitle('公告');
+    setTitle(this.$t('notice.subject.gg'));
     this.getNotice();
   },
   methods: {
@@ -93,6 +101,7 @@ export default {
     width: 100%;
     height: 12rem;
     padding: 0 .3rem;
+    margin-top: 0.3rem;
     .list {
       width: 100%;
       border-radius: .08rem;

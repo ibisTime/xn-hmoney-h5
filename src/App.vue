@@ -58,8 +58,10 @@
         this.isLoading = false;
       });
       this.$router.beforeEach((to, from, next) => {
-        this.$refs.touchDemo.style.left = '4.5rem';
-        this.$refs.touchDemo.style.top = '9rem';
+        this.$refs.touchDemo.style.right = '0.5rem';
+        this.$refs.touchDemo.style.bottom = '1rem';
+        this.$refs.touchDemo.style.left = '';
+        this.$refs.touchDemo.style.top = '';
         if (isLogin()) {
           this.tencentLogin();
           next();
@@ -83,6 +85,10 @@
           }
         }
       })
+    },
+    mounted() {
+      this.$refs.touchDemo.style.right = '0.5rem';
+      this.$refs.touchDemo.style.bottom = '1rem';
     },
     components: {
       Toast
@@ -213,8 +219,6 @@
   .tobuy{
     position: fixed;
     width: 2.8rem;
-    top: 9rem;
-    left: 4.5rem;
     height: 0.74rem;
     box-sizing: border-box;
     z-index: 999999;

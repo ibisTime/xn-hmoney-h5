@@ -22,7 +22,7 @@ export default function fetch(code, param) {
   param = 'code=' + code + '&json=' + encodeURIComponent(JSON.stringify(data));
   return axios.post(url, param, {
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
   }).then((res) => {
     res = res.data;
