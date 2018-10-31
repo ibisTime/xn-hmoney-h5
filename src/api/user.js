@@ -32,7 +32,7 @@ export function wxLogin(code, userReferee, activityCode, mobile, smsCaptcha) {
  * 获取腾讯云IM签名、账号
  */
 export function getTencentParamsAPi() {
-  return fetch(805953, {
+  return fetch(805087, {
     userId: getUserId()
   }).then((data) => {
     setCookie('__sig__', data.sig);

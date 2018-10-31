@@ -147,7 +147,7 @@ export default {
     padding: 0 0.3rem;
     line-height: 1rem;
     .mb20 {
-      border-bottom: 0.01rem solid #d8d8d8;
+      border-bottom: 0.01rem solid #eee;
     }
     .tag {
       display: block;

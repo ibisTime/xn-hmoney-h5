@@ -39,9 +39,8 @@
           <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link>
         </div>
       </div>
-      <div class='operate' v-if="infoItem.currency == 'FMVP'">
+      <div class='operate' v-if="infoItem.currency === 'FMVP'">
         <router-link to='wallet-top-up?type=buy' class='txt1'>充值</router-link>
-        |
         <router-link to='wallet-top-up?type=sell' class='txt2'>提现</router-link>
       </div>
     </div>
@@ -113,8 +112,8 @@
           }
         });
       },
-      formatAmount(money, unit, coin) {
-        return formatAmount(money, unit, coin);
+      formatAmount(money, format, coin) {
+        return formatAmount(money, format, coin);
       },
       formatMoneySubtract(s1, s2, format, coin) {
         return formatMoneySubtract(s1, s2, format, coin);
@@ -236,6 +235,7 @@
 
     .my-assets {
       width: 100%;
+      overflow: hidden;
       background: #FFFFFF;
       box-shadow: 0 .04rem .2rem 0 rgba(131, 128, 128, 0.14);
       border-radius: .14rem;
@@ -291,8 +291,7 @@
         font-size: .26rem;
         color: #e5e5e5;
         display: flex;
-        border-top: .01rem solid #e5e5e5;
-        border-bottom: .01rem solid #e5e5e5;
+        border-top: 0.01rem solid #e5e5e5;
         .box {
           flex: 1;
           text-align: center;
@@ -334,6 +333,7 @@
         font-size: .32rem;
         line-height: 1rem;
         color: #e5e5e5;
+        border-top: 0.01rem solid #e5e5e5;
         a {
           flex: 1;
           text-align: center;

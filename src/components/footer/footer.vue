@@ -50,6 +50,7 @@
     color: #B3B3B3;
     text-align: center;
     z-index: 99999;
+    box-shadow: 0 -2px 12px 2px rgba(0,0,0,0.05);
 
     .foot-item {
       position: relative;

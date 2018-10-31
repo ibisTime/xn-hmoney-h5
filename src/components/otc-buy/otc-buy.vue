@@ -29,7 +29,7 @@
             <span>好评率</span>
           </div>
           <div>
-            <p>{{formatAmount(data.userStatistics.totalTradeCount, '', data.tradeCoin)}}</p>
+            <p>{{data.userStatistics.totalTradeCount === '0' ? '0' : formatAmount(data.userStatistics.totalTradeCount, 0, data.tradeCoin) + '+' + data.tradeCoin}}</p>
             <span>历史交易</span>
           </div>
         </div>
@@ -53,10 +53,10 @@
           <p class='cont' v-html="jyText"></p>
       </div>
       <div class='footer'>
-          <router-link to='otc-contactOther' class='chat'>
+          <div class='chat' @click='getChatOrderBuy'>
             <span></span>
             联系对方
-          </router-link>
+          </div>
           <div class='buy' @click='showOrder'>
               {{bText}}
           </div>
@@ -100,7 +100,7 @@
 </template>
 <script>
 import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar, getPercentum } from 'common/js/util';
-import { otcBuy, buyETH, sellBB } from "api/otc";
+import { otcBuy, buyETH, sellBB, chatOrderBuy } from "api/otc";
 import {getUser} from 'api/person';
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
@@ -174,6 +174,19 @@ export default {
     })
   },
   methods: {
+    // 购买开始聊天，提交交易订单
+    getChatOrderBuy() {
+      this.isLoading = true;
+      chatOrderBuy(this.config.adsCode).then(data => {
+        this.isLoading = false;
+        this.goChat(data.code);
+      }).catch(() => {
+        this.isLoading = false
+      });
+    },
+    goChat(orderCode) {
+      this.$router.push(`/message/${orderCode}`);
+    },
     getPercentum(num1, num2){
       return getPercentum(num1, num2);
     },
@@ -227,8 +240,8 @@ export default {
         this.$refs.toast.show();
       }
     },
-    formatAmount(amount, len, coin){
-        return formatAmount(amount, len, coin);
+    formatAmount(money, format, coin) {
+      return formatAmount(money, format, coin);
     },
     otcBuy() {
       this.isLoading = true;

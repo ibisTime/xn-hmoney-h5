@@ -105,14 +105,15 @@ export default {
     width: 100%;
     padding: 0 0.3rem;
     line-height: 1rem;
-    .mb20 {
-      border-bottom: 0.01rem solid #d8d8d8;
-    }
     .tag {
       display: block;
       width: 100%;
       font-size: 0.32rem;
       color: #333;
+      border-bottom: 0.01rem solid #eee;
+      &:last-child{
+        border-bottom: none;
+      }
       .icon {
         width: 0.16rem;
         height: 0.26rem;

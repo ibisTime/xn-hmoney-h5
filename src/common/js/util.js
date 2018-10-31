@@ -157,7 +157,7 @@ export function formatAmount(money, format, coin, isRe = false) {
   if (isUndefined(format) || typeof format === 'object') {
     format = 2;
   }
-  if (coin) {
+  if (coin && isUndefined(format)) {
     format = 8;
   }
   // 金额格式化 金额除以unit并保留format位小数

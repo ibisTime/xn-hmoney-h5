@@ -109,6 +109,10 @@ const Homepage = () => import('components/homepage/homepage');
 // 用户评价
 const Userpj = () => import('components/user-pj/userpj');
 
+// 消息
+const Message = () => import('components/message/message');
+// 聊天
+const MessageChat = () => import('components/message-chat/message-chat');
 
 export default new Router({
   routes: [
@@ -325,6 +329,14 @@ export default new Router({
     {
       path: '/userpj',
       component: Userpj
+      path: '/message',
+      component: Message,
+      children: [
+        {
+          path: ':id',
+          component: MessageChat
+        }
+      ]
     }
   ],
   mode: 'history',
