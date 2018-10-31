@@ -35,7 +35,7 @@
           <span class='ico' @click.stop="showMsg('min')"></span>
         </p>
         <p>
-          <span class='txt1'>{{ $t('buyPublish.subject.zdj') }}<i></i></span>
+          <span class='txt1'>{{ $t('buyPublish.subject.zdjg') }}<i></i></span>
           <input type="number" name="maxTrade" v-validate="'required'" v-model="config.maxTrade" :placeholder="$t('buyPublish.subject.zded')">
           <span v-show="errors.has('maxTrade')" class="error-tip">{{errors.first('maxTrade')}}</span>
           <span class='txt2'>CNY</span>
@@ -397,7 +397,7 @@ export default {
         });
       }
       function cgAdver(that){
-        message.show(this.$t('common.czcg'));
+        message.show(that.$t('common.czcg'));
         if(that.config.publishType != '0'){
           sessionStorage.setItem('tradeType', that.config.tradeType);
           sessionStorage.setItem('coin', that.config.tradeCoin);
@@ -598,6 +598,8 @@ export default {
     }
   }
   .error-tip{
+    position: absolute;
+    right: 0.6rem;
     font-size: 0.24rem;
     width: 1.5rem;
     color: #d53d3d;
@@ -743,6 +745,7 @@ export default {
           height: .3rem;
         }
         .ico1 {
+          vertical-align: middle;
           background-image: url('./xz.png');
         }
         .ico2 {

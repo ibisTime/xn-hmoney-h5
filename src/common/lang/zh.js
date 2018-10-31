@@ -95,7 +95,7 @@ export default {
       kyjzgj: '广告可交易的最高价',
       zxj: '最小价',
       zced: '单笔交易的最小额度',
-      zdj: '最大价',
+      zdjg: '最大价',
       zded: '单笔交易的最大额度',
       zl: '总量',
       ye: '余额',
