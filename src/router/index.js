@@ -329,6 +329,8 @@ export default new Router({
     {
       path: '/userpj',
       component: Userpj
+    },
+    {
       path: '/message',
       component: Message,
       children: [
