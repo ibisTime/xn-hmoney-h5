@@ -1,11 +1,12 @@
 <template>
   <div class="guest-wrapper" @click.stop>
-    <!-- <header>
+    <header>
         <p>
-        <i class='icon'></i>
-        <span class='title'>我的获客</span>
+          <span @click="toxrFn('1')">我信任的</span>
+          <span @click="toxrFn('0')">信任我的</span>
+          <span @click="toxrFn('2')">我屏蔽的</span>
         </p>
-    </header> -->
+    </header>
     <div class='main' >
         <div class='list-wrap'>
             <Scroll 
@@ -13,28 +14,29 @@
             :data="list"
             :hasMore="hasMore"
             v-show="list.length > 0"
-            @pullingUp="myGuest"
+            @pullingUp="getPageTrust"
             >
                 <div class='list' v-for='(item,index) in list' :key="index">
                     <div class='pic'>
-                        <p :style="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt=""></p>
-                        <img :class="{'hidden': item.photo}" src="./txiang.png"/>
+                        <p :style="getUserPic(item.toUserInfo.photo)" :class="{'hidden': !(item.toUserInfo.photo)}" alt=""></p>
+                        <img :class="{'hidden': item.toUserInfo.photo}" src="./txiang.png"/>
                     </div>
                     <div class='text'>
                         <div class='text1'>
-                            <p class='txt1'><span class='name'>{{item.nickname}}</span><span class='slogn1' :class="[item.idKind ? 'slogn1' : 'slogn2']">{{item.idKind ? '已认证' : '未认证'}}</span></p>
+                            <p class='txt1'><span class='name'>{{item.toUserInfo.nickname}}</span></p>
                             <p class='txt2 gray'>{{item.createDatetime}}</p>
                         </div>
                         <div class='text2'>
-                            <p class='txt1'>交易金额：{{item.tradeCount}}</p>
-                            <p class='txt2'>获佣(注册佣金 + 交易佣金)：<span class='red'>{{item.total}} {{item.tradeCount ? 'FMVP' : ''}}</span></p>
+                            <p class='txt1'>交易次数：{{item.toUserInfo.userStatistics.jiaoYiCount}}</p>
+                            <p class='txt2'>信任人数：{{item.toUserInfo.userStatistics.beiXinRenCount}}</p>
+                            <p class='txt2'>好评率：{{getPercentum(item.toUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo.userStatistics.beiPingJiaCount)}}</p>
                         </div>
                     </div>
                 </div>
             </Scroll>
             <div class="no-data" :class="{'hidden': len > 0}">
                 <img src="./wu.png" />
-                <p>暂无获客</p>
+                <p>暂无信息</p>
             </div>
         </div>
 
@@ -42,8 +44,8 @@
   </div>
 </template>
 <script>
-import { myGuest } from "../../api/person";
-import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle } from "../../common/js/util";
+import { myGuest, getPageTrust } from "../../api/person";
+import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
 
 export default {
@@ -53,14 +55,23 @@ export default {
       start: 1,
       limit: 10,
       hasMore: true,
-      len: ''
+      len: '',
+      config: {
+        start: 1,
+        limit: 10,
+        type: '1'
+      }
     };
   },
   created() {
-      setTitle('我的获客');
-      this.myGuest();
+    setTitle('交易对手');
+    // this.myGuest();
+    this.getPageTrust();
   },
   methods: {
+    getPercentum(num1, num2){
+      return getPercentum(num1, num2);
+    },
     // 获取头像
     getUserPic(pic){
       return getAvatar(pic);
@@ -81,6 +92,27 @@ export default {
         this.len = this.list.length;
         this.start++;
       });
+    },
+    getPageTrust(){
+      this.config.start = this.start;
+      getPageTrust(this.config).then(data => {
+        data.list.map( v => {
+          v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
+        });
+        if (data.totalPage <= this.start) {
+          this.hasMore = false;
+        }
+        this.list = [...this.list, ...data.list];
+        this.len = this.list.length;
+        this.start++;
+      });
+    },
+    toxrFn(type){
+      switch(type){
+        case '0': this.config.type = '0';this.start = 1;this.list = [];this.getPageTrust();break;
+        case '1': this.config.type = '1';this.start = 1;this.list = [];this.getPageTrust();break;
+        case '2': this.config.toUser = getUserId();this.start = 1;this.list = [];this.getPageTrust();break;
+      }
     }
   },
   components: {
@@ -119,13 +151,11 @@ export default {
     width: 100%;
     padding: 0 0.3rem;
     margin-bottom: 0.2rem;
-
-    .icon {
-      width: 0.21rem;
-      height: 0.36rem;
-      background-image: url('./fhui.png');
-      float: left;
-      margin-top: 0.31rem;
+    p{
+      display: flex;
+      justify-content: space-around;
+      color: #666;
+      font-size: 0.32rem;
     }
   }
   .main {

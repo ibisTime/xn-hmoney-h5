@@ -1,6 +1,6 @@
 export default {
   language: {
-    name: '中文'
+    name: 'English'
   },
   // footer
   footer: {

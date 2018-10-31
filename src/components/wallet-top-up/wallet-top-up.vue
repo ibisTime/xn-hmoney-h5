@@ -225,7 +225,7 @@ export default {
           this.isLoading = false;
           this.textMsg = '请填写打款说明';
           this.$refs.toast.show();
-          return;
+          return false;
         }
       }
       if(this.showDet){
@@ -236,7 +236,7 @@ export default {
         }else{
           this.scopeMoney();
           this.isLoading = false;
-          return;
+          return false;
         }
       }else{
         let buyMon = this.buyMonNumber * this.cnyMon;
@@ -246,7 +246,7 @@ export default {
         }else{
           this.isLoading = false;
           this.scopeMoney();
-          return;
+          return false;
         }
       }
       buyX(this.buyConfig).then(data => {
@@ -269,7 +269,7 @@ export default {
         }else{
           this.isLoading = false;
           this.scopeMoney();
-          return;
+          return false;
         }
       }else{ // 数量
         let sellMon = this.sellMonNumber * this.cnyMon;
@@ -279,7 +279,7 @@ export default {
         }else{
           this.isLoading = false;
           this.scopeMoney();
-          return;
+          return false;
         }
       }
       this.sellConfig.receiveType = this.gmType[this.sellConfig.receiveType];

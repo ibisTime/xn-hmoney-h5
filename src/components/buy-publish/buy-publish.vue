@@ -105,8 +105,9 @@
       </div> -->
       <div class='select-last'>
         <p class='text1' @click="onlyFans">
-          <span>{{ $t('buyPublish.subject.jfs') }} <i :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i></span>
-          <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .3rem;"></i>
+          <span>{{ $t('buyPublish.subject.jfs') }} </span>
+          <i class="fr" :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i>
+          <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .4rem;"></i>
         </p>
       </div>
     </div>
@@ -235,10 +236,10 @@ export default {
       bbList: [],
       bbPrice: '',
       bbPriceDet: '',
-      yj_price: '',     //溢价率
+      yj_price: 0,     //溢价率
       paramCKey: 'buy_ads_hint',
       config: {
-        price: '',        //价格
+        price: 0,        //价格
         minTrade: '',     //最小
         maxTrade: '',     // 最大
         totalCount: '',   // 交易总量
@@ -255,7 +256,8 @@ export default {
         truePrice: '0',
         premiumRate: '0',   // 溢价率
         userId: getUserId()
-      }
+      },
+      isOk: true
     };
   },
   created() {
@@ -322,7 +324,15 @@ export default {
     },
     //通过溢价率改变价格
     changeYjlPrice(){
-      this.bbPrice = (Math.floor((this.config.price + this.yj_price * this.config.price / 100) * 100) / 100).toFixed(2);
+      let yj_price = parseFloat(this.yj_price);
+      if(50 < yj_price || yj_price < -50){
+        this.textMsg = '溢价率应在-50到50之间';
+        this.$refs.toast.show();
+        this.yj_price = 0;
+        return;
+      }
+      let price = parseFloat(this.config.price);
+      this.bbPrice = yj_price ? (Math.floor((price + yj_price * price / 100) * 100) / 100).toFixed(2) : price;
     },
     onlyFans(){ // 仅粉丝
       if(this.isFans){
@@ -335,9 +345,9 @@ export default {
     getBbPrice(tradeCoin){  // 获取币种价格
       getAdvertisePrice(tradeCoin).then(data => {
         if(!this.adsCode){
-          this.bbPrice = data.mid;
+          this.bbPrice = (Math.floor(data.mid * 100) / 100).toFixed(2);
         }
-        this.config.price = data.mid;
+        this.config.price = (Math.floor(data.mid * 100) / 100).toFixed(2);
         });
     },
     goBack() {
@@ -355,56 +365,64 @@ export default {
       this.getUserWallet();
     },
     changeConfig(path){
-      if(!this.select){
-        let str_ = document.querySelectorAll('.str_time');
-        let end_ = document.querySelectorAll('.end_time');
-        str_.forEach((item, index) => {
-          this.displayTime.push({
-            startTime: '',
-            endTime: '',
-            week: ''
+      if(this.isOk){
+        this.isOk = false;
+        if(!this.select){
+          let str_ = document.querySelectorAll('.str_time');
+          let end_ = document.querySelectorAll('.end_time');
+          str_.forEach((item, index) => {
+            this.displayTime.push({
+              startTime: '',
+              endTime: '',
+              week: ''
+            })
+            this.displayTime[index]['startTime'] = this.startTimeList.indexOf(item.value).toString();
+            this.displayTime[index]['week'] = (index + 1).toString();
+          });
+          end_.forEach((item, index) => {
+            this.displayTime[index]['endTime'] = this.endTimeList.indexOf(item.value).toString();
           })
-          this.displayTime[index]['startTime'] = this.startTimeList.indexOf(item.value).toString();
-          this.displayTime[index]['week'] = (index + 1).toString();
-        });
-        end_.forEach((item, index) => {
-          this.displayTime[index]['endTime'] = this.endTimeList.indexOf(item.value).toString();
-        })
-      }
-      this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
-      let totalCount = '';
-      this.config.totalCount = this.bbFormatAmount(this.count, '', this.config.tradeCoin);
-      this.config.displayTime = this.displayTime;
-      this.config.premiumRate = this.yj_price / 100;
-      if(!this.isDetail){
-        let that = this;
-        addAdvertising(this.config).then(data => {
-          cgAdver(that);
-        })
-      }else{
-        if(this.isCg){
-          this.config.publishType = '2';
+        }
+        this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
+        let totalCount = '';
+        this.config.totalCount = this.bbFormatAmount(this.count, '', this.config.tradeCoin);
+        this.config.displayTime = this.displayTime;
+        this.config.premiumRate = this.yj_price / 100;
+        if(!this.isDetail){
+          let that = this;
+          addAdvertising(this.config).then(data => {
+            cgAdver(that);
+          }, () => {
+            this.isOk = true;
+          })
         }else{
-          this.config.publishType = '3';
+          if(this.isCg){
+            this.config.publishType = '2';
+          }else{
+            this.config.publishType = '3';
+          }
+          this.config.adsCode = this.adsCode;
+          let that = this;
+          exitAdverFn(that);
         }
-        this.config.adsCode = this.adsCode;
-        let that = this;
-        exitAdverFn(that);
-      }
-      function exitAdverFn(that){
-        ExitAdvertising(that.config).then(data => {
-          cgAdver(that);
-        });
-      }
-      function cgAdver(that){
-        message.show(that.$t('common.czcg'));
-        if(that.config.publishType != '0'){
-          sessionStorage.setItem('tradeType', that.config.tradeType);
-          sessionStorage.setItem('coin', that.config.tradeCoin);
+        function exitAdverFn(that){
+          ExitAdvertising(that.config).then(data => {
+            cgAdver(that);
+          }, () => {
+            this.isOk = true;
+          });
         }
-        setTimeout(() => {
-          that.$router.push(path);
-        }, 300);
+        function cgAdver(that){
+          message.show(that.$t('common.czcg'));
+          this.isOk = true;
+          if(that.config.publishType != '0'){
+            sessionStorage.setItem('tradeType', that.config.tradeType);
+            sessionStorage.setItem('coin', that.config.tradeCoin);
+          }
+          setTimeout(() => {
+            that.$router.push(path);
+          }, 300);
+        }
       }
     },
     toOtcFn(){
@@ -412,6 +430,7 @@ export default {
       if(this.errors.any() || this.config.protectPrice == ''){
         this.textMsg = this.$t('common.txwz');
         this.$refs.toast.show();
+        this.isOk = true;
         return;
       }
       this.changeConfig('/otc');
@@ -436,7 +455,7 @@ export default {
           if(data.onlyTrust === '1'){
             this.isFans = true;
           }
-          this.bbPrice = data.truePrice;
+          this.bbPrice = (Math.floor(data.truePrice * 100) / 100).toFixed(2);
           this.config.minTrade = data.minTrade;
           this.config.maxTrade = data.maxTrade;
           this.count = formatAmount(data.totalCountString, '', data.tradeCoin);
@@ -449,6 +468,7 @@ export default {
           this.config.protectPrice = data.protectPrice;
           this.yj_price = parseFloat(data.premiumRate) * 100;
           this.getBbPrice(this.config.tradeCoin);
+          this.getUserWallet();
           // this.config.price = this.bbPrice * (100 - this.yj_price) / 100;
           this.isLoading = false;
         }, () => {
@@ -734,15 +754,24 @@ export default {
       height: .9rem;
       line-height: .9rem;
       .text1 {
+        position: relative;
         width: 100%;
         border-top: .01rem solid #e5e5e5;
         font-size: .26rem;
         color: #666;
         display: flex;
         justify-content: space-between;
+        .fr{
+          position: absolute;
+          right: 0.5rem;
+          top: 46%;
+        }
         .icon {
           width: .3rem;
           height: .3rem;
+          border: 1px solid #ccc;
+          border-radius: 100%;
+          vertical-align: middle;
         }
         .ico1 {
           vertical-align: middle;

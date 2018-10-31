@@ -22,7 +22,7 @@
           </div>
           <div class='list'>
               <span class='txt1'>手续费</span>
-              <span class='txt2'>{{fee}} %</span>
+              <span class='txt2'>{{type == '提现' ? fee : '-'}}</span>
           </div>
           <div class='list'>
               <span class='txt1'>变动时间</span>
@@ -37,27 +37,33 @@
               <span class='txt3'>转出至239120320190djkfdsahf djfafk djfafk djfafk</span>
           </div> -->
       </div>
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
 import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
 import { billDetails } from 'api/person';
-import {getSysConfig} from 'api/general';
+import { getSysConfig } from 'api/general';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
     data() {
         return {
             data: [],
             type: '',
-            fee: ''
+            fee: '',
+            isLoading: true
         }
     },
     created() {
         setTitle('账单详情');
         this.type = getUrlParam('type');
         this.billDetails();
-        getSysConfig('trade_fee_rate').then(data => {
-            this.fee = data.cvalue;
+        getSysConfig('withdraw_fee').then(data => {
+            this.fee = data.cvalue * 100 + '%';
+            this.isLoading = false;
+        }, () => {
+            this.isLoading = false;
         })
     },
     methods: {
@@ -67,9 +73,12 @@ export default {
                 data.postAmountString = formatAmount(data.postAmountString, '', data.currency);
                 data.preAmountString = formatAmount(data.preAmountString, '', data.currency);
                 this.data = data;
-                this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd');
+                this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd hh:mm:ss');
             });
         }
+    },
+    components: {
+        FullLoading
     }
 };
 </script>

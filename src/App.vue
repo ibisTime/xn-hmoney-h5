@@ -4,6 +4,16 @@
       <router-view></router-view>
     </div>
     <Toast :text="textMsg" ref="toast"/>
+    <div 
+      class="tobuy"
+      @click="toBuy"
+      ref="touchDemo"
+      @touchstart.stop="fbTouchStartFn"
+      @touchmove.stop="fbTouchMoveFn"
+      @touchend.stop="fbTouchEndFn"
+    >
+      <div >去购买FMVP</div>
+    </div>
   </div>
 </template>
 
@@ -17,23 +27,37 @@
     data() {
       return {
         textMsg: '',
-        coinData: {}
+        coinData: {},
+        position: {x: '', y: ''},
+        flags: false,
+        demoX: '',
+        demoY: '',
+        moveX: '',
+        moveY: '',
+        xPum: '',
+        yPum: '',
+        touchDemo: '',
+        docuWidth: '',
+        docuHeight: '',
       }
     },
     created() {
       getBbListData().then(data => {
-        data.forEach(item => {
-          this.coinData[item.symbol] = {
-            ...item,
-            unit: '1e' + item.unit
-          }
-        })
+        for(let i = data.length - 1; i >=0; i --){
+          let obj = {
+            ...data[i],
+            unit: '1e' + data[i].unit
+          };
+          this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+        }
         sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
         this.isLoading = false;
       }, () => {
         this.isLoading = false;
       });
       this.$router.beforeEach((to, from, next) => {
+        this.$refs.touchDemo.style.left = '4.5rem';
+        this.$refs.touchDemo.style.top = '9rem';
         if (isLogin()) {
           next();
         } else {
@@ -59,6 +83,64 @@
     },
     components: {
       Toast
+    },
+    methods: {
+      // 实现 发布 拖动
+      fbTouchStartFn(){
+        this.touchDemo = this.$refs.touchDemo;
+        this.flags = true;
+        let touch = '';
+        if(event.touchs){
+          touch = event.touchs[0];
+        }else{
+          touch = event.changedTouches[0];
+        }
+        
+        this.docuWidth = document.body.clientWidth - 150;
+        this.docuHeight = document.body.clientHeight - 150;
+        this.position.x = touch.clientX;
+        this.position.y = touch.clientY;
+        this.demoX = this.touchDemo.offsetLeft;
+        this.demoY = this.touchDemo.offsetTop;
+      },
+      fbTouchMoveFn(){
+        event.preventDefault();
+        if(this.flags){
+          var touch ;
+          if(event.touches){
+              touch = event.touches[0];
+          }else {
+              touch = event.changedTouches[0];
+          }
+          this.moveX = touch.clientX - this.position.x;
+          this.moveY = touch.clientY - this.position.y;
+          this.xPum = this.demoX + this.moveX;
+          this.yPum = this.demoY + this.moveY;
+
+          // 判断边界
+          if(this.xPum > this.docuWidth){
+            this.xPum = this.docuWidth;
+          }
+          if(this.xPum < 0){
+            this.xPum = 0;
+          }
+          if(this.yPum > this.docuHeight){
+            this.yPum = this.docuHeight;
+          }
+          if(this.yPum < 0){
+            this.yPum = 0;
+          }
+
+          this.touchDemo.style.left = this.xPum / 50 + 'rem';
+          this.touchDemo.style.top = this.yPum / 50 + 'rem';
+        }
+      },
+      fbTouchEndFn(){
+        this.flags = false;
+      },
+      toBuy(){
+        this.$router.push('wallet-top-up?type=buy');
+      }
     }
   };
 </script>
@@ -124,5 +206,22 @@
     margin-left: 0.5rem;
     color: #d53d3d;
     border: 1px solid #d53d3d;
+  }
+  .tobuy{
+    position: fixed;
+    width: 2.8rem;
+    top: 9rem;
+    left: 4.5rem;
+    height: 0.74rem;
+    box-sizing: border-box;
+    z-index: 999999;
+    div{
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.4rem;
+      background-color: #D53D3D;
+      opacity: 0.8;
+      color: #fff;
+      font-size: 0.32rem;
+    }
   }
 </style>

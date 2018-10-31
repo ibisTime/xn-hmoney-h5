@@ -95,6 +95,14 @@ export function wallet() {
   });
 }
 
+// 个人总资产转换
+export function userAllMoneyX(currency){
+  return fetch('650103', {
+      userId: getUserId(),
+      currency
+  })
+}
+
 // 绑定邮箱
 export function bindingEmail(captcha, email, userId) {
   return fetch(805086, {
@@ -293,4 +301,19 @@ export function bjPlayfo(config) {
 // 取消订单
 export function qxOrder(config) {
   return fetch('625272', config);
+}
+
+// 查询信任
+export function getPageTrust(config, to) {
+  if (to != '1') {
+      config.userId = getUserId();
+  }
+  return fetch("805155", {
+      ...config
+  });
+}
+
+//个人-评价
+export function userEvaluate(config){
+  return fetch("628279", config);
 }

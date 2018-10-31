@@ -18,7 +18,7 @@
         </div>
         <div class="h-text">
           <p class="name">{{data.nickname}}</p>
-          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | 信用 {{data.userStatistics.beiXinRenCount}}</p>
+          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | 信任 {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>

@@ -24,12 +24,12 @@
         <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + bizTypeValueList[item.bizType]" class="bill-list" v-for='(item,index) in list' :key='index'>
           <div class="list">
             <div class='mark'>
-              <i :class="[item.transAmountString < 0 ? 'icon' : 'icon ico3']"></i>
+              <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
             </div>
             <div class='item'>
               <p class='collect'>
                 <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
-                <span :class="[item.transAmountString < 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
+                <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
               </p>
               <p class='time'>{{item.createDatetime}}</p>
               <p class='explain'>{{item.bizNote}}</p>
@@ -84,12 +84,6 @@ export default {
           key:'ccorder_sell',
           value: '交易卖出'
         },{
-          key: 'accept_buy',
-          value: '场外承兑商购买'
-        },{
-          key: 'accept_sell',
-          value: '场外承兑商出售'
-        },{
           key: 'ccorder_fee',
           value: '交易手续费'
         },{
@@ -117,8 +111,9 @@ export default {
     this.config.accountNumber = getUrlParam('accountNumber');
     getDictList('jour_biz_type_user').then(data => {
       data.forEach((item) => {
-        this.bizTypeValueList[item.dkey] = item.dvalue
-      })
+        this.bizTypeValueList[item.dkey] = item.dvalue;
+      });
+      console.log(this.bizTypeValueList)
     })
     this.walletBill();
   },
@@ -139,7 +134,7 @@ export default {
       walletBill(this.config).then((data) => {
         data.list.map(item => {
           item.transAmountString = formatAmount(item.transAmountString, '', item.currency);
-          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh-mm-ss');
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
         })
         if (data.totalPage <= this.start) {
           this.hasMore = false;

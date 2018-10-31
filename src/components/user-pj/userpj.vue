@@ -1,0 +1,191 @@
+<template>
+  <div class="guest-wrapper" @click.stop>
+    <div class='main' >
+        <div class='list-wrap'>
+            <Scroll 
+            ref="scroll"
+            :data="list"
+            :hasMore="hasMore"
+            v-show="list.length > 0"
+            @pullingUp="userEvaluate"
+            >
+                <div v-for='(item,index) in list' :key="index">
+                    <div class="list">
+                        <div class='pic'>
+                            <p :style="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt=""></p>
+                            <img :class="{'hidden': item.photo}" src="./txiang.png"/>
+                        </div>
+                        <div class='text'>
+                            <p><span class='name'>{{item.user.nickname}}</span></p>
+                            <p class="isgood"><span :class="{'isg': item.starLevel == '2'}">{{isGood[item.starLevel]}}</span></p>
+                            <p class="fr">{{item.commentDatetime}}</p>
+                        </div>
+                    </div>
+                    <div class='text2'>
+                        <p class='txt1'>{{item.content ? item.content : '-'}}</p>
+                    </div>
+                </div>
+            </Scroll>
+            <div class="no-data" :class="{'hidden': len > 0}">
+                <img src="./wu.png" />
+                <p>暂无信息</p>
+            </div>
+        </div>
+
+    </div>
+  </div>
+</template>
+<script>
+import { userEvaluate, getPageTrust } from "../../api/person";
+import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
+import Scroll from 'base/scroll/scroll';
+
+export default {
+  data() {
+    return {
+      list: [],
+      start: 1,
+      limit: 10,
+      hasMore: true,
+      len: '',
+      isGood: {
+          '0': '否',
+          '2': '是'
+      },
+      config: {
+        start: 1,
+        limit: 10,
+        objectUserId: getUserId()
+      }
+    };
+  },
+  created() {
+    setTitle('用户评价');
+    this.userEvaluate();
+  },
+  methods: {
+    // 获取头像
+    getUserPic(pic){
+      return getAvatar(pic);
+    },
+    userEvaluate(){
+      this.config.start = this.start;
+      userEvaluate(this.config).then(data => {
+        data.list.map( v => {
+          v.commentDatetime = formatDate(v.commentDatetime, 'yyyy-MM-dd');
+        });
+        if (data.totalPage <= this.start) {
+          this.hasMore = false;
+        }
+        this.list = [...this.list, ...data.list];
+        this.len = this.list.length;
+        this.start++;
+      });
+    }
+  },
+  components: {
+      Scroll
+  }
+};
+</script>
+<style lang="scss" scoped>
+@import "~common/scss/mixin";
+@import "~common/scss/variable";
+
+.guest-wrapper {
+  font-size: 0.28rem;
+  color: #333;
+  width: 100%;
+  .red {
+    color: #d53d3d;
+  }
+  .gray {
+    color: #999;
+  }
+
+  .icon {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+  }
+
+  header {
+    line-height: 0.88rem;
+    text-align: center;
+    font-size: 0.36rem;
+    font-weight: bold;
+    background: #fff;
+    width: 100%;
+    padding: 0 0.3rem;
+    margin-bottom: 0.2rem;
+    p{
+      display: flex;
+      justify-content: space-around;
+      color: #666;
+      font-size: 0.32rem;
+    }
+  }
+  .main {
+    width: 100%;
+    height: 12rem;
+    overflow: scroll;
+    background: #fff;
+    .list-wrap {
+      display: block;
+      width: 100%;
+      .list {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0.4rem 0.3rem 0.1rem;
+        .pic {
+          width: 1rem;
+          height: 1rem;
+          border-radius: 50%;
+          margin-right: 0.22rem;
+          p{
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+            border-radius: 100%;
+          }
+          img{
+              width: 100%;
+              height: 100%;
+          }
+        }
+        .text {
+          width: 83%;
+          font-size: 0.24rem;
+          color: #323232;
+          display: flex;
+          p{
+              width: 2rem;
+          }
+          .isgood{
+              span{
+                  padding: 0.02rem 0.25rem;
+                  border: 1px solid #ccc;
+                  border-radius: 0.03rem;
+                  color: #888;
+              }
+              .isg{
+                  color: #d53d3d;
+                  border-color: #d53d3d;
+              }
+          }
+          .fr{
+              width: 100%;
+              text-align: right;
+          }
+        }
+      }
+      .text2{
+        border-bottom: 0.01rem solid #e5e5e5;
+        padding: 0.2rem;
+      }
+    }
+  }
+}
+</style>

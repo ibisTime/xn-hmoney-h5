@@ -46,14 +46,14 @@
             <span class='red max-len' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
-            <input type="number" placeholder="委托数量" v-model="wetNumber">
+            <input type="number" placeholder="委托数量" v-model="wetNumber" @keyup="qrLength">
             <span class='black'>{{downConfig.type == '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
           </p>
           <p class='he9 no-bor' v-show="downConfig.type == '1'">
-            <span>交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
+            <span class="he-jye">交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <button class='buy' @click="downClickFn">买入{{setBazDeal.symbol}}</button>
+          <button class='sell' @click="downClickFn">买入{{setBazDeal.symbol}}</button>
           <p class='he9 red'>
             <span>可用{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
@@ -89,15 +89,15 @@
             <span class='red'>￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
           </p>
           <p class='he9 mb20'>
-            <input type="number" placeholder="委托数量" v-model="wetNumber">
+            <input type="number" placeholder="委托数量" v-model="wetNumber" @keyup="qrLength">
             <span class='black'>{{setBazDeal.symbol}}</span>
           </p>
           <p class='he9 no-bor' v-show="downConfig.type == '1'">
             <span>交易额：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
-          <button class='sell' @click="downClickFn">卖出 {{setBazDeal.symbol}}</button>
-          <p class='he9 green'>
+          <button class='buy' @click="downClickFn">卖出 {{setBazDeal.symbol}}</button>
+          <p class='he9 red'>
             <span>可用{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
@@ -118,7 +118,7 @@
         <div class="right">
           <div class='one'>
             <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
-              <span class='green txt1'>卖{{7 - index}}</span>
+              <span class='red txt1'>卖{{7 - index}}</span>
               <span class='txt2'>{{sellItem ? sellItem.price : '--'}}</span>
               <span class='txt3'>{{sellItem ? sellItem.count : '--'}}</span>
             </p>
@@ -129,7 +129,7 @@
           </p>
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
-              <span class='red txt1'>买{{index + 1}}</span>
+              <span class='green txt1'>买{{index + 1}}</span>
               <span class='txt2'>{{buyItem ? buyItem.price : '--'}}</span>
               <span class='txt3'>{{buyItem ? buyItem.count : '--'}}</span>
             </p>
@@ -153,7 +153,7 @@
           >
             <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
               <p class='text1'>
-                <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
+                <span :class='myItem.direction != 0 ? "green" : "red1"'>{{myItem.direction == 0 ? '买入' : '卖出'}}</span>
                 <span>{{myItem.createDatetime}}</span>
                 <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">撤销</span>
               </p>
@@ -212,8 +212,8 @@
         <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
         <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
-          <button class='buy'><router-link to='wallet-top-up?type=buy'>买入FMVP</router-link></button>
-          <button class='sell'><router-link to='wallet-top-up?type=sell'>卖出FMVP</router-link></button>
+          <button class='sell'><router-link to='wallet-top-up?type=buy'>买入FMVP</router-link></button>
+          <button class='buy'><router-link to='wallet-top-up?type=sell'>卖出FMVP</router-link></button>
         </div>
       </div>
     </div>
@@ -322,9 +322,7 @@ export default {
           'toSymbol': item.toSymbol
         });
       });
-      getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
-        this.toSyMid = data[0].mid;
-      });
+      this.getMidPrice();
       this.handicapData();
       this.realTimeData();
       if(getUserId()){
@@ -348,6 +346,11 @@ export default {
     
   },
   methods: {
+    getMidPrice(){
+      getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
+        this.toSyMid = data[0].mid;
+      });
+    },
     getUserWalletData(){
       // 查询用户资产
       wallet().then(data => {
@@ -377,6 +380,7 @@ export default {
       sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
       this.handicapData();
       this.realTimeData();
+      this.getMidPrice();
       if(this.isLogin){
         this.getUserWalletData();
         this.hasMore = true;
@@ -420,6 +424,7 @@ export default {
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
             item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
+          this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
         }
         this.isLoading = false;
         return;
@@ -471,12 +476,14 @@ export default {
       this.show1 = true;
       this.xjPrice = '';
       this.wetNumber = '';
+      this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
     },
     sell() {
       this.downConfig.direction = '1';
       this.show1 = false;
       this.xjPrice = '';
       this.wetNumber = '';
+      this.xjPrice = this.bbBids[0] ? this.bbBids[0].price : '';
     },
     showHisto() {
       this.show3 = true;
@@ -536,7 +543,11 @@ export default {
             ...this.setBazDeal
           };
           if(this.downConfig.direction == '0'){
-            this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.toSymbol);
+            if(this.show1){
+              this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.toSymbol);
+            }else{
+              this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
+            }
           }else{
             this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
           }
@@ -579,10 +590,10 @@ export default {
       let numLeft = this.xjPrice.split('.')[0];
       let numRight = this.xjPrice.split('.')[1];
       if(numRight){
-        if(numRight.length > 4){
-          this.textMsg = '小数部分不得大于4位';
+        if(numRight.length > 8){
+          this.textMsg = '小数部分不得大于8位';
           this.$refs.toast.show();
-          numRight = numRight.substring(0, 4);
+          numRight = numRight.substring(0, 8);
           this.xjPrice = numLeft + '.' + numRight;
         }
       }
@@ -736,22 +747,22 @@ export default {
       font-size: .3rem;
       margin-bottom: .2rem;
       .buy {
-        padding-bottom: .3rem;
-        border-bottom: .04rem solid #d53d3d;
-      }
-      .sell {
         color: #0ec55b;
         padding-bottom: .3rem;
         border-bottom: .04rem solid #0ec55b;
       }
+      .sell {
+        padding-bottom: .3rem;
+        border-bottom: .04rem solid #d53d3d;
+      }
 
       .txt1 {
-        color: #d53d3d;
+        color: #0ec55b;
         margin-right: .5rem;
       }
 
       .txt2 {
-        color: #0ec55b;
+        color: #d53d3d;
         margin-right: 1.06rem;
       }
 
@@ -808,8 +819,14 @@ export default {
             line-height: .87rem;
           }
           span{
-            word-spacing: normal;
+            white-space: nowrap;
             padding-left: 0.2rem;
+          }
+          .he-jye{
+            display: inline-block;
+            max-width: 85%;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
         .no-bor{

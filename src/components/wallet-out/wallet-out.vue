@@ -12,7 +12,7 @@
       </p>
       <p class='text'>
         <span>转账数量</span>
-        <input type="number" placeholder="请输入转币数量" v-model="config.amount">
+        <input type="number" placeholder="请输入转币数量" v-model="zAmount">
       </p>
       <p class='text'>
         <span>资金密码</span>
@@ -48,7 +48,7 @@
 <script>
 import {walletOut} from 'api/person';
 import {getSysConfig} from 'api/general';
-import { getUrlParam, getUserId, setTitle, formatAmount } from 'common/js/util';
+import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
@@ -64,6 +64,7 @@ export default {
       site:'',
       paw: '',
       bbNumber: '',
+      zAmount: '',
       config: {
         accountNumber: '',
         amount: '',
@@ -88,7 +89,13 @@ export default {
   },
   methods: {
     walletOut() {
+      if(this.config.payCardNo == '' || this.zAmount == '' || this.config.tradePwd == '' || this.config.applyNote == ''){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
       this.isLoading = true;
+      this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
       walletOut(this.config).then(data => {
         this.isLoading = false;
         this.textMsg = '操作成功';

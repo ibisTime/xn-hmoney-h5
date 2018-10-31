@@ -77,7 +77,7 @@ export default {
       getCTSData(this.config).then(res => {
         res.list.map(item => {
           item.count = formatAmount(`${item.count}`, '', item.tradeCoin);
-          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh-mm-ss');
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
         });
         if (res.totalPage <= this.start) {
           this.hasMore = false;

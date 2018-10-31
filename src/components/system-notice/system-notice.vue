@@ -41,7 +41,7 @@ export default {
   methods: {
     getNotice(){
       notice(this.start).then(data => {
-        if(data.totalPage < this.start){
+        if(data.totalPage <= this.start){
           this.hasMore = false;
         }
         this.noticeData = [...this.noticeData, ...data.list];

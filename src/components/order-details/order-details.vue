@@ -188,6 +188,10 @@ export default {
     orderMessage(){
       getOrderDetail(this.code).then(data => {
         this.zcShow = false;
+        if(data.tradeAmount && data.tradePrice){
+          data.tradeAmount = (Math.floor(data.tradeAmount * 100) / 100).toFixed(2);
+          data.tradePrice = (Math.floor(data.tradePrice * 100) / 100).toFixed(2);
+        }
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
         this.yjTitle = `订单將在拖管中保持至<i>${data.invalidDatetime ? formatDate(data.invalidDatetime, "hh:mm:ss") : '--'}</i>，逾期未支付交易將自动取消`;

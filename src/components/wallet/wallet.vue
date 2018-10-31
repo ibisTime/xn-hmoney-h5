@@ -1,19 +1,19 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
     <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>总资产 {{cdInfo[0].currency}} 币</p>
+      <p class='txt1'><span class='icon ico'></span>总资产 {{cdInfo.currency}} 币</p>
       <div class='txt2' style='margin-top:.3rem;'>
-        <p class='t1'>{{formatAmount(cdInfo[0].amount, '', cdInfo[0].currency)}}</p>
+        <p class='t1'>{{cdInfo.symbol}} {{currency}}</p>
       </div>
       <div class='txt3'>
       </div>
     </div>
-    <div class='dollar'>
+    <!-- <div class='dollar'>
       <i class='icon ico1'></i>
       <span>$1 ≈ ¥6.6079</span>
       <i class='icon ico2'></i>
       <i class='icon ico3'></i>
-    </div>
+    </div> -->
     <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
       <i class="icon"
          :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
@@ -33,13 +33,13 @@
         </div>
         |
         <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i
-          class='icon ico2'></i><span>转出</span></div>
+          class='icon icoz'></i><span>转出</span></div>
         |
-        <div class='box'><i class='icon ico3'></i>
+        <div class='box'><i class='icon icoc'></i>
           <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">账单</router-link>
         </div>
       </div>
-      <div class='operate' v-show="infoItem.currency == 'FMVP'">
+      <div class='operate' v-if="infoItem.currency == 'FMVP'">
         <router-link to='wallet-top-up?type=buy' class='txt1'>充值</router-link>
         |
         <router-link to='wallet-top-up?type=sell' class='txt2'>提现</router-link>
@@ -52,7 +52,7 @@
 </template>
 <script>
   import Footer from 'components/footer/footer';
-  import {wallet, getUser} from 'api/person';
+  import {userAllMoneyX, wallet, getUser} from 'api/person';
   import Toast from 'base/toast/toast';
   import FullLoading from 'base/full-loading/full-loading';
   import {
@@ -71,21 +71,22 @@
         textMsg: '',
         isLoading: true,
         info: [{}, {}, {}],
-        cdInfo: [{}]
+        cdInfo: {},
+        currency: 'CNY'
       };
     },
     computed: {},
     created() {
       setTitle('我的资产');
       this.wallet();
+      userAllMoneyX(this.currency).then(v => {
+        this.cdInfo = v;
+      })
     },
     methods: {
       // 列表查询用户账户
       wallet() {
         wallet().then(v => {
-          this.cdInfo = v.filter(item => {
-            return item.currency === 'FMVP';
-          });
           this.info = v;
           this.isLoading = false;
         }, () => {
@@ -235,12 +236,11 @@
 
     .my-assets {
       width: 100%;
-      height: 4rem;
       background: #FFFFFF;
       box-shadow: 0 .04rem .2rem 0 rgba(131, 128, 128, 0.14);
       border-radius: .14rem;
       position: relative;
-      margin-bottom: .2rem;
+      margin-bottom: 0.5rem;
       .ico1, .ico2, .ico3 {
         width: 1.2rem;
         height: 1.2rem;
@@ -309,7 +309,7 @@
             background-image: url('./zr.png');
             margin-right: 1.1rem;
           }
-          .ico2 {
+          .icoz {
             width: .3rem;
             height: .3rem;
             background-image: url('./zc.png');
@@ -317,7 +317,7 @@
             vertical-align: middle;
           }
 
-          .ico3 {
+          .icoc {
             width: .26rem;
             height: .3rem;
             background-image: url('./zd.png');

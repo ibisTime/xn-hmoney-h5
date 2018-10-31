@@ -106,6 +106,9 @@ const systemNotice = () => import('components/system-notice/system-notice');
 // 个人主页 homepage
 const Homepage = () => import('components/homepage/homepage');
 
+// 用户评价
+const Userpj = () => import('components/user-pj/userpj');
+
 
 export default new Router({
   routes: [
@@ -318,6 +321,10 @@ export default new Router({
     {
       path: '/homepage',
       component: Homepage
+    },
+    {
+      path: '/userpj',
+      component: Userpj
     }
   ],
   mode: 'history',

@@ -29,7 +29,7 @@
             <span>好评率</span>
           </div>
           <div>
-            <p>{{formatAmount(data.userStatistics.totalTradeCount, '', data.tradeCurrency)}}</p>
+            <p>{{formatAmount(data.userStatistics.totalTradeCount, '', data.tradeCoin)}}</p>
             <span>历史交易</span>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default {
           this.textMsg = '订单提交成功';
           this.$refs.toast.show();
           setTimeout(() => {
-            this.$router.push('/otc');
+            this.$router.push('/my-order');
           }, 1500);
         }, (err) => {
           this.textMsg = err;
@@ -235,7 +235,7 @@ export default {
       otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
         this.data = data;
         this.config.tradePrice = data.truePrice;
-        this.truePrice = data.truePrice.toFixed(2);
+        this.truePrice = (Math.floor(data.truePrice * 100) / 100).toFixed(2);
         this.rate = this.truePrice;
         wallet().then(items => {
           let bbMoney = items.filter(item => {
@@ -274,7 +274,7 @@ export default {
           this.textMsg = '订单提交成功';
           this.$refs.toast.show();
           setTimeout(() => {
-            this.$router.push('/otc');
+            this.$router.push('/my-order');
           }, 1500);
         }, (err) => {
           this.textMsg = err;
@@ -543,9 +543,9 @@ export default {
   .footer {
     height: 1rem;
     width: 100%;
-    // position: fixed;
-    // bottom: 0;
-    // z-index: 99999;
+    position: fixed;
+    bottom: 0;
+    z-index: 99999;
     background: #fff;
     display: flex;
     line-height: 1rem;

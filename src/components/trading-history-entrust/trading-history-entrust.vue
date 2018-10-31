@@ -20,16 +20,20 @@
                 </p>
                 <div class='text2'>
                     <div class='txt1'>
-                    <p>价格({{item.toSymbol}})</p>
-                    <p class='black'>{{item.type == 0 ? '市价' : item.price}}</p>
+                        <p>价格({{item.toSymbol}})</p>
+                        <p class='black'>{{item.type == 0 ? '市价' : item.price}}</p>
                     </div>
                     <div class='txt2'>
-                    <p>数量({{item.symbol}})</p>
-                    <p class='black'>{{item.totalCount}}</p>
+                        <p>总额({{item.toSymbol}})</p>
+                        <p class='black'>{{item.direction == 1 && item.type == 0 ? '-' : item.totalAmount}}</p>
+                    </div>
+                    <div class='txt2'>
+                        <p>数量({{item.symbol}})</p>
+                        <p class='black'>{{item.direction == 0 && item.type == 0 ? '-' : item.totalCount}}</p>
                     </div>
                     <div class='txt3'>
-                    <p>实际成交({{item.symbol}})</p>
-                    <p class='black'>{{item.tradedCount}}</p>
+                        <p>实际成交({{item.symbol}})</p>
+                        <p class='black'>{{item.tradedCount}}</p>
                     </div>
                 </div>
             </div>
@@ -83,6 +87,7 @@ export default {
             data.list.map(item => {
                 item.createDatetime = formatDate(item.createDatetime, 'yy-MM-dd hh:mm:ss');
                 item.price = formatAmount(`${item.price}`, '', item.toSymbol);
+                item.totalAmount = formatAmount(`${item.totalAmount}`, '', item.toSymbol);
                 item.totalCount = formatAmount(`${item.totalCount}`, '', item.symbol);
                 item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
                 item.status = this.statusValueList[item.status];

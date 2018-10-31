@@ -2,12 +2,15 @@
 <div>
   <div :class = "[Show ? 'filter otc-wrapper': 'otc-wrapper' ]" @click.stop>
       <div class='header'>
-        <select name="bbName" v-model="config.coin" @change="getAdverFn">
-          <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}<span :class="{sicon: index == 0}"></span></option>
-        </select>
+        <div>
+          <select name="bbName" v-model="config.coin" @change="getAdverFn">
+            <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}<span :class="{sicon: index == 0}"></span></option>
+          </select>
+          <i class="icon ixla"></i>
+        </div>
         <p class="buySell">
-        <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>{{ $t('otc.navbar.buyB') }}</span>
-        <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>{{ $t('otc.navbar.sellB') }}</span>
+          <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>{{ $t('otc.navbar.buyB') }}</span>
+          <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>{{ $t('otc.navbar.sellB') }}</span>
         </p>
         <router-link to='trading' class='trading'>{{ $t('otc.navbar.bbjy') }}</router-link>
       </div>
@@ -15,7 +18,7 @@
         <div class='top-main'>
             <p>
               <select name="hbName" @change="selHbName" ref="select_hb">
-                <option value="">{{ $t('otc.navtxt.xz') }}</option>
+                <!-- <option value="">{{ $t('otc.navtxt.xz') }}</option> -->
                 <option value="CNY">CNY</option>
                 <option value="USD">USD</option>
               </select>
@@ -23,7 +26,7 @@
             </p>
             <p>
               <select name="bbPayType" @change="selPayType" ref="select_pay">
-                <option value="">{{ $t('otc.navtxt.xz') }}</option>
+                <!-- <option value="">{{ $t('otc.navtxt.xz') }}</option> -->
                 <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
                 <option value="1">{{ $t('otc.navtxt.wx') }}</option>
                 <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
@@ -63,7 +66,7 @@
                 <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
               </div>
               <div class='number'>
-                <p class='num'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
+                <p class='num'>{{(Math.floor(adverItem.truePrice * 100) / 100).toFixed(2)}} {{adverItem.tradeCurrency}}</p>
                 <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">{{adverItem.user.userId == userId ? $t('otc.subject.bj') : adverItem.tradeType == 0 ? $t('otc.subject.cs') : $t('otc.subject.gm')}}</p>
               </div>
             </div>
@@ -456,6 +459,15 @@ export default {
         background-image: url('./xlabai.png');
 
       }
+    }
+    .ixla{
+      width: 0.2rem;
+      height: 0.1rem;
+      display: inline-block;
+      background-image: url('./xla.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      vertical-align: middle;
     }
 
     .buySell {

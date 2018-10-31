@@ -1,7 +1,7 @@
 
 export default {
   language: {
-    name: 'English'
+    name: '中文'
   },
   // footer
   footer: {

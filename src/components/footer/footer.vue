@@ -8,7 +8,7 @@
       <i></i>
       <p>{{ $t('footer.navbar.shop') }}</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-2" to="/trading">
+    <router-link tag="div" class="foot-item item-2" to="/otc">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
     </router-link>

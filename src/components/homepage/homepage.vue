@@ -22,7 +22,7 @@
                 <h5>{{userDataList.userStatistics.beiXinRenCount}}</h5>
                 <p>信任次数</p>
             </div>
-            <div class="hp-box">
+            <div class="hp-box" @click="$router.push('userpj')">
                 <h5>{{getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
                 <p>好评率</p>
             </div>
@@ -214,7 +214,7 @@ export default {
                 h5{
                     color: #333;
                     font-size: 0.36rem;
-                    margin-bottom: 0.3rem;
+                    margin-top: 0.16rem;
                 }
                 p{
                     font-size: 0.26rem;

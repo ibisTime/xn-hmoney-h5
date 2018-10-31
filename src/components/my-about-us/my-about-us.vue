@@ -39,12 +39,12 @@
         </router-link>
     </div>
     <div class='content'>
-        <router-link class='tag mb20' to='about-helpCenter'>
+        <a class='tag mb20' href="https://funmvp.zendesk.com/hc/zh-cn/">
             <p>
             <span>帮助中心</span>
             <i class='icon'></i>
             </p>
-        </router-link>
+        </a>
     </div>
   </div>
 </template>
