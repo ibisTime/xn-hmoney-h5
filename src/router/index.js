@@ -105,7 +105,10 @@ const aboutHelpCenter = () => import('components/about-help-center/about-help-ce
 const systemNotice = () => import('components/system-notice/system-notice');
 // 个人主页 homepage
 const Homepage = () => import('components/homepage/homepage');
-
+// 消息
+const Message = () => import('components/message/message');
+// 聊天
+const MessageChat = () => import('components/message-chat/message-chat');
 
 export default new Router({
   routes: [
@@ -318,6 +321,16 @@ export default new Router({
     {
       path: '/homepage',
       component: Homepage
+    },
+    {
+      path: '/message',
+      component: Message,
+      children: [
+        {
+          path: ':id',
+          component: MessageChat
+        }
+      ]
     }
   ],
   mode: 'history',

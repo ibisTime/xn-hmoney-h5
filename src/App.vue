@@ -12,8 +12,10 @@
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam} from './common/js/util';
   import {getBbListData} from 'api/otc';
+  import {messageMixin} from 'common/js/message-mixin';
 
   export default {
+    mixins: [messageMixin],
     data() {
       return {
         textMsg: '',
@@ -35,6 +37,7 @@
       });
       this.$router.beforeEach((to, from, next) => {
         if (isLogin()) {
+          this.tencentLogin();
           next();
         } else {
           if (to.path == '/' ||
@@ -66,7 +69,7 @@
   #app {
     overflow-x: hidden;
     position: relative;
-    background-color: #fff;
+    /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
   }
 

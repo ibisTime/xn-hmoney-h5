@@ -434,6 +434,7 @@ export default {
   background: #fafafa;
   overflow-x: hidden;
   z-index: 10;
+  padding-bottom: 1rem;
 
   .header {
     width: 100%;
@@ -627,7 +628,7 @@ export default {
             color:#d53d3d;
             margin-top: .1rem;
             text-align: center;
-            line-height: .2rem;
+            line-height: .28rem;
           }
           .wname{
             color: #777;
@@ -696,7 +697,7 @@ export default {
     background-image: url('./fb.png');
     position: fixed;
     left: 6.3rem;
-    top: 7.52rem;
+    bottom: 1.52rem;
     opacity: 0.8;
 
   }

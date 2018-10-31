@@ -26,7 +26,7 @@
             <span>好评率</span>
           </div>
           <div>
-            <p>{{data.userStatistics.totalTradeCount}}</p>
+            <p>{{data.userStatistics.totalTradeCount === '0' ? '0' : formatAmount(data.userStatistics.totalTradeCount, 0, data.tradeCoin) + '+' + data.tradeCoin}}</p>
             <span>历史交易</span>
           </div>
         </div>
@@ -81,7 +81,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam } from 'common/js/util';
+import { getUrlParam, formatAmount } from 'common/js/util';
 import { otcBuy } from "api/otc";
 
 export default {
@@ -114,6 +114,9 @@ export default {
     },
     changeEnum() {
       this.Enum = this.Cnum / this.rate;
+    },
+    formatAmount(money, format, coin) {
+      return formatAmount(money, format, coin);
     },
     changeCnum() {
       this.Cnum = this.Enum * this.rate;

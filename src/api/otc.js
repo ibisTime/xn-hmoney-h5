@@ -91,3 +91,18 @@ export function sellBB(config) {
         ...config
     });
 }
+
+// 购买开始聊天，提交交易订单
+export function chatOrderBuy(adsCode) {
+  return fetch("625247", {
+    buyUser: getUserId(),
+    adsCode
+  });
+}
+//出售开始聊天，提交交易订单
+export function chatOrderSell(adsCode) {
+  return Ajax.get("625248", {
+    sellUser: getUserId(),
+    adsCode
+  });
+}
