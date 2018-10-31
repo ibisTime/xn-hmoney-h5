@@ -187,7 +187,7 @@
         <div class='top'>
           
         </div>
-        <p class='text1'><span class='txt1'>BTC</span><span>现价</span><span class='red txt3'>0.045678</span><span class='red txt4'>折合≈1911.567CNY</span></p>
+        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>现价</span><span class='red txt3'>0.045678</span><span class='red txt4'>折合≈1911.567CNY</span></p>
         <div class='text2'>
           <p><span class='gray txt1'>涨幅</span><span class='red txt2'>+1.17%</span></p>
           <p><span class='gray'>最高</span><span>0.041924</span></p>

@@ -9,7 +9,7 @@
     <div class="main">
       <p>256545545@qq.com</p>
       <p><input type="text" placeholder="请输入新的邮箱"></p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
 
     </div>
     <div class="foot">

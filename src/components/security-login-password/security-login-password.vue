@@ -12,7 +12,7 @@
       <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码">
         <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
         <span v-show="show" @click="get" class='txt2'>获取验证码</span>
-        <span v-show="!show" class='txt1'>重新获取({{time}})</span>
+        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
       </p>
       <p>
         <input required v-model="newLoginPwd" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合6位-16位">

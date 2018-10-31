@@ -22,12 +22,12 @@
                     </div>
                     <div class='text'>
                         <div class='text1'>
-                            <p class='txt1'><span class='name'>{{item.nickname}}</span><span class='slogn1' :class="[item.idNO ? 'slogn1' : 'slogn2']">{{item.idNO ? '已认证' : '未认证'}}</span></p>
+                            <p class='txt1'><span class='name'>{{item.nickname}}</span><span class='slogn1' :class="[item.idKind ? 'slogn1' : 'slogn2']">{{item.idKind ? '已认证' : '未认证'}}</span></p>
                             <p class='txt2 gray'>{{item.createDatetime}}</p>
                         </div>
                         <div class='text2'>
                             <p class='txt1'>交易金额：{{item.tradeCount}}</p>
-                            <p class='txt2'>获佣(注册佣金 + 交易佣金)：<span class='gray' :class="[item.regAwardCount ? 'gray' : 'red']">{{item.regAwardCount + item.tradeAwardCount}} {{item.tradeCount ? 'X' : ''}}</span></p>
+                            <p class='txt2'>获佣(注册佣金 + 交易佣金)：<span class='red'>{{item.total}} {{item.tradeCount ? 'FMVP' : ''}}</span></p>
                         </div>
                     </div>
                 </div>
@@ -68,9 +68,10 @@ export default {
     myGuest() {
       myGuest(this.start, this.limit).then(data => {
         data.list.map( v => {
-            v.regAwardCount = formatAmount(`${v.regAwardCount}`, '', 'X');
-            v.tradeCount = formatAmount(`${v.tradeCount}`, '', 'X');
-            v.tradeAwardCount = parseFloat(formatAmount(`${v.tradeAwardCount}`, '', 'X'));
+            v.total = formatAmount(v.tradeAwardCount + v.regAwardCount, '', 'FMVP');
+            v.regAwardCount = formatAmount(`${v.regAwardCount}`, '', 'FMVP');
+            v.tradeCount = formatAmount(`${v.tradeCount}`, '', 'FMVP');
+            v.tradeAwardCount = formatAmount(`${v.tradeAwardCount}`, '', 'FMVP');
             v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
         });
         if (data.totalPage <= this.start) {
