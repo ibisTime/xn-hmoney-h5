@@ -35,7 +35,7 @@ export function getTencentParamsAPi() {
   return fetch(805087, {
     userId: getUserId()
   }).then((data) => {
-    setCookie('__sig__', data.sig);
+    setCookie('__sign__', data.sign);
     setCookie('__accountType__', data.accountType);
     setCookie('__txAppCode__', data.txAppCode);
     return Promise.resolve(data);

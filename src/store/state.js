@@ -21,6 +21,7 @@ const state = {
   curChatList: [],
   curChatUserId: '',
   tencentLogined: false,
+  unreadMsgNum: 0,
   userMap: loadUserMap()
 };
 

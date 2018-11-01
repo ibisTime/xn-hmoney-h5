@@ -2,7 +2,7 @@ import {SYSTEM_CODE} from './config';
 import {getCookie} from './cookie';
 import Message from 'base/message/message';
 import axios from 'axios';
-import {clearUser} from 'common/js/util';
+import {clearUser, goLogin} from 'common/js/util';
 
 const ERR_OK = '0';
 const ERR_TIME_OUT = '4';
@@ -29,7 +29,9 @@ export default function fetch(code, param) {
     if (res.errorCode === ERR_TIME_OUT) {
       message.show('登录超时，请重新登录');
       clearUser();
-      _reloadPage();
+      setTimeout(() => {
+        goLogin();
+      }, 800);
       return Promise.reject('timeout');
     }
     if(res.errorCode !== ERR_OK) {
@@ -44,7 +46,7 @@ export default function fetch(code, param) {
   });
 }
 
-function _reloadPage() {
+function _reloadPageWX() {
   fetch(805917, {
     ckey: 'WX_H5_ACCESS_KEY'
   }).then((data) => {

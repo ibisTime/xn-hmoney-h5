@@ -58,3 +58,5 @@ export const SET_CHAT_USERID = 'SET_CHAT_USERID';
 export const SET_TENCENT_LOGINED = 'SET_TENCENT_LOGINED';
 // 设置聊过天的所有用户的头像、昵称
 export const SET_USER_MAP = 'SET_USER_MAP';
+// 设置新消息数
+export const SET_UNREAD_MSG_NUM = 'SET_UNREAD_MSG_NUM';

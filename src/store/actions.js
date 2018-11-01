@@ -72,14 +72,14 @@ export const clearSearchHistory = function ({commit}) {
 };
 
 // 新增银行卡
-export const addBankCard = function({commit, state}, {bankcard}) {
+export const addBankCard = function ({commit, state}, {bankcard}) {
   let bankcardList = state.bankcardList.slice();
   bankcardList.unshift(bankcard);
   commit(types.SET_BANKCARD_LIST, bankcardList);
 };
 
 // 删除银行卡
-export const deleteBankCard = function({commit, state}, {code}) {
+export const deleteBankCard = function ({commit, state}, {code}) {
   let bankcardList = state.bankcardList.slice();
   let index = bankcardList.findIndex((item) => {
     return item.code === code;
@@ -89,7 +89,7 @@ export const deleteBankCard = function({commit, state}, {code}) {
 };
 
 // 修改银行卡
-export const editBankCard = function({commit, state}, {bankcard}) {
+export const editBankCard = function ({commit, state}, {bankcard}) {
   let bankcardList = state.bankcardList.slice();
   let index = bankcardList.findIndex((item) => {
     return item.code === bankcard.code;
@@ -99,14 +99,14 @@ export const editBankCard = function({commit, state}, {bankcard}) {
 };
 
 // 新增地址
-export const addAddress = function({commit, state}, {address}) {
+export const addAddress = function ({commit, state}, {address}) {
   let addressList = state.addressList.slice();
   addressList.unshift(address);
   commit(types.SET_ADDRESS_LIST, addressList);
 };
 
 // 修改地址
-export const editAddress = function({commit, state}, {address}) {
+export const editAddress = function ({commit, state}, {address}) {
   let addressList = state.addressList.slice();
   let index = addressList.findIndex((item) => {
     return item.code === address.code;
@@ -142,7 +142,7 @@ export const setDefaultAddress = function ({commit, state}, {code}) {
 };
 
 // 删除地址
-export const deleteAddress = function({commit, state}, {code}) {
+export const deleteAddress = function ({commit, state}, {code}) {
   let addressList = state.addressList.slice();
   let index = addressList.findIndex((item) => {
     return item.code === code;
@@ -152,7 +152,7 @@ export const deleteAddress = function({commit, state}, {code}) {
 };
 
 // 取消订单后，改变orderList
-export const editOrderListByCancel = function({commit, state}, {code}) {
+export const editOrderListByCancel = function ({commit, state}, {code}) {
   let prevStatus = '1';
   let nextStatus = '91';
   let _orderList = _getOrderList(state, code, prevStatus, nextStatus);
@@ -168,7 +168,7 @@ export const editOrderListByCancel = function({commit, state}, {code}) {
 };
 
 // 支付订单后，改变orderList
-export const editOrderListByPay = function({commit, state}, {code}) {
+export const editOrderListByPay = function ({commit, state}, {code}) {
   let prevStatus = '1';
   let nextStatus = '2';
 
@@ -206,7 +206,7 @@ export const editOrderListByTk = function ({commit, state}, {code}) {
 };
 
 // 评论成功后，改变orderList
-export const editOrderListByRating = function({commit, state}, {code}) {
+export const editOrderListByRating = function ({commit, state}, {code}) {
   let prevStatus = '4';
   let nextStatus = '5';
 
@@ -223,7 +223,7 @@ export const editOrderListByRating = function({commit, state}, {code}) {
 };
 
 // 收货成功后，改变orderList
-export const editOrderListByReceived = function({commit, state}, {code}) {
+export const editOrderListByReceived = function ({commit, state}, {code}) {
   let prevStatus = '3';
   let nextStatus = '4';
 

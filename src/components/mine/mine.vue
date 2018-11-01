@@ -50,7 +50,7 @@
         <router-link to="my-order" class="item item-4">
             <i></i>
             <span class="txt">我的订单</span>
-            <span class='icon'></span>
+            <span class='icon'>{{getUnreadMsgNum ? '您有新消息' : ''}}</span>
         </router-link>
       </div>
 
@@ -97,6 +97,7 @@ import Qiniu from 'base/qiniu/qiniu';
 import { getQiniuToken } from 'api/general';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
+import {mapGetters} from 'vuex';
 
 export default {
   data() {
@@ -117,6 +118,11 @@ export default {
       multiple: false
     };
   },
+  computed: {
+    ...mapGetters([
+      'unreadMsgNum'
+    ])
+  },
   created() {
     setTitle('个人中心');
     getUser().then((data) => {
@@ -132,8 +138,11 @@ export default {
       this.token = data.uploadToken;
     });
   },
-  computed: {},
   methods: {
+    // 是否显示新消息
+    getUnreadMsgNum() {
+      return this.unreadMsgNum > 0;
+    },
     // 计算百分比
     getPercentum(num1, num2){
         return getPercentum(num1, num2);
@@ -348,10 +357,12 @@ export default {
           margin-top: 0.5rem;
           width: 0.15rem;
           height: 0.26rem;
+          font-size: 0.25rem;
           background-repeat: no-repeat;
-          background-position: center;
-          background-size: 100% 100%;
+          background-position: center right;
+          background-size: 0.15rem;
           background-image: url('./more.png');
+          font-size: 0.24rem;
         }
 
         &.item-2 {
@@ -369,6 +380,12 @@ export default {
         &.item-4 {
           i {
             background-image: url('./wddd.png');
+          }
+          .icon{
+            width: 1.6rem;
+            color: $color-red;
+            text-align: right;
+            padding-right: 0.3rem;
           }
         }
 
@@ -444,104 +461,6 @@ export default {
         i {
           background-image: url('./wsell.png');
         }
-      }
-    }
-
-    .item-Wrap {
-      font: 0.32rem/1.18rem PingFangSC-Regular;
-      letter-spacing: 0.0027rem;
-      background: #fff;
-
-      .box {
-        height: 1.18rem;
-        width: 6.7rem;
-        margin-left: 0.22rem;
-        position: relative;
-        .line {
-          width: 6.06rem;
-          border-bottom: .01rem solid #e3e3e3;
-          float: right;
-        }
-      }
-     
-
-      .txt {
-        margin-left: 0.64rem;
-      }
-
-      .icon {
-        background-image: url('./more.png');
-      }
-
-      .item-2 {
-        i {
-          background-image: url('./xzhb.png');
-        }
-      }
-
-      .item-3 {
-        i {
-          width: 0.36rem;
-          height: 0.33rem;
-          background-image: url('./wdgg.png');
-        }
-      }
-
-      .item-4 {
-        i {
-          width: 0.36rem;
-          height: 0.36rem;
-          background-image: url('./wddd.png');
-        }
-      }
-
-      .item-5 {
-        i {
-          background-image: url('./jyds.png');
-        }
-      }
-
-      .item-6 {
-        i {
-          background-image: url('./yqhy.png');
-        }
-      }
-
-      .item-7 {
-        i {
-          width: 0.34rem;
-          height: 0.4rem;
-          background-image: url('./aqzx.png');
-        }
-      }
-
-      .item-8 {
-        i {
-          background-image: url('./gywm.png');
-        }
-      }
-
-
-      i {
-        display: inline-block;
-        position: absolute;
-        top: 0.4rem;
-        width: 0.4rem;
-        height: 0.4rem;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 100%;
-      }
-
-      .icon {
-        float: right;
-        margin-top: 0.5rem;
-        margin-right: 0.2rem;
-        width: 0.15rem;
-        height: 0.26rem;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 100%;
       }
     }
   }

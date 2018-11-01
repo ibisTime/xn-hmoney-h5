@@ -61,7 +61,7 @@
 </template>
 <script>
   import {mapGetters, mapActions, mapMutations} from 'vuex';
-  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE} from 'store/mutation-types';
+  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE, SET_UNREAD_MSG_NUM} from 'store/mutation-types';
   import Scroll from 'base/scroll/scroll';
   import FullLoading from 'base/full-loading/full-loading';
   import Loading from 'base/loading/loading';
@@ -75,8 +75,8 @@
   import {getOrderDetail} from 'api/person';
   import {getQiniuToken} from 'api/general';
 
-  const selType = webim.SESSION_TYPE.C2C;
-  const subType = webim.C2C_MSG_SUB_TYPE.COMMON;
+  const selType = webim.SESSION_TYPE.GROUP;
+  const subType = webim.GROUP_MSG_SUB_TYPE.COMMON;
   const LIMIT = 20;
   const ERR = -1;
   const SENDING = 0;
@@ -99,7 +99,7 @@
       };
     },
     created() {
-      this.selToID = this.$route.params.id;
+      this.groupId = this.$route.params.id;
       this.firstUpdate = true;
       this.firstFetching = true;
       this.userId = getUserId();
@@ -112,14 +112,14 @@
       this.picMap = {}; // 保存正常往7牛上传的msg的对象，用于正式往腾讯云发消息是创建的msg的模版
       this.getStart();
       this.setCurChatList([]);
-      this.setCurChatUserId(this.selToID);
+      this.setCurChatUserId(this.groupId);
       this.getInitData();
       // initShowImage();
     },
     mounted() {
       let title = '聊天';
-      if (this.userMap[this.selToID]) {
-        title = this.userMap[this.selToID].nickname;
+      if (this.userMap[this.groupId]) {
+        title = this.userMap[this.groupId].nickname;
       }
       setTitle(title);
     },
@@ -156,7 +156,7 @@
       },
       // 获取订单详情
       getDetail() {
-        getOrderDetail(this.selToID).then((data) => {
+        getOrderDetail(this.groupId).then((data) => {
           // 判断卖家卖家
           if (data.buyUser === this.userId) {
             this.receiver = data.sellUserInfo;
@@ -168,8 +168,8 @@
       },
       getStart() {
         let obj = this.chatData[this.userId];
-        if (obj && obj[this.selToID]) {
-          this.start = obj[this.selToID].list.length;
+        if (obj && obj[this.groupId]) {
+          this.start = obj[this.groupId].list.length;
         } else {
           this.start = -1;
         }
@@ -240,10 +240,10 @@
       },
       getHistoryMessage() {
         let obj = this.chatData[this.userId];
-        if (this.start >= 0 && obj && obj[this.selToID]) {
+        if (this.start >= 0 && obj && obj[this.groupId]) {
           let min = Math.max(0, this.start - LIMIT);
           let max = this.start;
-          let list = obj[this.selToID].list.slice(min, max);
+          let list = obj[this.groupId].list.slice(min, max);
           let newList = this.getNewList(list);
           let oriList = this.curChatList.slice();
           this.setCurChatList(newList.concat(oriList));
@@ -307,7 +307,7 @@
       },
       onSendMsg(msgContent, suc) {
         let msgLen = webim.Tool.getStrBytes(msgContent);
-        let maxLen = webim.MSG_MAX_LENGTH.C2C;
+        let maxLen = webim.MSG_MAX_LENGTH.GROUP;
         if (msgLen > maxLen) {
           this.showToast('消息长度超出限制(最多' + Math.round(maxLen / 3) + '汉字)');
           return;
@@ -316,7 +316,7 @@
       },
       handleMsgSend(msgContent, suc) {
         if (!this.selSess) {
-          this.selSess = new webim.Session(selType, this.selToID, this.selToID, this.user.photo, Math.round(new Date().getTime() / 1000));
+          this.selSess = new webim.Session(selType, this.groupId, this.groupId, this.user.photo, Math.round(new Date().getTime() / 1000));
         }
         let random = Math.round(Math.random() * 4294967296); // 消息随机数，用于去重
         let msgTime = Math.round(new Date().getTime() / 1000); // 消息时间戳
@@ -352,7 +352,7 @@
             msg.addText(textObj);
           }
         }
-        let result = addMsg(msg, this.selToID, this.receiver.photo);
+        let result = addMsg(msg, this.groupId, this.receiver.photo);
         result.msg.status = SENDING;
         this.addMsg2CurList(result.msg);
         if (!this.msgMap[msg.uniqueId]) {
@@ -385,7 +385,8 @@
       },
       sendCommonMsg(msg, result, index) {
         webim.sendMsg(msg, () => {
-          if (selType === webim.SESSION_TYPE.C2C) {
+          if (selType === webim.SESSION_TYPE.GROUP) {
+            webim.Tool.setCookie("tmpmsg_" + this.groupId, '', 0);
             let newMsg = {
               toUser: result.toUser,
               fromUser: result.fromUser,
@@ -441,7 +442,7 @@
       },
       reSendMsg(item, index) {
         let msg = this.msgMap[item.uniqueId];
-        let result = addMsg(msg, this.selToID, this.receiver.photo);
+        let result = addMsg(msg, this.groupId, this.receiver.photo);
         result.msg.status = SENDING;
         this.updateCurStatus(result.msg, index);
         this.sendCommonMsg(msg, result, index);
@@ -449,7 +450,7 @@
       handleUpload(file) {
         this.hide();
         if (!this.selSess) {
-          this.selSess = new webim.Session(selType, this.selToID, this.selToID, this.user.photo, Math.round(new Date().getTime() / 1000));
+          this.selSess = new webim.Session(selType, this.groupId, this.groupId, this.user.photo, Math.round(new Date().getTime() / 1000));
         }
         let msg = new webim.Msg(this.selSess, true, -1, -1, -1, this.userId, 0, this.user.nickname);
         let UUID = file.preview.split('/').pop();
@@ -459,7 +460,7 @@
         imagesObj.addImage(newImg);
         imagesObj.addImage(newImg);
         msg.addImage(imagesObj);
-        let result = addMsg(msg, this.selToID, this.receiver.photo);
+        let result = addMsg(msg, this.groupId, this.receiver.photo);
         result.msg.status = SENDING;
         this.addMsg2CurList(result.msg);
         if (!this.picMap[msg.uniqueId]) {
@@ -467,7 +468,6 @@
         }
         file.uniqueId = msg.uniqueId;
         file.onprogress = (e) => {
-          console.log(this.findIndex(file));
           if (e.srcElement.status === 200) {
             this.sendPicByMsg(msg, file);
           }
@@ -494,7 +494,7 @@
         imagesObj.addImage(newImg2);
         imagesObj.addImage(newImg3);
         msg.addImage(imagesObj);
-        let result = addMsg(msg, this.selToID, this.receiver.photo);
+        let result = addMsg(msg, this.groupId, this.receiver.photo);
         result.msg.status = SENDING;
         this.updateCurStatus(result.msg);
         if (!this.msgMap[msg.uniqueId]) {
@@ -632,6 +632,7 @@
           padding: 0.2rem;
           line-height: 0.38rem;
           font-style: normal;
+          min-height: 0.8rem;
         }
       }
       .receive {

@@ -36,14 +36,11 @@ export function getUserId() {
 export function setUser(data) {
   setCookie('userId', data.userId);
   setCookie('token', data.token);
-  // setCookie('__sig__', data.sig);
-  // setCookie('__accountType__', data.accountType);
-  // setCookie('__txAppCode__', data.txAppCode);
 }
 
 // 获取腾讯云登录的sig
-export function getSig () {
-  return getCookie('__sig__') || '';
+export function getSign () {
+  return getCookie('__sign__') || '';
 }
 
 // 获取腾讯云登录的accountType
@@ -59,7 +56,7 @@ export function getTxAppCode () {
 // 获取腾讯云登录的参数
 export function getTencentParams () {
   return {
-    sig: getSig(),
+    sig: getSign(),
     accountType: getAccountType(),
     txAppCode: getTxAppCode()
   };
@@ -69,10 +66,15 @@ export function getTencentParams () {
 export function clearUser() {
   delCookie('userId');
   delCookie('token');
-  delCookie('__sig__');
+  delCookie('__sign__');
   delCookie('__accountType__');
   delCookie('__txAppCode__');
   sessionStorage.clear();
+}
+
+// 跳转登陆
+export function goLogin() {
+  location.href = location.href.split('://')[0] + '://' + location.host + '/login';
 }
 
 // 是否登录

@@ -111,6 +111,9 @@ const mutations = {
   },
   [types.SET_USER_MAP](state, userMap) {
     state.userMap = userMap;
+  },
+  [types.SET_UNREAD_MSG_NUM](state, num) {
+    state.unreadMsgNum = num;
   }
 };
 

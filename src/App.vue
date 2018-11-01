@@ -11,6 +11,7 @@
       @touchstart.stop="fbTouchStartFn"
       @touchmove.stop="fbTouchMoveFn"
       @touchend.stop="fbTouchEndFn"
+      v-show="showFlag"
     >
       <div >去购买FMVP</div>
     </div>
@@ -20,7 +21,7 @@
 <script type="text/ecmascript-6">
   //@touchmove.prevent
   import Toast from 'base/toast/toast';
-  import {isLogin, getUrlParam} from './common/js/util';
+  import {isLogin, getUrlParam, isUnDefined} from './common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
 
   export default {
@@ -40,15 +41,25 @@
         touchDemo: '',
         docuWidth: '',
         docuHeight: '',
+        showFlag: true
       }
     },
     created() {
+      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/login')[1])){
+        this.showFlag = true;
+      } else {
+        this.showFlag = false;
+      }
       this.$router.beforeEach((to, from, next) => {
-        this.$refs.touchDemo.style.right = '0.5rem';
-        this.$refs.touchDemo.style.bottom = '1rem';
-        this.$refs.touchDemo.style.left = '';
-        this.$refs.touchDemo.style.top = '';
+        // 聊天界面隐藏购买飘窗
+        if (this.showFlag && this.$refs.touchDemo) {
+          this.$refs.touchDemo.style.right = '0.5rem';
+          this.$refs.touchDemo.style.bottom = '1rem';
+          this.$refs.touchDemo.style.left = '';
+          this.$refs.touchDemo.style.top = '';
+        }
         if (isLogin()) {
+          // 腾讯云登陆
           this.tencentLogin();
           next();
         } else {
