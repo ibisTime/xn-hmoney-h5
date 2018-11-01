@@ -162,6 +162,11 @@ export default {
         return;
       }
       if(this.nickname != '' && this.smsCaptcha != '' && this.password1 != '' && !this.errors.any()){
+        if(this.password1 !== this.password2){
+          this.textMsg = '密码不一致，请重新输入';
+          this.$refs.toast.show();
+          return;
+        }
         this.config = {
           captcha: this.smsCaptcha,
           smsCaptcha: this.smsCaptcha,

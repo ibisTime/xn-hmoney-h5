@@ -409,12 +409,12 @@ export default {
           ExitAdvertising(that.config).then(data => {
             cgAdver(that);
           }, () => {
-            this.isOk = true;
+            that.isOk = true;
           });
         }
         function cgAdver(that){
           message.show(that.$t('common.czcg'));
-          this.isOk = true;
+          that.isOk = true;
           if(that.config.publishType != '0'){
             sessionStorage.setItem('tradeType', that.config.tradeType);
             sessionStorage.setItem('coin', that.config.tradeCoin);

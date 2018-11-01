@@ -1,14 +1,20 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>绑定手机号</span>
         </p>
-    </header>
+    </header> -->
     <div class="main">
-      <p><input type="text" v-model="mobile" placeholder="请输入手机号"></p>
-      <p class='text3'><input v-model="smsCaptcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p><input type="text" v-model="mobile" name="phone" v-validate="'required|phone'" placeholder="请输入手机号"></p>
+      <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
+      <p class='text3'>
+        <input v-model="smsCaptcha" type="text" placeholder="请输入验证码">
+        <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
+        <span v-show="show" @click="get" class='txt2'>获取验证码</span>
+        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
+      </p>
 
     </div>
     <div class="foot">
@@ -17,11 +23,15 @@
     <div class='promit'>
       <i class='icon'></i><span>请联系客服热线：289-3760-0000 进行修改</span>
     </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
 import {getUserId} from '../../common/js/util';
 import {bindingPhone, getSmsCaptcha1} from '../../api/person';
+import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 
 export default {
   data() {
@@ -30,19 +40,53 @@ export default {
       mobile: '',
       smsCaptcha: '',
       bizType: '805060',
+      time: 60,
+      isLoading: false,
+      textMsg: ''
     };
   },
   methods: {
     get() {
+      if(this.mobile == ''){
+        this.textMsg = '请填写手机号';
+        this.$refs.toast.show();
+        return;
+      }
       this.show = false;
+      this.isLoading = true;
       getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+        this.isLoading = false;
+        let phTime = setInterval(() => {
+          this.time --;
+          if(this.time < 0){
+            clearInterval(phTime);
+            this.time = 60;
+            this.show = true;
+          }
+        }, 1000);
+      }, () => {
+        this.isLoading = false;
+        this.show = true;
       });
     },
     bindPhone() {
-      bindingPhone(1, this.mobile, this.smsCaptcha, getUserId()).then(data => {
-        this.$router.push('security-center');
-      })
+      if(this.mobile == '' || this.smsCaptcha == ''){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
+      this.isLoading = true;
+      bindingPhone(0, this.mobile, this.smsCaptcha, getUserId()).then(data => {
+        this.isLoading = false;
+        this.$router.push('mine');
+      }, () => {
+        this.isLoading = false;
+      });
     }
+  },
+  components: {
+    FullLoading,
+    Toast
   }
 };
 </script>

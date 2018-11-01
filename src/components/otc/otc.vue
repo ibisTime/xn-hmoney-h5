@@ -709,7 +709,7 @@ export default {
     background-image: url('./fb.png');
     position: fixed;
     left: 6.3rem;
-    bottom: 1.52rem;
+    bottom: 1.82rem;
     opacity: 0.8;
 
   }

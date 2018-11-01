@@ -7,25 +7,39 @@
         </p>
     </header> -->
     <div class="main">
-      <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
+      <p class='text1' v-show="email == ''"><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p v-show="mobile">{{mobile}}</p>
-      <p v-show="!mobile"><input type="number" v-model="config.mobile" placeholder="手机号"></p>
-      <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
-      <p><input type="password" v-model="newPayPwd" pattern="^\d{6,}$" placeholder="新密码(不少于6位)"></p>
-      <p><input type="password" v-model="surePwd" pattern="^\d{6,}$" placeholder="确认密码"></p>
+      <p v-show="email != ''">{{email}}</p>
+      <p class='text3'>
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="输入验证码">
+        <i v-show="!show" class='icon'></i>
+        <span v-show="show" @click="get" class='txt2'>获取验证码</span>
+        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
+      </p>
+      <p>
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" placeholder="密码6位-16位">
+        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+      </p>
+      <p>
+        <input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" placeholder="确认密码">
+        <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
+      </p>
     </div>
     <div class="foot">
       <button @click="changeTradPwd">确 定</button>
     </div>
    
   <Toast :text="textMsg" ref="toast" />
+  <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import {getUser, changeTradPwd, getSmsCaptcha1} from '../../api/person';
-import {captValid, rePwdValid, tradeValid, getUserId, setTitle} from '../../common/js/util';
+import {getUser, changeTradPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import { setTradePwd } from 'api/user';
+import {captValid, rePwdValid, tradeValid, getUserId, setTitle, getUrlParam} from '../../common/js/util';
 import { resetPwd } from 'api/user';
 import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
@@ -34,73 +48,110 @@ export default {
       show: true,
       bizType: '805067',
       mobile: '',
+      email: '',
       smsCaptcha: '',
       newPayPwd: '',
       surePwd: '',
-      config: {
-        mobile: '',
-        newLoginPwd: '',
-        smsCaptcha: ''
-      }
+      istw: '',
+      isLoading: false
     };
   },
   created() {
-    if(getUserId()){
+    this.istw = getUrlParam('istw');      // 0设置 1修改
+    if(this.istw == '1'){
       setTitle('修改交易密码');
-      getUser().then((data) => {
-        this.mobile = data.mobile;
-      });
     }else{
-      setTitle('找回密码');
+      this.bizType = '805066'
+      setTitle('设置交易密码');
     }
+    getUser().then((data) => {
+      if(data.mobile){
+        this.mobile = data.mobile;
+      }else{
+        if(data.email){
+          this.email = data.email;
+        }
+      }
+    });
   },
   methods: {
     get() {
       this.show = false;
-      let mobile = this.mobile;
-      if(!this.mobile){
-        this.bizType = '805063';
-        mobile = this.config.mobile;
+      this.isLoading = true;
+      if(this.mobile){
+        getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.show = true;
+          this.isLoading = false;
+        });
       }
-      getSmsCaptcha1(this.bizType, mobile).then(data => {
-        let times = setInterval(() => {
-          this.time --;
-          if(this.time < 0){
-            clearInterval(times);
-            this.show = true;
-          }
-        }, 1000);
-      });
+      if(this.email){
+        getSmsCaptcha2(this.bizType, this.email).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.show = true;
+          this.isLoading = false;
+        });
+      }
     },
     changeTradPwd() {
-        if(tradeValid(this.newPayPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newPayPwd, this.surePwd).err === 0) {
-          if(this.mobile){
+      if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
+      if(this.newPayPwd !== this.surePwd){
+        this.textMsg = '密码不一致，请重新输入';
+        this.$refs.toast.show();
+        return;
+      }else{
+        if(!this.errors.any()){
+          this.isLoading = true;
+          if(this.istw == '1'){
             changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
-              this.textMsg = '操作成功';
+              this.textMsg = '重置密码成功';
               this.$refs.toast.show();
+              this.isLoading = false;
               setTimeout(() => {
                 this.$router.push('mine');
               }, 1500);
+            }, () => {
+              this.isLoading = false;
             });
           }else{
-            this.config.newLoginPwd = this.newPayPwd;
-            this.config.smsCaptcha = this.smsCaptcha;
-            resetPwd(this.config).then(data => {
-              this.textMsg = '重置密码成功';
+            setTradePwd(this.newPayPwd, this.smsCaptcha).then(data => {
+              this.textMsg = '设置密码成功';
               this.$refs.toast.show();
+              this.isLoading = false;
               setTimeout(() => {
-                this.$router.push('login');
+                this.$router.push('mine');
               }, 1500);
+            }, () => {
+              this.isLoading = false;
             })
           }
-        } else {
-          this.textMsg = '密码不一致，请重新输入';
-          this.$refs.toast.show();
         }
+      }
     }
   },
   components: {
-    Toast
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -221,7 +272,10 @@ export default {
     }
   }
 
-  
+  .error-tip{
+    color: #d53d3d;
+    font-size: 0.26rem;
+  }
 
 
 }

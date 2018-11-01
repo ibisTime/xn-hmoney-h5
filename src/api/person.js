@@ -122,14 +122,15 @@ export function bindingPhone(isSendSms, mobile, smsCaptcha, userId) {
   })
 }
 
-// 修改登录密码
-export function changeLoginPwd(mobile, newLoginPwd, smsCaptcha) {
-  return fetch(805063, {
-    mobile,
-    newLoginPwd,
-    smsCaptcha
-  })
+// 修改密码
+export function changeLoginPwd(oldLoginPwd, newLoginPwd) {
+  return fetch('805064', {
+      oldLoginPwd,
+      newLoginPwd,
+      userId: getUserId()
+  });
 }
+
 
 // 修改交易密码
 export function changeTradPwd(newTradePwd, smsCaptcha, userId) {

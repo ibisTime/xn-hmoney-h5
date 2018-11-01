@@ -205,7 +205,9 @@ export default {
             this.$refs.toast.show();
             this.getAdverData();
             setTimeout(() => {
-                this.$refs.toast.hide();
+                sessionStorage.setItem('tradeType', this.fbConfig.tradeType);
+                sessionStorage.setItem('coin', this.fbConfig.tradeCoin);
+                this.$router.push('/otc');
             }, 1500);
         });
     },

@@ -7,7 +7,8 @@
         </p>
     </header> -->
     <div class="main">
-      <p><input v-model="email" pattern="[a-zA-Z0-9]{5,12}@qq.com" type="text" placeholder="请输入邮箱"></p>
+      <p><input v-model="email" type="text" name="email" v-validate="'required|email'" placeholder="请输入邮箱"></p>
+      <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
       <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon' @click="captcha = ''"></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
 
     </div>
@@ -54,6 +55,7 @@ export default {
           }, 1000);
         }, () => {
           this.isLoading = false;
+          this.show = true;
         });
       }
     },

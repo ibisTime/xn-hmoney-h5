@@ -1,83 +1,160 @@
 <template>
-  <div class="login-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>修改登录密码</span>
-        </p>
-    </header> -->
+  <div class="password-wrapper" @click.stop>
     <div class="main">
-      <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>{{mobile}}</p>
-      <p class='text3'><input v-model="smsCaptcha" type="text" pattern="^\d{4}$" placeholder="输入验证码">
-        <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
+      <p v-show="isEmail">
+        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" placeholder="请输入邮箱或手机号">
+        <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
+      </p>
+      <p class='text3' v-show="(mobile == '' || email == '') && isEmail">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="输入验证码">
+        <i v-show="!show" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>获取验证码</span>
         <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
       </p>
       <p>
-        <input required v-model="newLoginPwd" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合6位-16位">
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|password'" :placeholder="!isEmail ? '请输入旧密码' : '英文数字组合6位-16位'">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
-      <p><input v-model="surePwd" type="password" pattern="^[a-zA-Z]\w{5,15}$" placeholder="确认密码"></p>
+      <p>
+        <input type="password" v-model="surePwd" name="password1" v-validate="'required|password'" placeholder="确认密码">
+        <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
+      </p>
     </div>
     <div class="foot">
-      <button @click="changeLoginPassword">确 定</button>
+      <button @click="changeLoginPwd">确 定</button>
     </div>
    
   <Toast :text="textMsg" ref="toast" />
+  <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import {getUser, changeLoginPwd, getSmsCaptcha1} from '../../api/person';
-import { rePwdValid, tradeValid, setTitle} from '../../common/js/util';
+import {getUser, changeLoginPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {captValid, rePwdValid, tradeValid, getUserId, setTitle, clearUser} from '../../common/js/util';
+import { resetPwd } from 'api/user';
 import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
     return {
+      isLoading: true,
+      time: 60,
       textMsg: '',
       show: true,
-      mobile: '',
-      smsCaptcha: '',
-      newLoginPwd: '',
-      surePwd: '',
       bizType: '805063',
-      time: 60
+      mobile: '',
+      email: '',
+      smsCaptcha: '',
+      newPayPwd: '',
+      surePwd: '',
+      config: {
+        mobile: '',
+        newLoginPwd: '',
+        smsCaptcha: ''
+      },
+      isEmail: true
     };
   },
   created() {
-    setTitle('修改登录密码');
-    getUser().then((data) => {
-      this.mobile = data.mobile;
-    });
+    if(getUserId()){
+      setTitle('修改登录密码');
+      getUser().then((data) => {
+        if(data.mobile){
+          this.isEmail = false;
+          this.mobile = data.mobile;
+        }else{
+          if(data.email){
+            this.isEmail = false;
+            this.email = data.email;
+          }
+        }
+      });
+    }else{
+      setTitle('找回密码');
+    }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
   },
   methods: {
     get() {
       this.show = false;
-      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
-        let phTime = setInterval(() => {
-          this.time --;
-          if(this.time < 0){
-            clearInterval(phTime);
-            this.show = true;
-            this.time = 60;
-          }
-        }, 1000);
-      });
+      let mobile, email;
+      this.isLoading = true;
+      if((this.config.mobile).match(/@/)){
+        email = this.config.mobile;
+        getSmsCaptcha2(this.bizType, email).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.time = 60;
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.isLoading = false;
+        });
+      }else{
+        mobile = this.config.mobile;
+        getSmsCaptcha1(this.bizType, mobile).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.time = 60;
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.isLoading = false;
+        });
+      }
     },
-    changeLoginPassword() {
-        if(tradeValid(this.newLoginPwd).err === 0 && tradeValid(this.surePwd).err === 0 && rePwdValid(this.newLoginPwd, this.surePwd).err === 0) {
-          changeLoginPwd(this.mobile, this.newLoginPwd, this.smsCaptcha).then((data) => {
+    changeLoginPwd() {
+      this.isLoading = true;
+      if(!this.isEmail){
+        changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
+          this.isLoading = false;
+          this.textMsg = '操作成功';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            clearUser();
             this.$router.push('login');
-          });
-        } else {
+          }, 1500);
+        }, () => {
+          this.isLoading = false;
+        });
+      }else{
+        if(this.newPayPwd != this.surePwd){
           this.textMsg = '密码不一致，请重新输入';
           this.$refs.toast.show();
+          return;
         }
+        this.config.newLoginPwd = this.newPayPwd;
+        this.config.smsCaptcha = this.smsCaptcha;
+        resetPwd(this.config).then(data => {
+          this.isLoading = false;
+          this.textMsg = '重置密码成功';
+          this.$refs.toast.show();
+          setTimeout(() => {
+            clearUser();
+            this.$router.push('login');
+          }, 1500);
+        }, () => {
+          this.isLoading = false;
+        })
+      }
     }
   },
   components: {
-    Toast
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -85,10 +162,11 @@ export default {
 @import "~common/scss/mixin";
 @import "~common/scss/variable";
 
-.login-wrapper {
+.password-wrapper {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
+  height: 12rem;
   background: #fff;
 
   .icon {
@@ -131,7 +209,6 @@ export default {
     }
     input {
       height: 1rem;
-      width: 65%;
     }
     input[attr='placeholder'] {
       color: #ccc;
@@ -184,11 +261,6 @@ export default {
     } 
   }
 
-  .error-tip {
-    font-size: 0.3rem;
-    color:red;
-  }
-
   .foot {
     width: 100%;
     text-align: center;
@@ -203,7 +275,10 @@ export default {
     }
   }
 
-  
+  .error-tip{
+    color: #d53d3d;
+    font-size: 0.26rem;
+  }
 
 
 }

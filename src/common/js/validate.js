@@ -55,6 +55,15 @@ Validator.extend('email', {
   }
 });
 
+// 邮箱账号检验
+Validator.extend('emailPhone', {
+  getMessage: field => '邮箱或手机号格式错误',
+  validate: value => {
+    var isIDCard1 = /^[a-z0-9._%-]+@([a-z0-9-]+\.)+[a-z]{2,4}$|^1[3|4|5|6|7|8|9]\d{9}$/;
+    return isIDCard1.test(value);
+  }
+});
+
 // 登录密码校验
 Validator.extend('password', {
   getMessage: field => '密码格式不正确',
@@ -74,9 +83,9 @@ Validator.extend('nickname', {
 
 // 支付密码校验
 Validator.extend('trade', {
-  getMessage: field => '长度不能小于6位',
+  getMessage: field => '密码为6-16位',
   validate: value => {
-    return value.length < 6;
+    return value.length > 5;
   }
 });
 

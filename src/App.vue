@@ -21,7 +21,6 @@
   //@touchmove.prevent
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam} from './common/js/util';
-  import {getBbListData} from 'api/otc';
   import {messageMixin} from 'common/js/message-mixin';
 
   export default {
@@ -44,19 +43,6 @@
       }
     },
     created() {
-      getBbListData().then(data => {
-        for(let i = data.length - 1; i >=0; i --){
-          let obj = {
-            ...data[i],
-            unit: '1e' + data[i].unit
-          };
-          this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-        }
-        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-        this.isLoading = false;
-      }, () => {
-        this.isLoading = false;
-      });
       this.$router.beforeEach((to, from, next) => {
         this.$refs.touchDemo.style.right = '0.5rem';
         this.$refs.touchDemo.style.bottom = '1rem';
@@ -74,7 +60,7 @@
             to.path == '/otc' ||
             to.path == '/login' ||
             to.path == '/registered' ||
-            to.path == '/security-tradePassword') {
+            to.path == '/security-loginPassword') {
             next();
           } else {
             this.textMsg = '请先登录';

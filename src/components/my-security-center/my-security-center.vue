@@ -7,7 +7,7 @@
         </p>
     </header> -->
     <div class='content cont1'>
-        <router-link class='tag' to='security-tradePassword'>
+        <router-link class='tag' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
             <p>
             <span>交易密码</span>
             <i class='icon'></i>
@@ -43,13 +43,13 @@
         </div>
     </div>
     <div class='content'>
-        <router-link v-show="show1" class='tag mb20' to='security-phoneNumber'>
+        <router-link v-show="!mobile" class='tag mb20' to='security-phoneNumber'>
             <p>
             <span>绑定手机号</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <div v-show="!show1" class='tag mb20'>
+        <div v-show="mobile" class='tag mb20'>
             <p>
             <span>已绑定手机号</span>
             <i class='icon'></i>
@@ -79,6 +79,7 @@ export default {
       show1: true,
       email: '',
       mobile: '',
+      isTradepwdFlag: '',
       googleAuthFlag: false
     };
   },
@@ -87,8 +88,8 @@ export default {
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
+      this.isTradepwdFlag = data.tradepwdFlag ? 1 : 0;
       data.emailBindFlag === false ? this.show = true : this.show = false;
-      this.mobile === '' ? this.show1 = true : this.show1 = false;
       this.googleAuthFlag = data.googleAuthFlag;
     });
   },
