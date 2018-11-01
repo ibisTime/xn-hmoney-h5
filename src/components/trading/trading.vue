@@ -17,7 +17,7 @@
         <p>
           <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
           <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
-          <select name="" id="" class='txt3' v-model="downConfig.type">
+          <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
             <option value="1">{{$t('trading.bbDeal.xj')}}</option>
             <option value="0">{{$t('trading.bbDeal.sj')}}</option>
           </select>
@@ -33,7 +33,7 @@
           <p class='he9'>
             <input 
               type="number" 
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.pk') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')" 
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')" 
               v-model="xjPrice" 
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
@@ -54,11 +54,11 @@
             <span class='black'>{{setBazDeal.toSymbol}}</span>
           </p>
           <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
-          <p class='he9 red'>
+          <p class='he9 green'>
             <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
             <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
           </p>
-          <p class='he9 btn red' v-show="downConfig.type == '1'">
+          <p class='he9 btn green' v-show="downConfig.type == '1'">
             <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
             <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
@@ -153,7 +153,7 @@
           >
             <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
               <p class='text1'>
-                <span :class='myItem.direction != 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
                 <span>{{myItem.createDatetime}}</span>
                 <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
               </p>
@@ -300,7 +300,8 @@ export default {
       symbolData: {},
       handTime: '',
       gkdsList: {},           // 高、低、涨幅
-      dayLineInfo: {}
+      dayLineInfo: {},
+      selIndex: 0
     };
   },
   created() {
@@ -450,7 +451,10 @@ export default {
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
             item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
-          this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+          if(this.selIndex == 0){
+            this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+          }
+          this.selIndex ++;
         }
         this.isLoading = false;
         return;
@@ -502,14 +506,24 @@ export default {
       this.show1 = true;
       this.xjPrice = '';
       this.wetNumber = '';
-      this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+      if(this.downConfig.type == '1'){
+        this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+      }
     },
     sell() {
       this.downConfig.direction = '1';
       this.show1 = false;
       this.xjPrice = '';
       this.wetNumber = '';
-      this.xjPrice = this.bbBids[0] ? this.bbBids[0].price : '';
+      if(this.downConfig.type == '1'){
+        this.xjPrice = this.bbBids[0] ? this.bbBids[0].price : '';
+      }
+    },
+    //选择市价或是限价
+    bbDealType(){
+      if(this.downConfig.type == '0'){
+        this.xjPrice = '';
+      }
     },
     showHisto() {
       this.show3 = true;
@@ -846,7 +860,6 @@ export default {
           }
           span{
             white-space: nowrap;
-            padding-left: 0.2rem;
           }
           .he-jye{
             display: inline-block;

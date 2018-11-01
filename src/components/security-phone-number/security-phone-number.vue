@@ -1,28 +1,22 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>绑定手机号</span>
-        </p>
-    </header> -->
     <div class="main">
-      <p><input type="text" v-model="mobile" name="phone" v-validate="'required|phone'" placeholder="请输入手机号"></p>
+      <p><input type="text" v-model="mobile" name="phone" v-validate="'required|phone'" :placeholder="$t('securityPhone.subject.sjh')"></p>
       <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
       <p class='text3'>
-        <input v-model="smsCaptcha" type="text" placeholder="请输入验证码">
+        <input v-model="smsCaptcha" type="text" :placeholder="$t('securityPhone.subject.yzm')">
         <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
-        <span v-show="show" @click="get" class='txt2'>获取验证码</span>
-        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
+        <span v-show="show" @click="get" class='txt2'>{{$t('securityPhone.subject.hqyzm')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('securityPhone.subject.cxhq')}}({{time}}s)</span>
       </p>
 
     </div>
     <div class="foot">
-      <button @click="bindPhone">确 定</button>
+      <button @click="bindPhone">{{$t('securityPhone.subject.qd')}}</button>
     </div>
-    <div class='promit'>
+    <!-- <div class='promit'>
       <i class='icon'></i><span>请联系客服热线：289-3760-0000 进行修改</span>
-    </div>
+    </div> -->
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
@@ -48,7 +42,7 @@ export default {
   methods: {
     get() {
       if(this.mobile == ''){
-        this.textMsg = '请填写手机号';
+        this.textMsg = this.$t('securityPhone.subject.qtx');
         this.$refs.toast.show();
         return;
       }
@@ -71,7 +65,7 @@ export default {
     },
     bindPhone() {
       if(this.mobile == '' || this.smsCaptcha == ''){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('securityPhone.subject.txwz');
         this.$refs.toast.show();
         return;
       }
@@ -196,7 +190,7 @@ export default {
     width: 100%;
     text-align: center;
     margin-top: 1.2rem;
-    margin-bottom: 2.43rem;
+    padding-bottom: 2.43rem;
     button {
       width: 6.28rem;
       height: 1rem;

@@ -5,21 +5,21 @@
             <div class='logo'></div>
             <div class="pic icon"></div>
             <div class="text1">
-                送您一份<span class='red1'>数字资产</span>
+                {{$t('myInviteFriends.subject.snyf')}}<span class='red1'>{{$t('myInviteFriends.subject.szzc')}}</span>
             </div>
             <i class='icon ico1'></i>
-            <p class='text2 red2'> 每个人都应该拥有一些比特币</p>
-            <p class='text3'>1年内，你就会明白它的珍贵；3年内，你就会明白它的价值；</p>
-            <p class="text4">10年内，它会给你一个新的世界；20年内，它就是你的生活方式</p>
+            <p class='text2 red2'> {{$t('myInviteFriends.subject.mgryg')}}</p>
+            <p class='text3'>{{$t('myInviteFriends.subject.ynsn')}}</p>
+            <p class="text4">{{$t('myInviteFriends.subject.snesn')}}</p>
 
           </div>
 
       </div>
       <div class='main'>
           <div class='text'>
-              <p class='txt1'>梵蒂冈</p>
-              <p class='txt2'>邀请你加入FUNMVP</p>
-              <p class='txt2'>长按识别二维码</p>
+              <p class='txt1'>{{$t('myInviteFriends.subject.fdg')}}</p>
+              <p class='txt2'>{{$t('myInviteFriends.subject.yqnjr')}}</p>
+              <p class='txt2'>{{$t('myInviteFriends.subject.casb')}}</p>
           </div>
           <div id='qrcode'></div>
       </div>
@@ -27,7 +27,7 @@
 </template> 
 <script>
 const QRCode = require('js-qrcode');
-import {getUserId} from 'common/js/util';
+import {getUserId, setTitle} from 'common/js/util';
 
 export default {
   data() {
@@ -35,8 +35,9 @@ export default {
     };
   },
   mounted() {
+    setTitle(this.$t('myInviteFriends.subject.yqhy'));
     this.userId = getUserId();
-    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();console.log(this.wxUrl)
+    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,

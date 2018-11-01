@@ -1,32 +1,26 @@
 <template>
   <div class="password-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>修改交易密码</span>
-        </p>
-    </header> -->
     <div class="main">
-      <p class='text1' v-show="email == ''"><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
+      <p class='text1' v-show="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p v-show="mobile">{{mobile}}</p>
       <p v-show="email != ''">{{email}}</p>
       <p class='text3'>
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="输入验证码">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
         <i v-show="!show" class='icon'></i>
-        <span v-show="show" @click="get" class='txt2'>获取验证码</span>
-        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
+        <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" placeholder="密码6位-16位">
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.mmjw')">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p>
-        <input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" placeholder="确认密码">
+        <input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">
         <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
       </p>
     </div>
     <div class="foot">
-      <button @click="changeTradPwd">确 定</button>
+      <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
     </div>
    
   <Toast :text="textMsg" ref="toast" />
@@ -59,10 +53,10 @@ export default {
   created() {
     this.istw = getUrlParam('istw');      // 0设置 1修改
     if(this.istw == '1'){
-      setTitle('修改交易密码');
+      setTitle(this.$t('securityTradePassword.subject.xgjymm'));
     }else{
       this.bizType = '805066'
-      setTitle('设置交易密码');
+      setTitle(this.$t('securityTradePassword.subject.szjymm'));
     }
     getUser().then((data) => {
       if(data.mobile){
@@ -111,12 +105,12 @@ export default {
     },
     changeTradPwd() {
       if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('securityTradePassword.subject.txwz');
         this.$refs.toast.show();
         return;
       }
       if(this.newPayPwd !== this.surePwd){
-        this.textMsg = '密码不一致，请重新输入';
+        this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
         this.$refs.toast.show();
         return;
       }else{
@@ -124,7 +118,7 @@ export default {
           this.isLoading = true;
           if(this.istw == '1'){
             changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
-              this.textMsg = '重置密码成功';
+              this.textMsg = this.$t('securityTradePassword.subject.czcg');
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {
@@ -135,7 +129,7 @@ export default {
             });
           }else{
             setTradePwd(this.newPayPwd, this.smsCaptcha).then(data => {
-              this.textMsg = '设置密码成功';
+              this.textMsg = this.$t('securityTradePassword.subject.szcg');
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {

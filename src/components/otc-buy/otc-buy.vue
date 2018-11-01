@@ -7,7 +7,8 @@
         <div class='person'>
           <div class='pic'>
             <p :style="getUserPic(photo)" :class="{'hidden': !(photo)}" alt=""></p>
-            <img :class="{'hidden': photo}" src="./txiang.png"/>
+            <!-- <img :class="{'hidden': photo}" src="./txiang.png"/> -->
+            <HeadPic :content="nickname.substring(0, 1)" :class="{'hidden': photo}"/>
           </div>
           <div class='text'>
             <p class='name'><span class='txt1'>{{data.user.nickname}}</span><span class='icon'>{{bizTypeList[data.payType]}}</span></p>
@@ -106,6 +107,7 @@ import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -149,7 +151,8 @@ export default {
         tradePwd: ''
       },
       photo: '',
-      userId: ''
+      userId: '',
+      nickname: ''
     };
   },
   created() {
@@ -164,6 +167,7 @@ export default {
       setTitle(this.$t('common.cs'));
     }
     getUser(this.userId).then(data => {
+      this.nickname = data.nickname;
       this.photo = data.photo;
     });
     this.otcBuy();
@@ -303,7 +307,8 @@ export default {
   },
   components: {
     Toast,
-    FullLoading
+    FullLoading,
+    HeadPic
   }
 };
 </script>

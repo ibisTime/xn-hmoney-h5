@@ -6,7 +6,8 @@
         <div class="con-user">
             <div class="user-left">
                 <p :style="getUserPic(userDataList.photo)" :class="{'hidden': !(userDataList.photo)}" alt=""></p>
-                <img src="./user.png" :class="{'hidden': (userDataList.photo)}" alt="">
+                <!-- <img src="./user.png" :class="{'hidden': (userDataList.photo)}" alt=""> -->
+                <HeadPic :content="userDataList.nickname.substring(0, 1)" :class="{'hidden': userDataList.photo}"/>
             </div>
             <div class="user-right">
                 <h5>{{userDataList.nickname}}</h5>
@@ -51,6 +52,7 @@ import { getUrlParam, setTitle, formatAmount, getAvatar, getPercentum } from 'co
 import { getUser, getUserRelation, addUserRelation, removeUserRelation } from "api/person";
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -87,7 +89,6 @@ export default {
           this.isLoading = false;
       });
   },
-  computed: {},
   methods: {
       // 计算百分比
       getPercentum(num1, num2){
@@ -159,7 +160,8 @@ export default {
   },
   components: {
       FullLoading,
-      Toast
+      Toast,
+      HeadPic
   }
 };
 </script>

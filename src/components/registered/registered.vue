@@ -1,50 +1,50 @@
 <template>
   <div class="regist-wrapper" @click.stop>
       <div class="card">
-          <h3 class="title">注册</h3>
+          <h3 class="title">{{$t('registered.subject.zc')}}</h3>
           <p calss="tabs" id="tabs">
-              <span :class="[flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag1">手机注册</span>
-              <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">邮箱注册</span>
+              <span :class="[flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag1">{{$t('registered.subject.sjzc')}}</span>
+              <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">{{$t('registered.subject.yxzc')}}</span>
           </p>
           <router-view></router-view>
           <div class="main-tel">
-            <p><input type="text" name="username" v-validate="'required|nickname'" placeholder="请输入用户昵称" v-model="nickname">
+            <p><input type="text" name="username" v-validate="'required|nickname'" :placeholder="$t('registered.subject.srnc')" v-model="nickname">
             <span v-show="errors.has('username')" class="error-tip">{{errors.first('username')}}</span>
             </p>
             <p>
-            <input required v-model="phone" v-show="flag" name="phone" v-validate="'required|phone'" type="text" placeholder="请输入手机号">
+            <input required v-model="phone" v-show="flag" name="phone" v-validate="'required|phone'" type="text" :placeholder="$t('registered.subject.srsjh')">
             <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
             </p>
             <p>
-            <input required v-model="email" v-show="!flag" name="email" v-validate="'required|email'" type="text" placeholder="请输入邮箱账号">
+            <input required v-model="email" v-show="!flag" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')">
             <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
             </p>
             <p class="yzm">
-            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" placeholder="请输入验证码">
+            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" :placeholder="$t('registered.subject.sryzm')">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
-            <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" value="获取验证码">
-            <span class="cxfs" v-if="fscg && type== '0'">重新发送({{time1}}s)</span>
-            <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" value="获取验证码">
-            <span class="cxfs" v-if="fscg1 && type== '1'">重新发送({{time2}}s)</span>
+            <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
+            <span class="cxfs" v-if="fscg && type== '0'">{{$t('registered.subject.cxfs')}}({{time1}}s)</span>
+            <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
+            <span class="cxfs" v-if="fscg1 && type== '1'">{{$t('registered.subject.cxfs')}}({{time2}}s)</span>
             </p>
             <p>
-            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" placeholder="密码由英文数字组合6位-16位">
+            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.ldslw')">
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
             <p>
-            <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" placeholder="请确认密码">
+            <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.qrmm')">
             <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
             </p>
             <p class="check">
-            <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="isLook = true">我已阅读并接受<i>《FUN MVP产品服务条款》</i></span>
+            <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="isLook = true">{{$t('registered.subject.wyjs')}}<i>{{$t('registered.subject.xytk')}}</i></span>
             </p>
-            <input type="submit" @click="regist" value="注册" :class="{'nosubmut': !checked}"/>
+            <input type="submit" @click="regist" :value="$t('registered.subject.zc')" :class="{'nosubmut': !checked}"/>
           </div>
       </div>
       <!-- 注册条款 -->
       <div class="clause-box" v-show="isLook">
         <div class="clause-tit">
-          <h5>注册协议</h5>
+          <h5>{{$t('registered.subject.zcxy')}}</h5>
           <span class="close" @click="isLook = false"></span>
         </div>
         <div class="cla-contant" v-html="clauseText"></div>
@@ -92,7 +92,7 @@ export default {
     };
   },
   created() {
-    setTitle('注册');
+    setTitle(this.$t('registered.subject.zc'));
     this.inviteCode = getUrlParam('inviteCode');
     getSysConfig('reg_protocol').then(data => {
       this.clauseText = data.cvalue;
@@ -111,7 +111,7 @@ export default {
     getSca1() {
       if(this.type == '0'){
         if(this.errors.has('phone') || this.phone == ''){
-          this.textMsg = this.errors.collect('phone')[0] || '手机号不能为空';
+          this.textMsg = this.errors.collect('phone')[0] || this.$t('registered.subject.sjhwk');
           this.$refs.toast.show();
           return;
         }
@@ -133,7 +133,7 @@ export default {
         });
       }else{
         if(this.errors.has('email') || this.email == ''){
-          this.textMsg = this.errors.collect('email')[0] || '邮箱号不能为空';
+          this.textMsg = this.errors.collect('email')[0] || this.$t('registered.subject.yxhwk');
           this.$refs.toast.show();
           return;
         }
@@ -157,13 +157,13 @@ export default {
     },
     regist() {
       if(!this.checked){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('registered.subject.txwz');
         this.$refs.toast.show();
         return;
       }
       if(this.nickname != '' && this.smsCaptcha != '' && this.password1 != '' && !this.errors.any()){
         if(this.password1 !== this.password2){
-          this.textMsg = '密码不一致，请重新输入';
+          this.textMsg = this.$t('registered.subject.mmbyz');
           this.$refs.toast.show();
           return;
         }
@@ -184,7 +184,7 @@ export default {
           delete this.config.smsCaptcha;
           reisteredEamil(this.config).then(data => {
             this.isLoading = false;
-            this.textMsg = '注册成功';
+            this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
               this.$router.push('login');
@@ -197,7 +197,7 @@ export default {
           delete this.config.captcha;
           reistered(this.config).then(data => {
             this.isLoading = false;
-            this.textMsg = '注册成功';
+            this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
               this.$router.push('login');
@@ -207,7 +207,7 @@ export default {
           });
         }
       }else if(this.nickname == '' || this.smsCaptcha == '' || this.password1 == ''){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('registered.subject.txwz');
         this.$refs.toast.show();
         return;
       }

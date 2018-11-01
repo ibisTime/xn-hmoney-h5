@@ -2,10 +2,6 @@
   <div class="order-details-wrapper" @click.stop>
     <div class='header'>
         <div class='top'>
-            <!-- <p>
-                <i class='icon'></i>
-                <span class='txt1'>订单详情</span>
-            </p> -->
         </div>
     </div>
     <!-- 待支付 -->
@@ -13,42 +9,38 @@
         <div class='text1'>
             <p class='txt1'><i class='icon'></i><span>{{statusList[status]}}</span></p>
             <p class='txt2'><span>￥</span>{{money}}</p>
-            <!-- <p class='line'>
-                <span class='t1'>转账附言</span>
-                <span class='red t2'>DUS7</span>
-            </p> -->
         </div>
         <p class='text2 clearfix'>
             <span class='icon ico1'><i class='icon' :class="receiveType == 'alipay' ? 'ico3' : 'ico2'"></i></span>
-            <span class='txt1'>{{receiveType == 'alipay' ? '支付宝' : '银行转账'}}</span>
+            <span class='txt1'>{{receiveType == 'alipay' ? $t('common.zfb') : $t('common.yhkzz')}}</span>
         </p>
         <p class='text3'>
             <!-- 请按一下方式付款，转账务必填写转账附言码 -->
         </p>
         <p class='text4'>
-            <span class='txt1'>类型：</span>
+            <span class='txt1'>{{$t('orderDetail.subject.lx')}}：</span>
             <span class='txt2'>{{typeList[type]}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>收款人：</span>
+            <span class='txt1'>{{$t('orderDetail.subject.skr')}}：</span>
             <span class='txt2'>{{realName}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>收款方式：</span>
+            <span class='txt1'>{{$t('orderDetail.subject.skfs')}}：</span>
             <span class='txt2'>{{zfType[receiveType]}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>账号：</span>
+            <span class='txt1'>{{$t('orderDetail.subject.zh')}}：</span>
             <span class='txt2'>{{receiveCardNo}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>开户行：</span>
+            <span class='txt1'>{{$t('orderDetail.subject.khh')}}：</span>
             <span class='txt2'>{{receiveInfo}}</span>
         </p>
-        <p class='text5'><i class='icon'></i><span>收款账户经过平台认证，请放心收款</span></p>
+        <p class='text5'><i class='icon'></i><span>{{$t('orderDetail.subject.ptrz')}}</span></p>
         <div v-show="btnStatus">
-            <button v-show="qrStatus" @click="qrPayClick">我已完成付款</button>
-            <button class="qx-order" v-show="qxStatus" @click="qxPayClick">取消交易</button>
+            <button v-show="qrStatus" @click="qrPayClick">{{$t('orderDetail.subject.wcfk')}}</button>
+            <button class="qx-order" v-show="qxStatus" @click="qxPayClick">{{$t('orderDetail.subject.qxjy')}}</button>
         </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
@@ -63,22 +55,22 @@ import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
-        textMsg: '操作成功',
+        textMsg: this.$t('common.czcg'),
         isLoading: true,
         qxStatus: false,
         btnStatus: false,
         qrStatus: false,
         statusList: {
-            '0': '待支付',
-            '1': '待确认',
-            '2': '已完成',
-            '3': '已取消',
-            '4': '平台已取消'
+            '0': this.$t('orderDetail.subject.dzf'),
+            '1': this.$t('orderDetail.subject.dqr'),
+            '2': this.$t('orderDetail.subject.ywc'),
+            '3': this.$t('orderDetail.subject.yqx'),
+            '4': this.$t('orderDetail.subject.ptyqx')
         },
         zfType: {},
         typeList: {
-            '0': '买入',
-            '1': '卖出'
+            '0': this.$t('common.mr'),
+            '1': this.$t('common.mc')
         },
         config: {
             start: 1,
@@ -100,7 +92,7 @@ export default {
     };
   },
   created() {
-      setTitle('订单详情');
+      setTitle(this.$t('orderDetail.subject.ddxq'));
       this.config.code = getUrlParam('code');
       this.jyConfig.code = getUrlParam('code');
       getGmBankData().then(data => {
@@ -112,7 +104,7 @@ export default {
   },
   methods: {
     getOrderDetail(){
-        getCTSDetail(this.config).then(data => {
+        getCTSDetail(this.config).then(data => {console.log(data)
             this.realName = data.bankcard ? data.bankcard.realName : data.user.realName;
             this.receiveCardNo = data.receiveCardNo;
             this.receiveInfo = data.receiveInfo;

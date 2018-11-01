@@ -1,14 +1,5 @@
 <template>
   <div class="bill-wrapper" @click.stop>
-    <!-- <header>
-      <p>
-      <i class='icon'></i>
-      <span class='txt1'>账单</span>
-      <span class='txt2'>筛选
-        
-      </span>
-      </p>
-    </header> -->
     <div class='list-wrap'>
       <p class="wallet-p"></p>
       <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
@@ -39,7 +30,7 @@
       </Scroll>
       <div class="no-data" :class="{'hidden': list.length > 0}">
         <img src="./wu.png" />
-        <p>暂无订单</p>
+        <p>{{$t('walletBill.subject.zwjl')}}</p>
       </div>
     </div>
     <!-- 筛选弹窗 -->
@@ -70,28 +61,25 @@ export default {
       watlleType: [
         {
           key: '',
-          value: '全部'
+          value: this.$t('walletBill.subject.qb')
         },{
           key: 'charge',
-          value: '充币'
+          value: this.$t('walletBill.subject.cb')
         },{
           key: 'withdraw',
-          value: '提币'
+          value: this.$t('walletBill.subject.tb')
         },{
           key: 'ccorder_buy',
-          value: '交易买入'
+          value: this.$t('walletBill.subject.jymr')
         },{
           key:'ccorder_sell',
-          value: '交易卖出'
+          value: this.$t('walletBill.subject.jymc')
         },{
           key: 'ccorder_fee',
-          value: '交易手续费'
+          value: this.$t('walletBill.subject.jysxf')
         },{
           key: 'withdraw_fee',
-          value: '提现手续费'
-        },{
-          key: 'award_reg',
-          value: '邀请好友收入'
+          value: this.$t('walletBill.subject.txsxf')
         }
       ],
       code: '12345',
@@ -107,13 +95,12 @@ export default {
     }
   },
   created() {
-    setTitle('币币交易账单');
+    setTitle(this.$t('walletBill.subject.zzjl'));
     this.config.accountNumber = getUrlParam('accountNumber');
     getDictList('jour_biz_type_user').then(data => {
       data.forEach((item) => {
         this.bizTypeValueList[item.dkey] = item.dvalue;
       });
-      console.log(this.bizTypeValueList)
     })
     this.walletBill();
   },

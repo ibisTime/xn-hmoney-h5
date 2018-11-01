@@ -1,29 +1,23 @@
 <template>
   <div class="identity-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>身份认证</span>
-        </p>
-    </header> -->
     <div class='content cont1'>
         <router-link class='tag mb20' :to='isRzNum == -1 ? "security-idcard/sfz" : ""' :class="{'show': isRzNum == '1' || !isSfRz}">
             <p>
-            <span>身份证认证</span>
+            <span>{{$t('securityIdentity.subject.sfzrz')}}</span>
             <span class="rz-sp" :class="{'rz-col': isRzNum == '1'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' :to='isRzNum == -1 ? "security-idcard/hz" : ""' :class="{'show': isRzNum == '2' || !isHzRz}">
             <p>
-            <span>护照认证</span>
+            <span>{{$t('securityIdentity.subject.hzrz')}}</span>
             <span class="rz-sp" :class="{'rz-col': isRzNum == '2'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag' :to='isRzNum == -1 ? "security-idcard/jz" : ""' :class="{'show': isRzNum == '3' || !isJzRz}">
             <p>
-            <span>驾照认证</span>
+            <span>{{$t('securityIdentity.subject.jzrz')}}</span>
             <span class="rz-sp" :class="{'rz-col': isRzNum == '3'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
@@ -42,14 +36,14 @@ export default {
       show: true,
       rzStatusList: {},
       isRzNum: -1,
-      rzStatus: '未认证',
+      rzStatus: this.$t('securityIdentity.subject.wrz'),
       isSfRz: false,
       isHzRz: false,
       isJzRz: false
     };
   },
   created() {
-    setTitle('身份认证');
+    setTitle(this.$t('securityIdentity.subject.sfrz'));
     getDictList("approve_status").then(data => {
       data.forEach(item => {
         this.rzStatusList[`${item.dkey}`] = item.dvalue;

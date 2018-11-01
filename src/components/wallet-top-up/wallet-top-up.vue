@@ -3,23 +3,23 @@
     <header>
       <p>
         <!-- <i class='icon'></i> -->
-        <span v-show="show" class='txt1'>购买FMVP币</span>
-        <span v-show="!show" class='txt1'>出售FMVP币</span>
+        <span v-show="show" class='txt1'>{{$t('walletBuy.subject.gmb')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('walletBuy.subject.csb')}}</span>
         <router-link to='wallect-orderRecord' class='icon ico1'></router-link>
       </p>
     </header>
     <div class='tabs'>
         <p>
-            <span :class="[ show ? 'select' : '' ]" @click='toBuy'>买入</span>
+            <span :class="[ show ? 'select' : '' ]" @click='toBuy'>{{$t('common.mr')}}</span>
         </p>
         <p>
-            <span :class="[ !show ? 'select' : '' ]" @click='toSell'>卖出</span>
+            <span :class="[ !show ? 'select' : '' ]" @click='toSell'>{{$t('common.mc')}}</span>
         </p>
     </div>
     <div class='public'>
-        <p class='text1'>自己币种（FMVP）</p>
+        <p class='text1'>{{$t('walletBuy.subject.zjbz')}}（FMVP）</p>
         <p class='text2'>
-            <span class='txt1'>单价：<i class='txt2'>￥</i></span>
+            <span class='txt1'>{{$t('walletBuy.subject.dj')}}：<i class='txt2'>￥</i></span>
             <span class='txt3'>{{cnyMon}}</span>
         </p>
         <!-- <i class='icon'></i> -->
@@ -29,40 +29,40 @@
         <!-- 买入显示内容 -->
         <div v-show='show' class='area'>
             <p class='tab'>
-                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? '输入购买金额' : '输入购买数量'" v-model="buyMonNumber">
+                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.gmje') : $t('walletBuy.subject.gmsl')" v-model="buyMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
                 <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((buyMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(buyMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
-                <span class=txt2>手续费：<i class=txt3>{{buyFvData}}%</i></span>
+                <span class=txt2>{{$t('walletBuy.subject.sxf')}}：<i class=txt3>{{buyFvData}}%</i></span>
             </p>
         </div>
         <!-- 卖出显示内容 -->
         <div v-show="!show" class='area'>
             <p class='tab'>
-                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
                 <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? '输入出售金额' : '输入出售数量'" v-model="sellMonNumber">
+                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.csje') : $t('walletBuy.subject.cssl')" v-model="sellMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
                 <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
-                <span class=txt2>手续费：<i class=txt3>{{sellFvData}}%</i></span>
+                <span class=txt2>{{$t('walletBuy.subject.sxf')}}：<i class=txt3>{{sellFvData}}%</i></span>
             </p>
         </div>
         <!-- 去购买 -->
         <div class='pay' v-show="show">  
             <p>
-              <span>付款方式</span>
+              <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
-                  支付宝
+                  {{$t('common.zfb')}}
               </span>
             </p>
         </div>
@@ -71,33 +71,33 @@
         </div>
         <div class="pay-note" v-show="show">
           <div>
-            <textarea name="" id="" v-model="buyConfig.remark" placeholder="请输入自己的支付宝账号（以便确认）"></textarea>
+            <textarea name="" id="" v-model="buyConfig.remark" :placeholder="$t('walletBuy.subject.qsrzh')"></textarea>
           </div>
           <div class="pay-tis" v-show="show">
-            <p>付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。</p>
+            <p>{{$t('walletBuy.subject.bzxx')}}</p>
           </div>
         </div>
         <!-- 去出售 -->
         <div class='pay' v-show="!show">
-            <span>付款方式</span>
+            <span>{{$t('walletBuy.subject.zffs')}}</span>
             <span class='txt2'>
                 <select name="" id="" v-model="sellConfig.receiveType">
-                  <option value="">请选择</option>
+                  <option value="">{{$t('walletBuy.subject.qxz')}}</option>
                   <option :value="sellItem.bankName" v-for="(sellItem, index) in gmBankList" :key="index">{{sellItem.bankName}}</option>
                 </select>
                 <i class='icon icon2'></i>
             </span>
         </div>
         <div class="payNum" v-show="!show">
-          <input type="text" placeholder="请输入账号或卡号" v-model="sellConfig.receiveCardNo">
+          <input type="text" :placeholder="$t('walletBuy.subject.zhhkh')" v-model="sellConfig.receiveCardNo">
         </div>
         <div class="payPaw" v-show="!show">
-          <p>资金密码</p>
-          <input type="password" placeholder="请输入资金密码" v-model="sellConfig.tradePwd">
+          <p>{{$t('walletBuy.subject.zjmm')}}</p>
+          <input type="password" :placeholder="$t('walletBuy.subject.qszjmm')" v-model="sellConfig.tradePwd">
         </div>
         <div class="btn-box">
-          <button v-show='show' @click="toBuyClick">确认购买</button>
-          <button v-show='!show' @click="toSellClick">确认出售</button>
+          <button v-show='show' @click="toBuyClick">{{$t('walletBuy.subject.qrgm')}}</button>
+          <button v-show='!show' @click="toSellClick">{{$t('walletBuy.subject.qrcs')}}</button>
         </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
@@ -113,7 +113,7 @@ import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
-      textMsg: '操作成功',
+      textMsg: this.$t('common.czcg'),
       type: '',
       isLoading: true,
       show: true,
@@ -139,7 +139,7 @@ export default {
         tradePrice: '',
         count: '',
         receiveCardNo: '',
-        receiveType: '支付宝',
+        receiveType: this.$t('common.zfb'),
         tradeAmount: '',
         tradePwd: ''       // 资金密码
       },
@@ -156,7 +156,7 @@ export default {
   created() {
     this.type = getUrlParam('type');
     this.show = this.type == 'buy' ? true : false;
-    let text = this.type == 'buy' ? '购买' : '出售';
+    let text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
     setTitle(text);
     getAdverMessage('accept_rule').then(data => {
       this.fmvpTypeData = data;
@@ -223,7 +223,7 @@ export default {
       if(this.show){
         if(this.buyConfig.remark === ''){
           this.isLoading = false;
-          this.textMsg = '请填写打款说明';
+          this.textMsg = this.$t('walletBuy.subject.dksm');
           this.$refs.toast.show();
           return false;
         }
@@ -294,7 +294,7 @@ export default {
       });
     },
     scopeMoney(){
-      this.textMsg = `金额应在${this.fmvpTypeData.accept_order_min_cny_amount}与${this.fmvpTypeData.accept_order_max_cny_amount}之间`;
+      this.textMsg = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
       this.$refs.toast.show();
     }
   },

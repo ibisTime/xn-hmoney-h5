@@ -1,11 +1,5 @@
 <template>
   <div class="top-up-wrapper" @click.stop>
-    <!-- <header>
-      <p>
-        <i class='icon'></i>
-        <span class='txt1'></span>
-      </p>
-    </header> -->
     <div class="main">
       <Scroll 
         ref="scroll"
@@ -21,8 +15,8 @@
               </div>
               <div class='text'>
                   <div class='text1'>
-                      <p class='txt1'>总金额：{{(Math.floor(orderItem.tradeAmount * 100) / 100).toFixed(2)}} <span class='name'>{{orderItem.tradeCurrency}}</span></p>
-                      <p class='txt2 green'>数量：{{orderItem.count}} {{orderItem.tradeCoin}}</p>
+                      <p class='txt1'>{{$t('walletRecord.subject.zje')}}：{{(Math.floor(orderItem.tradeAmount * 100) / 100).toFixed(2)}} <span class='name'>{{orderItem.tradeCurrency}}</span></p>
+                      <p class='txt2 green'>{{$t('common.sl')}}：{{orderItem.count}} {{orderItem.tradeCoin}}</p>
                   </div>
                   <div class='text2'>
                       <p class='txt1'>{{orderItem.createDatetime}}</p>
@@ -34,7 +28,7 @@
       </Scroll>
       <div class="no-data" :class="{'hidden': orderDataList.length > 0}">
         <img src="./wu.png" />
-        <p>暂无订单</p>
+        <p>{{$t('walletRecord.subject.zwdd')}}</p>
       </div>
     </div>
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -63,7 +57,7 @@ export default {
     };
   },
   created() {
-    setTitle('订单记录');
+    setTitle(this.$t('walletRecord.subject.ddjl'));
     getDictList('accept_order_status').then(data => {
       data.forEach(item => {
         this.statusList[item.dkey] = item.dvalue;

@@ -2,26 +2,26 @@
   <div class="password-wrapper" @click.stop>
     <div class="main">
       <p v-show="isEmail">
-        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" placeholder="请输入邮箱或手机号">
+        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" :placeholder="$t('exitLoginPassword.subject.sryxsj')">
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
       <p class='text3' v-show="(mobile == '' || email == '') && isEmail">
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="输入验证码">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="$t('exitLoginPassword.subject.yzm')">
         <i v-show="!show" class='icon'></i>
-        <span v-show="show" @click="get" class='txt2'>获取验证码</span>
-        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
+        <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|password'" :placeholder="!isEmail ? '请输入旧密码' : '英文数字组合6位-16位'">
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|password'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p>
-        <input type="password" v-model="surePwd" name="password1" v-validate="'required|password'" placeholder="确认密码">
+        <input type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
         <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
       </p>
     </div>
     <div class="foot">
-      <button @click="changeLoginPwd">确 定</button>
+      <button @click="changeLoginPwd">{{$t('exitLoginPassword.subject.qd')}}</button>
     </div>
    
   <Toast :text="textMsg" ref="toast" />
@@ -58,7 +58,7 @@ export default {
   },
   created() {
     if(getUserId()){
-      setTitle('修改登录密码');
+      setTitle(this.$t('exitLoginPassword.subject.xgdlmm'));
       getUser().then((data) => {
         if(data.mobile){
           this.isEmail = false;
@@ -71,7 +71,7 @@ export default {
         }
       });
     }else{
-      setTitle('找回密码');
+      setTitle(this.$t('exitLoginPassword.subject.zhmm'));
     }
   },
   mounted() {
@@ -121,7 +121,7 @@ export default {
       if(!this.isEmail){
         changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
           this.isLoading = false;
-          this.textMsg = '操作成功';
+          this.textMsg = this.$t('common.czcg');
           this.$refs.toast.show();
           setTimeout(() => {
             clearUser();
@@ -132,7 +132,7 @@ export default {
         });
       }else{
         if(this.newPayPwd != this.surePwd){
-          this.textMsg = '密码不一致，请重新输入';
+          this.textMsg = this.$t('exitLoginPassword.subject.mmbyz');
           this.$refs.toast.show();
           return;
         }
@@ -140,7 +140,7 @@ export default {
         this.config.smsCaptcha = this.smsCaptcha;
         resetPwd(this.config).then(data => {
           this.isLoading = false;
-          this.textMsg = '重置密码成功';
+          this.textMsg = $t('exitLoginPassword.subject.czmmcg');
           this.$refs.toast.show();
           setTimeout(() => {
             clearUser();

@@ -53,8 +53,6 @@ const WalletBill = () => import('components/wallet-bill/wallet-bill');
 const BillDetails = () => import('components/wallet-bill-details/wallet-bill-details');
 // 我的
 const Mine = () => import('components/mine/mine');
-// 我的 -- 选择货币
-const MyCurrency = () => import('components/my-currency/my-currency');
 // 我的 -- 安全中心
 const mySecurityCenter = () => import('components/my-security-center/my-security-center');
 // 安全中心 -- 谷歌认证
@@ -67,8 +65,6 @@ const securityIdentity = () => import('components/security-identity/security-ide
 const securityIdcard = () => import('components/security-idcard/security-idcard');
 // 安全中心 -- 绑定邮箱 
 const securityBindingEmail = () => import('components/security-binding-email/security-binding-email');
-// 安全中心 -- 修改邮箱 
-const securityEmail = () => import('components/security-email/security-email');
 // 安全中心 -- 修改手机号 
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码 
@@ -91,16 +87,8 @@ const myInviteFriends = () => import('components/my-invite-friends/my-invite-fri
 const myAboutUs = () => import('components/my-about-us/my-about-us');
 // 关于我们 -- 平台介绍
 const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
-// 关于我们 -- 用户协议
-const aboutUserAgreement = () => import('components/about-user-agreement/about-user-agreement');
 // 关于我们 -- 隐私条款
 const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-privacy-policy');
-// 关于我们 -- 法律申明
-const aboutLegalNotices = () => import('components/about-legal-notices/about-legal-notices');
-// 关于我们 -- 费率说明
-const aboutRateExplain = () => import('components/about-rate-explain/about-rate-explain');
-// 关于我们 -- 帮助中心
-const aboutHelpCenter = () => import('components/about-help-center/about-help-center');
 // 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
 // 个人主页 homepage
@@ -227,10 +215,6 @@ export default new Router({
       component: Mine
     },
     {
-      path: '/my-currency',
-      component: MyCurrency
-    },
-    {
       path: '/my-advertising',
       component: myAdvertising
     },
@@ -275,10 +259,6 @@ export default new Router({
       component: securityBindingEmail
     },
     {
-      path: '/security-email',
-      component: securityEmail
-    },
-    {
       path: '/security-phoneNumber',
       component: securityPhoneNumber
     },
@@ -291,24 +271,8 @@ export default new Router({
       component: aboutPlatformIntroduced
     },
     {
-      path: '/about-userAgreement',
-      component: aboutUserAgreement
-    },
-    {
       path: '/about-privacyPolicy',
       component: aboutPrivacyPolicy
-    },
-    {
-      path: '/about-legalNotices',
-      component: aboutLegalNotices
-    },
-    {
-      path: '/about-rateExplain',
-      component: aboutRateExplain
-    },
-    {
-      path: '/about-helpCenter',
-      component: aboutHelpCenter
     },
     {
       path: '/order-details',

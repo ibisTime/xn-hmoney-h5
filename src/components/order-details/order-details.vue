@@ -8,27 +8,27 @@
     </header> -->
     <div class='order'>
         <p>
-            <span class='num'><i class='icon'></i>订单编号：{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
+            <span class='num'><i class='icon'></i>{{$t('myOrderDetail.subject.ddbh')}}：{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
             <span class='state'>{{statusValueList[orderDetailData.status]}}</span>
         </p>
     </div>
     <div class='trading'>
-        <p class='money'><span>交易金额</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
-        <p class='number'><span>交易数量</span><span>{{countString ? countString : '0'}} {{orderDetailData.tradeCoin}}</span></p>
-        <p class='price'><span>交易价格</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='money'><span>{{$t('myOrderDetail.subject.jyje')}}</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='number'><span>{{$t('myOrderDetail.subject.jysl')}}</span><span>{{countString ? countString : '0'}} {{orderDetailData.tradeCoin}}</span></p>
+        <p class='price'><span>{{$t('myOrderDetail.subject.jyjg')}}</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
     </div>
     <div class='message'>
         <div class='mess'>
             <p class='text1'>
-              <span>买家 {{orderDetailData.sellUserInfo.nickname}}</span>
+              <span>{{$t('myOrderDetail.subject.mj')}} {{orderDetailData.sellUserInfo.nickname}}</span>
               <span class='pay'>{{payTypeList[orderDetailData.payType]}}</span>
-              <span class='seller'>卖家： {{orderDetailData.buyUserInfo.nickname}}</span>
+              <span class='seller'>{{$t('myOrderDetail.subject.maij')}}： {{orderDetailData.buyUserInfo.nickname}}</span>
             </p>
             <p class='text2'>{{orderDetailData.leaveMessage}}</p>
         </div>
         <div class='appraise' v-show='this.index == 2'>
-          <p class='txt1'>评价</p>
-          <p class='txt2'>对这次交易非常满意，下次继续合作。</p>
+          <p class='txt1'>{{$t('myOrderDetail.subject.pj')}}</p>
+          <p class='txt2'>{{$t('myOrderDetail.subject.pjyj')}}</p>
         </div>
     </div>
     <div class='window'>
@@ -46,49 +46,49 @@
 
     <div class="chat-input">
         <p>
-            <input type="text" placeholder="请输入聊天内容">
+            <input type="text" :placeholder="$t('myOrderDetail.subject.ltnr')">
             <i class='ico1 icon'></i>
             <i class='ico2 icon'></i>
         </p>
     </div>
     <div class="zc-box" v-show="zcShow">
       <div class='up-window'>
-        <h3>仲裁理由</h3>
+        <h3>{{$t('myOrderDetail.subject.zcly')}}</h3>
         <div class='text'>
-          <textarea type="text" placeholder="请输入申请理由" v-model="reason"></textarea>
+          <textarea type="text" :placeholder="$t('myOrderDetail.subject.sqly')" v-model="reason"></textarea>
         </div>
         <div class='btn'>
-          <button class='no' @click='qxReason'>取消</button>
-          <button class='yes' @click="qrReason">确认</button>
+          <button class='no' @click='qxReason'>{{$t('common.qx')}}</button>
+          <button class='yes' @click="qrReason">{{$t('common.qr')}}</button>
         </div>
       </div>
     </div>
     <div class="zc-box" v-show="showFlag">
       <div class='up-window'>
-        <h3>交易评价</h3>
-        <p>交易有何印象？快來评价吧</p>
+        <h3>{{$t('myOrderDetail.subject.jypj')}}</h3>
+        <p>{{$t('myOrderDetail.subject.yhyx')}}</p>
         <div class='pj-text'>
           <div class="item on">
               <div class="icon icon-good" @click="pjClick('2')">
                 <img src="./hph.png" alt="" :class="{'hidden': userHp}">
                 <img src="./hp.png" alt="" :class="{'hidden': !userHp}">
               </div>
-              <p>好评</p>
+              <p>{{$t('common.hp')}}</p>
           </div>
           <div class="item ml20">
               <div class="icon icon-bad" @click="pjClick('0')">
                 <img src="./cph.png" alt="" :class="{'hidden': userCp}">
                 <img src="./cp.png" alt="" :class="{'hidden': !userCp}">
               </div>
-              <p>差评</p>
+              <p>{{$t('common.cp')}}</p>
           </div>
         </div>
         <div class="pj-content">
-              <textarea name="" id="" placeholder="快來评价吧" v-model="content"></textarea>
+              <textarea name="" id="" :placeholder="$t('myOrderDetail.subject.klpj')" v-model="content"></textarea>
           </div>
         <div class='btn'>
-          <button class='no' @click='qxUserPj'>取消</button>
-          <button class='yes' @click="qrUserPj">确认</button>
+          <button class='no' @click='qxUserPj'>{{$t('common.qx')}}</button>
+          <button class='yes' @click="qrUserPj">{{$t('common.qr')}}</button>
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@ export default {
     };
   },
   created() {
-    setTitle('订单详情');
+    setTitle(this.$t('myOrderDetail.subject.ddxq'));
     this.code = getUrlParam('code');
     getDictList('pay_type').then(data => {
       data.forEach((item) => {
@@ -167,7 +167,7 @@ export default {
     },
     qrUserPj(){
       if(this.comment == ''){
-        this.textMsg = '请点评';
+        this.textMsg = this.$t('myOrderDetail.subject.qdp');
         this.$refs.toast.show();
         return;
       }
@@ -175,9 +175,9 @@ export default {
       this.showFlag = false;
       commentOrder(this.code, this.comment, this.content).then(data => {
         if(data.filterFlag == '2'){
-          this.textMsg = '评价成功, 其中含有关键字，需平台进行审核';
+          this.textMsg = this.$t('myOrderDetail.subject.pjsh');
         }else{
-          this.textMsg = '评价成功';
+          this.textMsg = this.$t('myOrderDetail.subject.pjcg');
         }
         this.$refs.toast.show();
         this.orderMessage();
@@ -194,39 +194,39 @@ export default {
         }
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
-        this.yjTitle = `订单將在拖管中保持至<i>${data.invalidDatetime ? formatDate(data.invalidDatetime, "hh:mm:ss") : '--'}</i>，逾期未支付交易將自动取消`;
+        this.yjTitle = `${this.$t('myOrderDetail.subject.ddbcd')}<i>${data.invalidDatetime ? formatDate(data.invalidDatetime, "hh:mm:ss") : '--'}</i>，${this.$t('myOrderDetail.subject.zdqx')}`;
         // 当前用户为买家
         if (data.buyUser == getUserId()) {
           if(data.status == 0){
             this.btns = `<button class="o-btn payBtn">
-                          标记付款
+                          ${this.$t('myOrderDetail.subject.bjfk')}
                         </button>
                         <button class="o-btn qx-btn cancelBtn">
-                          取消交易
+                          ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
           }else if(data.status == "2"){
             if (data.bsComment != "0" && data.bsComment != "1") {
-              this.btns = `<button class="o-btn pjBtn">交易评价</button>`
+              this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
             }
           }
           if (data.status == "1") {
-            this.btns = `<button class="o-btn qx-btn sqBtn">申请仲裁</button>`
+            this.btns = `<button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`
           }
         }else{  // 当前用户为卖家
           //待支付
           if (data.status == "1") {
-              this.btns = `<button class="o-btn releaseBtn">释放货币</button>
-                          <button class="o-btn qx-btn sqBtn">申请仲裁</button>`;
+              this.btns = `<button class="o-btn releaseBtn">${this.$t('myOrderDetail.subject.sfhb')}</button>
+                          <button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`;
           } else if (data.status == "2") {
               if (data.sbComment != "0" && data.sbComment != "1") {
-                this.btns = `<button class="o-btn pjBtn">交易评价</button>`
+                this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
               }
           }
         }
 
         if(data.status == '-1'){
           this.btns = `<button class="o-btn qx-btn cancelBtn">
-                          取消交易
+                          ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
         }
 
@@ -276,8 +276,12 @@ export default {
 
         // 评价 
         if(target.classList.contains('pjBtn')){
-          this.isLoading = false;
-          this.showFlag = true;
+          releaseOrder(this.code).then(data => {
+            this.orderMessage();
+            this.showFlag = true;
+          }, () => {
+            this.isLoading = false;
+          });
         }
       }
     },
@@ -286,7 +290,7 @@ export default {
     },
     qrReason(){
       if(this.reason == ''){
-        this.textMsg = '申请理由不能为空';
+        this.textMsg = this.$t('myOrderDetail.subject.sqlybk');
         this.$refs.toast.show();
       }
       let config = {
@@ -294,7 +298,7 @@ export default {
         reason: this.reason
       };
       arbitrationlOrder(config).then(data => {
-        this.textMsg = '仲裁发起成功';
+        this.textMsg = this.$t('myOrderDetail.subject.fqcg');
         this.$refs.toast.show();
         this.orderMessage();
       });

@@ -1,19 +1,18 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>绑定邮箱</span>
-        </p>
-    </header> -->
     <div class="main">
-      <p><input v-model="email" type="text" name="email" v-validate="'required|email'" placeholder="请输入邮箱"></p>
+      <p><input v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')"></p>
       <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
-      <p class='text3'><input v-model="captcha" type="text" placeholder="请输入验证码"><i v-show="!show" class='icon' @click="captcha = ''"></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取({{time}}s)</span></p>
+      <p class='text3'>
+        <input v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
+        <i v-show="!show" class='icon' @click="captcha = ''"></i>
+        <span v-show="show" @click="get" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
+      </p>
 
     </div>
     <div class="foot">
-      <button @click="bindEmail">确 定</button>
+      <button @click="bindEmail">{{$t('bindEmail.subject.qd')}}</button>
     </div>
     
   <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -36,7 +35,7 @@ export default {
     };
   },
   created() {
-    setTitle('绑定邮箱');
+    setTitle(this.$t('bindEmail.subject.bdyx'));
   },
   methods: {
     get() {

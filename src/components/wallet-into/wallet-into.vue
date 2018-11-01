@@ -2,12 +2,12 @@
   <div class="wallet-into-wrapper" @click.stop>
     <div class='prompt' v-show="txtShow">
         <p class='text'>
-            {{currency}}钱包地址禁止充值除{{currency}}之外其他资产，任何{{currency}}资产充值将不可找回
+            {{currency}}{{$t('walletInto.subject.qbjz')}}{{currency}}{{$t('walletInto.subject.qbzw')}}{{currency}}{{$t('walletInto.subject.qbzh')}}
         </p>
         <i class='icon' @click="txtShow = false"></i>
     </div>
     <p class='my-address'>
-        我的转入地址
+        {{$t('walletInto.subject.zrdz')}}
     </p>
     <div class='erweima'>
         <div class='ewm-wrap'>
@@ -15,10 +15,10 @@
         </div>
     </div>
     <div class='address'>
-        <p class='txt'>地址 <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>记录</router-link></p>
+        <p class='txt'>{{$t('walletInto.subject.dz')}} <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link></p>
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
-    <button @click='CopyUrl'>复制收款地址</button>
+    <button @click='CopyUrl'>{{$t('walletInto.subject.fzskdz')}}</button>
     <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
@@ -37,7 +37,7 @@ export default {
     };
   },
   created() {
-    setTitle('转入');
+    setTitle(this.$t('walletInto.subject.zr'));
     this.adress = getUrlParam('adress');
     this.currency = getUrlParam('currency');
     this.accountNumber = getUrlParam('accountNumber');
@@ -47,7 +47,7 @@ export default {
       let url = document.querySelector('#copyObj');
       url.select(); // 选择对象
       if(!document.execCommand('Copy')){
-        this.textMsg = '该机型不支持点击复制，请长按文本复制';
+        this.textMsg = this.$t('walletInto.subject.gbzc');
         this.$refs.toast.show();
       }
     }
@@ -195,7 +195,7 @@ export default {
       box-shadow: 0 0.02rem 0.16rem 0 rgba(149, 43, 43, 0.1);
       border-radius: 0.08rem;
       text-indent: 0.22rem;
-      font-size: 0.28rem;
+      font-size: 0.25rem;
       color: #666;
       line-height: 0.8rem;
     }

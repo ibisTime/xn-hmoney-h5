@@ -1,7 +1,7 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
     <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.currency}} {{$t('wallet.subject.b')}}</p>
+      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.currency}} FMVP</p>
       <div class='txt2' style='margin-top:.3rem;'>
         <p class='t1'>{{cdInfo.symbol}} {{currency}}</p>
       </div>
@@ -95,16 +95,10 @@
       // 转出
       zcMoneyFn(currency, amount, accountNumber) {
         getUser().then(data => {
-          if (data.tradepwdFlag && data.realName) {
+          if (data.tradepwdFlag) {
             this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
-          } else if (!data.realName) {
-            this.textMsg = this.$t('wallet.subject.xyzsf');
-            this.$refs.toast.show();
-            setTimeout(() => {
-              this.$router.push('/security-center');
-            }, 1500);
           } else if (!data.tradepwdFlag) {
-            this.textMsg = this.$t('wallet.subject.szzjmm');
+            this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
             setTimeout(() => {
               this.$router.push('/security-center');

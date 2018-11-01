@@ -7,11 +7,11 @@
         </p>
     </header> -->
     <div class="main">
-      <p><input type="text" placeholder="请输入姓名" v-model="config.realName"></p>
-      <p><input type="text" :placeholder="`请输入${rzText}号`" v-model="config.idNo"></p>
+      <p><input type="text" :placeholder="$t('securityIdcard.subject.qsrxm')" v-model="config.realName"></p>
+      <p><input type="text" :placeholder="`${$t('securityIdcard.subject.qsr')}${rzText}${$t('securityIdcard.subject.h')}`" v-model="config.idNo"></p>
     </div>
     <div class="id-pic">
-      <h5>上传{{rzText}}</h5>
+      <h5>{{$t('securityIdcard.subject.sc')}}{{rzText}}</h5>
       <div class="pic-box">
         <qiniu
           ref="qiniu"
@@ -27,7 +27,7 @@
           accept="image/*"
         />
         <p class="add-pic"><img src="./sctp.png" alt=""></p>
-        <p class="pic-tit">{{rzText}}正面</p>
+        <p class="pic-tit">{{rzText}}{{$t('securityIdcard.subject.zm')}}</p>
         <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_z"></div>
       </div>
       <div class="pic-box" style="margin-top: 0.3rem;">
@@ -45,12 +45,12 @@
           accept="image/*"
         />
         <p class="add-pic"><img src="./sctp.png" alt=""></p>
-        <p class="pic-tit">{{rzText}}反面</p>
+        <p class="pic-tit">{{rzText}}{{$t('securityIdcard.subject.fm')}}</p>
         <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_f"></div>
       </div>
     </div>
     <div class="foot">
-      <button @click="scIdCard">确 定</button>
+      <button @click="scIdCard">{{$t('securityIdcard.subject.qd')}}</button>
     </div>
     <Toast ref="toast" :text="text"/>
 
@@ -66,7 +66,7 @@ import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
-      text: '认证发起成功',
+      text: this.$t('securityIdcard.subject.fqcg'),
       rzText: '',
       show: true,
       token: '',
@@ -85,7 +85,7 @@ export default {
       }
     };
   },
-  beforeRouteEnter (to, from, next) {console.log(1)
+  beforeRouteEnter (to, from, next) {
     if(from.path == '/security-identity'){
       next();
     }else{
@@ -96,19 +96,19 @@ export default {
     this.rzType = this.$route.params.type;
     switch(this.rzType){
       case 'sfz': 
-        this.rzText = '身份证';
+        this.rzText = this.$t('securityIdcard.subject.sfz');
         this.config.idKind = '1';
         break;
       case 'hz': 
-        this.rzText = '护照';
+        this.rzText = this.$t('securityIdcard.subject.hz');
         this.config.idKind = '2';
         break;
       case 'jz': 
-        this.rzText = '驾照';
+        this.rzText = this.$t('securityIdcard.subject.jz');
         this.config.idKind = '3';
         break;
     };
-    setTitle(this.rzText + '认证');
+    setTitle(this.rzText + this.$t('securityIdcard.subject.rz'));
   },
   mounted() {
     this.uploadUrl = 'http://up-z0.qiniu.com';
@@ -132,7 +132,7 @@ export default {
       }
     },
     onUploadError(error) {
-      this.text = (error.body && error.body.error) || `${error.message}:10M` || '图片上传出错';
+      this.text = (error.body && error.body.error) || `${error.message}:10M` || this.$t('securityIdcard.subject.tpcc');
       this.$refs.toast.show();
     },
     /**
