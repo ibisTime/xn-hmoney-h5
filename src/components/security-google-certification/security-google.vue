@@ -1,30 +1,24 @@
 <template>
   <div class="google" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>绑定手机号</span>
-        </p>
-    </header> -->
     <div class="main">
         <p>
-          <input type="text" disabled v-model="config.secret" placeholder="密码">
+          <input type="text" disabled v-model="config.secret" :placeholder="$t('securityGoogle.subject.mm')">
         </p>
         <p>
-          <input type="text" v-model="config.googleCaptcha" placeholder="谷歌验证码">
+          <input type="text" v-model="config.googleCaptcha" :placeholder="$t('securityGoogle.subject.ggyzm')">
         </p>
         <p class='text3'>
-          <input v-model="config.smsCaptcha" type="text" placeholder="手机验证码">
+          <input v-model="config.smsCaptcha" type="text" :placeholder="$t('securityGoogle.subject.sjyzm')">
           <span v-show="show" @click="get" class='txt2'>
-              获取验证码
+              {{$t('securityGoogle.subject.hqyzm')}}
           </span>
           <span v-show="!show" class='txt1'>
-              重新获取({{time}}s)
+              {{$t('securityGoogle.subject.cxhq')}}({{time}}s)
           </span>
         </p>
     </div>
     <div class="foot">
-      <button @click="bindPhone">确 定</button>
+      <button @click="bindPhone">{{$t('securityGoogle.subject.qd')}}</button>
     </div>
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -54,7 +48,7 @@ export default {
     };
   },
   created() {
-      setTitle('谷歌认证');
+      setTitle(this.$t('securityGoogle.subject.ggrz'));
       this.googleAuthFlag = getUrlParam('google');
       this.mobile = getUrlParam('mobile');
       if(this.googleAuthFlag == 'false'){
@@ -80,6 +74,8 @@ export default {
                   clearInterval(inTime);
               }
           }, 1000);
+      }, () => {
+        this.show = true;
       });
     },
     bindPhone() {
@@ -88,7 +84,7 @@ export default {
           // 开启谷歌认证
           openGoogle(this.config).then(data => {
               this.isLoading = false;
-              this.textMsg = '开启成功';
+              this.textMsg = this.$t('securityGoogle.subject.kqcg');
               this.$refs.toast.show();
               setTimeout(() => {
                   this.$router.push('/security-center');
@@ -101,7 +97,7 @@ export default {
           delete this.config.secret;
           closeGoogle(this.config).then(data => {
               this.isLoading = false;
-              this.textMsg = '关闭成功';
+              this.textMsg = this.$t('securityGoogle.subject.gbcg');
               this.$refs.toast.show();
               setTimeout(() => {
                   this.$router.push('/security-center');

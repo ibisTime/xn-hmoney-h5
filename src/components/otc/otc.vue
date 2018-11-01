@@ -18,7 +18,7 @@
         <div class='top-main'>
             <p>
               <select name="hbName" @change="selHbName" ref="select_hb">
-                <!-- <option value="">{{ $t('otc.navtxt.xz') }}</option> -->
+                <option value="">{{ $t('otc.navtxt.xz') }}</option>
                 <option value="CNY">CNY</option>
                 <option value="USD">USD</option>
               </select>
@@ -26,7 +26,7 @@
             </p>
             <p>
               <select name="bbPayType" @change="selPayType" ref="select_pay">
-                <!-- <option value="">{{ $t('otc.navtxt.xz') }}</option> -->
+                <option value="">{{ $t('otc.navtxt.xz') }}</option>
                 <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
                 <option value="1">{{ $t('otc.navtxt.wx') }}</option>
                 <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
@@ -55,7 +55,8 @@
             <div class='cont'>
               <div class='preson'>
                 <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
-                  <p class="pic-p" :style="getAvatar(adverItem.user.photo)" alt=""></p>
+                  <p class="pic-p" :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt=""></p>
+                  <HeadPic :content="adverItem.user.nickname.substring(0, 1)" :class="{'hidden': adverItem.user.photo}"/>
                   <span class='green color'></span>
                 </div>
                 <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? $t('otc.subject.ysm') : $t('otc.subject.wsm')}}</span>
@@ -116,6 +117,7 @@ import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
+import HeadPic from 'base/head-pic/headPic';
 /* 
   {
             threshold: 40,
@@ -320,24 +322,9 @@ export default {
     goSellPublish() {
       this.$router.push('buy-publish?type=1');
     }, 
-    getPic(pic, suffix) {
-      if (!pic) {
-          return "";
-      }
-      pic = pic.split(/\|\|/)[0];
-      if (!/^http|^data:image/i.test(pic)) {
-          suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
-          pic = PIC_PREFIX + pic + suffix;
-      }
-      return {backgroundImage: `url(${pic})`};
-    },
-    getAvatar(pic, suffix) {
-      var defaultAvatar = '';
-      var suffix = suffix || this.PHOTO_SUFFIX;
-      if (!pic) {
-          pic = defaultAvatar;
-      }
-      return this.getPic(pic, suffix);
+    // 获取头像
+    getUserPic(pic){
+        return getAvatar(pic);
     },
     // 编辑、购买或出售
     toclAdver(userId, type, code){
@@ -421,7 +408,8 @@ export default {
     Slider,
     Scroll,
     Toast,
-    FullLoading
+    FullLoading,
+    HeadPic
   }
 };
 </script>

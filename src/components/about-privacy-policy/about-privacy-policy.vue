@@ -22,11 +22,11 @@ export default {
   created() {
     this.ckey = getUrlParam('ckey');
     switch(this.ckey){
-      case 'about_us': this.tit = '平台介绍';break;
-      case 'reg_protocol': this.tit = '用户协议';break;
-      case 'privacy': this.tit = '隐私条款';break;
-      case 'raw_note': this.tit = '法律申明';break;
-      case 'fee_note': this.tit = '费率说明';break;
+      case 'about_us': this.tit = this.$t('aboutprivacy.subject.ptjs');break;
+      case 'reg_protocol': this.tit = this.$t('aboutprivacy.subject.yhxy');break;
+      case 'privacy': this.tit = this.$t('aboutprivacy.subject.ystk');break;
+      case 'raw_note': this.tit = this.$t('aboutprivacy.subject.flsm');break;
+      case 'fee_note': this.tit = this.$t('aboutprivacy.subject.fvsm');break;
     }
     setTitle(this.tit);
     getSysConfig(this.ckey).then(data => {

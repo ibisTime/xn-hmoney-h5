@@ -13,7 +13,8 @@
                     <div class="list">
                         <div class='pic'>
                             <p :style="getUserPic(item.user.photo)" :class="{'hidden': !(item.user.photo)}" alt=""></p>
-                            <img :class="{'hidden': item.user.photo}" src="./txiang.png"/>
+                            <!-- <img :class="{'hidden': item.user.photo}" src="./txiang.png"/> -->
+                            <HeadPic :content="item.user.nickname.substring(0, 1)" :class="{'hidden': item.user.photo}"/>
                         </div>
                         <div class='text'>
                             <p><span class='name'>{{item.user.nickname}}</span></p>
@@ -39,6 +40,7 @@
 import { userEvaluate } from "../../api/person";
 import { getAvatar, setTitle, getUrlParam, getUserId, formatDate } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -87,7 +89,8 @@ export default {
     }
   },
   components: {
-      Scroll
+      Scroll,
+      HeadPic
   }
 };
 </script>
@@ -164,14 +167,17 @@ export default {
           color: #323232;
           display: flex;
           p{
-              width: 2rem;
+            margin-right: 0.08rem;
           }
           .name{
             font-size: 0.3rem;
           }
           .isgood{
               span{
-                  padding: 0.02rem 0.25rem;
+                  min-width: 1rem;
+                  display: inline-block;
+                  text-align: center;
+                  padding: 0.05rem 0;
                   border: 1px solid #ccc;
                   border-radius: 0.03rem;
                   color: #888;

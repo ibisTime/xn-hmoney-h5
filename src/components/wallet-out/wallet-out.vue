@@ -2,45 +2,45 @@
   <div class="wallet-out-wrapper" @click.stop>
     <div class='main'>
       <p class='text'>
-        <span>可用余额</span>
+        <span>{{$t('walletOut.subject.kyye')}}</span>
         <input type="text" class='dis' readonly v-model="value">
-        <router-link :to="'wallet-bill'+'?accountNumber=' + config.accountNumber" style="margin-left: 0.6rem;">记录</router-link>
+        <router-link :to="'wallet-bill'+'?accountNumber=' + config.accountNumber" style="margin-left: 0.6rem;">{{$t('walletOut.subject.jl')}}</router-link>
       </p>
       <p class='text'>
-        <span>接受地址</span>
-        <input type="text" placeholder="请输入转币地址" v-model="config.payCardNo">
+        <span>{{$t('walletOut.subject.jsdz')}}</span>
+        <input type="text" :placeholder="$t('walletOut.subject.qsrzzdz')" v-model="config.payCardNo">
       </p>
       <p class='text'>
-        <span>转账数量</span>
-        <input type="number" placeholder="请输入转币数量" v-model="zAmount">
+        <span>{{$t('walletOut.subject.zzsl')}}</span>
+        <input type="number" :placeholder="$t('walletOut.subject.qsrsl')" v-model="zAmount">
       </p>
       <p class='text'>
-        <span>资金密码</span>
-        <input type="password" placeholder="请输入资金密码" v-model="config.tradePwd">
+        <span>{{$t('walletOut.subject.zjmm')}}</span>
+        <input type="password" :placeholder="$t('walletOut.subject.qsrzjmm')" v-model="config.tradePwd">
       </p>
       <!-- <p class='text'>
         <span>谷歌验证码</span>
         <input type="text" placeholder="请输入谷歌验证码" v-model="config.tradePwd">
       </p> -->
       <p class='text'>
-        <span>提现说明</span>
+        <span>{{$t('walletOut.subject.txsm')}}</span>
       </p>
       <div class="tx-box">
-        <textarea type="text" placeholder="请输入提现说明" v-model="config.applyNote"></textarea>
+        <textarea type="text" :placeholder="$t('walletOut.subject.qsrsm')" v-model="config.applyNote"></textarea>
       </div>
 
     </div>
     <div class='plan'>
       <p class='kgfee'>
-        矿工费：{{feeAmount}}
+        {{$t('walletOut.subject.kgf')}}：{{feeAmount}}
       </p>
       <p class='text2'>
-        矿工费将在可用余额中扣除，余额不足将从转账金额扣除
+        {{$t('walletOut.subject.kgfzz')}}
         <br>
-        在平台内相互转账是实时到账且免费的。
+        {{$t('walletOut.subject.zzssmf')}}
       </p>
     </div>
-    <button @click="walletOut">确认转账</button>
+    <button @click="walletOut">{{$t('walletOut.subject.qrzz')}}</button>
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
@@ -77,7 +77,7 @@ export default {
     }
   },
   created() {
-    setTitle('转出');
+    setTitle(this.$t('walletOut.subject.zc'));
     this.currency = getUrlParam('currency');
     this.amount = getUrlParam('amount');
     this.value = formatAmount(this.amount, '', this.currency) + this.currency;
@@ -90,7 +90,7 @@ export default {
   methods: {
     walletOut() {
       if(this.config.payCardNo == '' || this.zAmount == '' || this.config.tradePwd == '' || this.config.applyNote == ''){
-        this.textMsg = '请填写完整';
+        this.textMsg = this.$t('common.txwz');
         this.$refs.toast.show();
         return;
       }
@@ -98,7 +98,7 @@ export default {
       this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
       walletOut(this.config).then(data => {
         this.isLoading = false;
-        this.textMsg = '操作成功';
+        this.textMsg = this.$t('common.czcg');
         this.$refs.toast.show();
         setTimeout(() => {
           this.$router.push(`/wallet-bill?accountNumber=${this.config.accountNumber}`);

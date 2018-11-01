@@ -1,9 +1,6 @@
 <template>
   <div class="bill-details-wrapper" @click.stop>
       <div class='header'>
-            <!-- <p>
-                <span class='title'>账单详情</span>
-            </p> -->
       </div>
       <div class='box'>
             <div class='mess'>
@@ -13,23 +10,23 @@
       </div>
       <div class='main'>
           <div class='list'>
-              <span class='txt1'>变动前金额</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdqje')}}</span>
               <span class='txt2'>{{data.preAmountString}} {{data.currency}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>变动后金额</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdhje')}}</span>
               <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>手续费</span>
+              <span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>
               <span class='txt2'>{{type == '提现' ? fee : '-'}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>变动时间</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdsj')}}</span>
               <span class='txt2'>{{data.createDatetime}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>明细状态</span>
+              <span class='txt1'>{{$t('billDetail.subject.jymx')}}</span>
               <span class='txt2'>{{data.bizNote}}</span>
           </div>
           <!-- <div class='list'>
@@ -56,7 +53,7 @@ export default {
         }
     },
     created() {
-        setTitle('账单详情');
+        setTitle(this.$t('billDetail.subject.zdxq'));
         this.type = getUrlParam('type');
         this.billDetails();
         getSysConfig('withdraw_fee').then(data => {

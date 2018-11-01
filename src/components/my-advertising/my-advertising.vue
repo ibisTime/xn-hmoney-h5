@@ -1,17 +1,11 @@
 <template>
   <div class="order-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>我的广告</span>
-        </p>
-    </header> -->
     <div class='tabs'>
         <p @click="change1">
-            <span :class="[show1? 'select' : '']">待发布</span>
+            <span :class="[show1? 'select' : '']">{{$t('myAdvertising.subject.dfb')}}</span>
         </p>
         <p @click="change2">
-            <span :class="[!show1? 'select' : '']">已发布</span>
+            <span :class="[!show1? 'select' : '']">{{$t('myAdvertising.subject.yfb')}}</span>
         </p>
     </div>
     <div class='adver'>
@@ -24,35 +18,35 @@
         >
             <div class='list-wrap' v-for="(adverItem, index) in myWillAdverList" :key="index">
                 <div class='list1'>
-                    <!--  @click="toHomePage(adverItem.userId, adverItem.tradeCoin)" -->
                     <div class='pic'>
                         <p :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt=""></p>
-                        <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/>
+                        <!-- <img :class="{'hidden': adverItem.user.photo}" src="./txiang.png"/> -->
+                        <HeadPic :content="adverItem.user.nickname.substring(0, 1)" :class="{'hidden': adverItem.user.photo}"/>
                     </div>
                     <div class='text1'>
                         <p class='txt1'><span class='name'>{{adverItem.user.nickname}}</span><span class='green'>{{payTypeList[adverItem.payType]}}</span></p>
-                        <p class='txt2'>交易{{adverItem.userStatistics.jiaoYiCount}} • 好评{{adverItem.userStatistics.beiPingJiaCount != 0 ? getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount) : '0'}} • 信任{{adverItem.userStatistics.beiXinRenCount}}</p>
-                        <p class='txt3'>限额：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
+                        <p class='txt2'>{{$t('common.jy')}}{{adverItem.userStatistics.jiaoYiCount}} • {{$t('common.hp')}}{{adverItem.userStatistics.beiPingJiaCount != 0 ? getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount) : '0'}} • {{$t('common.xr')}}{{adverItem.userStatistics.beiXinRenCount}}</p>
+                        <p class='txt3'>{{$t('myAdvertising.subject.xe')}}：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
                     </div>
                     <div class='text2'>
                         <p class='txt1'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
-                        <span class='txt2' :class="[show1? 'select' : '']" @click="fbAdverFn(adverItem)">发布</span>
+                        <span class='txt2' :class="[show1? 'select' : '']" @click="fbAdverFn(adverItem)">{{$t('myAdvertising.subject.fb')}}</span>
                     </div>
                 </div>
                 <div class='list2'>
                     <div class='text1'>
-                        <p @click.stop="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)"><i class='icon'></i><span>编辑</span></p>
+                        <p @click.stop="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)"><i class='icon'></i><span>{{$t('myAdvertising.subject.bj')}}</span></p>
                     </div>
                     <span :class="{'hidden': show1}">|</span>
                     <div class='text2'>
-                        <p :class="{'hidden': show1}" @click="downAdverFn(adverItem.code)"><i class='icon'></i><span>下架</span></p>
+                        <p :class="{'hidden': show1}" @click="downAdverFn(adverItem.code)"><i class='icon'></i><span>{{$t('myAdvertising.subject.xj')}}</span></p>
                     </div>
                 </div>
             </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': myWillAdverList.length > 0}">
           <img src="./wu.png" />
-          <p>暂无广告</p>
+          <p>{{$t('myAdvertising.subject.zwgg')}}</p>
         </div>
         <Toast :text="textMsg" ref="toast" />
         <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -65,6 +59,7 @@ import {getUserId, formatAmount, setTitle, getAvatar, getPercentum} from 'common
 import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
+import HeadPic from 'base/head-pic/headPic';
 export default {
   data() {
     return {
@@ -74,14 +69,14 @@ export default {
       type: 's',
       hasMore: true,
       isLoading: true,
-      textMsg: '操作成功',
+      textMsg: this.$t('common.czcg'),
       show1: true,
       myWillAdverList: [],
       myAdverList: [],
       payTypeList: {
-          '0': '支付宝',
-          '1': '微信',
-          '2': '银行卡转账'
+          '0': this.$t('common.zfb'),
+          '1': this.$t('common.wx'),
+          '2': this.$t('common.yhkzz')
       },
       config: {
           limit: 5,
@@ -111,7 +106,7 @@ export default {
   },
   created() {
     this.getAdverData();
-    setTitle('我的广告');
+    setTitle(this.$t('myAdvertising.subject.wdgg'));
   },
   methods: {
     getPercentum(num1, num2){
@@ -246,15 +241,12 @@ export default {
             }, 1500);
         })
     },
-    // 个人主页
-    // toHomePage(userId, tradeCoin){
-    //   this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
-    // }
   },
   components: {
       Toast,
       Scroll,
-      FullLoading
+      FullLoading,
+      HeadPic
   }
 };
 </script>

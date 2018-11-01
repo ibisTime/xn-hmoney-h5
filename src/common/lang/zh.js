@@ -33,6 +33,12 @@ export default {
     yhkzz: '银行卡转账',
     qdlhcz: '请登录后操作',
     xdcg: '下单成功',
+    mr: '买入',
+    mc: '卖出',
+    jy: '交易',
+    hp: '好评',
+    xr: '信任',
+    cp: '差评'
   },
   // page页
   page: {
@@ -111,9 +117,9 @@ export default {
       zgj: '最高价',
       kjyzdj: '广告可交易的最低价',
       kyjzgj: '广告可交易的最高价',
-      zxj: '最小价',
+      zxj: '最小限额',
       zced: '单笔交易的最小额度',
-      zdjg: '最大价',
+      zdjg: '最大限额',
       zded: '单笔交易的最大额度',
       zl: '总量',
       ye: '余额',
@@ -141,7 +147,8 @@ export default {
       xqi: '星期四',
       xqw: '星期五',
       xql: '星期六',
-      xqt: '星期天'
+      xqt: '星期天',
+      yjlv: '溢价率应在-50到50之间'
     }
   },
   // 购买页面
@@ -258,8 +265,397 @@ export default {
       tx: '提现',
       wdzc: '我的资产',
       xyzsf: '请先进行身份验证',
-      szzjmm: '请先设置资金密码',
-      
+      szjymm: '请先设置资金密码',
+    }
+  },
+  // 转入
+  walletInto: {
+    subject: {
+      qbtscz: 'ETH钱包地址禁止充值除ETH之外其他资产，任何ETH资产充值将不可找回',
+      qbjz: '钱包地址禁止充值除',
+      qbzw: '之外其他资产，任何',
+      qbzh: '资产充值将不可找回',
+      zrdz: '我的转入地址',
+      dz: '地址',
+      jl: '记录',
+      fzskdz: '复制收款地址',
+      zr: '转入',
+      gbzc: '该机型不支持点击复制，请长按文本复制'
+    }
+  },
+  // 转出
+  walletOut: {
+    subject: {
+      zc: '转出',
+      kyye: '可用余额',
+      jl: '记录',
+      jsdz: '接受地址',
+      qsrzzdz: '请输入转币地址',
+      zzsl: '转账数量',
+      qsrsl: '请输入转币数量',
+      zjmm: '资金密码',
+      qsrzjmm: '请输入资金密码',
+      txsm: '提现说明',
+      qsrsm: '请输入提现说明',
+      kgf: '矿工费',
+      kgfzz: '矿工费将在可用余额中扣除，余额不足将从转账金额扣除',
+      zzssmf: '在平台内相互转账是实时到账且免费的。',
+      qrzz: '确认转账',
+    }
+  },
+  // 转账记录
+  walletBill: {
+    subject: {
+      zwjl: '暂无记录',
+      qb: '全部',
+      cb: '充币',
+      tb: '提币',
+      jymr: '交易买入',
+      jymc: '交易卖出',
+      jysxf: '交易手续费',
+      txsxf: '提现手续费',
+      zzjl: '转账记录',
+
+    }
+  },
+  // 账单详情
+  billDetail: {
+    subject: {
+      bdqje: '变动前金额',
+      bdhje: '变动后金额',
+      sxf: '手续费',
+      bdsj: '变动时间',
+      jymx: '明细状态',
+      zdxq: '账单详情'
+    }
+  },
+  // 买卖fmvp
+  walletBuy: {
+    subject: {
+      gmb: '购买FMVP币',
+      csb: '出售FMVP币',
+      zjbz: '自己币种',
+      dj: '单价',
+      gmje: '输入购买金额',
+      gmsl: '输入购买数量',
+      csje: '输入出售金额',
+      cssl: '输入出售数量',
+      sxf: '手续费',
+      ky: '可用',
+      zffs: '付款方式',
+      qsrzh: '请输入自己的支付宝账号（以便确认）',
+      bzxx: '付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。',
+      qxz: '请选择',
+      zhhkh: '请输入账号或卡号',
+      zjmm: '资金密码',
+      qszjmm: '请输入资金密码',
+      qrgm: '确认购买',
+      qrcs: '确认出售',
+      dksm: '请填写打款说明',
+      jeyzzj: '金额应在1与2之间',
+      jeyz: '金额应在',
+      y: '与',
+      zj: '之间'
+    }
+  },
+  // 订单记录
+  walletRecord: {
+    subject: {
+      zje:'总金额',
+      zwdd: '暂无订单',
+      ddjl: '订单记录'
+    }
+  },
+  // 订单详情
+  orderDetail: {
+    subject: {
+      lx: '类型',
+      skr: '收款人',
+      skfs: '收款方式',
+      zh: '账号',
+      khh: '开户行',
+      ptrz: '收款账户经过平台认证，请放心收款',
+      wcfk: '我已完成付款',
+      qxjy: '取消交易',
+      dzf: '待支付',
+      dqr: '待确认',
+      ywc: '已完成',
+      yqx: '已取消',
+      ptyqx: '平台已取消',
+      ddxq: '订单详情'
+    }
+  },
+  // 个人主页
+  mine: {
+    subject: {
+      jy: '交易',
+      hpl: '好评率',
+      xr: '信任',
+      wygm: '我要购买',
+      wycs: '我要出售',
+      wdgg: '我的广告',
+      wddd: '我的订单',
+      jyds: '交易对手',
+      yqhy: '邀请好友',
+      aqzx: '安全中心',
+      gywm: '关于我们',
+      grzx: '个人中心',
+      ghcg: '更换成功',
+      tpsc: '图片上传出错',
+
+    }
+  },
+  // 我的广告
+  myAdvertising: {
+    subject: {
+      dfb: '待发布',
+      yfb: '已发布',
+      xe: '限额',
+      fb: '发布',
+      bj: '编辑',
+      xj: '下架',
+      zwgg: '暂无广告',
+      wdgg: '我的广告',
+
+    }
+  },
+  // 我的订单
+  myOrder: {
+    subject: {
+      jxz: '进行中',
+      yjs: '已结束',
+      jyje: '交易金额',
+      jysl: '交易数量',
+      ddbh: '订单编号',
+      zwdd: '暂无订单',
+      wddd: '我的订单'
+    }
+  },
+  // 我的订单详情
+  myOrderDetail: {
+    subject: {
+      ddbh: '订单编号',
+      jyje: '交易金额',
+      jysl: '交易数量',
+      jyjg: '交易价格',
+      mj: '买家',
+      maij: '卖家',
+      pj: '评价',
+      pjyj: '对这次交易非常满意，下次继续合作。',
+      ltnr: '请输入聊天内容',
+      zcly: '仲裁理由',
+      sqly: '请输入申请理由',
+      jypj: '交易评价',
+      yhyx: '交易有何印象？快來评价吧',
+      klpj: '快來评价吧',
+      ddxq: '订单详情',
+      qdp: '请点评',
+      pjsh: '评价成功, 其中含有关键字，需平台进行审核',
+      pjcg: '评价成功',
+      ddbcd: '订单將在拖管中保持至',
+      zdqx: '逾期未支付交易將自动取消',
+      bjfk: '标记付款',
+      qxjy: '取消交易',
+      sfhb: '释放货币',
+      sqlybk: '申请理由不能为空',
+      fqcg: '仲裁发起成功',
+      sqzc: '申请仲裁'
+    }
+  },
+  // 交易对手
+  myGuest: {
+    subject: {
+      wxrd: '我信任的',
+      xrwd: '信任我的',
+      wpbd: '我屏蔽的',
+      jycs: '交易次数',
+      xrrs: '信任人数',
+      hpl: '好评率',
+      zwxx: '暂无信息',
+      jyds: '交易对手'
+    }
+  },
+  // 邀请好友
+  myInviteFriends: {
+    subject: {
+      snyf: '送您一份',
+      szzc: '数字资产',
+      mgryg: '每个人都应该拥有一些比特币',
+      ynsn: '1年内，你就会明白它的珍贵；3年内，你就会明白它的价值；',
+      snesn: '10年内，它会给你一个新的世界；20年内，它就是你的生活方式',
+      fdg: '梵蒂冈',
+      yqnjr: '邀请你加入FUNMVP',
+      casb: '长按识别二维码',
+      yqhy: '邀请好友'
+    }
+  },
+  // 安全中心
+  securityCenter: {
+    subject: {
+      jymm: '资金密码',
+      sfrz: '身份认证',
+      ggrz: '谷歌认证',
+      ykq: '已开启',
+      bdyx: '绑定邮箱',
+      ybdyx: '已绑定邮箱',
+      bdsjh: '绑定手机号',
+      ybdsjh: '已绑定手机号',
+      xgdlmm: '修改登录密码',
+      tcdl: '退出登录',
+      aqzx: '安全中心'
+    }
+  },
+  // 修改资金密码
+  securityTradePassword: {
+    subject: {
+      zg: '中国',
+      sryzm: '输入验证码',
+      hqyzm: '获取验证码',
+      cxhq: '重新获取',
+      mmjw: '密码6位-16位',
+      qrmm: '确认密码',
+      qd: '确 定',
+      xgjymm: '修改资金密码',
+      szjymm: '设置资金密码',
+      txwz: '请填写完整',
+      mmbyz: '密码不一致，请重新输入',
+      czcg: '重置密码成功',
+      szcg: '设置密码成功'
+    }
+  },
+  // 身份认证
+  securityIdentity: {
+    subject: {
+      sfzrz: '身份证认证',
+      hzrz: '护照认证',
+      jzrz: '驾照认证',
+      wrz: '未认证',
+      sfrz: '身份认证'
+    }
+  },
+  // 进行身份认证
+  securityIdcard: {
+    subject: {
+      qsrxm: '请输入姓名',
+      qsr: '请输入',
+      h: '号',
+      sc: '上传',
+      zm: '正面',
+      fm: '反面',
+      qd: '确 定',
+      fqcg: '认证发起成功',
+      sfz: '身份证',
+      hz: '护照',
+      jz: '驾照',
+      rz: '认证',
+      tpcc: '图片上传出错'
+    }
+  },
+  // google认证
+  securityGoogle: {
+    subject: {
+      mm: '密码',
+      ggyzm: '谷歌验证码',
+      sjyzm: '手机验证码',
+      hqyzm: '获取验证码',
+      cxhq: '重新获取',
+      qd: '确 定',
+      ggrz: '谷歌认证',
+      kqcg: '开启成功',
+      gbcg: '关闭成功'
+    }
+  },
+  // 绑定邮箱
+  bindEmail: {
+    subject: {
+      sryx: '请输入邮箱',
+      sryz: '请输入验证码',
+      hqyz: '获取验证码',
+      cxhq: '重新获取',
+      qd: '确 定',
+      bdyx: '绑定邮箱'
+    }
+  },
+  // 绑定手机
+  securityPhone: {
+    subject: {
+      sjh: '请输入手机号',
+      yzm: '请输入验证码',
+      hqyzm: '获取验证码',
+      cxhq: '重新获取',
+      qd: '确 定',
+      qtx: '请填写手机号',
+      txwz: '请填写完整'
+    }
+  },
+  // 修改登录密码
+  exitLoginPassword: {
+    subject: {
+      sryxsj: '请输入邮箱或手机号',
+      yzm: '输入验证码',
+      hqyzm: '获取验证码',
+      cxhq: '重新获取',
+      jmm: '请输入旧密码',
+      ywsz: '英文数字组合6位-16位',
+      qrmm: '确认密码',
+      qd: '确 定',
+      xgdlmm: '修改登录密码',
+      zhmm: '找回密码',
+      mmbyz: '密码不一致，请重新输入',
+      czmmcg: '重置密码成功',
+
+    }
+  },
+  // 登录
+  login: {
+    subject: {
+      hyhl: '欢迎回来',
+      srzh: '请输入账号',
+      srldsl: '请输入密码（英文数字组合6位-16位）',
+      dl: '登录',
+      ljzc: '立即注册',
+      wjmm: '忘记密码？'
+    }
+  },
+  // 注册
+  registered: {
+    subject: {
+      zc: '注册',
+      sjzc: '手机注册',
+      yxzc: '邮箱注册',
+      srnc: '请输入用户昵称',
+      srsjh: '请输入手机号',
+      sryxh: '请输入邮箱账号',
+      sryzm: '请输入验证码',
+      hqyzm:'获取验证码',
+      cxfs: '重新发送',
+      ldslw: '密码由英文数字组合6位-16位',
+      qrmm: '请确认密码',
+      wyjs: '我已阅读并接受',
+      xytk: '《FUN MVP产品服务条款》',
+      zcxy: '注册协议',
+      sjhwk: '手机号不能为空',
+      yxhwk: '邮箱号不能为空',
+      txwz: '请填写完整',
+      mmbyz: '密码不一致，请重新输入',
+      zccg: '注册成功'
+    }
+  },
+  //协议
+  aboutprivacy: {
+    subject: {
+      ptjs: '平台介绍',
+      yhxy: '用户协议',
+      ystk: '隐私条款',
+      flsm: '法律申明',
+      fvsm: '费率说明'
+    }
+  },
+  // 聊天
+  messageChat: {
+    subject: {
+      ltnr: '输入聊天内容',
+      sdsm: '说点什么吧'
     }
   }
 };

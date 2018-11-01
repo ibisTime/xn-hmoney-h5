@@ -17,7 +17,7 @@
         </div>
         <div class="h-text">
           <p class="name">{{data.nickname}}</p>
-          <p class="intro">交易 {{data.userStatistics.jiaoYiCount}} | 好评率 {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | 信任 {{data.userStatistics.beiXinRenCount}}</p>
+          <p class="intro">{{$t('mine.subject.jy')}} {{data.userStatistics.jiaoYiCount}} | {{$t('mine.subject.hpl')}} {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | {{$t('mine.subject.xr')}} {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>
@@ -25,11 +25,11 @@
       <div class="trading item-top ">
         <router-link to="wallet-top-up?type=buy" class="buy item-0">
           <i></i>
-          <span>我要购买</span>
+          <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
         <router-link to="wallet-top-up?type=sell" class="sell item-1">
           <i></i>
-          <span>我要出售</span>
+          <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>
       </div>
 
@@ -44,12 +44,12 @@
       <div class="card">
         <router-link to="my-advertising" class="item item-3">
           <i></i>
-          <span class='txt'>我的广告</span>
+          <span class='txt'>{{$t('mine.subject.wdgg')}}</span>
           <span class='icon'></span>
         </router-link>
         <router-link to="my-order" class="item item-4">
             <i></i>
-            <span class="txt">我的订单</span>
+            <span class="txt">{{$t('mine.subject.wddd')}}</span>
             <span class='icon'>{{getUnreadMsgNum ? '您有新消息' : ''}}</span>
         </router-link>
       </div>
@@ -57,12 +57,12 @@
       <div class="card">
         <router-link to="my-guest" class="item item-5">
           <i></i>
-          <span class='txt'>交易对手</span>
+          <span class='txt'>{{$t('mine.subject.jyds')}}</span>
           <span class='icon'></span>
         </router-link>
         <router-link to="my-inviteFriends" class="item item-6">
           <i></i>
-          <span class="txt">邀请好友</span>
+          <span class="txt">{{$t('mine.subject.yqhy')}}</span>
           <span class='icon'></span>
         </router-link>
       </div>
@@ -70,12 +70,12 @@
       <div class="card">
         <router-link to="security-center" class="item item-7">
           <i></i>
-          <span class='txt'>安全中心</span>
+          <span class='txt'>{{$t('mine.subject.aqzx')}}</span>
           <span class='icon'></span>
         </router-link>
         <router-link to="my-aboutUs" class="item item-8">
           <i></i>
-          <span class="txt">关于我们</span>
+          <span class="txt">{{$t('mine.subject.gywm')}}</span>
           <span class='icon'></span>
         </router-link>
       </div>
@@ -124,7 +124,7 @@ export default {
     ])
   },
   created() {
-    setTitle('个人中心');
+    setTitle(this.$t('mine.subject.grzx'));
     getUser().then((data) => {
       this.isLoading = false;
       this.data = data;
@@ -188,7 +188,7 @@ export default {
             if(item.ok === true) {
               self.photos = [item];
               changePhoto(self.photos[0].key).then(() => {
-                self.textMsg = '更换成功';
+                self.textMsg = self.$t('mine.subject.ghcg');
                 self.$refs.toast.show();
               })
             }
@@ -202,7 +202,7 @@ export default {
       reader.readAsDataURL(file);
     },
     onUploadError(error) {
-      this.text = (error.body && error.body.error) || `${error.message}:10M` || '图片上传出错';
+      this.text = (error.body && error.body.error) || `${error.message}:10M` || this.$t('mine.subject.tpsc');
       this.$refs.toast.show();
     },
     updatePhotos(item) {

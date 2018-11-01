@@ -5,13 +5,13 @@
       </div>
       <div class="card">
           <div class="main">
-              <h3>欢迎回来</h3>
-              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" placeholder="请输入账号">
-              <input type="password" v-model="password" name="password" v-validate="'required|password'" placeholder="请输入密码（英文数字组合6位-16位）">
-              <input type="submit" value="登  录" @click='login'>
+              <h3>{{$t('login.subject.hyhl')}}</h3>
+              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" :placeholder="$t('login.subject.srzh')">
+              <input type="password" v-model="password" name="password" v-validate="'required|password'" :placeholder="$t('login.subject.srldsl')">
+              <input type="submit" :value="$t('login.subject.dl')" @click='login'>
               <p>
-                  <router-link class="reg" to="/registered">立即注册</router-link>
-                  <router-link class="paw" to="/security-loginPassword">忘记密码？</router-link>
+                  <router-link class="reg" to="/registered">{{$t('login.subject.ljzc')}}</router-link>
+                  <router-link class="paw" to="/security-loginPassword">{{$t('login.subject.wjmm')}}</router-link>
               </p>
           </div>
       </div>
@@ -29,7 +29,7 @@ export default {
     };
   },
   created(){
-    setTitle('登录');
+    setTitle(this.$t('login.subject.dl'));
   },
   computed: {},
   methods: {

@@ -326,7 +326,7 @@ export default {
     changeYjlPrice(){
       let yj_price = parseFloat(this.yj_price);
       if(50 < yj_price || yj_price < -50){
-        this.textMsg = '溢价率应在-50到50之间';
+        this.textMsg = this.$t('buyPublish.subject.yjlv');
         this.$refs.toast.show();
         this.yj_price = 0;
         return;

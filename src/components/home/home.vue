@@ -71,7 +71,6 @@
   import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
-  import {getBbListData} from 'api/otc';
   export default {
     data() {
       return {
@@ -83,19 +82,6 @@
     },
     created() {
       setTitle(this.$t('footer.navbar.page'));
-      getBbListData().then(data => {
-        for(let i = data.length - 1; i >=0; i --){
-          let obj = {
-            ...data[i],
-            unit: '1e' + data[i].unit
-          };
-          this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-        }
-        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-        this.isLoading = false;
-      }, () => {
-        this.isLoading = false;
-      });
       getBannerList().then((data) => {
         this.banners = data;
         this.isLoading = false;

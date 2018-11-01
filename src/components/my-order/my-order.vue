@@ -8,10 +8,10 @@
     </header> -->
     <div class='tabs'>
         <p>
-            <span :class="[ show ? 'select' : '' ]" @click='starting'>进行中</span>
+            <span :class="[ show ? 'select' : '' ]" @click='starting'>{{$t('myOrder.subject.jxz')}}</span>
         </p>
         <p>
-            <span :class="[ !show ? 'select' : '' ]" @click='ended'>已结束</span>
+            <span :class="[ !show ? 'select' : '' ]" @click='ended'>{{$t('myOrder.subject.yjs')}}</span>
         </p>
     </div>
     <div class='list-start'>
@@ -29,22 +29,26 @@
                       :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
                     >
                     </p>
-                    <img :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}" src="./txiang.png"/>
+                    <!-- <img :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}" src="./txiang.png"/> -->
+                    <HeadPic :content="item.buyUser !== userId ? item.buyUserInfo.nickname.substring(0, 1) : item.sellUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}"/>
                 </div>
                 <div class='text1'>
-                    <p class='txt1'><span class='t1' >{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span><span :class="[item.type === 'buy' ? 'txt2 buy' : 'txt2 sell']">{{typeList[item.type]}} {{item.tradeCoin}}</span></p>
-                    <p class='txt2'>交易金额：{{item.tradePrice ? item.tradePrice : '0'}} {{item.tradeCurrency}}</p>
-                    <p class='txt2'>交易数量：{{item.countString ? item.countString : '0'}} {{item.tradeCoin}}</p>
+                    <p class='txt1'>
+                      <span class='t1' >{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span>
+                      <span :class="[item.buyUser !== userId ? 'txt2 buy' : 'txt2 sell']">{{typeList[item.buyUser !== userId ? 'buy' : 'sell']}} {{item.tradeCoin}}</span>
+                    </p>
+                    <p class='txt2'>{{$t('myOrder.subject.jyje')}}：{{item.tradePrice ? item.tradePrice : '0'}} {{item.tradeCurrency}}</p>
+                    <p class='txt2'>{{$t('myOrder.subject.jysl')}}：{{item.countString ? item.countString : '0'}} {{item.tradeCoin}}</p>
                 </div>
                 <div class='text2'>
                     <p class='txt1'>{{statusValueList[item.status]}}</p>
-                    <p class='txt2' :title="item.code" >订单编号:{{item.code.substring(item.code.length-8)}}</p>
+                    <p class='txt2' :title="item.code" >{{$t('myOrder.subject.ddbh')}}:{{item.code.substring(item.code.length-8)}}</p>
                 </div>
             </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': list.length > 0}">
           <img src="./wu.png" />
-          <p>暂无订单</p>
+          <p>{{$t('myOrder.subject.zwdd')}}</p>
         </div>
     </div>
   </div>
@@ -55,6 +59,7 @@ import { getDictList } from "api/general";
 import { formatAmount, getAvatar, setTitle } from "common/js/util";
 import Scroll from 'base/scroll/scroll';
 import { getUserId } from '../../common/js/util';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -67,16 +72,17 @@ export default {
       start2: 1,
       limit: 10,
       typeList: {
-        "sell": "出售",
-        "buy": "购买"
+        "sell": this.$t('common.cs'),
+        "buy": this.$t('common.gm')
       },
       statusValueList: {},
       type: 's',
-      statusList: ['0', '-1', '1', '5']
+      statusList: ['0', '-1', '1', '5'],
+      orderType: ''
     };
   },
   created() {
-    setTitle('我的订单');
+    setTitle(this.$t('myOrder.subject.wddd'));
     getDictList('trade_order_status').then(data => {
       data.forEach((item) => {
         this.statusValueList[item.dkey] = item.dvalue
@@ -171,7 +177,8 @@ export default {
     }
   },
   components: {
-      Scroll
+      Scroll,
+      HeadPic
   }
 };
 </script>

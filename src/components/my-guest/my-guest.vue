@@ -2,9 +2,9 @@
   <div class="guest-wrapper" @click.stop>
     <header>
         <p>
-          <span @click="toxrFn('1')">我信任的</span>
-          <span @click="toxrFn('0')">信任我的</span>
-          <span @click="toxrFn('2')">我屏蔽的</span>
+          <span @click="toxrFn('1')" :class="{'select': type == '1'}">{{$t('myGuest.subject.wxrd')}}</span>
+          <span @click="toxrFn('0')" :class="{'select': type == '0'}">{{$t('myGuest.subject.xrwd')}}</span>
+          <span @click="toxrFn('2')" :class="{'select': type == '2'}">{{$t('myGuest.subject.wpbd')}}</span>
         </p>
     </header>
     <div class='main' >
@@ -19,7 +19,8 @@
                 <div class='list' v-for='(item,index) in list' :key="index">
                     <div class='pic'>
                         <p :style="getUserPic(item.toUserInfo.photo)" :class="{'hidden': !(item.toUserInfo.photo)}" alt=""></p>
-                        <img :class="{'hidden': item.toUserInfo.photo}" src="./txiang.png"/>
+                        <!-- <img :class="{'hidden': item.toUserInfo.photo}" src="./txiang.png"/> -->
+                        <HeadPic :content="item.toUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.toUserInfo.photo}"/>
                     </div>
                     <div class='text'>
                         <div class='text1'>
@@ -27,16 +28,16 @@
                             <p class='txt2 gray'>{{item.createDatetime}}</p>
                         </div>
                         <div class='text2'>
-                            <p class='txt1'>交易次数：{{item.toUserInfo.userStatistics.jiaoYiCount}}</p>
-                            <p class='txt2'>信任人数：{{item.toUserInfo.userStatistics.beiXinRenCount}}</p>
-                            <p class='txt2'>好评率：{{getPercentum(item.toUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo.userStatistics.beiPingJiaCount)}}</p>
+                            <p class='txt1'>{{$t('myGuest.subject.jycs')}}：{{item.toUserInfo.userStatistics.jiaoYiCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.xrrs')}}：{{item.toUserInfo.userStatistics.beiXinRenCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.hpl')}}：{{getPercentum(item.toUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo.userStatistics.beiPingJiaCount)}}</p>
                         </div>
                     </div>
                 </div>
             </Scroll>
             <div class="no-data" :class="{'hidden': len > 0}">
                 <img src="./wu.png" />
-                <p>暂无信息</p>
+                <p>{{$t('myGuest.subject.zwxx')}}</p>
             </div>
         </div>
 
@@ -47,6 +48,7 @@
 import { myGuest, getPageTrust } from "../../api/person";
 import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -60,11 +62,12 @@ export default {
         start: 1,
         limit: 10,
         type: '1'
-      }
+      },
+      type: '1'
     };
   },
   created() {
-    setTitle('交易对手');
+    setTitle(this.$t('myGuest.subject.jyds'));
     // this.myGuest();
     this.getPageTrust();
   },
@@ -108,6 +111,7 @@ export default {
       });
     },
     toxrFn(type){
+      this.type = type;
       switch(type){
         case '0': this.config.type = '0';this.start = 1;this.list = [];this.getPageTrust();break;
         case '1': this.config.type = '1';this.start = 1;this.list = [];this.getPageTrust();break;
@@ -116,7 +120,8 @@ export default {
     }
   },
   components: {
-      Scroll
+      Scroll,
+      HeadPic
   }
 };
 </script>
@@ -229,6 +234,10 @@ export default {
         }
       }
     }
+  }
+  .select{
+    color: #d53d3d;
+    border-bottom: .04rem solid #d53d3d;
   }
 }
 </style>

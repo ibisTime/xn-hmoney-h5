@@ -23,7 +23,8 @@
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam, isUnDefined} from './common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
-
+  import {getBbListData} from 'api/otc';
+  
   export default {
     mixins: [messageMixin],
     data() {
@@ -50,6 +51,19 @@
       } else {
         this.showFlag = false;
       }
+      getBbListData().then(data => {
+        for(let i = 0; i < data.length; i ++){
+          let obj = {
+            ...data[i],
+            unit: '1e' + data[i].unit
+          };
+          this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+        }
+        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
       this.$router.beforeEach((to, from, next) => {
         // 聊天界面隐藏购买飘窗
         if (this.showFlag && this.$refs.touchDemo) {
