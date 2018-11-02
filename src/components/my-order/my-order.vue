@@ -37,7 +37,7 @@
                       <span class='t1' >{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span>
                       <span :class="[item.buyUser !== userId ? 'txt2 buy' : 'txt2 sell']">{{typeList[item.buyUser !== userId ? 'buy' : 'sell']}} {{item.tradeCoin}}</span>
                     </p>
-                    <p class='txt2'>{{$t('myOrder.subject.jyje')}}：{{item.tradePrice ? item.tradePrice : '0'}} {{item.tradeCurrency}}</p>
+                    <p class='txt2'>{{$t('myOrder.subject.jyje')}}：{{item.status!="-1" ? item.tradeAmount : ''}} {{item.tradeCurrency}}</p>
                     <p class='txt2'>{{$t('myOrder.subject.jysl')}}：{{item.countString ? item.countString : '0'}} {{item.tradeCoin}}</p>
                 </div>
                 <div class='text2'>

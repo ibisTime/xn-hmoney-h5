@@ -11,6 +11,7 @@
       @touchstart.stop="fbTouchStartFn"
       @touchmove.stop="fbTouchMoveFn"
       @touchend.stop="fbTouchEndFn"
+      v-show="showFlag"
     >
       <div >去购买FMVP</div>
     </div>
@@ -20,7 +21,7 @@
 <script type="text/ecmascript-6">
   //@touchmove.prevent
   import Toast from 'base/toast/toast';
-  import {isLogin, getUrlParam} from './common/js/util';
+  import {isLogin, getUrlParam, isUnDefined} from './common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
   import {getBbListData} from 'api/otc';
   
@@ -41,6 +42,7 @@
         touchDemo: '',
         docuWidth: '',
         docuHeight: '',
+        showFlag: true
       }
     },
     created() {
@@ -64,7 +66,9 @@
             this.isLoading = false;
           });
         }
+        
         if (isLogin()) {
+          // 腾讯云登陆
           this.tencentLogin();
           next();
         } else {

@@ -1,10 +1,10 @@
 <template>
   <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
     <div class='header' :class="{'col-header': !show2}">
-      <span v-show="show2" to=''><i class='icon' @click="showTwo"></i></span>
+      <span v-show="show2"><i class='icon' @click="showTwo"></i></span>
       <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
       <p>
-        <select name="" id="" v-model="symNumber" @change="changeSymBaz">
+        <select name="" class="cg-bb" v-model="symNumber" @change="changeSymBaz">
           <option :value="index" v-for="(symItem, index) in symBazList" :key="index">{{symItem.symbol}}/{{symItem.toSymbol}}</option>
         </select>
         <i class='icon' :class="{'icon-bai': !show2}"></i>
@@ -130,8 +130,8 @@
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
               <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-              <span class='txt2'>{{buyItem ? (Math.floor(formatAmount(buyItem.price, '', setBazDeal.toSymbol) * 10000) / 10000).toFixed(4) : '--'}}</span>
-              <span class='txt3'>{{buyItem ? (Math.floor(formatAmount(buyItem.count, '', setBazDeal.symbol) * 10000) / 10000).toFixed(4) : '--'}}</span>
+              <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, '', setBazDeal.toSymbol) : '--'}}</span>
+              <span class='txt3'>{{buyItem ? formatAmount(buyItem.count, '', setBazDeal.symbol) : '--'}}</span>
             </p>
           </div>
 
@@ -212,8 +212,8 @@
         <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
         <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
         <div class='foot'>
-          <button class='sell'><router-link to='wallet-top-up?type=buy'>{{$t('trading.bbDeal.mr')}}FMVP</router-link></button>
-          <button class='buy'><router-link to='wallet-top-up?type=sell'>{{$t('trading.bbDeal.mc')}}FMVP</router-link></button>
+          <button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}FMVP</button>
+          <button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}FMVP</button>
         </div>
       </div>
     </div>
@@ -346,13 +346,13 @@ export default {
         this.myOrderTicket();
       }
 
-      // this.handTime = setInterval(() => {
-      //   if(this.isLogin){
-      //     this.getUserWalletData();
-      //   }
-      //   this.handicapData();
-      //   this.realTimeData();
-      // }, 5000);
+      this.handTime = setInterval(() => {
+        if(this.isLogin){
+          this.getUserWalletData();
+        }
+        this.handicapData();
+        this.realTimeData();
+      }, 5000);
 
     });
   },
@@ -415,14 +415,14 @@ export default {
         this.myOrderData = [];
         this.myOrderTicket();
       }
-      // clearInterval(this.handTime);
-      // this.handTime = setInterval(() => {
-      //   if(this.isLogin){
-      //     this.getUserWalletData();
-      //   }
-      //   this.handicapData();
-      //   this.realTimeData();
-      // }, 5000);
+      clearInterval(this.handTime);
+      this.handTime = setInterval(() => {
+        if(this.isLogin){
+          this.getUserWalletData();
+        }
+        this.handicapData();
+        this.realTimeData();
+      }, 5000);
     },
     handicapData(){
       // 查询盘口
@@ -442,17 +442,9 @@ export default {
           });
           this.bbAsks.map(item => {
             item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-            item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
+            // item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-            item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
-          // this.bbBids.map(item => {
-          //   item.price = formatAmount(item.price, '', this.setBazDeal.toSymbol);
-          //   item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
-          //   item.count = formatAmount(item.count, '', this.setBazDeal.symbol);
-          //   item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
-          // });
-          console.log(this.bbBids)
           if(this.selIndex == 0){
             this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
           }
@@ -518,7 +510,7 @@ export default {
       this.xjPrice = '';
       this.wetNumber = '';
       if(this.downConfig.type == '1'){
-        this.xjPrice = this.bbBids[0] ? this.bbBids[0].price : '';
+        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, '', this.setBazDeal.toSymbol) : '';
       }
     },
     //选择市价或是限价
@@ -669,6 +661,28 @@ export default {
     },
     formatAmount(money, len, coin){
       return formatAmount(money, len, coin);
+    },
+    // 去买
+    toBuy(){
+      this.show2 = true;
+      this.downConfig.direction = '0';
+      this.show1 = true;
+      this.xjPrice = '';
+      this.wetNumber = '';
+      if(this.downConfig.type == '1'){
+        this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+      }
+    },
+    // 去卖
+    toSell(){
+      this.show2 = true;
+      this.downConfig.direction = '1';
+      this.show1 = false;
+      this.xjPrice = '';
+      this.wetNumber = '';
+      if(this.downConfig.type == '1'){
+        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, '', this.setBazDeal.toSymbol) : '';
+      }
     }
   },
   components: {
@@ -768,6 +782,9 @@ export default {
       background-image: url('./fbai.png');
       margin-top: .25rem;
     }
+    .cg-bb{
+      padding: 0.2rem 0;
+    }
   }
 
   .col-header{
@@ -809,7 +826,7 @@ export default {
 
       .txt2 {
         color: #d53d3d;
-        margin-right: 1.06rem;
+        margin-right: 0.2rem;
       }
 
       .txt3 {
@@ -829,7 +846,7 @@ export default {
       }
 
       .txt4 {
-        margin-right: .1rem;
+        margin-right: .4rem;
       }
       .txt6 {
         float: right;
@@ -847,11 +864,12 @@ export default {
       .left {
         margin-right: .2rem;
         .he9 {
-          width: 3.9rem;
+          width: 2.9rem;
           height: .9rem;
           padding-right: 0.2rem;
           border: .01rem solid #e5e5e5;
           display: flex;
+          font-size: 0.26rem;
           justify-content: space-between;
           line-height: .9rem;
           input[attr="placeholder"] {
@@ -911,17 +929,18 @@ export default {
             font-size: .2rem;
             color: #484848;
             line-height: .55rem;
+            span{
+              text-align: center;
+              width: 41%;
+              display: inline-block;
+            }
             .txt1 {
-              margin-right: .2rem;
               display: inline-block;
               width: .6rem;
-              text-align: left;
             }
             .txt3 {
               float: right;
-              text-align: right;
-            }
-            
+            } 
           }
         }
         .middle {
@@ -939,14 +958,17 @@ export default {
     }
     .max-len{
       max-width: 2.1rem;
+      margin-left: 0.05rem;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .max-len_r{
-      width: 95%;
+      width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       word-spacing: normal;
+      font-size: 0.26rem;
+      padding-left: 0.1rem;
     }
 
     .entrust {
@@ -1127,10 +1149,8 @@ export default {
         button {
           flex: 1;
           height: .9rem;
-          a {
-            font-size: .32rem;
-            color: #fff;
-          }
+          font-size: .32rem;
+          color: #fff;
         }
       }
       

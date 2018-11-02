@@ -19,7 +19,7 @@
           </div>
           <div class='list'>
               <span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>
-              <span class='txt2'>{{type == '提现' ? fee : '-'}}</span>
+              <span class='txt2'>{{type == '提币' || type == '提币冻结' || type == '提币手续费' || type == '提币解冻'? fee : '-'}}</span>
           </div>
           <div class='list'>
               <span class='txt1'>{{$t('billDetail.subject.bdsj')}}</span>

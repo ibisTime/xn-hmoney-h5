@@ -6,7 +6,7 @@
     </div>
     <div class="slider-wrapper">
         <slider v-if="banners.length">
-          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)">
+          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
         <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
@@ -103,6 +103,9 @@
         return {
           backgroundImage: `url(${formatImg(imgs)})`
         };
+      },
+      toUrl(url){
+        window.open(url);
       }
     },
     components: {

@@ -37,7 +37,7 @@
       </div>
       <div class="slider-wrapper">
         <slider v-if="banners.length">
-          <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)">
+          <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
       </div>
@@ -118,15 +118,6 @@ import Scroll from 'base/scroll/scroll';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 import HeadPic from 'base/head-pic/headPic';
-/* 
-  {
-            threshold: 40,
-            txt: {
-              more: this.$t('common.jzz') + '...',
-              noMore: this.$t('common.jzwb')
-            }
-          }
- */
 export default {
   data() {
     return {
@@ -177,7 +168,7 @@ export default {
     };
   },
   created() {
-    setTitle('场外交易');
+    setTitle(this.$t('page.cate.otc'));
     getBannerList().then((data) => {
       this.banners = data;
     });
@@ -301,17 +292,7 @@ export default {
       this.$router.push('otc-buy');
     },
     relShow() {
-      getUser().then(data => {
-        if(data.tradepwdFlag){
-          this.Show = true;
-        }else if(!data.tradepwdFlag){
-          this.textMsg = this.$t('common.szzjmm');
-          this.$refs.toast.show();
-          setTimeout(() => {
-            this.$router.push('/security-tradePassword');
-          }, 1500);
-        }
-      });
+      this.Show = true;
     },
     relClose() {
       this.Show = false;
@@ -320,7 +301,17 @@ export default {
       this.$router.push('buy-publish?type=0');
     },
     goSellPublish() {
-      this.$router.push('buy-publish?type=1');
+      getUser().then(data => {
+        if(data.tradepwdFlag){
+          this.$router.push('buy-publish?type=1');
+        }else if(!data.tradepwdFlag){
+          this.textMsg = this.$t('common.szzjmm');
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('/security-tradePassword');
+          }, 1500);
+        }
+      });
     }, 
     // 获取头像
     getUserPic(pic){
@@ -401,6 +392,9 @@ export default {
     },
     fbTouchEndFn(){
       this.flags = false;
+    },
+    toUrl(url){
+      window.open(url);
     }
   },
   components: {

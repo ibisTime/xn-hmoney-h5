@@ -39,3 +39,5 @@ export const curChatUserId = state => state.curChatUserId;
 export const tencentLogined = state => state.tencentLogined;
 
 export const userMap = state => state.userMap;
+
+export const unreadMsgNum = state => state.unreadMsgNum;

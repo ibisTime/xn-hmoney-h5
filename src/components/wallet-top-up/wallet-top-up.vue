@@ -63,7 +63,7 @@
             <p>
               <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
-                  {{$t('common.zfb')}}
+                  {{$t('common.zfb')}} {{bankcardNumber}}
               </span>
             </p>
         </div>
@@ -180,6 +180,7 @@ export default {
         this.zfType[item.bankName] = item.bankCode;
         this.zfNumber[item.bankName] = item.bankcardNumber;
       });
+      this.selBankcar();
     });
     // 数字货币折合
     // getNumberMoney('FMVP', 'CNY').then(data => {

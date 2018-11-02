@@ -63,7 +63,8 @@ export default {
     navbar: {
       title: '商城',
       txt: '区块链游戏',
-      car: '二手车'
+      car: '二手车',
+      escdh: '二手车兑换'
     },
     subject: {
       yxye: '游戏余额',
@@ -258,11 +259,12 @@ export default {
       bzzc: '币种资产',
       dj: '冻结',
       ky: '可用',
-      zr: '转入',
-      zc: '转出',
+      zr: '充币',
+      zc: '提币',
       zd: '账单',
-      cz: '充值',
-      tx: '提现',
+      cz: '去购买',
+      tx: '去出售',
+      ddjl: '订单记录',
       wdzc: '我的资产',
       xyzsf: '请先进行身份验证',
       szjymm: '请先设置资金密码',
@@ -595,6 +597,7 @@ export default {
       yzm: '输入验证码',
       hqyzm: '获取验证码',
       cxhq: '重新获取',
+      xmm: '请输入6-16位的新密码',
       jmm: '请输入旧密码',
       ywsz: '英文数字组合6位-16位',
       qrmm: '确认密码',
@@ -648,7 +651,11 @@ export default {
       yhxy: '用户协议',
       ystk: '隐私条款',
       flsm: '法律申明',
-      fvsm: '费率说明'
+      fvsm: '费率说明',
+      lxwm: '联系我们',
+      gg: '公告',
+      bzzx: '帮助中心',
+      gywm: '关于我们'
     }
   },
   // 聊天

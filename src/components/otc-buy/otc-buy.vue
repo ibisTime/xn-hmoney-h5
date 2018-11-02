@@ -26,7 +26,7 @@
             <span>{{$t('otcBuy.userMsg.xrcs')}}</span>
           </div>
           <div @click="$router.push('/userpj?userId=' + userId)">
-            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}%</p>
+            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}</p>
             <span>{{$t('otcBuy.userMsg.xrl')}}</span>
           </div>
           <div>
@@ -391,7 +391,6 @@ export default {
           .txt1 {
             display: inline-block;
             line-height: 0.28rem;
-            overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
           }

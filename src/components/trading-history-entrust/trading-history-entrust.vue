@@ -85,7 +85,7 @@ export default {
         this.hisConfig.limit = this.limit;
         getMyHistoryData(this.hisConfig).then(data => {
             data.list.map(item => {
-                item.createDatetime = formatDate(item.createDatetime, 'yy-MM-dd hh:mm:ss');
+                item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
                 item.price = formatAmount(`${item.price}`, '', item.toSymbol);
                 item.totalAmount = formatAmount(`${item.totalAmount}`, '', item.toSymbol);
                 item.totalCount = formatAmount(`${item.totalCount}`, '', item.symbol);

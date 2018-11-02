@@ -17,7 +17,7 @@
       </div>
       <div class='main'>
           <div class='text'>
-              <p class='txt1'>{{$t('myInviteFriends.subject.fdg')}}</p>
+              <p class='txt1'>{{nickName}}</p>
               <p class='txt2'>{{$t('myInviteFriends.subject.yqnjr')}}</p>
               <p class='txt2'>{{$t('myInviteFriends.subject.casb')}}</p>
           </div>
@@ -28,14 +28,19 @@
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId, setTitle} from 'common/js/util';
+import {getUser} from 'api/user';
 
 export default {
   data() {
     return {
+        nickName: ''
     };
   },
   mounted() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
+    getUser().then(data => {
+        this.nickName = data.nickname;
+    });
     this.userId = getUserId();
     this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
     const container = document.getElementById('qrcode');

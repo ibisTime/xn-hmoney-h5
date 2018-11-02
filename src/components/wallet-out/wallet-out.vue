@@ -80,7 +80,7 @@ export default {
     setTitle(this.$t('walletOut.subject.zc'));
     this.currency = getUrlParam('currency');
     this.amount = getUrlParam('amount');
-    this.value = formatAmount(this.amount, '', this.currency) + this.currency;
+    this.value = this.amount + this.currency;
     this.config.accountNumber = getUrlParam('accountNumber');
     this.config.payCardInfo = this.currency;
     getSysConfig('withdraw_fee').then(data => {

@@ -1,9 +1,9 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
     <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.currency}} FMVP</p>
+      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
       <div class='txt2' style='margin-top:.3rem;'>
-        <p class='t1'>{{cdInfo.symbol}} {{currency}}</p>
+        <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
       </div>
       <div class='txt3'>
       </div>
@@ -42,6 +42,7 @@
       <div class='operate' v-if="infoItem.currency === 'FMVP'">
         <router-link to='wallet-top-up?type=buy' class='txt1'>{{$t('wallet.subject.cz')}}</router-link>
         <router-link to='wallet-top-up?type=sell' class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
+        <router-link to='wallect-orderRecord' class='txt2'>{{$t('wallet.subject.ddjl')}}</router-link>
       </div>
     </div>
     <Footer></Footer>
@@ -79,6 +80,7 @@
       setTitle(this.$t('wallet.subject.wdzc'));
       this.wallet();
       userAllMoneyX(this.currency).then(v => {
+        v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
         this.cdInfo = v;
       })
     },
@@ -87,10 +89,9 @@
       wallet() {
         wallet().then(v => {
           v.map(item => {
-            console.log(item);
+            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency);
             item.amount = formatAmount(item.amount, '', item.currency);
             item.frozenAmount = formatAmount(item.frozenAmount, '', item.currency);
-            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency)
           })
           this.info = v;
           this.isLoading = false;
@@ -107,7 +108,7 @@
             this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('/security-center');
+              this.$router.push('/security-tradePassword?istw=0');
             }, 1500);
           }
         });
@@ -244,7 +245,7 @@
       .ico1, .ico2, .ico3 {
         width: 1.2rem;
         height: 1.2rem;
-        @include bg-image("x");
+        @include bg-image("f");
         position: absolute;
         top: .3rem;
         right: .4rem;
