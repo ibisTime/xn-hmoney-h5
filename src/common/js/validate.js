@@ -75,9 +75,9 @@ Validator.extend('password', {
 
 // 昵称校验
 Validator.extend('nickname', {
-  getMessage: field => '昵称4-10位',
+  getMessage: field => '昵称2-10位',
   validate: value => {
-    return 3 < value.length && value.length < 11;
+    return 1 < value.length && value.length < 11;
   }
 });
 

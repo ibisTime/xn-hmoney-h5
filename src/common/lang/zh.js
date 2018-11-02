@@ -629,7 +629,7 @@ export default {
       sryzm: '请输入验证码',
       hqyzm:'获取验证码',
       cxfs: '重新发送',
-      ldslw: '密码由英文数字组合6位-16位',
+      ldslw: '英文数字组合6位-16位',
       qrmm: '请确认密码',
       wyjs: '我已阅读并接受',
       xytk: '《FUN MVP产品服务条款》',

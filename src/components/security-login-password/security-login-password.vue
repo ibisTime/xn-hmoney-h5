@@ -124,8 +124,8 @@ export default {
           this.textMsg = this.$t('common.czcg');
           this.$refs.toast.show();
           setTimeout(() => {
-            clearUser();
-            this.$router.push('login');
+            // clearUser();
+            this.$router.push('mine');
           }, 1500);
         }, () => {
           this.isLoading = false;

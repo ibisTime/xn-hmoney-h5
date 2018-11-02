@@ -101,10 +101,20 @@ export default {
   computed: {},
   methods: {
     changeFlag1() {
+      this.nickname = '';
+      this.email = '';
+      this.smsCaptcha = '';
+      this.password1 = '';
+      this.password2 = '';
       this.type = '0';
       this.flag = true;
     },
     changeFlag2() {
+      this.nickname = '';
+      this.phone = '';
+      this.smsCaptcha = '';
+      this.password1 = '';
+      this.password2 = '';
       this.type = '1';
       this.flag = false;
     },
@@ -255,7 +265,7 @@ export default {
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
       color: #999;
-      padding: 0.3rem 0;
+      padding: 0.3rem 0.1rem;
       box-sizing: border-box;
       height: 1.2rem;
       line-height: 1.2rem;
@@ -398,7 +408,8 @@ export default {
       font-size: 0.5rem;
       font-weight: 400;
       text-align: center;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
+      margin-top: 0.2rem;
       .close{
         position: absolute;
         right: 0;
@@ -413,7 +424,7 @@ export default {
     }
     .cla-contant{
       width: 100%;
-      height: 10rem;
+      height: 11rem;
       line-height: 1.7;
       font-size: 0.32rem;
       overflow-y: scroll;

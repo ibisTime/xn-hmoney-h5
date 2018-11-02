@@ -142,6 +142,8 @@ export function isUndefined(value) {
  * @param isRe 是否去零
  */
 export function formatAmount(money, format, coin, isRe = false) {
+  // console.log('m:', money)
+// if(money == '90000'){debugger}
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
   let flag = false;// 是否是负数
   if (isNaN(money)) {
@@ -157,7 +159,7 @@ export function formatAmount(money, format, coin, isRe = false) {
   if (isUndefined(format) || typeof format === 'object') {
     format = 2;
   }
-  if (coin && isUndefined(format)) {
+  if (coin) {
     format = 8;
   }
   // 金额格式化 金额除以unit并保留format位小数
@@ -172,6 +174,7 @@ export function formatAmount(money, format, coin, isRe = false) {
   if (flag) {
     money = '-' + money;
   }
+  // console.log('mon:', money)
   return money;
 }
 

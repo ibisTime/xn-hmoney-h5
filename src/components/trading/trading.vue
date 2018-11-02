@@ -130,8 +130,8 @@
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
               <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-              <span class='txt2'>{{buyItem ? buyItem.price : '--'}}</span>
-              <span class='txt3'>{{buyItem ? buyItem.count : '--'}}</span>
+              <span class='txt2'>{{buyItem ? (Math.floor(formatAmount(buyItem.price, '', setBazDeal.toSymbol) * 10000) / 10000).toFixed(4) : '--'}}</span>
+              <span class='txt3'>{{buyItem ? (Math.floor(formatAmount(buyItem.count, '', setBazDeal.symbol) * 10000) / 10000).toFixed(4) : '--'}}</span>
             </p>
           </div>
 
@@ -141,7 +141,7 @@
         <div class='tabs'>
           <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
           <p @click='showHisto' class='history'><i class='icon'></i>
-          <router-link to='trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link></p>
+          <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link></p>
         </div>
         <div v-show="!show3" class='current-history'>
           <Scroll 
@@ -346,13 +346,13 @@ export default {
         this.myOrderTicket();
       }
 
-      this.handTime = setInterval(() => {
-        if(this.isLogin){
-          this.getUserWalletData();
-        }
-        this.handicapData();
-        this.realTimeData();
-      }, 5000);
+      // this.handTime = setInterval(() => {
+      //   if(this.isLogin){
+      //     this.getUserWalletData();
+      //   }
+      //   this.handicapData();
+      //   this.realTimeData();
+      // }, 5000);
 
     });
   },
@@ -415,14 +415,14 @@ export default {
         this.myOrderData = [];
         this.myOrderTicket();
       }
-      clearInterval(this.handTime);
-      this.handTime = setInterval(() => {
-        if(this.isLogin){
-          this.getUserWalletData();
-        }
-        this.handicapData();
-        this.realTimeData();
-      }, 5000);
+      // clearInterval(this.handTime);
+      // this.handTime = setInterval(() => {
+      //   if(this.isLogin){
+      //     this.getUserWalletData();
+      //   }
+      //   this.handicapData();
+      //   this.realTimeData();
+      // }, 5000);
     },
     handicapData(){
       // 查询盘口
@@ -432,11 +432,12 @@ export default {
         this.bbAsks.length = 7;
         this.bbBids.length = 7;
         let asks = data.asks.sort( (a, b) => (b - a) );
+        let bids = data.bids;
         if(data.bids.length > 0 || data.asks.length > 0){
           asks.forEach((item, index) => {
             this.bbAsks[6 - index] = JSON.parse(JSON.stringify(item));
           });
-          data.bids.forEach((item, index) => {
+          bids.forEach((item, index) => {
             this.bbBids[index] = JSON.parse(JSON.stringify(item));
           });
           this.bbAsks.map(item => {
@@ -445,12 +446,13 @@ export default {
             item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
             item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
           });
-          this.bbBids.map(item => {
-            item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-            item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
-            item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-            item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
-          });
+          // this.bbBids.map(item => {
+          //   item.price = formatAmount(item.price, '', this.setBazDeal.toSymbol);
+          //   item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
+          //   item.count = formatAmount(item.count, '', this.setBazDeal.symbol);
+          //   item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
+          // });
+          console.log(this.bbBids)
           if(this.selIndex == 0){
             this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
           }
@@ -527,6 +529,7 @@ export default {
     },
     showHisto() {
       this.show3 = true;
+      this.$router.push('trading-historyEntrust');
     },
     showCurr() {
       this.show3 = false;
@@ -663,6 +666,9 @@ export default {
       if(!this.show1){
         this.xjPrice = this.bbBids[index] ? this.bbBids[index].price : '0';
       }
+    },
+    formatAmount(money, len, coin){
+      return formatAmount(money, len, coin);
     }
   },
   components: {

@@ -550,6 +550,7 @@ export default {
         width: 4.1rem;
         padding-left: 0.5rem;
         flex: 1;
+        font-size: 100%;
     }
 
     input[attr="placeholder"] {

@@ -30,7 +30,7 @@
                     </div>
                     <div class='text2'>
                         <p class='txt1'>{{adverItem.truePrice.toFixed(2)}} {{adverItem.tradeCurrency}}</p>
-                        <span class='txt2' :class="[show1? 'select' : '']" @click="fbAdverFn(adverItem)">{{$t('myAdvertising.subject.fb')}}</span>
+                        <span class='txt2 select' v-show="show1" @click="fbAdverFn(adverItem)">{{$t('myAdvertising.subject.fb')}}</span>
                     </div>
                 </div>
                 <div class='list2'>
@@ -50,6 +50,7 @@
         </div>
         <Toast :text="textMsg" ref="toast" />
         <FullLoading ref="fullLoading" v-show="isLoading"/> 
+        <Confirm ref="confirm" :text="'是否下架？'" :confirmBtnText="'确定'" :cancelBtnText="'取消'" @confirm="confirmAdverFn"/>
     </div>
   </div>
 </template>
@@ -60,6 +61,7 @@ import Toast from 'base/toast/toast';
 import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
 import HeadPic from 'base/head-pic/headPic';
+import Confirm from 'base/confirm/confirm';
 export default {
   data() {
     return {
@@ -101,7 +103,8 @@ export default {
         truePrice: '0',
         premiumRate: '0',   // 溢价率
         userId: getUserId()
-      }
+      },
+      adsCode: ''
     };
   },
   created() {
@@ -231,22 +234,30 @@ export default {
     },
     // 下架广告
     downAdverFn(adsCode){
+        this.$refs.confirm.show();
+        this.adsCode = adsCode;
+    },
+    confirmAdverFn(){
         this.start2 = 1;
         this.myWillAdverList = [];
-        downAdvertise(adsCode).then(data => {
+        this.isLoading = true;
+        downAdvertise(this.adsCode).then(data => {
             this.$refs.toast.show();
             this.getAdverData();
             setTimeout(() => {
                 this.$refs.toast.hide();
             }, 1500);
+        }, () => {
+            this.isLoading = false;
         })
-    },
+    }
   },
   components: {
       Toast,
       Scroll,
       FullLoading,
-      HeadPic
+      HeadPic,
+      Confirm
   }
 };
 </script>

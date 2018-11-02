@@ -19,9 +19,9 @@
          :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
       <div class='my'>
         <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
-        <p class='txt2'>{{formatAmount(infoItem.amount, '', infoItem.currency)}}</p>
-        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{formatAmount(infoItem.frozenAmount, '', infoItem.currency)}}</span><span
-          :title="infoItem.amount - infoItem.frozenAmount">{{$t('wallet.subject.ky')}}{{formatMoneySubtract(infoItem.amount, infoItem.frozenAmount, '', infoItem.currency)}} {{infoItem.currency}}</span>
+        <p class='txt2'>{{infoItem.amount}}</p>
+        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
+          :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
         </p>
       </div>
       <div class='datil'>
@@ -86,6 +86,12 @@
       // 列表查询用户账户
       wallet() {
         wallet().then(v => {
+          v.map(item => {
+            console.log(item);
+            item.amount = formatAmount(item.amount, '', item.currency);
+            item.frozenAmount = formatAmount(item.frozenAmount, '', item.currency);
+            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency)
+          })
           this.info = v;
           this.isLoading = false;
         }, () => {
