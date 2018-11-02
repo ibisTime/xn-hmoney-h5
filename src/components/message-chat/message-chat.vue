@@ -36,7 +36,7 @@
                   </template>
                 </i>
                 <div @click="reSendMsg(info, index)" v-show="showErr(info)" class="error-icon"></div>
-                <div class="loading-wrapper" v-show="showLoading(info)"><loading title=""></loading></div>
+                <!--<div class="loading-wrapper" v-show="showLoading(info)"><loading title=""></loading></div>-->
               </div>
             </div>
            </div>
@@ -157,12 +157,14 @@
       // 获取订单详情
       getDetail() {
         getOrderDetail(this.groupId).then((data) => {
+          let receiver = {};
           // 判断卖家卖家
           if (data.buyUser === this.userId) {
-            this.receiver = data.sellUserInfo;
+            receiver = data.sellUserInfo;
           } else {
-            this.receiver = data.sellUserInfo;
+            receiver = data.sellUserInfo;
           }
+          this.receiver = new User(receiver);
           setTitle(this.receiver.nickname);
         }).catch(() => {});
       },
@@ -206,7 +208,7 @@
         this.$refs.emoji.hide();
         if (!isUnDefined(this.emoji) && this.emoji.trim() !== '') {
           this.onSendMsg(this.emoji, (info) => {
-            this.saveChatHistory(info);
+            // this.saveChatHistory(info);
             // setTimeout(() => {
               // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
               // this.scroll.scrollIntoViewIfNeeded();
@@ -395,7 +397,7 @@
                 status: SUCCESS
               }
             };
-            this.saveChatHistory(newMsg);
+            // this.saveChatHistory(newMsg);
             setTimeout(() => {
               index = isUnDefined(index) ? this.curChatList.length - 1 : index;
               this.$refs.scroll.scrollToElement(this.$refs.mesRef[index], 100);

@@ -44,6 +44,7 @@ export const messageMixin = {
     },
     // 监听新消息
     onMsgNotify(newMsgList) {
+      console.log(newMsgList);
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
         let selSess;
@@ -121,6 +122,7 @@ export const messageMixin = {
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
+      console.log(isUnDefined(this.$route.path.split('/message/')[1]));
       if (isUnDefined(this.$route.path.split('/message/')[1])) {
         flag = false;
       }
