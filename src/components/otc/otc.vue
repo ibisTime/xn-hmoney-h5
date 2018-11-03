@@ -121,7 +121,6 @@ import HeadPic from 'base/head-pic/headPic';
 export default {
   data() {
     return {
-      PHOTO_SUFFIX: '?imageMogr2/auto-orient/thumbnail/!150x150r',
       userId: getUserId(),
       isLoading: true,
       bbList: [],
@@ -622,7 +621,7 @@ export default {
             color:#d53d3d;
             margin-top: .1rem;
             text-align: center;
-            line-height: .28rem;
+            line-height: .26rem;
           }
           .wname{
             color: #777;

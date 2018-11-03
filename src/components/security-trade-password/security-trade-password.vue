@@ -1,9 +1,9 @@
 <template>
   <div class="password-wrapper" @click.stop>
     <div class="main">
-      <p class='text1' v-show="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p v-show="mobile">{{mobile}}</p>
-      <p v-show="email != ''">{{email}}</p>
+      <p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
+      <p v-if="mobile">{{mobile}}</p>
+      <p v-if="email != ''">{{email}}</p>
       <p class='text3'>
         <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
         <i v-show="!show" class='icon'></i>

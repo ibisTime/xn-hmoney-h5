@@ -570,6 +570,7 @@ export default {
     justify-content: space-between;
     .chat {
       width: 50%;
+      text-align: center;
       border-top: .01rem solid #e6e6e6;
       span {
         display: inline-block;

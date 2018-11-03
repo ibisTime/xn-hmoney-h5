@@ -3,6 +3,7 @@
     <div class="mine-header">
       <div class="my">
         <div class="pic" :style="getAvatar()">
+            <HeadPic :content="picName" :class="{'hidden': data.photo}"/>
             <qiniu
               ref="qiniu"
               style="visibility: hidden;position: absolute;"
@@ -32,14 +33,6 @@
           <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>
       </div>
-
-      <!--<div class="card">-->
-        <!--<router-link to="my-currency" class="item item-2">-->
-          <!--<i></i>-->
-          <!--<span class='txt'>选择货币</span>-->
-          <!--<span class='icon'></span>-->
-        <!--</router-link>-->
-      <!--</div>-->
 
       <div class="card">
         <router-link to="my-advertising" class="item item-3">
@@ -98,6 +91,7 @@ import { getQiniuToken } from 'api/general';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 import {mapGetters} from 'vuex';
+import HeadPic from 'base/head-pic/headPic';
 
 export default {
   data() {
@@ -115,7 +109,8 @@ export default {
       photos: [],
       token: '',
       uploadUrl: '',
-      multiple: false
+      multiple: false,
+      picName: ''
     };
   },
   computed: {
@@ -128,6 +123,7 @@ export default {
     getUser().then((data) => {
       this.isLoading = false;
       this.data = data;
+      this.picName = data.nickname.substring(0, 1);
     }, () => {
       this.isLoading = false;
     });
@@ -222,7 +218,8 @@ export default {
     Footer,
     Qiniu,
     Toast,
-    FullLoading
+    FullLoading,
+    HeadPic
   }
 };
 </script>
@@ -267,7 +264,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        background-image: url('./tou.png');
+        // background-image: url('./tou.png');
         float: left;
         .input-file {
           position: absolute;
