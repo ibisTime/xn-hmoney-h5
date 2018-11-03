@@ -13,9 +13,9 @@
         </p>
     </div>
     <div class='trading'>
-        <p class='money'><span>{{$t('myOrderDetail.subject.jyje')}}</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='money'><span>{{$t('myOrderDetail.subject.jyje')}}</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '-'}} {{orderDetailData.tradeCurrency}}</span></p>
         <p class='number'><span>{{$t('myOrderDetail.subject.jysl')}}</span><span>{{countString ? countString : '0'}} {{orderDetailData.tradeCoin}}</span></p>
-        <p class='price'><span>{{$t('myOrderDetail.subject.jyjg')}}</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '0'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='price'><span>{{$t('myOrderDetail.subject.jyjg')}}</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '-'}} {{orderDetailData.tradeCurrency}}</span></p>
     </div>
     <div class='message'>
         <div class='mess'>
@@ -209,7 +209,8 @@ export default {
       token: '',
       sendMessage: false,
       getPrePageGroupHistroyMsgInfoMap: {},
-      isMWindow: true
+      isMWindow: true,
+      // isShowTime: true
     };
   },
   created() {
@@ -238,6 +239,8 @@ export default {
       data.forEach((item) => {
           this.payTypeList[item.dkey] = item.dvalue;
       });
+    }, () => {
+      this.isLoading = false;
     });
     getDictList('trade_order_status').then(data => {
         data.forEach((item) => {
@@ -245,6 +248,8 @@ export default {
         });
       this.getInitData();
       this.orderMessage();
+    }, () => {
+      this.isLoading = false;
     })
   },
   mounted() {
@@ -285,7 +290,7 @@ export default {
         return;
       }
       this.isLoading = true;
-      this.showFlag = false;
+      this.showFlag = true;
       commentOrder(this.code, this.comment, this.content).then(data => {
         if(data.filterFlag == '2'){
           this.textMsg = this.$t('myOrderDetail.subject.pjsh');
@@ -293,7 +298,10 @@ export default {
           this.textMsg = this.$t('myOrderDetail.subject.pjcg');
         }
         this.$refs.toast.show();
-        this.orderMessage();
+        sessionStorage.setItem('ordering', 'ended');
+        setTimeout(() => {
+          this.$router.push('my-order');
+        }, 1200);
       }, () => {
         this.isLoading = false;
         this.orderMessage();
@@ -320,7 +328,11 @@ export default {
         }
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
-        this.yjTitle = `${this.$t('myOrderDetail.subject.ddbcd')}<i>${data.invalidDatetime ? formatDate(data.invalidDatetime, "hh:mm:ss") : '--'}</i>，${this.$t('myOrderDetail.subject.zdqx')}`;
+        if(data.invalidDatetime){
+          this.yjTitle = `${this.$t('myOrderDetail.subject.ddbcd')}<i>${formatDate(data.invalidDatetime, "hh:mm:ss")}</i>，${this.$t('myOrderDetail.subject.zdqx')}`;
+        }else{
+          this.yjTitle = '';
+        }
         // 当前用户为买家
         if (data.buyUser == getUserId()) {
           if(data.status == 0){
@@ -361,7 +373,6 @@ export default {
           this.yjTitle = data.remark;
           this.btns = '';
         }
-
         this.isLoading = false;
       });
     },
@@ -403,6 +414,7 @@ export default {
         // 评价 
         if(target.classList.contains('pjBtn')){
           this.showFlag = true;
+          this.isLoading = false;
         }
       }
     },
@@ -1108,7 +1120,6 @@ export default {
         margin-bottom: 0.3rem;
         .pay {
           display: inline-block;
-          width: 0.74rem;
           background: #0ec55b;
           font-size: 0.2rem;
           line-height: 0.28rem;
@@ -1267,9 +1278,9 @@ export default {
   }
   .up-window{
     position: absolute;
-    top: 4.1rem;
+    top: 40%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     width: 6.14rem;
     // height: 6.5rem;
     background: #fff;
@@ -1421,7 +1432,6 @@ export default {
         line-height: 0.76rem;
         text-align: center;
         color: #fff;
-
         &.avatarDefault{
           background-color: $primary-color;
         }
@@ -1486,6 +1496,7 @@ export default {
         line-height: 0.76rem;
         text-align: center;
         color: #fff;
+        margin-right: 0.2rem;
 
         &.avatarDefault{
           background-color: $primary-color;

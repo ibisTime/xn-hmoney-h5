@@ -1,11 +1,11 @@
 <template>
   <div class="password-wrapper" @click.stop>
     <div class="main">
-      <p v-show="isEmail">
+      <p v-if="isEmail">
         <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" :placeholder="$t('exitLoginPassword.subject.sryxsj')">
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
-      <p class='text3' v-show="(mobile == '' || email == '') && isEmail">
+      <p class='text3' v-if="(mobile == '' || email == '') && isEmail">
         <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')">
         <i v-show="!show" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>

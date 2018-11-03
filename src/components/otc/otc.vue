@@ -57,7 +57,7 @@
                 <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
                   <p class="pic-p" :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}" alt=""></p>
                   <HeadPic :content="adverItem.user.nickname.substring(0, 1)" :class="{'hidden': adverItem.user.photo}"/>
-                  <span class='green color'></span>
+                  <span class='color' :class="calculateFn(adverItem.user.lastLogin)"></span>
                 </div>
                 <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? $t('otc.subject.ysm') : $t('otc.subject.wsm')}}</span>
               </div>
@@ -78,7 +78,6 @@
           <p>{{ $t('common.zwgg') }}</p>
         </div>
       </div>
-      <Toast :text="textMsg" ref="toast" />
       <div   
         class='release'
         ref="touchDemo"
@@ -104,12 +103,13 @@
     </div>
     <div @click='relClose' class='close'></div>
 </div>
-<FullLoading ref="fullLoading" v-show="isLoading"/>
+  <Toast :text="textMsg" ref="toast" />
+  <FullLoading ref="fullLoading" v-show="isLoading"/>
 </div>
 </template>
 <script>
 import Footer from 'components/footer/footer';
-import {formatImg, getUserId, getAvatar, setTitle, getPercentum} from 'common/js/util';
+import {formatImg, getUserId, getAvatar, setTitle, getPercentum, calculateDays} from 'common/js/util';
 import {getUser} from 'api/user';
 import {getBannerList} from 'api/general';
 import {getAdvertisingData} from 'api/otc';
@@ -163,7 +163,8 @@ export default {
           more: this.$t('common.jzz') + '...',
           noMore: this.$t('common.jzwb')
         }
-      }
+      },
+      loginStatus: ''
     };
   },
   created() {
@@ -189,6 +190,17 @@ export default {
   computed: {
   },
   methods: {
+    // 登录状态
+    calculateFn(userTime){
+      let time = calculateDays(userTime, new Date());
+      if (time <= 10) {
+        return 'green';
+      } else if (time <= 30) {
+        return 'yellow';
+      } else {
+        return 'gray';
+      }
+    },
     // 计算百分比
     getPercentum(num1, num2){
         return getPercentum(num1, num2);
@@ -700,13 +712,12 @@ export default {
 .release2 {
   width: 100%;
   height: 100%;
-  z-index: 1000;
   position: fixed;
   top: 0;
   left: 0;
   background: #fff;
   opacity: 0.64;
-  z-index: 1000;
+  z-index: 90;
 
   .main {
     width: 100%;

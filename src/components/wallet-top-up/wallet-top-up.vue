@@ -109,6 +109,7 @@
 import {getAdverMessage} from 'api/otc';
 import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam, getPic} from 'common/js/util';
 import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
+import {getUser} from 'api/user';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 export default {
@@ -152,7 +153,8 @@ export default {
       gmBankList: [],   // 去出售账号列表
       cdsMoney: '',
       fmvpTypeData: {},   // 承兑商参数
-      zfPic: ''
+      zfPic: '',
+      istradepwdFlag: true
     };
   },
   created() {
@@ -204,8 +206,22 @@ export default {
         this.isLoading = false;
       });
     });
+
+    if(this.type == 'sell'){
+      this.pwdFlag();
+    }
   },
   methods: {
+    // 验证资金密码
+    pwdFlag(){
+      getUser().then(data => {
+        if(!data.tradepwdFlag){
+          this.textMsg = this.$t('common.szzjmm');
+          this.$refs.toast.show();
+          this.istradepwdFlag = false;
+        }
+      });
+    },
     buy() {
       this.showDet = true;
     },
@@ -217,6 +233,7 @@ export default {
     },
     toSell() {
       this.show = false;
+      this.pwdFlag();
     },
     selBankcar(){
       let list = this.zfBankList.filter(item => item.bankCode == this.buyConfig.receiveType);
@@ -254,48 +271,57 @@ export default {
         }
       }
       buyX(this.buyConfig).then(data => {
+        this.textMsg = this.$t('common.czcg');
         this.$refs.toast.show();
         setTimeout(() => {
           this.$router.push('wallect-orderRecord')
-        }, 1000);
+        }, 1500);
         this.isLoading = false;
         }, () => {
           this.isLoading = false;
       });
     },
     toSellClick(){
-      this.isLoading = true;
-      if(this.showDet){ // 金额
-        if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.sellMonNumber) && parseFloat(this.sellMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
-          this.sellConfig.tradeAmount = this.sellMonNumber;
-          let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
-          this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
-        }else{
-          this.isLoading = false;
-          this.scopeMoney();
-          return false;
+      if(this.istradepwdFlag){
+        this.isLoading = true;
+        if(this.showDet){ // 金额
+          if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.sellMonNumber) && parseFloat(this.sellMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
+            this.sellConfig.tradeAmount = this.sellMonNumber;
+            let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
+            this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
+          }else{
+            this.isLoading = false;
+            this.scopeMoney();
+            return false;
+          }
+        }else{ // 数量
+          let sellMon = this.sellMonNumber * this.cnyMon;
+          if(this.fmvpTypeData.accept_order_min_cny_amount <= sellMon && sellMon <= this.fmvpTypeData.accept_order_max_cny_amount){
+            this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'FMVP');
+            this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(sellMon * 100))/ 100).toFixed(2) : '0';
+          }else{
+            this.isLoading = false;
+            this.scopeMoney();
+            return false;
+          }
         }
-      }else{ // 数量
-        let sellMon = this.sellMonNumber * this.cnyMon;
-        if(this.fmvpTypeData.accept_order_min_cny_amount <= sellMon && sellMon <= this.fmvpTypeData.accept_order_max_cny_amount){
-          this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'FMVP');
-          this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(sellMon * 100))/ 100).toFixed(2) : '0';
-        }else{
+        this.sellConfig.receiveType = this.gmType[this.sellConfig.receiveType];
+        sellX(this.sellConfig).then(data => {
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('wallect-orderRecord')
+          }, 1000);
           this.isLoading = false;
-          this.scopeMoney();
-          return false;
-        }
-      }
-      this.sellConfig.receiveType = this.gmType[this.sellConfig.receiveType];
-      sellX(this.sellConfig).then(data => {
+          }, () => {
+            this.isLoading = false;
+        });
+      }else{
+        this.textMsg = this.$t('common.szzjmm');
         this.$refs.toast.show();
         setTimeout(() => {
-          this.$router.push('wallect-orderRecord')
-        }, 1000);
-        this.isLoading = false;
-        }, () => {
-          this.isLoading = false;
-      });
+          this.$router.push('/security-tradePassword');
+        }, 1500);
+      }
     },
     scopeMoney(){
       this.textMsg = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;

@@ -220,6 +220,7 @@ export default {
           sessionStorage.setItem('tradeType', '0');
           this.textMsg = this.$t('otcBuy.subject.ddtjcg');
           this.$refs.toast.show();
+          sessionStorage.setItem('ordering', 'starting');
           setTimeout(() => {
             this.$router.push('/my-order');
           }, 1500);
@@ -290,6 +291,7 @@ export default {
           sessionStorage.setItem('tradeType', '1');
           this.textMsg = this.$t('otcBuy.subject.ddtjcg');
           this.$refs.toast.show();
+          sessionStorage.setItem('ordering', 'starting');
           setTimeout(() => {
             this.$router.push('/my-order');
           }, 1500);
