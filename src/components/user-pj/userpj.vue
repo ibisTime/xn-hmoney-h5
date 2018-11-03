@@ -152,8 +152,9 @@ export default {
           margin-right: 0.22rem;
           p{
             width: 100%;
-            height: 100%;
-            background-size: 100% 100%;
+            height: 100%;    
+            background-position: center;
+            background-size: cover;
             border-radius: 100%;
           }
           img{

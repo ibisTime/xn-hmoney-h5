@@ -155,13 +155,12 @@ export function formatAmount(money, format, coin, isRe = false) {
     money = -1 * money;
     flag = true;
   }
-  // 默认格式为2位小数
-  if (isUnDefined(format) || typeof format === 'object') {
-    format = 2;
-  }
   if (coin && isUnDefined(format)) {
     format = 8;
+  }else if (isUnDefined(format) || typeof format === 'object') {// 默认格式为2位小数
+    format = 2;
   }
+  
   // 金额格式化 金额除以unit并保留format位小数
   money = new BigDecimal(money.toString());
   money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();

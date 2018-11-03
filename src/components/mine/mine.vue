@@ -263,7 +263,7 @@ export default {
         border-radius: 100%;
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 100% 100%;
+        background-size: cover;
         // background-image: url('./tou.png');
         float: left;
         .input-file {

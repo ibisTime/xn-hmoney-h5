@@ -184,7 +184,8 @@ export default {
           p{
             width: 100%;
             height: 100%;
-            background-size: 100% 100%;
+            background-position: center;
+            background-size: cover;
             border-radius: 100%;
           }
           img{

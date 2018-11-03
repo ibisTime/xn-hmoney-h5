@@ -581,13 +581,14 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            background-image: url('./tou.png');
+            // background-image: url('./tou.png');
             position: relative;
             .pic-p{
               height: 100%;
               width: 100%;
               border-radius: 50%;
-              background-size: 100% 100%;
+              background-position: center;
+              background-size: cover;
             }
             .color {
               display: inline-block;
