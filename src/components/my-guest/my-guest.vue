@@ -42,6 +42,7 @@
         </div>
 
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -49,6 +50,7 @@ import { myGuest, getPageTrust } from "../../api/person";
 import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
 import HeadPic from 'base/head-pic/headPic';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
@@ -63,7 +65,8 @@ export default {
         limit: 10,
         type: '1'
       },
-      type: '1'
+      type: '1',
+      isLoading: true
     };
   },
   created() {
@@ -79,7 +82,7 @@ export default {
     getUserPic(pic){
       return getAvatar(pic);
     },
-    myGuest() {
+    myGuest() { // 邀请好友列表
       myGuest(this.start, this.limit).then(data => {
         data.list.map( v => {
             v.total = formatAmount(v.tradeAwardCount + v.regAwardCount, '', 'FMVP');
@@ -97,8 +100,10 @@ export default {
       });
     },
     getPageTrust(){
+      this.isLoading = true;
       this.config.start = this.start;
       getPageTrust(this.config).then(data => {
+        this.isLoading = false;
         data.list.map( v => {
           v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
         });
@@ -108,10 +113,15 @@ export default {
         this.list = [...this.list, ...data.list];
         this.len = this.list.length;
         this.start++;
+      }, () => {
+        this.isLoading = false;
       });
     },
     toxrFn(type){
       this.type = type;
+      if(this.config.toUser){
+        delete this.config.toUser;
+      }
       switch(type){
         case '0': this.config.type = '0';this.start = 1;this.list = [];this.getPageTrust();break;
         case '1': this.config.type = '1';this.start = 1;this.list = [];this.getPageTrust();break;
@@ -121,7 +131,8 @@ export default {
   },
   components: {
       Scroll,
-      HeadPic
+      HeadPic,
+      FullLoading
   }
 };
 </script>

@@ -155,7 +155,7 @@
               <p class='text1'>
                 <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
                 <span>{{myItem.createDatetime}}</span>
-                <span class='red' v-show="myItem.tradedCount == 0" @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
+                <span class='red' v-show="(myItem.type != 0 && (myItem.status === '0' || myItem.status === '1'))" @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
               </p>
               <div class='text2'>
                 <div class='txt1'>

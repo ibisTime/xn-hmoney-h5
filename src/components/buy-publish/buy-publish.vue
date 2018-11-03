@@ -288,6 +288,7 @@ export default {
     });
     let coinList = JSON.parse(sessionStorage.getItem('coinData'));
     this.bbList = Object.keys(coinList);
+    this.config.tradeCoin = this.bbList[0];
     this.getBbPrice('BTC');
     this.getAdverDetail();
   },

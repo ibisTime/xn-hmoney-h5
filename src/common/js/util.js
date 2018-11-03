@@ -662,3 +662,12 @@ export function formatChatDate(timeStamp, param) {
   }
   return param ? week[before.getDay()] + ' ' + formatDate(timeStamp, 'hh:mm') : week[before.getDay()];
 }
+
+//计算日期相隔时间
+export function calculateDays (start, end) {
+  if (!start || !end)
+      return 0;
+  start = new Date(start);
+  end = new Date(end);
+  return (end - start) / (60 * 1000);
+}
