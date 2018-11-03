@@ -1,8 +1,10 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
     <div class="main">
-      <p><input v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')"></p>
+      <p>
+        <input v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')">
       <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
+      </p>
       <p class='text3'>
         <input v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
         <i v-show="!show" class='icon' @click="captcha = ''"></i>
@@ -114,6 +116,7 @@ export default {
     color: #333;
     font-weight: bold;
     p {
+      position: relative;
       height: 1.1rem;
       line-height: 1.1rem;
       margin-bottom: .1rem;
@@ -171,6 +174,10 @@ export default {
           margin-right: -.2rem;
       }
     } 
+    .error-tip{
+      color: #d53d3d;
+      font-size: 0.28rem;
+    }
   }
 
   .foot {

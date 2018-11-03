@@ -9,17 +9,20 @@
     <div class='main'>
 
     </div>
-
+    <Footer></Footer>
   </div>
   
 </template>
 <script>
 import { setTitle } from "common/js/util";
+import Footer from 'components/footer/footer';
 export default {
   created() {
-      setTitle('二手车兑换');
+      setTitle(this.$t('shop.navbar.escdh'));
   },
-
+  components: {
+    Footer
+  }
 };
 </script>
 <style lang="scss" scoped>

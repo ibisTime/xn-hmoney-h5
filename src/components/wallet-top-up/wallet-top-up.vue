@@ -33,7 +33,8 @@
                 <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.gmje') : $t('walletBuy.subject.gmsl')" v-model="buyMonNumber">
+              <!--  + '(' + placeTxt + ')' -->
+                <input type="text" :placeholder="(showDet ? $t('walletBuy.subject.gmje') : $t('walletBuy.subject.gmsl'))" v-model="buyMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
@@ -62,7 +63,7 @@
             <p>
               <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
-                  {{$t('common.zfb')}}
+                  {{$t('common.zfb')}} {{bankcardNumber}}
               </span>
             </p>
         </div>
@@ -114,6 +115,7 @@ export default {
   data() {
     return {
       textMsg: this.$t('common.czcg'),
+      placeTxt: '',
       type: '',
       isLoading: true,
       show: true,
@@ -169,6 +171,7 @@ export default {
       this.sellConfig.tradePrice = data.accept_cny_price;
       this.buyFvData = parseFloat(data.accept_order_buy_fee_rate) * 100;
       this.sellFvData = parseFloat(data.accept_order_sell_fee_rate) * 100;
+      this.placeTxt = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
     });
     getBankData().then(data => {
       this.zfPic = getPic(data[0].pic).backgroundImage;
@@ -177,6 +180,7 @@ export default {
         this.zfType[item.bankName] = item.bankCode;
         this.zfNumber[item.bankName] = item.bankcardNumber;
       });
+      this.selBankcar();
     });
     // 数字货币折合
     // getNumberMoney('FMVP', 'CNY').then(data => {
@@ -469,6 +473,7 @@ export default {
         border-bottom: .01rem solid #ebebeb;
 
         input {
+          width: 92%;
           color: #999;
           border-bottom: .01rem solid #ebebeb;
         }

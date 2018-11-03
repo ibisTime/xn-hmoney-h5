@@ -27,6 +27,7 @@ export default {
       case 'privacy': this.tit = this.$t('aboutprivacy.subject.ystk');break;
       case 'raw_note': this.tit = this.$t('aboutprivacy.subject.flsm');break;
       case 'fee_note': this.tit = this.$t('aboutprivacy.subject.fvsm');break;
+      case 'service': this.tit = this.$t('aboutprivacy.subject.lxwm');break;
     }
     setTitle(this.tit);
     getSysConfig(this.ckey).then(data => {

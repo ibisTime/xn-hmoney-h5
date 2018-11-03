@@ -7,6 +7,18 @@
             <i class='icon'></i>
             </p>
         </router-link>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=service'>
+            <p>
+            <span>{{$t('aboutprivacy.subject.lxwm')}}</span>
+            <i class='icon'></i>
+            </p>
+        </router-link>
+        <router-link class='tag mb20' to='system-notice'>
+            <p>
+            <span>{{$t('aboutprivacy.subject.gg')}}</span>
+            <i class='icon'></i>
+            </p>
+        </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=reg_protocol'>
             <p>
             <span>{{$t('aboutprivacy.subject.yhxy')}}</span>
@@ -35,7 +47,7 @@
     <div class='content'>
         <a class='tag mb20' href="https://funmvp.zendesk.com/hc/zh-cn/">
             <p>
-            <span>帮助中心</span>
+            <span>{{$t('aboutprivacy.subject.bzzx')}}</span>
             <i class='icon'></i>
             </p>
         </a>
@@ -50,7 +62,7 @@ export default {
     };
   },
   created() {
-    setTitle('关于我们');
+    setTitle(this.$t('aboutprivacy.subject.gywm'));
   },
   methods: {}
 };

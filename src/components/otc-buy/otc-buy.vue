@@ -26,7 +26,7 @@
             <span>{{$t('otcBuy.userMsg.xrcs')}}</span>
           </div>
           <div @click="$router.push('/userpj?userId=' + userId)">
-            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}%</p>
+            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}</p>
             <span>{{$t('otcBuy.userMsg.xrl')}}</span>
           </div>
           <div>
@@ -391,8 +391,6 @@ export default {
           .txt1 {
             display: inline-block;
             line-height: 0.28rem;
-            width: 1.3rem;
-            overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
           }
@@ -571,12 +569,13 @@ export default {
     color: #333;
     justify-content: space-between;
     .chat {
-      width: 61.6%;
+      width: 50%;
       border-top: .01rem solid #e6e6e6;
       span {
         display: inline-block;
         width: .32rem;
         height: .32rem;
+        vertical-align: middle;
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
@@ -585,7 +584,7 @@ export default {
       }
     }
     .buy{
-      width: 38.4%;
+      width: 50%;
       background: #d53d3d;
       text-align: center;
       color: #fff;

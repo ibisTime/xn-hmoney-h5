@@ -296,6 +296,7 @@ export default {
         this.orderMessage();
       }, () => {
         this.isLoading = false;
+        this.orderMessage();
       })
     },
     orderMessage(){
@@ -401,12 +402,7 @@ export default {
 
         // 评价 
         if(target.classList.contains('pjBtn')){
-          releaseOrder(this.code).then(data => {
-            this.orderMessage();
-            this.showFlag = true;
-          }, () => {
-            this.isLoading = false;
-          });
+          this.showFlag = true;
         }
       }
     },

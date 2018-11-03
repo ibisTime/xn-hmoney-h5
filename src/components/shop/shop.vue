@@ -14,7 +14,7 @@
         {{ $t('shop.subject.jryx') }}
       </a>
     </div>
-    <div class="main">
+    <div class="main" @click="toGame">
     </div>
       <Footer></Footer>
       <FullLoading ref="fullLoading" v-show="isLoading"/> 
@@ -48,7 +48,11 @@ export default {
       this.isLoading = false;
     });
   },
-  methods: {},
+  methods: {
+    toGame(){
+      window.location.href = this.gUrl;
+    }
+  },
   components: {
     Footer,
     FullLoading

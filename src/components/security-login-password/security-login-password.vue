@@ -6,7 +6,7 @@
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
       <p class='text3' v-show="(mobile == '' || email == '') && isEmail">
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" placeholder="$t('exitLoginPassword.subject.yzm')">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')">
         <i v-show="!show" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
@@ -14,6 +14,10 @@
       <p>
         <input type="password" v-model="newPayPwd" name="password" v-validate="'required|password'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+      </p>
+      <p v-show="!isEmail">
+        <input type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')">
+        <span v-show="errors.has('password2')" class="error-tip password2">{{errors.first('password2')}}</span>
       </p>
       <p>
         <input type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
@@ -53,7 +57,8 @@ export default {
         newLoginPwd: '',
         smsCaptcha: ''
       },
-      isEmail: true
+      isEmail: true,
+      sureNewPwd: ''
     };
   },
   created() {
@@ -117,38 +122,48 @@ export default {
       }
     },
     changeLoginPwd() {
-      this.isLoading = true;
       if(!this.isEmail){
-        changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
-          this.isLoading = false;
-          this.textMsg = this.$t('common.czcg');
+        if(this.sureNewPwd !== this.surePwd){
+          this.textMsg = this.$t('exitLoginPassword.subject.mmbyz');
           this.$refs.toast.show();
-          setTimeout(() => {
-            clearUser();
-            this.$router.push('login');
-          }, 1500);
-        }, () => {
-          this.isLoading = false;
-        });
+          return;
+        }
+        if(!this.errors.any()){
+          this.isLoading = true;
+          changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
+            this.isLoading = false;
+            this.textMsg = this.$t('common.czcg');
+            this.$refs.toast.show();
+            setTimeout(() => {
+              // clearUser();
+              this.$router.push('mine');
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
+          });
+        }
       }else{
         if(this.newPayPwd != this.surePwd){
           this.textMsg = this.$t('exitLoginPassword.subject.mmbyz');
           this.$refs.toast.show();
           return;
         }
-        this.config.newLoginPwd = this.newPayPwd;
-        this.config.smsCaptcha = this.smsCaptcha;
-        resetPwd(this.config).then(data => {
-          this.isLoading = false;
-          this.textMsg = $t('exitLoginPassword.subject.czmmcg');
-          this.$refs.toast.show();
-          setTimeout(() => {
-            clearUser();
-            this.$router.push('login');
-          }, 1500);
-        }, () => {
-          this.isLoading = false;
-        })
+        if(!this.errors.any()){
+          this.isLoading = true;
+          this.config.newLoginPwd = this.newPayPwd;
+          this.config.smsCaptcha = this.smsCaptcha;
+          resetPwd(this.config).then(data => {
+            this.isLoading = false;
+            this.textMsg = this.$t('exitLoginPassword.subject.czmmcg');
+            this.$refs.toast.show();
+            setTimeout(() => {
+              clearUser();
+              this.$router.push('login');
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
+          })
+        }
       }
     }
   },

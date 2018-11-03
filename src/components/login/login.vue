@@ -15,17 +15,20 @@
               </p>
           </div>
       </div>
+      <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
 import fetch from '../../common/js/fetch';
 import {login} from '../../api/person';
 import {setUser, setTitle} from '../../common/js/util';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      isLoading: false
     };
   },
   created(){
@@ -35,15 +38,20 @@ export default {
   methods: {
     login() {
       if(this.errors.any()){
+        this.isLoading = true;
         login(this.username, this.password).then(data => {
+          this.isLoading = false;
           setUser(data);
           this.$router.push('page');
+        }, () => {
+          this.isLoading = false;
         });
       }
     }
   },
   components: {
-    fetch
+    fetch,
+    FullLoading
   }
 };
 </script>
@@ -97,7 +105,7 @@ export default {
         border-bottom: 0.02rem solid #e3e3e3;
         font: 0.32rem/1.28rem PingFangSC-Medium;
         color: #999;
-        padding: 0.3rem 0;
+        padding: 0.3rem 0.1rem;
         box-sizing: border-box;
         height: 1.2rem;
         line-height: 1.2rem;

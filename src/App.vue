@@ -46,32 +46,27 @@
       }
     },
     created() {
-      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/login')[1])){
-        this.showFlag = true;
-      } else {
-        this.showFlag = false;
-      }
-      getBbListData().then(data => {
-        for(let i = 0; i < data.length; i ++){
-          let obj = {
-            ...data[i],
-            unit: '1e' + data[i].unit
-          };
-          this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-        }
-        sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-        this.isLoading = false;
-      }, () => {
-        this.isLoading = false;
-      });
       this.$router.beforeEach((to, from, next) => {
-        // 聊天界面隐藏购买飘窗
-        if (this.showFlag && this.$refs.touchDemo) {
-          this.$refs.touchDemo.style.right = '0.5rem';
-          this.$refs.touchDemo.style.bottom = '1rem';
-          this.$refs.touchDemo.style.left = '';
-          this.$refs.touchDemo.style.top = '';
+        this.$refs.touchDemo.style.right = '0.5rem';
+        this.$refs.touchDemo.style.bottom = '1rem';
+        this.$refs.touchDemo.style.left = '';
+        this.$refs.touchDemo.style.top = '';
+        if(!sessionStorage.getItem('coinData')){
+          getBbListData().then(data => {
+            for(let i = 0; i < data.length; i ++){
+              let obj = {
+                ...data[i],
+                unit: '1e' + data[i].unit
+              };
+              this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+            }
+            sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
+            this.isLoading = false;
+          }, () => {
+            this.isLoading = false;
+          });
         }
+        
         if (isLogin()) {
           // 腾讯云登陆
           this.tencentLogin();
@@ -117,7 +112,7 @@
         }
         
         this.docuWidth = document.body.clientWidth - 150;
-        this.docuHeight = document.body.clientHeight - 150;
+        this.docuHeight = document.body.clientHeight - 50;
         this.position.x = touch.clientX;
         this.position.y = touch.clientY;
         this.demoX = this.touchDemo.offsetLeft;
@@ -167,7 +162,6 @@
 <style lang="scss">
   #app {
     overflow-x: hidden;
-    position: relative;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
   }
