@@ -24,9 +24,10 @@
   import {isLogin, getUrlParam, isUnDefined} from './common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
   import {getBbListData} from 'api/otc';
-  
+
   export default {
     mixins: [messageMixin],
+    name: 'app',
     data() {
       return {
         textMsg: '',

@@ -7,8 +7,8 @@
        </p>
         <div class='title2'>
           <p class='tit1'>
-            <span>价格({{setBazDeal.toSymbol}})</span>
             <span>数量({{setBazDeal.symbol}})</span>
+            <span>价格({{setBazDeal.toSymbol}})</span>
           </p>
           <p class='tit2'>
             <span>价格({{setBazDeal.toSymbol}})</span>
@@ -18,8 +18,8 @@
        <div class='content'>
         <div class='left'>
           <p v-for="(item, index) in bbAsks" :key="index">
-            <span class='red'>{{item ? item.price : '--'}}</span>
             <span class='white'>{{item ? item.count : '--'}}</span>
+            <span class='red'>{{item ? item.price : '--'}}</span>
           </p>
         </div>
         <div class='right'>
@@ -105,7 +105,7 @@ import { getHandicapData } from 'api/bb';
 
 .put-up-wrapper {
   width: 100%;
-  background: #172143;
+  background: #172432;
   font-size: .28rem;
   color: #ccc;
   line-height: .35rem;
@@ -143,6 +143,9 @@ import { getHandicapData } from 'api/bb';
         width: 50%;
         display: flex;
         justify-content: space-around;
+        span{
+          font-size: 0.2rem;
+        }
       }
       .tit1 {    
         background: #d53d3d;

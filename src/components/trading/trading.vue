@@ -184,9 +184,6 @@
     <!-- K线图 -->
     <div v-show="!show2" class='Two'>
       <div class="top-mian">
-        <div class='top'>
-          
-        </div>
         <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>{{$t('trading.bbDepth.xj')}} </span><span class='red txt3'>&nbsp;&nbsp;{{ gkdsList.price}}</span><span class='red txt4'>≈ {{(Math.floor(gkdsList.currencyPrice * 100) / 100).toFixed(2)}} CNY</span></p>
         <div class='text2'>
           <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate * 100}} %</span></p>
@@ -198,7 +195,10 @@
         </div>
       </div>
       <!-- k线图部分 -->
-      <div class='main1'></div>
+      <div class='main1'>
+        <TVChartContainer />
+      </div>
+
       <!-- 主要内容区 -->
       <div class='main2'>
         <div class='tabs' @click="changeMain">
@@ -231,6 +231,8 @@ import TradingSynopsis from 'components/trading-synopsis/trading-synopsis';
 import TradingPutUp from 'components/trading-put-up/trading-put-up';
 import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchadeal';
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
+import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
+
 import { 
   formatAmount, 
   setTitle, 
@@ -693,7 +695,8 @@ export default {
     TradingSynopsis,
     TradingPutUp,
     TradingClinchadeal,
-    TradingDepthMap
+    TradingDepthMap,
+    TVChartContainer
   },
   watch: {  // 监听深度图
     setBazDeal: {
@@ -748,7 +751,7 @@ export default {
     font: bold .32rem/.98rem PingFangSC-Medium;
     font-size: .32rem;
     color: #333;
-    border-bottom: .01rem solid #dedede;
+    border-bottom: .01rem solid #eee;
     span{
       padding: 0 0.3rem;
     }
@@ -793,7 +796,7 @@ export default {
       color: #fff;
     }
     select{
-      background-color: #172143;
+      background-color: transparent;
     }
   }
 
@@ -806,7 +809,7 @@ export default {
       height: 1rem;
       width: 100%;
       padding: 0 .1rem;
-      border-bottom: .01rem solid #e5e5e5;
+      border-bottom: .01rem solid #eee;
       font-size: .3rem;
       margin-bottom: .2rem;
       .buy {
@@ -866,8 +869,8 @@ export default {
         .he9 {
           width: 2.9rem;
           height: .9rem;
-          padding-right: 0.2rem;
-          border: .01rem solid #e5e5e5;
+          padding: 0 0.2rem;
+          border: .01rem solid #eee;
           display: flex;
           font-size: 0.26rem;
           justify-content: space-between;
@@ -877,7 +880,6 @@ export default {
           }
           input {
             width: 85%;
-            padding: 0 0 0 .2rem;
             height: .87rem;
             font-size: .28rem;
             line-height: .87rem;
@@ -1108,7 +1110,6 @@ export default {
 
     .main1 {
       width: 100%;
-      height: 9.12rem;
       background: #1c2b3f;
     }
     .main2 {
@@ -1160,7 +1161,10 @@ export default {
 }
 
 .back-wrapper{
-  background-color: #172143;
+  background-color: #172b3f;
+  .header{
+    border-bottom: 0;
+  }
 }
 
 </style>

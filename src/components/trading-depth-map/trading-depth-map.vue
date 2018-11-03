@@ -169,7 +169,7 @@ import { formatAmount } from "common/js/util";
 
 .map-wrapper {
   width: 100%;
-  background: #172143;
+  background: #172432;
   font-size: .28rem;
   color: #ccc;
   line-height: .35rem;

@@ -101,7 +101,7 @@ import { formatDate, formatAmount } from 'common/js/util';
 
 .clinch-wrapper {
   width: 100%;
-  background: #172143;
+  background: #172432;
   font-size: .28rem;
   color: #fff;
   line-height: .35rem;
@@ -131,6 +131,7 @@ import { formatDate, formatAmount } from 'common/js/util';
         overflow: hidden;
         text-overflow: ellipsis;
         word-spacing: normal;
+        font-size: 0.2rem;
         // &:nth-of-type(1){
         //   width: 30%;
         // }
