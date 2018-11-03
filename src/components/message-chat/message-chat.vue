@@ -1,5 +1,6 @@
 <template>
   <transition  name="slide">
+
     <div class="chat-wrapper" @click='hide'>
       <div class="message-wrapper">
         <scroll :data="curChatList"
@@ -14,7 +15,8 @@
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
             <div class="receive" v-if="!info.isSend">
-              <span class="avatar"><img :src="info.icon"/></span>
+              <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
+              <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
                 <span class="triangle-left"></span>
                 <i>
@@ -26,7 +28,8 @@
               </div>
             </div>
             <div v-else class="post clearfix">
-              <span class="avatar"><img :src="info.icon"/></span>
+              <span class="avatar avatarDefault" v-if="isUnDefined(user.photo)">{{getDefaultPhoto(user)}}</span>
+              <span class="avatar" v-else :style="formatAvatarSyl(user.photo)"></span>
               <div class="p-content">
                 <span class="triangle-right"></span>
                 <i>
@@ -36,7 +39,7 @@
                   </template>
                 </i>
                 <div @click="reSendMsg(info, index)" v-show="showErr(info)" class="error-icon"></div>
-                <!--<div class="loading-wrapper" v-show="showLoading(info)"><loading title=""></loading></div>-->
+                <div class="loading-wrapper" v-show="showLoading(info)"><loading title=""></loading></div>
               </div>
             </div>
            </div>
@@ -57,6 +60,7 @@
       <toast :text="text" ref="toast"></toast>
       <full-loading v-show="loadingFlag"></full-loading>
     </div>
+
   </transition>
 </template>
 <script>
@@ -69,7 +73,7 @@
   import Toast from 'base/toast/toast';
   import Qiniu from 'base/qiniu/qiniu';
   import {addMsg} from 'common/js/message';
-  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle} from 'common/js/util';
+  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl} from 'common/js/util';
   import User from 'common/bean/user';
   import {getUser} from 'api/user';
   import {getOrderDetail} from 'api/person';
@@ -77,7 +81,7 @@
 
   const selType = webim.SESSION_TYPE.GROUP;
   const subType = webim.GROUP_MSG_SUB_TYPE.COMMON;
-  const LIMIT = 20;
+  const REQMSGCOUNT = 20;
   const ERR = -1;
   const SENDING = 0;
   const SUCCESS = 1;
@@ -95,7 +99,8 @@
         receiver: null,
         showEmoji: false,
         token: '',
-        sendMessage: false
+        sendMessage: false,
+        getPrePageGroupHistroyMsgInfoMap: {}
       };
     },
     created() {
@@ -146,6 +151,12 @@
         getQiniuToken().then((data) => {
           this.token = data.uploadToken;
         }).catch(() => {});
+        let self = this;
+        this.getLastGroupHistoryMsgs(function(msgList) {
+          self.setCurChatList(msgList);
+        }, function(err) {
+          alert(err.ErrorInfo);
+        });
       },
       getUser() {
         if (!this.user) {
@@ -175,6 +186,16 @@
         } else {
           this.start = -1;
         }
+      },
+      // 没有头像的显示nickname 第一个字
+      getDefaultPhoto(info) {
+        return info.nickname.substring(0, 1).toUpperCase();
+      },
+      formatAvatarSyl(photo) {
+        return formatAvatarSyl(photo);
+      },
+      isUnDefined(value) {
+        return isUnDefined(value);
       },
       scroll(pos) {
         if (pos.y > -20 && !this.fetching && !this.firstFetching && this.hasMore) {
@@ -208,7 +229,7 @@
         this.$refs.emoji.hide();
         if (!isUnDefined(this.emoji) && this.emoji.trim() !== '') {
           this.onSendMsg(this.emoji, (info) => {
-            // this.saveChatHistory(info);
+            this.saveChatHistory(info);
             // setTimeout(() => {
               // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
               // this.scroll.scrollIntoViewIfNeeded();
@@ -241,16 +262,16 @@
         return arr;
       },
       getHistoryMessage() {
-        let obj = this.chatData[this.userId];
-        if (this.start >= 0 && obj && obj[this.groupId]) {
-          let min = Math.max(0, this.start - LIMIT);
-          let max = this.start;
-          let list = obj[this.groupId].list.slice(min, max);
-          let newList = this.getNewList(list);
+        // 获取更早的群历史消息
+        let obj = this.getPrePageGroupHistoryMsgs(function (newList)  {
+          return newList;
+        });
+        if (this.start >= 0 && obj) {
+          let newList = this.getNewList(obj);
           let oriList = this.curChatList.slice();
           this.setCurChatList(newList.concat(oriList));
           this.hasMore = min !== 0;
-          this.start -= LIMIT;
+          this.start -= REQMSGCOUNT;
           if (this.firstFetching) {
             this.updateChatData();
             this.scrollToElement();
@@ -260,6 +281,162 @@
         } else {
           this.hasMore = false;
         }
+      },
+      //读取群组基本资料-高级接口
+      getGroupInfo(group_id, cbOK, cbErr) {
+        let self = this;
+        var options = {
+          'GroupIdList': [
+            group_id
+          ],
+          'GroupBaseInfoFilter': [
+            'Type',
+            'Name',
+            'Introduction',
+            'Notification',
+            'FaceUrl',
+            'CreateTime',
+            'Owner_Account',
+            'LastInfoTime',
+            'LastMsgTime',
+            'NextMsgSeq',
+            'MemberNum',
+            'MaxMemberNum',
+            'ApplyJoinOption',
+            'ShutUpAllMember'
+          ],
+          'MemberInfoFilter': [
+            'Account',
+            'Role',
+            'JoinTime',
+            'LastSendMsgTime',
+            'ShutUpUntil'
+          ]
+        };
+        webim.getGroupInfo(
+          options,
+          function(resp) {
+            if (resp.GroupInfo[0].ShutUpAllMember == 'On') {
+              console.log('该群组已开启全局禁言');
+            }
+            if (cbOK) {
+              cbOK(resp);
+            }
+          },
+          function(err) {
+            console.log(err.ErrorInfo);
+            cbErr && cbErr();
+          }
+        );
+      },
+      showMsg(msg) {
+        this.text = msg;
+        this.$refs.toast.show();
+      },
+      //获取最新的群历史消息,用于切换群组聊天时，重新拉取群组的聊天消息
+      getLastGroupHistoryMsgs(cbOk) {
+        let self = this;
+        this.getGroupInfo(this.groupId, function(resp) {
+          let groupId = self.groupId;
+          //拉取最新的群历史消息
+          var options = {
+            'GroupId': groupId,
+            'ReqMsgSeq': resp.GroupInfo[0].NextMsgSeq - 1,
+            'ReqMsgNumber': REQMSGCOUNT
+          };
+          if (options.ReqMsgSeq == null || options.ReqMsgSeq == undefined || options.ReqMsgSeq <= 0) {
+            webim.Log.warn("该群还没有历史消息:options=" + JSON.stringify(options));
+            return;
+          }
+          self.selSess = null;
+          //清空会话
+          webim.MsgStore.delSessByTypeId(selType, groupId);
+          // 获取消息
+          webim.syncGroupMsgs(
+            options,
+            function(msgList) {
+              if (msgList.length == 0) {
+                // webim.Log.warn("该群没有历史消息了:options=" + JSON.stringify(options));
+                return;
+              }
+              var msgSeq = msgList[0].seq - 1;
+              self.getPrePageGroupHistroyMsgInfoMap[groupId] = {
+                "ReqMsgSeq": msgSeq
+              };
+
+              cbOk && cbOk(msgList);
+            },
+            function(err) {
+              alert(err.ErrorInfo);
+            }
+          );
+        });
+      },
+      //获取历史消息(c2c或者group)成功回调函数
+      //msgList 为消息数组，结构为[Msg]
+      getHistoryMsgCallback(msgList, prepage) {
+        var msg;
+        prepage = prepage || false;
+        let self = this;
+
+        //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下
+        if (prepage) {
+          msgList.reverse();
+        }
+        let newList = [];
+        //		console.log('History', msgList);
+        for (var j in msgList) { //遍历新消息
+          msg = msgList[j];
+          if (msg.getSession().id() === this.groupId) { //为当前聊天对象的消息
+            self.selSess = msg.getSession();
+            //在聊天窗体中新增一条消息
+            newList.push(msg);
+          }
+        }
+        //消息已读上报，并将当前会话的消息设置成自动已读
+        webim.setAutoRead(self.selSess, true, true);
+        return newList;
+      },
+      //向上翻页，获取更早的群历史消息
+      getPrePageGroupHistoryMsgs(cbOk) {
+        var tempInfo = this.getPrePageGroupHistroyMsgInfoMap[this.groupId]; //获取下一次拉取的群消息seq
+        var reqMsgSeq;
+        if (tempInfo) {
+          reqMsgSeq = tempInfo.ReqMsgSeq;
+          if (reqMsgSeq <= 0) {
+            webim.Log.warn('该群没有历史消息可拉取了');
+            return;
+          }
+        } else {
+          webim.Log.error('获取下一次拉取的群消息seq为空');
+          return;
+        }
+        var options = {
+          'GroupId': this.groupId,
+          'ReqMsgSeq': reqMsgSeq,
+          'ReqMsgNumber': REQMSGCOUNT
+        };
+
+        webim.syncGroupMsgs(
+          options,
+          function(msgList) {
+            if (msgList.length == 0) {
+              webim.Log.warn("该群没有历史消息了:options=" + JSON.stringify(options));
+              return;
+            }
+            var msgSeq = msgList[0].seq - 1;
+            this.getPrePageGroupHistroyMsgInfoMap[this.groupId] = {
+              "ReqMsgSeq": msgSeq
+            };
+
+            if (cbOk) {
+              cbOk(this.getHistoryMsgCallback(msgList, true));
+            }
+          },
+          function(err) {
+            alert(err.ErrorInfo);
+          }
+        );
       },
       scrollToElement() {
         setTimeout(() => {
@@ -284,15 +461,15 @@
           if (item.fromAccount === this.userId) {
             return {
               ...item,
-              icon: this.user.photo,
-              photo: this.receiver.photo,
+              icon: isUnDefined(this.user.photo) ? '' : this.user.photo,
+              photo: isUnDefined(this.user.photo) ? '' : this.user.photo,
               fromAccountNick: this.user.nickname
             };
           } else {
             return {
               ...item,
-              icon: this.receiver.photo,
-              photo: this.receiver.photo,
+              icon: isUnDefined(this.receiver.photo) ? '' : this.receiver.photo,
+              photo: isUnDefined(this.receiver.photo) ? '' : this.receiver.photo,
               fromAccountNick: this.receiver.nickname
             };
           }
@@ -397,7 +574,7 @@
                 status: SUCCESS
               }
             };
-            // this.saveChatHistory(newMsg);
+            this.saveChatHistory(newMsg);
             setTimeout(() => {
               index = isUnDefined(index) ? this.curChatList.length - 1 : index;
               this.$refs.scroll.scrollToElement(this.$refs.mesRef[index], 100);
@@ -645,10 +822,16 @@
           height: 0.76rem;
           border-radius: 50%;
           overflow: hidden;
+          background-position: center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          font-size: 0.4rem;
+          line-height: 0.76rem;
+          text-align: center;
+          color: #fff;
 
-          img {
-            width: 100%;
-            height: 100%;
+          &.avatarDefault{
+            background-color: $primary-color;
           }
         }
 
@@ -704,10 +887,16 @@
           height: 0.76rem;
           border-radius: 50%;
           overflow: hidden;
+          background-position: center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          font-size: 0.4rem;
+          line-height: 0.76rem;
+          text-align: center;
+          color: #fff;
 
-          img {
-            width: 100%;
-            height: 100%;
+          &.avatarDefault{
+            background-color: $primary-color;
           }
         }
 

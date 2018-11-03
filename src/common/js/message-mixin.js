@@ -44,35 +44,56 @@ export const messageMixin = {
     },
     // 监听新消息
     onMsgNotify(newMsgList) {
+      // debugger;
       console.log(newMsgList);
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
         let selSess;
         for (let j in newMsgList) {
           let newMsg = newMsgList[j];
+          // 判断是自己 不用添加消息
+          if (newMsg.fromAccount === getUserId()) {
+            continue;
+          }
           if (newMsg.getSession().id() === this.curChatUserId) {
             selSess = newMsg.getSession();
           }
           let photo = '';
           let user = this.userMap[newMsg.fromAccount];
           if (user) {
-            newMsg.fromAccountNick = user.nickname;
+            // 系统消息
+            if(newMsg.fromAccount === 'admin') {
+              newMsg.fromAccountNick = 'admin';
+            } else {
+              let user = this.userMap[newMsg.fromAccount];
+              newMsg.fromAccountNick = user.nickname;
+            }
             photo = user.photo;
             this.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
           } else {
             let self = this;
-            getProfilePortrait(newMsg.fromAccount, function (res) {
-              newMsg.fromAccountNick = res.nickname;
-              photo = res.photo;
+            // 系统消息
+            if(newMsg.fromAccount === 'admin') {
               self.updateUserMap({
                 userId: newMsg.fromAccount,
-                nickname: res.nickname,
-                photo: res.photo
+                nickname: 'admin',
+                photo: ''
               });
               self.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
-            }, function () {
-              self.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
-            });
+            } else {
+              getProfilePortrait(newMsg.fromAccount, function (res) {
+                newMsg.fromAccountNick = res.nickname;
+                photo = res.photo;
+                self.updateUserMap({
+                  userId: newMsg.fromAccount,
+                  nickname: res.nickname,
+                  photo: res.photo
+                });
+                self.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
+              }, function () {
+                self.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
+              });
+            }
           }
         }
         webim.setAutoRead(selSess, true, true);
@@ -122,8 +143,7 @@ export const messageMixin = {
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
-      console.log(isUnDefined(this.$route.path.split('/message/')[1]));
-      if (isUnDefined(this.$route.path.split('/message/')[1])) {
+      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/order-details')[1])) {
         flag = false;
       }
       return flag;
@@ -159,13 +179,13 @@ export const messageMixin = {
         'isLogOn': false
       };
       let self = this;
-      if (!this.tencentLogined || this.isMessageWindow()) {
+      if (!this.tencentLogined) {
         webim.login(loginInfo, listeners, options, function () {
           getUser().then((data) => {
             self.setUser(data);
             let gender = self.user.gender;
             let nickname = self.user.nickname;
-            let photo = data.photo;
+            let photo = isUnDefined(data.photo) ? '' : data.photo;
             setProfilePortrait({gender, nickname, photo});
           });
           self.getMyGroup(loginInfo);
@@ -174,6 +194,8 @@ export const messageMixin = {
         }, function () {
           self.setTententLogined(false);
         });
+      } else if(this.tencentLogined && this.isMessageWindow()) {
+        self.getMyGroup(loginInfo);
       }
     },
     ...mapMutations({

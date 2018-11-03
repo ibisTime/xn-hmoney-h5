@@ -383,7 +383,7 @@ export default {
           }
           .icon{
             width: 1.6rem;
-            color: $color-red;
+            color: $primary-color;
             text-align: right;
             padding-right: 0.3rem;
           }

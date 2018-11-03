@@ -15,7 +15,8 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  @import "~common/scss/variable";
 #defPic{
     width: 100%;
     height: 100%;
@@ -23,7 +24,7 @@
 .def-pic{
     width: 100%;
     height: 100%;
-    background-color: #f15353;
+    background-color: $primary-color;
     font-size: 0.55rem;
     text-align: center;
     color: #fff;
