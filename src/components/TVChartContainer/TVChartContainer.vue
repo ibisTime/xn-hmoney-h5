@@ -73,10 +73,10 @@
     },
     data() {
       return {
-        showMore: false,
-        showMoreBtn: false,
-        resolution: '15',
-        btnList: [
+        showMore: false, // 更多面板
+        showMoreBtn: false, // 更多按钮
+        resolution: '15', // 当前选中分时
+        btnList: [ // 分时
           {
             label: '1min',
             resolution: "1",
