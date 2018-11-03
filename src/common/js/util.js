@@ -1,5 +1,6 @@
 import {setCookie, getCookie, delCookie} from './cookie';
 import './BigDecimal';
+import avatarDefault from '../image/avatar@2x.png';
 // import {setProfilePortrait} from 'common/js/message';
 // 日期格式化
 export function formatDate(date, fmt) {
@@ -69,6 +70,8 @@ export function clearUser() {
   delCookie('__sign__');
   delCookie('__accountType__');
   delCookie('__txAppCode__');
+  window.localStorage.removeItem('__message__');
+  window.localStorage.removeItem('__usermap__');
   sessionStorage.clear();
 }
 
@@ -110,14 +113,15 @@ export function formatImg(imgs, suffix = '?imageMogr2/auto-orient') {
 
 // 格式化头像
 export function formatAvatar(img, suffix = '?imageMogr2/auto-orient') {
-  if (!img) {
-    let avatar = require('../image/avatar@2x.png');
-    if (/^http|^data:image/i.test(avatar)) {
-      return avatar;
-    }
-    return location.origin + avatar;
-  }
-  return formatImg(img, suffix);
+  return isUnDefined(img) ? avatarDefault : formatImg(img, suffix);
+}
+
+// 格式化头像 - backgroundImage
+export function formatAvatarSyl(imgs) {
+  let img = isUnDefined(imgs) ? avatarDefault :  formatImg(imgs);
+  return {
+    backgroundImage: `url(${img})`
+  };
 }
 
 // 获得分享图片
@@ -132,10 +136,6 @@ export function getShareImg(imgs) {
   return formatImg(imgs);
 }
 
-export function isUndefined(value) {
-  return value === undefined || value === null || value === '';
-}
-
 /**
  * 金额格式转化 根据币种格式化金额
  * @param money
@@ -144,24 +144,22 @@ export function isUndefined(value) {
  * @param isRe 是否去零
  */
 export function formatAmount(money, format, coin, isRe = false) {
-  // console.log('m:', money)
-// if(money == '90000'){debugger}
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
   let flag = false;// 是否是负数
   if (isNaN(money)) {
     return '-';
   } else {
-    Number(money);
+    money = Number(money);
   }
   if (money < 0) {
     money = -1 * money;
     flag = true;
   }
   // 默认格式为2位小数
-  if (isUndefined(format) || typeof format === 'object') {
+  if (isUnDefined(format) || typeof format === 'object') {
     format = 2;
   }
-  if (coin) {
+  if (coin && isUnDefined(format)) {
     format = 8;
   }
   // 金额格式化 金额除以unit并保留format位小数
@@ -176,7 +174,6 @@ export function formatAmount(money, format, coin, isRe = false) {
   if (flag) {
     money = '-' + money;
   }
-  // console.log('mon:', money)
   return money;
 }
 
@@ -197,8 +194,10 @@ export function moneyReplaceComma(money) {
 export function formatMoneyMultiply(money, rate, coin) {
   let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
 
-  if (isUndefined(money) || money === '') {
+  if (isUnDefined(money) || money === '') {
       return '-';
+  } else {
+    money = Number(money).toString()
   }
   rate = rate || new BigDecimal(unit);
   money = new BigDecimal(money);
@@ -213,8 +212,11 @@ export function formatMoneyMultiply(money, rate, coin) {
  * @param coin 币种
  */
 export function formatMoneySubtract(s1, s2, format, coin) {
-  if (isUndefined(s1) || isUndefined(s2) || s1 === '' || s2 === '') {
+  if (isUnDefined(s1) || isUnDefined(s2) || s1 === '' || s2 === '') {
       return '-';
+  }  else {
+    s1 = Number(s1);
+    s2 = Number(s2);
   }
   let num1 = new BigDecimal(s1.toString());
   let num2 = new BigDecimal(s2.toString());

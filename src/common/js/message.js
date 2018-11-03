@@ -74,10 +74,6 @@ export function setProfilePortrait ({gender, nickname, photo}) {
     'Tag': 'Tag_Profile_IM_Image',
     'Value': photo
   });
-  !isUnDefined(gender) && profileItem.push({
-    'Tag': 'Tag_Profile_IM_Gender',
-    'Value': GENDER[gender]
-  });
   var options = {
     'ProfileItem': profileItem
   };
@@ -88,7 +84,6 @@ export function getProfilePortrait (userId, success, error) {
   var tagList = [
     'Tag_Profile_IM_Nick', // 昵称
     'Tag_Profile_IM_Gender', // 性别
-    'Tag_Profile_IM_AllowType', // 加好友方式
     'Tag_Profile_IM_Image' // 头像
   ];
   var options = {
@@ -100,26 +95,20 @@ export function getProfilePortrait (userId, success, error) {
       res = res.UserProfileItem;
       let item = res[0];
       let _nickname;
-      let _gender;
       let _photo;
       item.ProfileItem.map((_item, index) => {
         switch (_item.Tag) {
           case 'Tag_Profile_IM_Nick':
             _nickname = _item.Value;
             break;
-          case 'Tag_Profile_IM_Gender':
-            _gender = _item.Value;
-            break;
           case 'Tag_Profile_IM_Image':
             _photo = _item.Value;
             break;
         }
       });
-      _gender = _gender === 'Gender_Type_Male' ? 1 : 0;
       let profileItem = {
         'nickname': _nickname,
-        'photo': formatAvatar(_photo),
-        'gender': _gender
+        'photo': isUnDefined(_photo) ? '' : formatAvatar(_photo)
       };
       success && success(profileItem);
     } else {
