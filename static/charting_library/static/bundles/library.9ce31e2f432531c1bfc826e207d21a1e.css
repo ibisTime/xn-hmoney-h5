@@ -9437,7 +9437,7 @@ html.theme-dark .pane-legend .pane-legend-icon .expand, html.theme-dark .pane-le
 }
 
 .pane-legend-line.pane-legend-wrap.main.expand-line {
-  padding-right: 85px
+  /*padding-right: 85px*/
 }
 
 .pane-legend-line.pane-legend-wrap.main .pane-legend-item-value-wrap {
