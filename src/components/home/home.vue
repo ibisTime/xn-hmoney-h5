@@ -215,7 +215,7 @@
 
 
       .tabCar {
-        width: 47.8%;
+        width: 46.8%;
         height: 1.8rem;
         background-size: 100% 100%;
 
