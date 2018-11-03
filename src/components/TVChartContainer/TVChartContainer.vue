@@ -277,7 +277,7 @@
     .chart-button{
       float: left;
       height: 0.6rem;
-      padding: 0 0.25rem 0.02rem;
+      padding: 0 0.2rem 0.02rem;
       p{
         display: inline-block;
         overflow: hidden;
