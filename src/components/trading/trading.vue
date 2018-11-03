@@ -332,11 +332,11 @@ export default {
         return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
       });
       this.gkdsList = gkData[0];
-      this.dayLineInfo = this.gkdsList.dayLineInfo;
+      this.dayLineInfo = this.gkdsList.dayLineInfo;console.log(this.dayLineInfo)
       if(this.dayLineInfo){
         this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
         this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
-        this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
+        // this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.symbol);
       }
       this.getMidPrice();
       this.handicapData();
