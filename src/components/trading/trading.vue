@@ -60,7 +60,7 @@
           </p>
           <p class='he9 btn green' v-show="downConfig.type == '1'">
             <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
-            <span class="max-len">{{xjPrice > 0 ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
+            <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
           </p>
           <p class='he9 btn'>
             <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
@@ -144,14 +144,7 @@
           <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link></p>
         </div>
         <div v-show="!show3" class='current-history'>
-          <Scroll 
-            ref="scroll"
-            :data="myOrderData"
-            :hasMore="hasMore"
-            v-show="myOrderData.length > 0"
-            @pullingUp="myOrderTicket"
-          >
-            <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
+          <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
               <p class='text1'>
                 <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
                 <span>{{myItem.createDatetime}}</span>
@@ -172,7 +165,6 @@
                 </div>
               </div>
             </div>
-          </Scroll>
           <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
             <img src="./zwdata.png" />
             <p>{{$t('trading.bbDeal.zwdd')}}</p>
@@ -225,7 +217,7 @@
 <script>
 import Footer from 'components/footer/footer';
 import Toast from 'base/toast/toast';
-import Scroll from 'base/scroll/scroll';
+// import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
 import TradingSynopsis from 'components/trading-synopsis/trading-synopsis';
 import TradingPutUp from 'components/trading-put-up/trading-put-up';
@@ -287,7 +279,7 @@ export default {
       start: '1',
       myOrderConfig: {             // 我的委托单config
         start: '1',
-        limit: '3',
+        limit: '20',
         userId: getUserId(),
         symbol: '',
         toSymbol: '',
@@ -332,7 +324,7 @@ export default {
         return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
       });
       this.gkdsList = gkData[0];
-      this.dayLineInfo = this.gkdsList.dayLineInfo;console.log(this.dayLineInfo)
+      this.dayLineInfo = this.gkdsList.dayLineInfo;
       if(this.dayLineInfo){
         this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
         this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
@@ -351,6 +343,7 @@ export default {
       this.handTime = setInterval(() => {
         if(this.isLogin){
           this.getUserWalletData();
+          this.myOrderTicket();
         }
         this.handicapData();
         this.realTimeData();
@@ -421,6 +414,7 @@ export default {
       this.handTime = setInterval(() => {
         if(this.isLogin){
           this.getUserWalletData();
+          this.myOrderTicket();
         }
         this.handicapData();
         this.realTimeData();
@@ -459,7 +453,7 @@ export default {
       });
     },
     myOrderTicket(){
-      this.isLoading = true;
+      // this.isLoading = true;
       this.myOrderConfig.start = this.start;
       this.myOrderConfig = {
         ...this.myOrderConfig,
@@ -473,14 +467,10 @@ export default {
             item.totalCount = showTotalCount ? '-' : (formatAmount(`${item.totalCount}`, '', item.symbol));
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol)
           });
-          if (data.totalPage <= this.start) {
-            this.hasMore = false;
-          }
-          this.myOrderData = [...this.myOrderData, ...data.list];
-          this.start ++;
-          this.isLoading = false;
+          this.myOrderData = data.list;
+          // this.isLoading = false;
         }, () => {
-          this.isLoading = false;
+          // this.isLoading = false;
         });
     },
     realTimeData(){
@@ -690,7 +680,7 @@ export default {
   components: {
     Footer,
     Toast,
-    Scroll,
+    // Scroll,
     FullLoading,
     TradingSynopsis,
     TradingPutUp,
@@ -933,7 +923,7 @@ export default {
             line-height: .55rem;
             span{
               text-align: center;
-              width: 41%;
+              width: 40%;
               display: inline-block;
             }
             .txt1 {
