@@ -16,19 +16,25 @@
         <p class='money'><span>{{$t('myOrderDetail.subject.jyje')}}</span><span>{{orderDetailData.tradeAmount ? orderDetailData.tradeAmount : '-'}} {{orderDetailData.tradeCurrency}}</span></p>
         <p class='number'><span>{{$t('myOrderDetail.subject.jysl')}}</span><span>{{countString ? countString : '0'}} {{orderDetailData.tradeCoin}}</span></p>
         <p class='price'><span>{{$t('myOrderDetail.subject.jyjg')}}</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '-'}} {{orderDetailData.tradeCurrency}}</span></p>
+        <p class='paytype'><span>{{$t('buyPublish.subject.fkfs')}}</span><span>{{payTypeList[orderDetailData.payType]}}</span></p>
     </div>
     <div class='message'>
         <div class='mess'>
             <p class='text1'>
-              <span>{{$t('myOrderDetail.subject.mj')}} {{orderDetailData.sellUserInfo.nickname}}</span>
-              <span class='pay'>{{payTypeList[orderDetailData.payType]}}</span>
-              <span class='seller'>{{$t('myOrderDetail.subject.maij')}}： {{orderDetailData.buyUserInfo.nickname}}</span>
+              <span>{{$t('myOrderDetail.subject.mj')}} {{buyNick}}</span>
+              <span class='seller m-r'>{{$t('myOrderDetail.subject.maij')}}： {{sellNick}}</span>
             </p>
+            <p class="titly">{{$t('orderDetail.subject.ggly')}}：</p>
             <p class='text2'>{{orderDetailData.leaveMessage}}</p>
         </div>
-        <div class='appraise' v-show='this.index == 2'>
-          <p class='txt1'>{{$t('myOrderDetail.subject.pj')}}</p>
-          <p class='txt2'>{{$t('myOrderDetail.subject.pjyj')}}</p>
+        <div class='appraise' v-show="pjComment">
+          <p class='txt1'>
+            {{$t('myOrderDetail.subject.pj')}} 
+            <span class="fr" :class="ishpTxt == $t('common.hp') ? 'hptxt' : 'cptxt'">
+              <i class="icon pjback" :style="pjback"></i>{{ishpTxt}}
+            </span>
+            </p>
+          <p class='txt2'>{{pjComment}}</p>
         </div>
     </div>
     <div class='window'>
@@ -105,6 +111,11 @@
       },
       statusValueList: {},
       payTypeList: {},
+      pjList: {
+        '2': this.$t('common.hp'),
+        '0': this.$t('common.cp')
+      },
+      ishpTxt: '',
       btns: '',
       index: 0,
       show: true,
@@ -117,7 +128,11 @@
       userCp: false,
       isLoading: true,
       comment: '',
-      content: ''
+      content: '',
+      buyNick: '',
+      sellNick: '',
+      pjComment: '',
+      pjback: ''
     };
   },
   created() {
@@ -188,6 +203,8 @@
           data.tradeAmount = (Math.floor(data.tradeAmount * 100) / 100).toFixed(2);
           data.tradePrice = (Math.floor(data.tradePrice * 100) / 100).toFixed(2);
         }
+        this.buyNick = data.buyUserInfo.nickname;
+        this.sellNick = data.sellUserInfo.nickname;
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
         if(data.invalidDatetime){
@@ -197,6 +214,9 @@
         }
         // 当前用户为买家
         if (data.buyUser == getUserId()) {
+          this.pjback = data.sbComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+          this.pjComment = data.sbCommentContent;
+          this.ishpTxt = this.pjList[data.sbComment];
           if(data.status == 0){
             this.btns = `<button class="o-btn payBtn">
                           ${this.$t('myOrderDetail.subject.bjfk')}
@@ -213,6 +233,9 @@
             this.btns = `<button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`
           }
         }else{  // 当前用户为卖家
+        this.pjback = data.bsComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+        this.pjComment = data.bsCommentContent;
+        this.ishpTxt = this.pjList[data.bsComment];
           //待支付
           if (data.status == "1") {
               this.btns = `<button class="o-btn releaseBtn">${this.$t('myOrderDetail.subject.sfhb')}</button>
@@ -390,12 +413,16 @@
       justify-content: space-between;
     }
     .number,
-    .price {
+    .price,
+    .paytype {
       font-size: 0.28rem;
       color: #999;
     }
     .number {
       margin: 0.34rem 0;
+    }
+    .paytype{
+      margin-top: 0.34rem;
     }
   }
 
@@ -419,11 +446,16 @@
           border-radius: 0.03rem;
         }
         .seller {
-          position: absolute;
-          right: 0.3rem;
+          float: right;
+        }
+        .m-r{
+          margin-right: 0.2rem;
         }
       }
       .text2 {
+        padding: 0.1rem;
+        padding-top: 0.2rem;
+        padding-bottom: 0;
         font-size: 0.26rem;
         color: #999;
         line-height: 0.34rem;
@@ -437,6 +469,19 @@
       }
       .txt2 {
         color: #999;
+      }
+      .hptxt{
+        color: #d53d3d;
+      }
+      .cptxt{
+        color: #666;
+      }
+      .pjback{
+        display: inline-block;
+        width: 0.3rem;
+        height: 0.4rem;
+        margin-right: 0.1rem;
+        vertical-align: middle;
       }
     }
   }
@@ -638,7 +683,9 @@
       margin-bottom: 0.4rem;
     }
   }
-
+  .fr{
+    float: right;
+  }
 }
 
 </style>

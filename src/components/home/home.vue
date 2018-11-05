@@ -82,7 +82,7 @@
     },
     created() {
       setTitle(this.$t('footer.navbar.page'));
-      getBannerList().then((data) => {console.log(data)
+      getBannerList().then((data) => {
         this.banners = data;
         this.isLoading = false;
       });

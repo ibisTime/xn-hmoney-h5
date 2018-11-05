@@ -325,6 +325,7 @@ export default {
 
   .list-start {
     height: 12rem;
+    padding-bottom: 1rem;
     overflow: scroll;
       .list {
           .text1 {

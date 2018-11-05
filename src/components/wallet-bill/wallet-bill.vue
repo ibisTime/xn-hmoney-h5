@@ -284,6 +284,7 @@ export default {
   .list-wrap{
     position: relative;
     height: 13rem;
+    padding-bottom: 1rem;
     overflow: scroll;
     .wallet-p{
       position: absolute;

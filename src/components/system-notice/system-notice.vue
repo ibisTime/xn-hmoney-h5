@@ -101,6 +101,7 @@ export default {
     width: 100%;
     height: 12rem;
     padding: 0 .3rem;
+    padding-bottom: 1rem;
     margin-top: 0.3rem;
     .list {
       width: 100%;

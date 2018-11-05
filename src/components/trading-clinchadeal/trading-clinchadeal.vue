@@ -116,6 +116,7 @@ import { formatDate, formatAmount } from 'common/js/util';
     .t-box{
       width: 100%;
       height: 6rem;
+      padding-bottom: 0.2rem;
       overflow: scroll;
     }
     p {
