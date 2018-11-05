@@ -2,88 +2,161 @@
   <div class="order-details-wrapper" @click.stop>
     <div class='header'>
         <div class='top'>
-            <p>
-                <i class='icon'></i>
-                <span class='txt1'>订单详情</span>
-            </p>
         </div>
     </div>
     <!-- 待支付 -->
-    <div v-show='show' class='main'>
+    <div class='main'>
         <div class='text1'>
-            <p class='txt1'><i class='icon'></i><span>待支付</span></p>
-            <p class='txt2'><span>￥</span>100</p>
-            <p class='line'>
-                <span class='t1'>转账附言</span>
-                <span class='red t2'>DUS7</span>
-                <span class='red t1'>复制</span></p>
+            <p class='txt1'><i class='icon'></i><span>{{statusList[status]}}</span></p>
+            <p class='txt2'><span>￥</span>{{money}}</p>
         </div>
         <p class='text2 clearfix'>
-            <span class='icon ico1'><i class='icon ico2'></i></span>
-            <span class='txt1'>银行转账</span>
-            <span class='red'>一键复制</span>
+            <span class='icon ico1'><i class='icon' :class="receiveType == 'alipay' ? 'ico3' : 'ico2'"></i></span>
+            <span class='txt1'>{{receiveType == 'alipay' ? $t('common.zfb') : $t('common.yhkzz')}}</span>
         </p>
         <p class='text3'>
-            请按一下方式付款，转账务必填写转账附言码
+            <!-- 请按一下方式付款，转账务必填写转账附言码 -->
         </p>
         <p class='text4'>
-            <span class='txt1'>收款人</span>
-            <span class='txt2'>lisa</span>
-            <span class='red txt3'>复制</span>
+            <span class='txt1'>{{$t('orderDetail.subject.lx')}}：</span>
+            <span class='txt2'>{{typeList[type]}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>银行卡号</span>
-            <span class='txt2'>6216 9012 1358 0868</span>
-            <span class='red txt3'>复制</span>
+            <span class='txt1'>{{$t('orderDetail.subject.skr')}}：</span>
+            <span class='txt2'>{{realName}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>收款银行</span>
-            <span class='txt2'>中国民生银行</span>
-            <span class='red txt3'>复制</span>
+            <span class='txt1'>{{$t('orderDetail.subject.skfs')}}：</span>
+            <span class='txt2'>{{zfType[receiveType]}}</span>
         </p>
         <p class='text4'>
-            <span class='txt1'>开户行</span>
-            <span class='txt2'>上海奉贤支行</span>
-            <span class='red txt3'>复制</span>
+            <span class='txt1'>{{$t('orderDetail.subject.zh')}}：</span>
+            <span class='txt2'>{{receiveCardNo}}</span>
         </p>
-        <p class='text5'><i class='icon'></i><span>收款账户经过平台认证，请放心收款</span></p>
-        <button>我已完成付款</button>
-    </div>
-    <!-- 已取消 -->
-    <div v-show='!show' class='main main1'>
-        <div class='text1'>
-            <p class='txt1'><i class='icon ico1'></i><span>已取消</span></p>
-            <p class='txt2'>买入 0.345657BTC</p>
-            <p class='txt3'>总价 ￥100</p>
-            <p class='txt4 line'>币已转入您的账户，交易完成</p>
+        <p class='text4'>
+            <span class='txt1'>{{$t('orderDetail.subject.khh')}}：</span>
+            <span class='txt2'>{{receiveInfo}}</span>
+        </p>
+        <p class='text5'><i class='icon'></i><span>{{$t('orderDetail.subject.ptrz')}}</span></p>
+        <div v-show="btnStatus">
+            <button v-show="qrStatus" @click="qrPayClick">{{$t('orderDetail.subject.wcfk')}}</button>
+            <button class="qx-order" v-show="qxStatus" @click="qxPayClick">{{$t('orderDetail.subject.qxjy')}}</button>
         </div>
-        <p class='text4'>
-            <span class='txt1'>订单编号</span>
-            <span class='txt2'>56567878898989</span>
-        </p>
-        <p class='text4'>
-            <span class='txt1'>类型</span>
-            <span class='txt2'>买入</span>
-        </p>
-        <p class='text4'>
-            <span class='txt1'>单价</span>
-            <span class='txt2'>￥576</span>
-        </p>
-        <p class='text4'>
-            <span class='txt1'>下单时间</span>
-            <span class='txt2'>2018-09-23 12:00:00</span>
-        </p>
     </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+import { getUrlParam, getUserId, formatAmount, setTitle } from 'common/js/util';
+import { bjPlayfo, qxOrder, getGmBankData, getCTSDetail } from 'api/person';
+import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 export default {
   data() {
     return {
-        show: true
+        textMsg: this.$t('common.czcg'),
+        isLoading: true,
+        qxStatus: false,
+        btnStatus: false,
+        qrStatus: false,
+        statusList: {
+            '0': this.$t('orderDetail.subject.dzf'),
+            '1': this.$t('orderDetail.subject.dqr'),
+            '2': this.$t('orderDetail.subject.ywc'),
+            '3': this.$t('orderDetail.subject.yqx'),
+            '4': this.$t('orderDetail.subject.ptyqx')
+        },
+        zfType: {},
+        typeList: {
+            '0': this.$t('common.mr'),
+            '1': this.$t('common.mc')
+        },
+        config: {
+            start: 1,
+            limit: 10,
+            userId: getUserId(),
+            code: ''
+        },
+        jyConfig: {
+            userId: getUserId(),
+            code: ''
+        },
+        realName: '',
+        receiveCardNo: '',
+        receiveInfo: '',
+        receiveType: '',
+        status: '',
+        type: '',
+        money: ''
     };
   },
-  methods: {}
+  created() {
+      setTitle(this.$t('orderDetail.subject.ddxq'));
+      this.config.code = getUrlParam('code');
+      this.jyConfig.code = getUrlParam('code');
+      getGmBankData().then(data => {
+          data.forEach(item => {
+            this.zfType[item.bankCode] = item.bankName;
+        });
+        this.getOrderDetail();
+      });
+  },
+  methods: {
+    getOrderDetail(){
+        getCTSDetail(this.config).then(data => {console.log(data)
+            this.realName = data.bankcard ? data.bankcard.realName : data.user.realName;
+            this.receiveCardNo = data.receiveCardNo;
+            this.receiveInfo = data.receiveInfo;
+            this.receiveType = data.receiveType;
+            this.status = data.status;
+            this.money = data.tradeAmount;
+            this.type = data.type;
+            if (data.status == 0 || data.status == 1) {
+                this.btnStatus = true;
+            }else{
+                this.btnStatus = false;
+            }
+            if (data.status == 0) {
+                this.qxStatus = true;
+            }else{
+                this.qxStatus = false;
+            }
+            if (data.status == 0 && data.type == 0) {
+                this.qrStatus = true;
+            }else{
+                this.qrStatus = false;
+            }
+            this.isLoading = false;
+        }, () => {
+            this.isLoading = false;
+        })
+    },
+    qrPayClick(){
+        bjPlayfo(this.jyConfig).then(data => {
+            this.$refs.toast.show();
+            this.getOrderDetail();
+        }, () => {
+            setTimeout(() => {
+                this.$router.push('/wallect-orderRecord');
+            }, 1500);
+        });
+    },
+    qxPayClick(){
+        qxOrder(this.jyConfig).then(data => {
+            this.$refs.toast.show();
+            this.getOrderDetail();
+        }, () => {
+            setTimeout(() => {
+                this.$router.push('/wallect-orderRecord');
+            }, 1500);
+        });
+    }
+  },
+  components: {
+      FullLoading,
+      Toast
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -113,7 +186,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("账单详情");
+    background-image: url('./zdxq.png');
     .top {
         line-height: 0.88rem;
         width: 100%;
@@ -123,7 +196,7 @@ export default {
         .icon {
             width: 0.2rem;
             height: 0.36rem;
-            @include bg-image("返回白色");
+            background-image: url('./fhbs.png');
             margin-top: 0.28rem;
             float: left;
         }
@@ -142,14 +215,10 @@ export default {
   .main {
       width: 92%;
       margin: 0 auto;
+      margin-top: -1.32rem;
       border-radius: .08rem;
       background: #fff;
-      position: absolute;
-      top: 1.32rem;
-      left: 50%;
-      transform: translateX(-50%);
       text-align: center;
-      z-index: 10;
       .text1 {
           width: 100%;
           padding: .5rem .3rem 0;
@@ -158,12 +227,12 @@ export default {
             .icon {
                 width: .36rem;
                 height: .36rem;
-                 @include bg-image("待支付");
+                background-image: url('./dzf.png');
                  margin-right: .12rem;
                  vertical-align: baseline;
             }
             .ico1 {
-                @include bg-image("已取消");
+                background-image: url('./yqx.png');
                 vertical-align: baseline;
             }
             span {
@@ -206,13 +275,18 @@ export default {
             position: relative;
             float: left;
           }
-          .ico2 {
+          .ico2 , .ico3{
             position: absolute;
             top: .098rem;
             left: .28rem;
             width: .32rem;
             height: .26rem;
-            @include bg-image("银行卡白色");
+          }
+          .ico2{
+              background-image: url('./yhk.png');
+          }
+          .ico3{
+              background-image: url('./zfb.png');
           }
           .txt1 {
               float: left;
@@ -265,18 +339,24 @@ export default {
           .icon {
               width: .2rem;
               height: .24rem;
-               @include bg-image("认证");
+              background-image: url('./rz.png');
                margin-right: .1rem;
           }
       }
       button {
-          width: 3.84rem;
+          width: 2.34rem;
           height: .9rem;
           background: #d53d3d;
           border-radius: .45rem;
           font-size: .32rem;
           color: #fff;
           margin-bottom: .4rem;
+      }
+      .qx-order{
+          border: 1px solid #d53d3d;
+          color: #d53d3d;
+          background-color: #fff;
+          margin-left: 0.5rem;
       }
   }
 

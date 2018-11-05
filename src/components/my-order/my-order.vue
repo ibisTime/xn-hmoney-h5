@@ -1,150 +1,184 @@
 <template>
   <div class="order-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon' @click='goBack'></i>
         <span class='title'>我的订单</span>
         </p>
-    </header>
+    </header> -->
     <div class='tabs'>
         <p>
-            <span :class="[ show ? 'select' : '' ]" @click='starting'>进行中</span>
+            <span :class="[ show ? 'select' : '' ]" @click='starting'>{{$t('myOrder.subject.jxz')}}</span>
         </p>
         <p>
-            <span :class="[ !show ? 'select' : '' ]" @click='ended'>已结束</span>
+            <span :class="[ !show ? 'select' : '' ]" @click='ended'>{{$t('myOrder.subject.yjs')}}</span>
         </p>
     </div>
-    <div v-show='show' class='list-start'>
-        <div class='list' @click='goDetails'>
-            <div class='pic'>
-                <i class='icon'></i>
+    <div class='list-start'>
+        <Scroll 
+          ref="scroll"
+          :data="list"
+          :hasMore="hasMore"
+          v-show="list.length > 0"
+          @pullingUp="getOrderData"
+        >
+            <div class='list' @click='goDetails(item.code, item.status)' v-for='(item,index) in list' :key="index">
+                <div class='pic' @click.stop="toHomePage(item.sellUser, item.buyUser, item.tradeCoin)">
+                    <p 
+                      :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)" 
+                      :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
+                    >
+                    </p>
+                    <!-- <img :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}" src="./txiang.png"/> -->
+                    <HeadPic :content="item.buyUser !== userId ? item.buyUserInfo.nickname.substring(0, 1) : item.sellUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}"/>
+                </div>
+                <div class='text1'>
+                    <p class='txt1'>
+                      <span class='t1' >{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span>
+                      <span :class="[item.buyUser !== userId ? 'txt2 buy' : 'txt2 sell']">{{typeList[item.buyUser !== userId ? 'buy' : 'sell']}} {{item.tradeCoin}}</span>
+                    </p>
+                    <p class='txt2'>{{$t('myOrder.subject.jyje')}}：{{item.status!="-1" ? item.tradeAmount : '-'}} {{item.tradeCurrency}}</p>
+                    <p class='txt2'>{{$t('myOrder.subject.jysl')}}：{{item.countString ? item.countString : '0'}} {{item.tradeCoin}}</p>
+                </div>
+                <div class='text2'>
+                    <p class='txt1'>{{statusValueList[item.status]}}</p>
+                    <p class='txt2' :title="item.code" >{{$t('myOrder.subject.ddbh')}}:{{item.code.substring(item.code.length-8)}}</p>
+                </div>
             </div>
-            <div class='text1'>
-                <p class='txt1'>KOALA<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：500.08 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易进行中</p>
-                <p class='txt2'>订单编号:1020</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>FUN MVP<span class='sell'>出售</span></p>
-                <p class='txt2'>交易金额：100.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易进行中</p>
-                <p class='txt2'>订单编号：2080</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>不懂<span class='sell'>出售</span></p>
-                <p class='txt2'>交易金额：200.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易进行中</p>
-                <p class='txt2'>订单编号：6666</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>Sting<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：100.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易进行中</p>
-                <p class='txt2'>订单编号：2080</p>
-            </div>
-        </div>
-    </div>
-
-    <div v-show='!show' class='list-end'>
-        <div class='list' @click='goDetails'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>KOALA<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：500.08 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易已结束</p>
-                <p class='txt2'>订单编号:1020</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>FUN MVP<span class='sell'>出售</span></p>
-                <p class='txt2'>交易金额：100.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易已结束</p>
-                <p class='txt2'>订单编号：2080</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>不懂<span class='sell'>出售</span></p>
-                <p class='txt2'>交易金额：200.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易已结束</p>
-                <p class='txt2'>订单编号：6666</p>
-            </div>
-        </div>
-        <div class='list'>
-            <div class='pic'>
-                <i class='icon'></i>
-            </div>
-            <div class='text1'>
-                <p class='txt1'>Sting<span class='buy'>购买</span></p>
-                <p class='txt2'>交易金额：100.00 CNY</p>
-            </div>
-            <div class='text2'>
-                <p class='txt1'>交易已结束</p>
-                <p class='txt2'>订单编号：2080</p>
-            </div>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': list.length > 0}">
+          <img src="./wu.png" />
+          <p>{{$t('myOrder.subject.zwdd')}}</p>
         </div>
     </div>
   </div>
 </template>
 <script>
+import { myOrder } from "api/person";
+import { getDictList } from "api/general";
+import { formatAmount, getAvatar, setTitle } from "common/js/util";
+import Scroll from 'base/scroll/scroll';
+import { getUserId } from '../../common/js/util';
+import HeadPic from 'base/head-pic/headPic';
+
 export default {
   data() {
     return {
+      userId: getUserId(),
       show: true,
+      hasMore: true,
+      list: [],
+      start1: 1,
+      start2: 1,
+      limit: 10,
+      typeList: {
+        "sell": this.$t('common.cs'),
+        "buy": this.$t('common.gm')
+      },
+      statusValueList: {},
+      type: 's',
+      statusList: ['0', '-1', '1', '5'],
+      orderType: ''
     };
   },
+  created() {
+    setTitle(this.$t('myOrder.subject.wddd'));
+    getDictList('trade_order_status').then(data => {
+      data.forEach((item) => {
+        this.statusValueList[item.dkey] = item.dvalue
+      });
+      let ordering = sessionStorage.getItem('ordering');
+      if(ordering == 'ended'){
+        this.show = false;
+        this.type = 'e';
+        this.start2 = 1;
+        this.list = [];
+        this.statusList = ['2', '3', '4'];
+      }
+      this.getOrderData();
+    })
+  },
   methods: {
+    // 获取头像
+    getUserPic(pic){
+        return getAvatar(pic);
+    },
+    getOrderData(){
+      this.getOrderList(this.type);
+    },
     goBack() {
       this.$router.go(-1);
     },
-    goDetails() {
-      this.$router.push('order-details');
+    goDetails(code, status) {
+      // if(status == -1){
+      //   return;
+      // }
+      this.$router.push('order-details?code=' + code);
     },
     starting() {
+      sessionStorage.setItem('ordering', 'starting');
       this.show = true;
+      this.type = 's';
+      this.start1 = 1;
+      this.list = [];
+      this.statusList = ['0', '-1', '1', '5'];
+      this.getOrderList(this.type);
     },
     ended() {
+      sessionStorage.setItem('ordering', 'ended');
       this.show = false;
+      this.type = 'e';
+      this.start2 = 1;
+      this.list = [];
+      this.statusList = ['2', '3', '4'];
+      this.getOrderList(this.type);
+    },
+    getOrderList(type){
+      let that = this;
+      if(type == 's'){
+        myOrder(this.statusList, this.start1, this.limit).then( data => {
+          clData(data, that, this.start1, 's');
+        })
+      }else{
+        myOrder(this.statusList, this.start2, this.limit).then( data => {
+          clData(data, that, this.start2, 'e');
+        })
+      }
+
+      function clData(data, that, start, type){
+        data.list.map( v => {
+          v.countString = formatAmount(v.countString, '', v.tradeCoin);
+        });
+        that.hasMore = true;
+        if(data.totalPage < start){
+          that.list = [];
+        }
+        if (data.totalPage <= start) {
+          that.hasMore = false;
+        }
+        that.list = [...that.list, ...data.list];
+        if(type == 's'){
+          that.start1 ++;
+        }else{
+          that.start2 ++;
+        }
+      }
+    },
+    // 个人主页
+    toHomePage(sellUser, buyUser, tradeCoin){
+      if (buyUser == getUserId()) {
+        //当前用户为买家
+        this.$router.push(`/homepage?userId=${sellUser}&currency=${tradeCoin}`);
+      } else {
+        //当前用户为卖家
+        this.$router.push(`/homepage?userId=${buyUser}&currency=${tradeCoin}`);
+      }
+      
     }
+  },
+  components: {
+      Scroll,
+      HeadPic
   }
 };
 </script>
@@ -176,7 +210,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -219,26 +253,41 @@ export default {
       height: 1rem;
       border-radius: 50%;
       margin-right: 0.22rem;
-      .icon {
+      p{
+        width: 100%;
+        height: 100%;    
+        background-position: center;
+        background-size: cover;
+        border-radius: 100%;
+      }
+      img {
         width: 100%;
         height: 100%;
-        @include bg-image("头像(4)");
       }
     }
 
     .text1 {
       .txt1 {
-        margin-bottom: 0.27rem;
+        margin-bottom: 0.17rem;
         font-weight: bold;
-        span {
+        display: inline-block;
+        .t1 {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-right: 0.1rem;
+        }
+        .txt2 {
           display: inline-block;
-          width: 0.6rem;
+          width: 1.3rem;
           font-size: 0.2rem;
           color: #fff;
           text-align: center;
           line-height: 0.28rem;
           border-radius: 0.04rem;
-          margin-left: 0.33rem;
+          margin-left: 0.1rem;
+          margin-bottom: 0.05rem;
         }
         .buy {
           background: #d53d3d;
@@ -251,13 +300,12 @@ export default {
 
       .txt2 {
         font-size: 0.24rem;
-        font-weight: bold;
       }
     }
 
     .text2 {
       text-align: right;
-      margin-top: 0.04rem;
+      margin-top: 0.4rem;
       position: absolute;
       right: 0.3rem;
       .txt1 {
@@ -265,13 +313,19 @@ export default {
         margin-bottom: 0.23rem;
       }
       .txt2 {
+        width: 3rem;
         font-size: 0.24rem;
         color: #666;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
   }
 
   .list-start {
+    height: 12rem;
+    overflow: scroll;
       .list {
           .text1 {
               .txt1 {

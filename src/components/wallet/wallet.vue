@@ -1,331 +1,354 @@
 <template>
   <div class="wallet-wrapper" @click.stop>
-      <header>
-        我的资产
-      </header>
-      <div class='banner'>
-        <p class='txt1'><span class='icon ico'></span>总资产X币</p>
-        <div class='txt2' style='margin-top:.3rem;'>
-          <p class='t1'>{{data[2].amount}}</p>
-          <!-- <p class='t2'>≈60000.00 CNY</p> -->
+    <div class='banner'>
+      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
+      <div class='txt2' style='margin-top:.3rem;'>
+        <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
+      </div>
+      <div class='txt3'>
+      </div>
+    </div>
+    <!-- <div class='dollar'>
+      <i class='icon ico1'></i>
+      <span>$1 ≈ ¥6.6079</span>
+      <i class='icon ico2'></i>
+      <i class='icon ico3'></i>
+    </div> -->
+    <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
+      <i class="icon"
+         :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
+      <div class='my'>
+        <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
+        <p class='txt2'>{{infoItem.amount}}</p>
+        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
+          :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
+        </p>
+      </div>
+      <div class='datil'>
+        <div class='box'><i class='icon ico1'></i>
+          <router-link
+            :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">
+            {{$t('wallet.subject.zr')}}
+          </router-link>
         </div>
-        <div class='txt3'>
-          <!-- <div class='left'>
-            <p>币币资产 0.000987</p>
-            <p>≈60000.00 CNY</p>
-          </div>
-          <div class='right'>
-            <p>场外资产 0.000987</p>
-            <p>≈60000.00 CNY</p>
-          </div> -->
+        |
+        <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i
+          class='icon icoz'></i><span>{{$t('wallet.subject.zc')}}</span></div>
+        |
+        <div class='box'><i class='icon icoc'></i>
+          <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}</router-link>
         </div>
       </div>
-      <div class='dollar'>
-        <i class='icon ico1'></i>
-        <span>$1≈¥6.6079</span>
-        <i class='icon ico2'></i>
-        <i class='icon ico3'></i>   
+      <div class='operate' v-if="infoItem.currency === 'FMVP'">
+        <router-link to='wallet-top-up?type=buy' class='txt1'>{{$t('wallet.subject.cz')}}</router-link>
+        <router-link to='wallet-top-up?type=sell' class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
+        <router-link to='wallect-orderRecord' class='txt2'>{{$t('wallet.subject.ddjl')}}</router-link>
       </div>
-      <div class='my-assets'>
-        <i class="icon ico1"></i>
-        <div class='my'>
-          <p class='txt1'>自己币种资产({{data[2].currency}})</p>
-          <p class='txt2'>{{data[2].amount}}</p>
-          <p class='txt3'><span>冻结{{data[2].frozenAmount}}</span><span>可用{{data[2].amount - data[2].frozenAmount}}{{data[2].currency}}</span><span></span></p>
-        </div>
-        <div class='datil'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
-        </div>
-        <div class='operate'>
-          <router-link to='wallet-top-up' class='txt1'>充值</router-link>|
-          <router-link to='wallet-top-up' class='txt2'>提现</router-link>
-        </div>
-      </div>
-      <div class='my-assets my-assets1'>
-        <i class="icon ico1 icon1"></i>
-        <div class='my'>
-          <p class='txt1'>比特币资产({{data[0].currency}})</p>
-          <p class='txt2'>{{data[0].amount}}</p>
-          <p class='txt3'><span>冻结{{data[0].frozenAmount}}</span><span>可用{{data[0].amount - data[0].frozenAmount}}{{data[0].currency}}</span><span></span></p>
-        </div>
-        <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
-        </div>
-      </div>
-      <div class='my-assets my-assets1'>
-        <i class="icon ico1 icon2"></i>
-        <div class='my'>
-          <p class='txt1'>以太币资产({{data[1].currency}})</p>
-          <p class='txt2'>{{data[1].amount}}</p>
-          <p class='txt3'><span>冻结{{data[1].frozenAmount}}</span><span>可用{{data[1].amount - data[1].frozenAmount}}{{data[1].currency}}</span><span></span></p>
-        </div>
-        <div class='datil datil1'>
-          <div class='box'><i class='icon ico1'></i><router-link to='wallet-into'>转入</router-link></div>|
-          <div class='box'><i class='icon ico2'></i><router-link to='wallet-out'>转出</router-link></div>|
-          <div class='box'><i class='icon ico3'></i><router-link to='wallet-bill'>账单</router-link></div>
-        </div>
-      </div>
-      <Footer></Footer>
+    </div>
+    <Footer></Footer>
+    <Toast :text="textMsg" ref="toast"/>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import Footer from 'components/footer/footer';
-import {wallet} from '../../api/person';
-import jquery from 'jquery';
-import {getUserId, moneyFormat, moneyParse, moneyReplaceComma, moneyFormatSubtract, getCoinList, setCoinData } from '../../common/js/util';
+  import Footer from 'components/footer/footer';
+  import {userAllMoneyX, wallet, getUser} from 'api/person';
+  import Toast from 'base/toast/toast';
+  import FullLoading from 'base/full-loading/full-loading';
+  import {
+    getUserId,
+    formatAmount,
+    formatMoneySubtract,
+    moneyParse,
+    getCoinList,
+    setCoinData,
+    setTitle
+  } from 'common/js/util';
 
-export default {
-  data() {
-    return {
-      data: [
-        {}
-      ]
-    };
-  },
-  computed: {},
-  created() {
-    wallet(getUserId()).then(data => {
-      data.forEach( d => {
-        console.log(d);
+  export default {
+    data() {
+      return {
+        textMsg: '',
+        isLoading: true,
+        info: [{}, {}, {}],
+        cdInfo: {},
+        currency: 'CNY'
+      };
+    },
+    computed: {},
+    created() {
+      setTitle(this.$t('wallet.subject.wdzc'));
+      this.wallet();
+      userAllMoneyX(this.currency).then(v => {
+        v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
+        this.cdInfo = v;
       })
-
-    });
-  },
-  methods: {
-  },
-  components: {
-    Footer
-  }
-};
+    },
+    methods: {
+      // 列表查询用户账户
+      wallet() {
+        wallet().then(v => {
+          v.map(item => {
+            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency);
+            item.amount = formatAmount(item.amount, '', item.currency);
+            item.frozenAmount = formatAmount(item.frozenAmount, '', item.currency);
+          })
+          this.info = v;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+        });
+      },
+      // 转出
+      zcMoneyFn(currency, amount, accountNumber) {
+        getUser().then(data => {
+          if (data.tradepwdFlag) {
+            this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
+          } else if (!data.tradepwdFlag) {
+            this.textMsg = this.$t('wallet.subject.szjymm');
+            this.$refs.toast.show();
+            setTimeout(() => {
+              this.$router.push('/security-tradePassword?istw=0');
+            }, 1500);
+          }
+        });
+      },
+      formatAmount(money, format, coin) {
+        return formatAmount(money, format, coin);
+      },
+      formatMoneySubtract(s1, s2, format, coin) {
+        return formatMoneySubtract(s1, s2, format, coin);
+      }
+    },
+    components: {
+      Footer,
+      Toast,
+      FullLoading
+    }
+  };
 </script>
 <style lang="scss" scoped>
-@import "~common/scss/mixin";
-@import "~common/scss/variable";
+  @import "~common/scss/mixin";
+  @import "~common/scss/variable";
 
-.wallet-wrapper {
-  font-size: .3rem;
-  font-family: PingFangSC-Medium;
-  color: #333;
-  width: 100%;
-  padding: 0 .3rem .96rem .3rem;
-  background: #fff;
-  overflow: auto;
-
-  .icon {
-    display: inline-block;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
-  }
-
-  header {
+  .wallet-wrapper {
+    font-size: .3rem;
+    font-family: PingFangSC-Medium;
+    color: #333;
     width: 100%;
-    line-height: .9rem;
-    font-size: .36rem;
-    font-weight: bold;
-    text-align: center;
-  }
+    padding: 0.3rem .3rem .96rem .3rem;
+    background: #fff;
+    overflow: auto;
 
-  .banner {
-    width: 100%;
-    height: 2.9rem;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
-    @include bg-image("banner");
-    color: #fff;
-    font-size: .22rem;
+    .icon {
+      display: inline-block;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+    }
 
-    .txt1, .txt2 {
+    header {
+      width: 100%;
+      line-height: .9rem;
+      font-size: .36rem;
+      font-weight: bold;
       text-align: center;
     }
 
-    .txt1 {
-      padding-top:.52rem;
-      padding-bottom: .12rem;
-      font-size: .24rem;
-      color: #fff5f3;
-      line-height: .24rem;
-      letter-spacing: .002rem;
-
-
-      .ico {
-        width: .22rem;
-        height: .24rem;
-        @include bg-image("资产");
-        vertical-align: middle;
-        margin-right: .083rem;
-      }
-    }
-
-    .txt2 {
-      .t1 {
-        font-size: .52rem;
-        line-height: .52rem;
-        text-shadow: .04rem 0 .08rem rgba(206,58,7,0.20);
-        padding-bottom: .06rem;
-      }
-      .t2 {
-        font-size: .22rem;
-        letter-spacing: .0018rem;
-        margin-bottom: .22rem;
-      }
-    }
-
-    .txt3 {
+    .banner {
       width: 100%;
-      padding: 0 .85rem 0 .74rem;
-      display: flex;
-      justify-content: space-between;
+      height: 2.9rem;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+      @include bg-image("banner");
+      color: #fff;
       font-size: .22rem;
-      line-height: .32rem;
-    }
-    
-   
 
-  }
+      .txt1, .txt2 {
+        text-align: center;
+      }
 
-  .dollar {
-    height: .9rem;
-    line-height: .9rem;
-    .ico1, .ico2 {
-      width: .45rem;
-      height: .3rem;
-    }
-    .ico1 {
-      @include bg-image("美国");
-      margin: 0 .22rem 0 .1rem ;
-    }
-    .ico2 {
-      @include bg-image("中国");
-      margin-left: .21rem;
-      margin-right: 3.2rem;
-    }
-    .ico3 {
-      width: .148rem;
-      height: .255rem;
-      @include bg-image("更多");
-    }
-  }
-
-  .my-assets {
-    width: 100%;
-    height: 4rem;
-    background: #FFFFFF;
-    box-shadow: 0 .04rem .2rem 0 rgba(131,128,128,0.14);
-    border-radius: .14rem;
-    position: relative;
-    margin-bottom: .2rem;
-    .ico1 {
-      width: 1.2rem;
-      height: 1.2rem;
-      @include bg-image("x");
-      position: absolute;
-      top: .3rem;
-      right: .4rem;
-    }
-    .my {
-      padding: .3rem .62rem .3rem .2rem;
       .txt1 {
-        color: #D53D3D;
-        letter-spacing: .0025rem;
-        line-height: .42rem;
-        padding-bottom: .22rem;
-        margin-left: .1rem;
-      }
-      .txt2 {
-        font-size: .48rem;
-        line-height: .48rem;
-        color: #333;
-        margin-left: .1rem;
-        padding-bottom: .24rem;
-      }
-      .txt3 {
-        font-size: .22rem;
+        padding-top: .52rem;
+        padding-bottom: .12rem;
+        font-size: .24rem;
+        color: #fff5f3;
         line-height: .24rem;
-        color: #999;
+        letter-spacing: .002rem;
+
+        .ico {
+          width: .22rem;
+          height: .24rem;
+          background-image: url('./uzc.png');
+          vertical-align: middle;
+          margin-right: .083rem;
+        }
+      }
+
+      .txt2 {
+        .t1 {
+          font-size: .52rem;
+          line-height: .52rem;
+          text-shadow: .04rem 0 .08rem rgba(206, 58, 7, 0.20);
+          padding-bottom: .06rem;
+        }
+        .t2 {
+          font-size: .22rem;
+          letter-spacing: .0018rem;
+          margin-bottom: .22rem;
+        }
+      }
+
+      .txt3 {
+        width: 100%;
+        padding: 0 .85rem 0 .74rem;
         display: flex;
         justify-content: space-between;
+        font-size: .22rem;
+        line-height: .32rem;
+      }
+
+    }
+
+    .dollar {
+      height: .9rem;
+      line-height: .9rem;
+      .ico1, .ico2 {
+        width: .45rem;
+        height: .3rem;
+      }
+      .ico1 {
+        background-image: url('./mg.png');
+        margin: 0 .22rem 0 .1rem;
+      }
+      .ico2 {
+        background-image: url('./zg.png');
+        margin-left: .21rem;
+        margin-right: 3.2rem;
+      }
+      .ico3 {
+        width: .148rem;
+        height: .255rem;
+        background-image: url('./gd.png');
       }
     }
-    .datil {
-      width: 100%;
-      line-height: .8rem;
-      font-size: .26rem;
-      color: #e5e5e5;
-      display: flex;
-      border-top: .01rem solid #e5e5e5;
-      border-bottom: .01rem solid #e5e5e5;
-      .box {
-        flex: 1;
-        text-align: center;
-        position: relative;
-        color: #333;
 
+    .my-assets {
+      width: 100%;
+      overflow: hidden;
+      background: #FFFFFF;
+      box-shadow: 0 .04rem .2rem 0 rgba(131, 128, 128, 0.14);
+      border-radius: .14rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+      .ico1, .ico2, .ico3 {
+        width: 1.2rem;
+        height: 1.2rem;
+        @include bg-image("f");
+        position: absolute;
+        top: .3rem;
+        right: .4rem;
+      }
+      .ico2 {
+        background-image: url('./yt.png');
+      }
+      .ico3 {
+        background-image: url('./bt.png');
+      }
+      .my {
+        padding: .3rem .62rem .3rem .2rem;
+        .txt1 {
+          color: #D53D3D;
+          letter-spacing: .0025rem;
+          line-height: .42rem;
+          padding-bottom: .22rem;
+          margin-left: .1rem;
+        }
+        .txt2 {
+          font-size: .48rem;
+          line-height: .48rem;
+          color: #333;
+          margin-left: .1rem;
+          padding-bottom: .24rem;
+        }
+        .txt3 {
+          font-size: .22rem;
+          line-height: .24rem;
+          color: #999;
+          display: flex;
+          justify-content: space-between;
+          span {
+            width: 49%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      .datil {
+        width: 100%;
+        line-height: .8rem;
+        font-size: .26rem;
+        color: #e5e5e5;
+        display: flex;
+        border-top: 0.01rem solid #e5e5e5;
+        .box {
+          flex: 1;
+          text-align: center;
+          position: relative;
+          color: #333;
+
+          a {
+            color: #333;
+          }
+
+          .ico1 {
+            width: .29rem;
+            height: .26rem;
+            background-image: url('./zr.png');
+            margin-right: 1.1rem;
+          }
+          .icoz {
+            width: .3rem;
+            height: .3rem;
+            background-image: url('./zc.png');
+            margin-right: .1rem;
+            vertical-align: middle;
+          }
+
+          .icoc {
+            width: .26rem;
+            height: .3rem;
+            background-image: url('./zd.png');
+            margin-right: .1rem;
+            vertical-align: middle;
+          }
+
+        }
+
+      }
+
+      .operate {
+        display: flex;
+        font-size: .32rem;
+        line-height: 1rem;
+        color: #e5e5e5;
+        border-top: 0.01rem solid #e5e5e5;
         a {
+          flex: 1;
+          text-align: center;
+          font-size: .32rem;
           color: #333;
         }
+      }
 
-        .ico1 {
-          width: .29rem;
-          height: .26rem;
-          @include bg-image("转入");
-          margin-right: 1.1rem;
-        }
-        .ico2 {
-          width: .3rem;
-          height: .3rem;
-          @include bg-image("转出");
-          margin-right: .1rem;
-          vertical-align: middle;
-        }
-
-        .ico3 {
-          width: .26rem;
-          height: .3rem;
-          @include bg-image("账单");
-          margin-right: .1rem;
-          vertical-align: middle;
-        }
-
+      .datil1 {
+        border-bottom: none;
       }
 
     }
 
-    .operate {
-      display: flex;
-      font-size: .32rem;
-      line-height: 1rem;
-      color: #e5e5e5;
-      a {
-        flex: 1;
-        text-align: center;
-        font-size: .32rem;
-        color: #333;
-      }
-    }
-
-    .datil1 {
-      border-bottom: none;
-    }
-
   }
-
-  .my-assets1 {
-    height: 3rem;
-    .icon1 {
-      @include bg-image("比特");
-    }
-    .icon2 {
-      @include bg-image("以太");
-    }
-  }
-
-
-}
 
 </style>

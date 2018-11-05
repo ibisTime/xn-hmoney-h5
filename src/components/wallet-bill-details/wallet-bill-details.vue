@@ -1,47 +1,82 @@
 <template>
   <div class="bill-details-wrapper" @click.stop>
       <div class='header'>
-            <p>
-                <i class='icon'></i>
-                <span class='title'>账单详情</span>
-            </p>
       </div>
       <div class='box'>
             <div class='mess'>
-                <p class='name'>转出</p>
-                <p class='num'>-40ETH</p>
+                <p class='name'>{{type}}</p>
+                <p class='num'>{{data.transAmountString}} {{data.currency}}</p>
             </div>
       </div>
       <div class='main'>
           <div class='list'>
-              <span class='txt1'>变动前金额</span>
-              <span class='txt2'>0.0002ETH</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdqje')}}</span>
+              <span class='txt2'>{{data.preAmountString}} {{data.currency}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>变动后金额</span>
-              <span class='txt2'>0.0001ETH</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdhje')}}</span>
+              <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>手续费用</span>
-              <span class='txt2'>0.0002ETH</span>
+              <span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>
+              <span class='txt2'>{{type == '提币' || type == '提币冻结' || type == '提币手续费' || type == '提币解冻'? fee : '-'}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>变动时间</span>
-              <span class='txt2'>2017-10-10 12:20:22</span>
+              <span class='txt1'>{{$t('billDetail.subject.bdsj')}}</span>
+              <span class='txt2'>{{data.createDatetime}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>明细状态</span>
-              <span class='txt2'>未对账</span>
+              <span class='txt1'>{{$t('billDetail.subject.jymx')}}</span>
+              <span class='txt2'>{{data.bizNote}}</span>
           </div>
-          <div class='list'>
+          <!-- <div class='list'>
               <span class='txt1'>明细摘要</span>
               <span class='txt3'>转出至239120320190djkfdsahf djfafk djfafk djfafk</span>
-          </div>
+          </div> -->
       </div>
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
+import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
+import { billDetails } from 'api/person';
+import { getSysConfig } from 'api/general';
+import FullLoading from 'base/full-loading/full-loading';
+
 export default {
+    data() {
+        return {
+            data: [],
+            type: '',
+            fee: '',
+            isLoading: true
+        }
+    },
+    created() {
+        setTitle(this.$t('billDetail.subject.zdxq'));
+        this.type = getUrlParam('type');
+        this.billDetails();
+        getSysConfig('withdraw_fee').then(data => {
+            this.fee = data.cvalue * 100 + '%';
+            this.isLoading = false;
+        }, () => {
+            this.isLoading = false;
+        })
+    },
+    methods: {
+        billDetails() {
+            billDetails(getUrlParam('code')).then((data) => {
+                data.transAmountString = formatAmount(data.transAmountString, '', data.currency);
+                data.postAmountString = formatAmount(data.postAmountString, '', data.currency);
+                data.preAmountString = formatAmount(data.preAmountString, '', data.currency);
+                this.data = data;
+                this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+            });
+        }
+    },
+    components: {
+        FullLoading
+    }
 };
 </script>
 <style lang="scss" scoped>
@@ -67,7 +102,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("账单详情");
+        background-image: url('./zdxq.png');
         text-align: center;
         font-size: .36rem;
         line-height: .5rem ;
@@ -86,7 +121,7 @@ export default {
                 float: left;
                 width: .2rem;
                 height: .36rem;
-                @include bg-image("返回白色");
+                background-image: url('./fhbs.png');
             }
         }
 
@@ -105,7 +140,7 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-            @include bg-image("详情");
+            background-image: url('./xq.png');
             text-align: center;
 
             .name {

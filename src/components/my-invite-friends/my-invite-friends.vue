@@ -5,21 +5,21 @@
             <div class='logo'></div>
             <div class="pic icon"></div>
             <div class="text1">
-                送您一份<spann class='red1'>数字资产</spann>
+                {{$t('myInviteFriends.subject.snyf')}}<span class='red1'>{{$t('myInviteFriends.subject.szzc')}}</span>
             </div>
             <i class='icon ico1'></i>
-            <p class='text2 red2'> 每个人都应该拥有一些比特币</p>
-            <p class='text3'>1年内，你就会明白它的珍贵；3年内，你就会明白它的价值；</p>
-            <p class="text4">10年内，它会给你一个新的世界；20年内，它就是你的生活方式</p>
+            <p class='text2 red2'> {{$t('myInviteFriends.subject.mgryg')}}</p>
+            <p class='text3'>{{$t('myInviteFriends.subject.ynsn')}}</p>
+            <p class="text4">{{$t('myInviteFriends.subject.snesn')}}</p>
 
           </div>
 
       </div>
       <div class='main'>
           <div class='text'>
-              <p class='txt1'>梵蒂冈</p>
-              <p class='txt2'>邀请你加入FUN MVP</p>
-              <p class='txt3'>长按识别二维码</p>
+              <p class='txt1'>{{nickName}}</p>
+              <p class='txt2'>{{$t('myInviteFriends.subject.yqnjr')}}</p>
+              <p class='txt2'>{{$t('myInviteFriends.subject.casb')}}</p>
           </div>
           <div id='qrcode'></div>
       </div>
@@ -27,13 +27,22 @@
 </template> 
 <script>
 const QRCode = require('js-qrcode');
+import {getUserId, setTitle} from 'common/js/util';
+import {getUser} from 'api/user';
+
 export default {
   data() {
     return {
+        nickName: ''
     };
   },
   mounted() {
-    this.wxUrl = 'http://www.baidu.com';
+    setTitle(this.$t('myInviteFriends.subject.yqhy'));
+    getUser().then(data => {
+        this.nickName = data.nickname;
+    });
+    this.userId = getUserId();
+    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
     const container = document.getElementById('qrcode');
     const qr = new QRCode(container, {
       typeNumber: -1,
@@ -69,7 +78,7 @@ export default {
     .friends {
         width: 100%;
         height: 10.96rem;
-        @include bg-image("邀请背景");
+        background-image: url('./yqbj.png');
         position: relative;
         .content {
             width: 100%;
@@ -101,7 +110,7 @@ export default {
                 width: .24rem;
                 margin: .8rem auto .6rem;
                 height: .12rem;
-                @include bg-image("邀请好友三角形箭头");
+                background-image: url('./yqhysjx.png');
             }
             .text2 {
                 font-size: .34rem;

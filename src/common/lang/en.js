@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   language: {
-    name: '中文'
+    name: 'English'
   },
   // footer
   footer: {
@@ -15,12 +15,15 @@ module.exports = {
   // page页
   page: {
     navbar: {
-      title: 'FUN MVP'
+      title: 'FUNMVP'
     },
     cate: {
       game: 'game',
       exchange: 'exchange',
-      otc: 'otc'
+      otc: 'otc',
+      splendid: 'Chaotic world, wonderful pictures',
+      bbDeal: 'Coin currency trading',
+      realTime: '24h global real-time market'
     }
   }
 };

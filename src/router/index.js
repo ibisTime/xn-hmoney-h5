@@ -53,10 +53,10 @@ const WalletBill = () => import('components/wallet-bill/wallet-bill');
 const BillDetails = () => import('components/wallet-bill-details/wallet-bill-details');
 // 我的
 const Mine = () => import('components/mine/mine');
-// 我的 -- 选择货币
-const MyCurrency = () => import('components/my-currency/my-currency');
 // 我的 -- 安全中心
 const mySecurityCenter = () => import('components/my-security-center/my-security-center');
+// 安全中心 -- 谷歌认证
+const securityGoogle = () => import('components/security-google-certification/security-google');
 // 安全中心 -- 交易密码 
 const securityTradePassword = () => import('components/security-trade-password/security-trade-password');
 // 安全中心 -- 身份认证 
@@ -65,8 +65,6 @@ const securityIdentity = () => import('components/security-identity/security-ide
 const securityIdcard = () => import('components/security-idcard/security-idcard');
 // 安全中心 -- 绑定邮箱 
 const securityBindingEmail = () => import('components/security-binding-email/security-binding-email');
-// 安全中心 -- 修改邮箱 
-const securityEmail = () => import('components/security-email/security-email');
 // 安全中心 -- 修改手机号 
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码 
@@ -88,19 +86,21 @@ const myInviteFriends = () => import('components/my-invite-friends/my-invite-fri
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
 // 关于我们 -- 平台介绍
-const aboutPlatformIntroduced = () => import('components/about-platform-introduced/about-platform-introduced');
-// 关于我们 -- 用户协议
-const aboutUserAgreement = () => import('components/about-user-agreement/about-user-agreement');
+const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 隐私条款
 const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-privacy-policy');
-// 关于我们 -- 法律申明
-const aboutLegalNotices = () => import('components/about-legal-notices/about-legal-notices');
-// 关于我们 -- 费率说明
-const aboutRateExplain = () => import('components/about-rate-explain/about-rate-explain');
-// 关于我们 -- 帮助中心
-const aboutHelpCenter = () => import('components/about-help-center/about-help-center');
 // 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
+// 个人主页 homepage
+const Homepage = () => import('components/homepage/homepage');
+
+// 用户评价
+const Userpj = () => import('components/user-pj/userpj');
+
+// 消息
+const Message = () => import('components/message/message');
+// 聊天
+const MessageChat = () => import('components/message-chat/message-chat');
 
 export default new Router({
   routes: [
@@ -110,15 +110,7 @@ export default new Router({
     },
     {
       path: '/page',
-      component: Home,
-      beforeRouteLeave(to, from, next) {
-        if(to.path === '/login' || to.path === '/registered') {
-          next();
-        } else {
-          alert('还没有登陆，请先登录！');
-          next('/login');
-        }
-      },
+      component: Home
     },
     {
       path: '/system-notice',
@@ -223,10 +215,6 @@ export default new Router({
       component: Mine
     },
     {
-      path: '/my-currency',
-      component: MyCurrency
-    },
-    {
       path: '/my-advertising',
       component: myAdvertising
     },
@@ -247,6 +235,10 @@ export default new Router({
       component: mySecurityCenter
     },
     {
+      path: '/security-google',
+      component: securityGoogle
+    },
+    {
       path: '/security-tradePassword',
       component: securityTradePassword
     },
@@ -255,7 +247,7 @@ export default new Router({
       component: securityIdentity
     },
     {
-      path: '/security-idcard',
+      path: '/security-idcard/:type',
       component: securityIdcard
     },
     {
@@ -265,10 +257,6 @@ export default new Router({
     {
       path: '/security-bindingEmail',
       component: securityBindingEmail
-    },
-    {
-      path: '/security-email',
-      component: securityEmail
     },
     {
       path: '/security-phoneNumber',
@@ -283,24 +271,8 @@ export default new Router({
       component: aboutPlatformIntroduced
     },
     {
-      path: '/about-userAgreement',
-      component: aboutUserAgreement
-    },
-    {
       path: '/about-privacyPolicy',
       component: aboutPrivacyPolicy
-    },
-    {
-      path: '/about-legalNotices',
-      component: aboutLegalNotices
-    },
-    {
-      path: '/about-rateExplain',
-      component: aboutRateExplain
-    },
-    {
-      path: '/about-helpCenter',
-      component: aboutHelpCenter
     },
     {
       path: '/order-details',
@@ -313,7 +285,28 @@ export default new Router({
     {
       path: '/registered',
       component: Registered
+    },
+    {
+      path: '/homepage',
+      component: Homepage
+    },
+    {
+      path: '/userpj',
+      component: Userpj
+    },
+    {
+      path: '/message',
+      component: Message,
+      children: [
+        {
+          path: ':id',
+          component: MessageChat
+        }
+      ]
     }
   ],
-  mode: 'history'
+  mode: 'history',
+  scrollBehavior(to, from, savedPosition) { // vue滚动行为
+      return { x: 0, y: 0 };
+  }
 });

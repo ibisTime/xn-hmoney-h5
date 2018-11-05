@@ -1,103 +1,37 @@
 <template>
   <div class="bill-wrapper" @click.stop>
-    <header>
-      <p>
-      <i class='icon'></i>
-      <span class='txt1'>账单</span>
-      <span class='txt2'>筛选</span>
-      </p>
-    </header>
     <div class='list-wrap'>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon'></i>
+      <p class="wallet-p"></p>
+      <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
+        <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
+        </select>
+      <Scroll 
+        ref="scroll"
+        :data="list"
+        :hasMore="hasMore"
+        v-show="list.length > 0"
+        @pullingUp="walletBill"
+      >
+        <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + bizTypeValueList[item.bizType]" class="bill-list" v-for='(item,index) in list' :key='index'>
+          <div class="list">
+            <div class='mark'>
+              <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
+            </div>
+            <div class='item'>
+              <p class='collect'>
+                <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
+                <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
+              </p>
+              <p class='time'>{{item.createDatetime}}</p>
+              <p class='explain'>{{item.bizNote}}</p>
+            </div>
           </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>收款</span>
-              <span class='txt2'>-10ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>取现矿工费</p>
-          </div>
-        </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon'></i>
-          </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>收款</span>
-              <span class='txt2'>-10ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
-          </div>
-        </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon ico1'></i>
-          </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>充值</span>
-              <span class='txt2 txt22'>+5000ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
-          </div>
-        </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon ico2'></i>
-          </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>转出</span>
-              <span class='txt2'>-40ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
-          </div>
-        </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon ico3'></i>
-          </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>转入</span>
-              <span class='txt2 txt22'>+250ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
-          </div>
-        </div>
-      </router-link>
-      <router-link to='bill-details' class="bill-list">
-        <div class="list">
-          <div class='mark'>
-            <i class='icon ico4'></i>
-          </div>
-          <div class='item'>
-            <p class='collect'>
-              <span class='txt1'>提现</span>
-              <span class='txt2'>+2500ETH</span>
-            </p>
-            <p class='time'>06-19 10:25</p>
-            <p class='explain'>0xf750b2b488323dfpfdspo0xf70xf750b2b488323dfpfdspo50b2b</p>
-          </div>
-        </div>
-      </router-link>
+        </router-link>
+      </Scroll>
+      <div class="no-data" :class="{'hidden': list.length > 0}">
+        <img src="./wu.png" />
+        <p>{{$t('walletBill.subject.zwjl')}}</p>
+      </div>
     </div>
     <!-- 筛选弹窗 -->
     <div class='select'>
@@ -107,11 +41,102 @@
       </p> -->
 
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
+import { walletBill } from 'api/person';
+import { getDictList } from 'api/general';
+import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading';
+
 export default {
+  data() {
+    return {
+      isLoading: true,
+      hasMore: true,
+      billType: '',
+      list: [],
+      watlleType: [
+        {
+          key: '',
+          value: this.$t('walletBill.subject.qb')
+        },{
+          key: 'charge',
+          value: this.$t('walletBill.subject.cb')
+        },{
+          key: 'withdraw',
+          value: this.$t('walletBill.subject.tb')
+        },{
+          key: 'ccorder_buy',
+          value: this.$t('walletBill.subject.jymr')
+        },{
+          key:'ccorder_sell',
+          value: this.$t('walletBill.subject.jymc')
+        },{
+          key: 'ccorder_fee',
+          value: this.$t('walletBill.subject.jysxf')
+        },{
+          key: 'withdraw_fee',
+          value: this.$t('walletBill.subject.txsxf')
+        }
+      ],
+      code: '12345',
+      start: 1,
+      limit: 10,
+      config: {
+        accountNumber: '',
+        bizType: '',
+        start: 1,
+        limit: 10
+      },
+      bizTypeValueList: []
+    }
+  },
+  created() {
+    setTitle(this.$t('walletBill.subject.zzjl'));
+    this.config.accountNumber = getUrlParam('accountNumber');
+    getDictList('jour_biz_type_user').then(data => {
+      data.forEach((item) => {
+        this.bizTypeValueList[item.dkey] = item.dvalue;
+      });
+    })
+    this.walletBill();
+  },
   methods: {
+    walletTypeFn(){
+      // 筛选
+      this.FullLoading = true;
+      this.config.bizType = this.billType;
+      this.hasMore = true;
+      this.start = 1;
+      this.list = [];
+      this.walletBill();
+    },
+    walletBill() { // 充币：charge     提币：withdraw
+      this.config.start = this.start;
+      this.config.limit = this.limit;
+      // 获取账单列表
+      walletBill(this.config).then((data) => {
+        data.list.map(item => {
+          item.transAmountString = formatAmount(item.transAmountString, '', item.currency);
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+        })
+        if (data.totalPage <= this.start) {
+          this.hasMore = false;
+        }
+        this.list = [...this.list, ...data.list];
+        this.start ++;
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
+    }
+  },
+  components: {
+    Scroll,
+    FullLoading
   }
 };
 </script>
@@ -145,7 +170,7 @@ export default {
       .icon {
         width: .2rem;
         height: .36rem;
-        @include bg-image("返回");
+        background-image: url('./fh.png');
         margin-top: .28rem;
       }
 
@@ -184,24 +209,24 @@ export default {
         .icon {
           width: .6rem;
           height: .6rem;
-          @include bg-image("收款");
+          background-image: url('./sk.png');
           margin-right: .32rem;
         }
 
         .ico1 {
-          @include bg-image("充值");
+          background-image: url('./cz.png');
         }
 
         .ico2 {
-          @include bg-image("转出");
+          background-image: url('./zc.png');
         }
 
         .ico3 {
-          @include bg-image("转入");
+          background-image: url('./zr.png');
         }
 
         .ico4 {
-          @include bg-image("提现");
+          background-image: url('./tx.png');
         }
 
       }
@@ -256,7 +281,31 @@ export default {
 
   }
 
-
+  .list-wrap{
+    position: relative;
+    height: 13rem;
+    overflow: scroll;
+    .wallet-p{
+      position: absolute;
+      right: 15%;
+      top: 0.6rem;
+      z-index: 5;
+      height: 1rem;
+      width: 1rem;
+      opacity: 0.7;
+      background-image: url('./sxuan.png');
+      background-size: 100%;
+    }
+    #wallet-set{
+      position: absolute;
+      opacity: 0;
+      right: 15%;
+      top: 0.6rem;
+      z-index: 9;
+      height: 1rem;
+      width: 1rem;
+    }
+  }
 
 
 

@@ -1,53 +1,86 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>修改手机号</span>
-        </p>
-    </header>
     <div class="main">
-      <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>15868201234</p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="promi" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
-      <p><input type="text" placeholder="新手机号"></p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p><input type="text" v-model="mobile" name="phone" v-validate="'required|phone'" :placeholder="$t('securityPhone.subject.sjh')"></p>
+      <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
+      <p class='text3'>
+        <input v-model="smsCaptcha" type="text" :placeholder="$t('securityPhone.subject.yzm')">
+        <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
+        <span v-show="show" @click="get" class='txt2'>{{$t('securityPhone.subject.hqyzm')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('securityPhone.subject.cxhq')}}({{time}}s)</span>
+      </p>
 
     </div>
     <div class="foot">
-      <button>确 定</button>
+      <button @click="bindPhone">{{$t('securityPhone.subject.qd')}}</button>
     </div>
-    <div class='promit'>
+    <!-- <div class='promit'>
       <i class='icon'></i><span>请联系客服热线：289-3760-0000 进行修改</span>
-    </div>
-    <div v-show="show2" class='windows'>
-      <div class="cont">
-        <div class='text'>
-          <p class='txt1'>获取验证码失败</p>
-          <p class='txt2'>请联系客服热线</p>
-          <p class='txt3'>289-3760-0000</p>
-        </div>
-        <p class='yes' @click='show2 = !show2'>确 定</p>
-      </div>
-    </div>
-
+    </div> -->
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
+import {getUserId} from '../../common/js/util';
+import {bindingPhone, getSmsCaptcha1} from '../../api/person';
+import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
+
 export default {
   data() {
     return {
       show: true,
-      show2: false
+      mobile: '',
+      smsCaptcha: '',
+      bizType: '805060',
+      time: 60,
+      isLoading: false,
+      textMsg: ''
     };
   },
   methods: {
     get() {
+      if(this.mobile == ''){
+        this.textMsg = this.$t('securityPhone.subject.qtx');
+        this.$refs.toast.show();
+        return;
+      }
       this.show = false;
+      this.isLoading = true;
+      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+        this.isLoading = false;
+        let phTime = setInterval(() => {
+          this.time --;
+          if(this.time < 0){
+            clearInterval(phTime);
+            this.time = 60;
+            this.show = true;
+          }
+        }, 1000);
+      }, () => {
+        this.isLoading = false;
+        this.show = true;
+      });
     },
-    promi() {
-      this.show2 = true;
+    bindPhone() {
+      if(this.mobile == '' || this.smsCaptcha == ''){
+        this.textMsg = this.$t('securityPhone.subject.txwz');
+        this.$refs.toast.show();
+        return;
+      }
+      this.isLoading = true;
+      bindingPhone(0, this.mobile, this.smsCaptcha, getUserId()).then(data => {
+        this.isLoading = false;
+        this.$router.push('mine');
+      }, () => {
+        this.isLoading = false;
+      });
     }
+  },
+  components: {
+    FullLoading,
+    Toast
   }
 };
 </script>
@@ -81,7 +114,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -112,7 +145,7 @@ export default {
       .icon {
         width: .18rem;
         height: .14rem;
-        @include bg-image("下啦");
+        background-image: url('./xl.png');
       }
     }
     .text3 {
@@ -146,7 +179,7 @@ export default {
       .icon {
           width: .34rem;
           height: .34rem;
-          @include bg-image("删除");
+          background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
       }
@@ -157,7 +190,7 @@ export default {
     width: 100%;
     text-align: center;
     margin-top: 1.2rem;
-    margin-bottom: 2.43rem;
+    padding-bottom: 2.43rem;
     button {
       width: 6.28rem;
       height: 1rem;
@@ -177,50 +210,10 @@ export default {
     .icon {
       width: .26rem;
       height: .26rem;
-      @include bg-image("提示");
+      background-image: url('./ts.png');
       vertical-align: middle;
       margin-right: .13rem;
     }
   }
-
-  .windows {
-    width: 100%;
-    height: 100%;
-    top: 0;
-    text-align: center;
-    position: fixed;
-    background: rgba(0,0,0,.5);
-    .cont {
-      width: 6.6rem;
-      height: 4.21rem;
-      background: #fff;
-      border-radius: .08rem;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 4rem;
-      .text {
-        font-weight: bold;
-        height: 3.3rem;
-        border-bottom: .01rem solid #d8d8d8;
-        .txt1 {
-          font-size: .38rem;
-          line-height: .54rem;
-          padding: .69rem 0 .36rem;
-        }
-        .txt2, .txt3 {
-          font-size: .36rem;
-          line-height: .54rem;
-        }
-      }
-      .yes {
-        line-height: .9rem;
-        font-size: .32rem;
-        color: #d53d3d;
-      }
-    }
-  }
-
-
 }
 </style>

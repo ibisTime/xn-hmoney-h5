@@ -68,6 +68,11 @@ export function getPageAccountSysConfig(type) {
   });
 }
 
+// 根据key查询系统参数
+export function getSysConfig(ckey) {
+  return fetch("630047", { ckey });
+}
+
 // 获取appId
 export function getAppId() {
   return getUserSystemConfig('WX_H5_ACCESS_KEY');
@@ -75,7 +80,7 @@ export function getAppId() {
 
 // 获取七牛token
 export function getQiniuToken() {
-  return fetch(805951, {});
+  return fetch(630091, {});
 }
 
 // 发送验证码
@@ -92,19 +97,18 @@ export function getDictList(parentKey) {
   if (getDictList[parentKey]) {
     return Promise.resolve(getDictList[parentKey]);
   }
-  return fetch(801907, {
+  return fetch(630036, {
     parentKey
   }).then((data) => {
-    getDictList[parentKey] = data;
     return Promise.resolve(data);
   });
 }
 
 // 获取banner
 export function getBannerList() {
-  return fetch(805806, {
+  return fetch(630506, {
     type: 2,
-    belong: 0
+    location: 'web_banner'
   });
 }
 
@@ -125,5 +129,13 @@ export function getPageSysNotices(start, limit) {
 export function getTradeIconRule(key) {
   return fetch(808917, {
     key
+  });
+}
+// 系统公告
+export function notice(start) {
+  return fetch('805305', {
+      start,
+      limit: '10',
+      status: '1'
   });
 }

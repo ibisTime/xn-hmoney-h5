@@ -4,9 +4,9 @@
       <slot>
       </slot>
     </div>
-    <div class="dots" v-if="showDots">
+    <!-- <div class="dots" v-if="showDots">
       <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex === index}"></span>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -24,7 +24,7 @@
     props: {
       loop: {
         type: Boolean,
-        default: false
+        default: true
       },
       autoPlay: {
         type: Boolean,
@@ -45,14 +45,16 @@
     },
     mounted() {
       setTimeout(() => {
-        this._setSliderWidth();
-        if (this.showDots) {
-          this._initDots();
-        }
-        this._initSlider();
+        if(this.dots.length > 1){
+          this._setSliderWidth();
+          if (this.showDots) {
+            this._initDots();
+          }
+          this._initSlider();
 
-        if(this.autoPlay) {
-          this._play();
+          if(this.autoPlay) {
+            this._play();
+          }
         }
       }, 20);
 
@@ -75,13 +77,13 @@
     },
     methods: {
       refresh() {
-        this._setSliderWidth(true);
+        this._setSliderWidth();
         this.slider.refresh();
       },
       next() {
         this.slider.next();
       },
-      _setSliderWidth(isResize) {
+      _setSliderWidth() {
         this.children = this.$refs.sliderGroup.children;
 
         let width = 0;
@@ -94,7 +96,7 @@
           width += sliderWidth;
         }
 
-        if(this.loop && !isResize) {
+        if(this.loop) {
           width += 2 * sliderWidth;
         }
         this.$refs.sliderGroup.style.width = width + 'px';
@@ -107,11 +109,13 @@
           scrollX: true,
           scrollY: false,
           momentum: false,
+          snapLoop: this.loop,
           snap: {
             loop: this.loop,
             threshold: 0.3,
             speed: 400
           },
+          snapThreshold: 0,
           click: this.click
         });
         this.slider.on('scrollEnd', this._onScrollEnd);
@@ -134,7 +138,6 @@
           pageIndex -= 1;
         }
         this.currentPageIndex = pageIndex;
-
         if(this.autoPlay) {
           this._play();
         }
@@ -148,11 +151,15 @@
       }
     },
     beforeDestroy() {
-      this.slider.disable();
+      if(this.dots.length > 1){
+        this.slider.disable();
+      }
       clearTimeout(this.timer);
     },
     deactivated() {
-      this.slider.disable();
+      if(this.dots.length > 1){
+        this.slider.disable();
+      }
       clearTimeout(this.timer);
     },
     activated() {

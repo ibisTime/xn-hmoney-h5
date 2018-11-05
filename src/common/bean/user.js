@@ -1,4 +1,4 @@
-import {formatAvatar, formatDate, calcSpace} from 'common/js/util';
+import {formatAvatar, formatDate, calcSpace, isUnDefined} from 'common/js/util';
 
 const GENDER = {
   '0': '女',
@@ -10,33 +10,33 @@ export default class User {
                 nickname, photo, totalFansNum, totalFollowNum,
                 tradepwdFlag, loginDatetime, h5OpenId, introduce, createDatetime }) {
     this.userId = userId;
-    this.birthday = birthday;
-    this.gender = gender;
+    // this.birthday = birthday;
+    // this.gender = gender;
     this.level = level;
     this.mobile = mobile;
     this.nickname = nickname;
-    this.photo = formatAvatar(photo);
-    this.totalFansNum = totalFansNum;
-    this.totalFollowNum = totalFollowNum;
+    this.photo = isUnDefined(photo) ? '' : formatAvatar(photo);
+    // this.totalFansNum = totalFansNum;
+    // this.totalFollowNum = totalFollowNum;
     this.tradepwdFlag = tradepwdFlag;
     this.loginDatetime = loginDatetime;
     this.h5OpenId = h5OpenId;
-    this.introduce = introduce;
+    // this.introduce = introduce;
     this.createDatetime = createDatetime;
     this.totalDays = calcTotalDays(createDatetime);
   }
   setAvatar(photo) {
     this.photo = formatAvatar(photo);
   }
-  getDescription() {
-    let infos = this.getInfos();
-    infos.gender = infos.gender ? infos.gender + '生' : '';
-    let str = infos.age + infos.constellation + infos.gender;
-    if (str) {
-      str += '，';
-    }
-    return str + '加入我淘网' + this.totalDays + '天。' + (this.introduce || '');
-  }
+  // getDescription() {
+  //   let infos = this.getInfos();
+  //   infos.gender = infos.gender ? infos.gender + '生' : '';
+  //   let str = infos.age + infos.constellation + infos.gender;
+  //   if (str) {
+  //     str += '，';
+  //   }
+  //   return str + '加入' + this.totalDays + '天。' + (this.introduce || '');
+  // }
   getLoginTime() {
     let logTime = '';
     if (this.loginDatetime) {

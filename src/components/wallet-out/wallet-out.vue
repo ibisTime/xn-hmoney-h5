@@ -1,48 +1,120 @@
 <template>
   <div class="wallet-out-wrapper" @click.stop>
-    <header>
-      <p>
-      <i class='icon'></i>
-      <span class='txt1'>转出</span>
-      <router-link to='wallet-bill' class='txt2'>记录</router-link>
-      </p>
-    </header>
     <div class='main'>
       <p class='text'>
-        <span>可用余额</span>
-        <input type="text" class='dis' readonly value='0.000023 BTC'>
+        <span>{{$t('walletOut.subject.kyye')}}</span>
+        <input type="text" class='dis' readonly v-model="value">
+        <router-link :to="'wallet-bill'+'?accountNumber=' + config.accountNumber" style="margin-left: 0.6rem;">{{$t('walletOut.subject.jl')}}</router-link>
       </p>
       <p class='text'>
-        <span>接受地址</span>
-        <input type="text" placeholder="请输入付币地址或扫码">
-        <i class='icon'></i>
+        <span>{{$t('walletOut.subject.jsdz')}}</span>
+        <input type="text" :placeholder="$t('walletOut.subject.qsrzzdz')" v-model="config.payCardNo">
       </p>
       <p class='text'>
-        <span>转账数量</span>
-        <input type="text" placeholder="请输入付币数量">
+        <span>{{$t('walletOut.subject.zzsl')}}</span>
+        <input type="number" :placeholder="$t('walletOut.subject.qsrsl')" v-model="zAmount">
       </p>
+      <p class='text'>
+        <span>{{$t('walletOut.subject.zjmm')}}</span>
+        <input type="password" :placeholder="$t('walletOut.subject.qsrzjmm')" v-model="config.tradePwd">
+      </p>
+      <!-- <p class='text'>
+        <span>谷歌验证码</span>
+        <input type="text" placeholder="请输入谷歌验证码" v-model="config.tradePwd">
+      </p> -->
+      <p class='text'>
+        <span>{{$t('walletOut.subject.txsm')}}</span>
+      </p>
+      <div class="tx-box">
+        <textarea type="text" :placeholder="$t('walletOut.subject.qsrsm')" v-model="config.applyNote"></textarea>
+      </div>
 
     </div>
     <div class='plan'>
-      <p class='text1'>
-        <span class='txt1'>矿工费</span>
-        <span class='txt2'>矿工费将在可用余额中扣除，余额不足将从转账金额扣除</span>
+      <p class='kgfee'>
+        {{$t('walletOut.subject.kgf')}}：{{feeAmount}}
       </p>
-      <div class='progress'>
-        <div class='pro'>
-        </div>
-      </div>
       <p class='text2'>
-        <span>慢</span>
-        <span class='txt'>0.002 BTC</span>
-        <span>快</span>
+        {{$t('walletOut.subject.kgfzz')}}
+        <br>
+        {{$t('walletOut.subject.zzssmf')}}
       </p>
     </div>
-    <button>确认转账</button>
+    <button @click="walletOut">{{$t('walletOut.subject.qrzz')}}</button>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+import {walletOut} from 'api/person';
+import {getSysConfig} from 'api/general';
+import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply } from 'common/js/util';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
+
 export default {
+  data() {
+    return {
+      textMsg: '',
+      isLoading: false,
+      currency: '',
+      amount: '',
+      feeAmount: '',
+      value: '',
+      site:'',
+      paw: '',
+      bbNumber: '',
+      zAmount: '',
+      config: {
+        accountNumber: '',
+        amount: '',
+        applyNote: '',
+        applyUser: getUserId(),
+        payCardInfo: '',
+        payCardNo: '',
+        tradePwd: ''
+      }
+    }
+  },
+  created() {
+    setTitle(this.$t('walletOut.subject.zc'));
+    this.currency = getUrlParam('currency');
+    this.amount = getUrlParam('amount');
+    this.value = this.amount + this.currency;
+    this.config.accountNumber = getUrlParam('accountNumber');
+    this.config.payCardInfo = this.currency;
+    getSysConfig('withdraw_fee').then(data => {
+      this.feeAmount = data.cvalue;
+    })
+  },
+  methods: {
+    walletOut() {
+      if(this.config.payCardNo == '' || this.zAmount == '' || this.config.tradePwd == '' || this.config.applyNote == ''){
+        this.textMsg = this.$t('common.txwz');
+        this.$refs.toast.show();
+        return;
+      }
+      this.isLoading = true;
+      this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
+      walletOut(this.config).then(data => {
+        this.isLoading = false;
+        this.textMsg = this.$t('common.czcg');
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push(`/wallet-bill?accountNumber=${this.config.accountNumber}`);
+        }, 1500);
+      }, () => {
+        this.isLoading = false;
+      })
+    },
+    formatAmount(money, unit, coin) {
+      return formatAmount(money, unit, coin);
+    },
+  },
+  components: {
+    Toast,
+    FullLoading
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -79,7 +151,7 @@ export default {
         .icon {
             width: .2rem;
             height: .36rem;
-            @include bg-image("返回");
+            background-image: url('./fh.png');
             margin-top: .28rem;
         }
 
@@ -100,13 +172,22 @@ export default {
       padding: 0 .3rem;
       background: #fff;
       margin-bottom: .2rem;
-
+      .tx-box{
+        text-align: left;
+        textarea{
+          width: 100%;
+          height: 2rem;
+          padding: .2rem .2rem;
+          border: 1px solid #eee;
+        }
+      }
       .text {
         width: 100%;
         height: 1rem;
         border-bottom: .01rem solid #E5E5E5;
         line-height: 1rem;
         display: flex;
+        position: relative;
         span {
           display: inline-block;
           float: left;
@@ -119,11 +200,20 @@ export default {
           font-size: .3rem;
           color: #d53d3d;
           line-height: 1rem;
-          
+          height: 1rem;
+          margin-top: 0;
+          border-bottom: .01rem solid #E5E5E5;
+        }
+        .error-tip {
+          position: absolute;
+          font-size: 0.3rem;
+          color:red;
+          right: .3rem;
+          top: .6rem;
         }
 
         input {
-          width: 2.8rem;
+          width: 4rem;
           height: .42rem;
           margin-top: .3rem;
           font-size: .28rem;
@@ -133,9 +223,9 @@ export default {
         .icon {
           width: .36rem;
           height: .36rem;
-          @include bg-image("扫一扫-黑色");
+          background-image: url('./sys.png');
           margin-top: .34rem;
-          margin-left: 1.78rem;
+          margin-left: 0.78rem;
         }
       }
     }
@@ -143,10 +233,14 @@ export default {
     .plan {
       width: 100%;
       padding: 0 .3rem;
-      height: 2.7rem;
       background: #fff;
       margin-bottom: .8rem;
-
+      padding-bottom: 0.3rem;
+      .kgfee{
+          text-align: left;
+          padding-top: 0.4rem;
+          padding-bottom: 0.2rem;
+        }
       .text1 {
         padding-top: .34rem;
         padding-bottom: .82rem;
@@ -163,8 +257,6 @@ export default {
           font-size: .22rem;
           color: #b5b5b5;
         }
-
-        
       }
 
       .progress {

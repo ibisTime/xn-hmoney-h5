@@ -1,23 +1,28 @@
 <template>
   <div class="usedCar-wrapper" @click.stop>
-    <header>
+    <!-- <header>
         <p>
         <i class='icon'></i>
         <span class='title'>二手车</span>
         </p>
-    </header>
+    </header> -->
     <div class='main'>
 
     </div>
-
+    <Footer></Footer>
   </div>
   
 </template>
 <script>
+import { setTitle } from "common/js/util";
+import Footer from 'components/footer/footer';
 export default {
-  methods: {
+  created() {
+      setTitle(this.$t('shop.navbar.escdh'));
+  },
+  components: {
+    Footer
   }
-
 };
 </script>
 <style lang="scss" scoped>
@@ -45,7 +50,7 @@ export default {
             background-size: 100% 100%;
             width: 0.21rem;
             height: 0.36rem;
-            @include bg-image("返回");
+            background-image: url('./fh.png');
             float: left;
             margin-top: .26rem;
         }
@@ -57,7 +62,7 @@ export default {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100% 100%;
-        @include bg-image("即将推出");
+        background-image: url('./jjtc.png');
     }
 
 }

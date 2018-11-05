@@ -1,73 +1,93 @@
 <template>
   <div class="top-up-wrapper" @click.stop>
-    <header>
-      <p>
-        <i class='icon'></i>
-        <span class='txt1'>订单记录</span>
-      </p>
-    </header>
     <div class="main">
-      <router-link to='wallet-orderDetails' class='list-wrap'>
+      <Scroll 
+        ref="scroll"
+        :data="orderDataList"
+        :hasMore="hasMore"
+        v-show="orderDataList.length > 0"
+        @pullingUp="getOrderData"
+      >
+        <router-link :to='"wallet-orderDetails?code=" + orderItem.code' class='list-wrap' v-for="(orderItem, index) in orderDataList" :key="index">
           <div class='list'>
               <div class='pic'>
-                  <i class='icon'></i>
+                  <i :class='orderItem.type == "0" ? "icon" : "ico1"'></i>
               </div>
               <div class='text'>
                   <div class='text1'>
-                      <p class='txt1'><span class='name'>ETH</span></p>
-                      <p class='txt2 green'>剩余付款时间：09分30秒</p>
+                      <p class='txt1'>{{$t('walletRecord.subject.zje')}}：{{(Math.floor(orderItem.tradeAmount * 100) / 100).toFixed(2)}} <span class='name'>{{orderItem.tradeCurrency}}</span></p>
+                      <p class='txt2 green'>{{$t('common.sl')}}：{{orderItem.count}} {{orderItem.tradeCoin}}</p>
                   </div>
                   <div class='text2'>
-                      <p class='txt1'>2018-06-19 10:25</p>
-                      <p class='txt2 green'>待支付</p>
+                      <p class='txt1'>{{orderItem.createDatetime}}</p>
+                      <p class='txt2 green'>{{statusList[orderItem.status]}}</p>
                   </div>
               </div>
           </div>
-      </router-link>
-      <router-link to='wallet-orderDetails' class='list-wrap'>
-          <div class='list'>
-              <div class='pic'>
-                  <i class='icon ico1'></i>
-              </div>
-              <div class='text'>
-                  <div class='text1'>
-                      <p class='txt1'><span class='name'>ETH</span></p>
-                      <p class='txt2 gray'>剩余付款时间：09分30秒</p>
-                  </div>
-                  <div class='text2'>
-                      <p class='txt1'>2018-06-19 10:25</p>
-                      <p class='txt2 gray'>已取消</p>
-                  </div>
-              </div>
-          </div>
-      </router-link>
-      <router-link to='wallet-orderDetails' class='list-wrap'>
-          <div class='list'>
-              <div class='pic'>
-                  <i class='icon ico1'></i>
-              </div>
-              <div class='text'>
-                  <div class='text1'>
-                      <p class='txt1'><span class='name'>ETH</span></p>
-                      <p class='txt2 black'>-0.0897</p>
-                  </div>
-                  <div class='text2'>
-                      <p class='txt1'>2018-06-19 10:25</p>
-                      <p class='txt2 red'>已完成</p>
-                  </div>
-              </div>
-          </div>
-      </router-link>
-
+        </router-link>
+      </Scroll>
+      <div class="no-data" :class="{'hidden': orderDataList.length > 0}">
+        <img src="./wu.png" />
+        <p>{{$t('walletRecord.subject.zwdd')}}</p>
+      </div>
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+// bjPlayfo, qxOrder
+import {getUserId, formatAmount, formatDate, setTitle} from 'common/js/util';
+import { getDictList } from "api/general";
+import { getCTSData } from "api/person";
+import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
-    return {};
+    return {
+      hasMore: true,
+      isLoading: true,
+      statusList: [],
+      orderDataList: [],
+      start: 1,
+      config: {
+        start: 1,
+        limit: 10,
+        userId: getUserId()
+      }
+    };
   },
-  methods: {}
+  created() {
+    setTitle(this.$t('walletRecord.subject.ddjl'));
+    getDictList('accept_order_status').then(data => {
+      data.forEach(item => {
+        this.statusList[item.dkey] = item.dvalue;
+      });
+      this.getOrderData();
+    })
+  },
+  methods: {
+    getOrderData(){
+      this.config.start = this.start;
+      getCTSData(this.config).then(res => {
+        res.list.map(item => {
+          item.count = formatAmount(`${item.count}`, '', item.tradeCoin);
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+        });
+        if (res.totalPage <= this.start) {
+          this.hasMore = false;
+        }
+        this.orderDataList = [...this.orderDataList, ...res.list];
+        this.start ++;
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      })
+    }
+  },
+  components: {
+    Scroll,
+    FullLoading
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -108,7 +128,7 @@ export default {
     .icon {
       width: 0.2rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       margin-top: 0.28rem;
       float: left;
     }
@@ -124,6 +144,8 @@ export default {
 
   .main {
     width: 100%;
+    height: 13rem;
+    overflow: scroll;
     background: #fff;
     .list-wrap {
       display: block;
@@ -142,10 +164,14 @@ export default {
           .icon {
             width: 100%;
             height: 100%;
-            @include bg-image("买入");
+            background-image: url(./mr.png);
           }
           .ico1 {
-            @include bg-image("卖出");
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            background-image: url(./mc.png);
+            background-size: 100% 100%;
           }
         }
         .text {

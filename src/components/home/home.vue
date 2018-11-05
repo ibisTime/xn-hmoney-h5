@@ -4,99 +4,90 @@
       <p class="title">{{ $t('page.navbar.title') }}</p>
       <span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>
     </div>
-    <scroll>
-      <div class="slider-wrapper">
-        <slider>
-          <div class="home-slider" v-for="item in banners" :key="item.code">
-            <a :href="item.url||'javascript:void(0)'" :style="getImgSyl(item.pic)"></a>
+    <div class="slider-wrapper">
+        <slider v-if="banners.length">
+          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
+        <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
       </div>
       <div class="cates-wrapper">
-          <div tag="div" class="cate-item">
+          <router-link to="shop" tag="div" class="cate-item">
             <i class="cate-icon game-icon"></i>
             <p>{{ $t('page.cate.game') }}</p>
-          </div>
-          <div tag="div" class="cate-item">
+          </router-link>
+          <router-link to="shop-usedCar" class="cate-item">
             <i class="cate-icon exchange-icon"></i>
             <p>{{ $t('page.cate.exchange') }}</p>
-          </div>
-          <router-link to='otc' tag="div" class="cate-item">
+          </router-link>
+          <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
             <i class="cate-icon otc-icon"></i>
             <p>{{ $t('page.cate.otc') }}</p>
           </router-link>
       </div>
       <div class="tab-wrapper">
           <div class="tabCar fun">
-            <router-link to=''>
+            <router-link to='shop'>
               <div class="tab-text">
-                <p class="tit">FUN MVP</p>
-                <p class="con">混乱世界、精彩画面</p>
+                <p class="tit">{{ $t('page.navbar.title') }}</p>
+                <p class="con">{{ $t('page.cate.splendid') }}</p>
               </div>
             </router-link>           
           </div>
           <div class="tabCar bibi">
-            <router-link to=''>
+            <router-link to='trading'>
               <div class="tab-text">
-                <p class="tit">币币交易</p>
-                <p class="con">24h全球实时行情</p>
+                <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
+                <p class="con">{{ $t('page.cate.realTime') }}</p>
               </div>
             </router-link>           
           </div>
           <div class="tabCar notice">
             <router-link to='system-notice'>
               <div class="tab-text">
-                <p class="tit">系统公告</p>
-                <p class="con">实时推送精彩内容</p>
+                <p class="tit">{{ $t('page.cate.xtgg') }}</p>
+                <p class="con">{{ $t('page.cate.sstsjcnr') }}</p>
               </div>
             </router-link>
           </div>
           <div class="tabCar introduce">
-            <router-link to=''>
+            <router-link to='about-platformIntroduced?ckey=about_us'>
               <div class="tab-text">
-                <p class="tit">平台介绍</p>
-                <p class="con">让你更加的了解我们</p>
+                <p class="tit">{{ $t('page.cate.ptjs') }}</p>
+                <p class="con">{{ $t('page.cate.ljwm') }}</p>
               </div>
             </router-link>
           </div>
       </div>
-    </scroll>
-    <div class="foot"></div>
     <Footer></Footer>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
-  import {isLogin, formatImg} from 'common/js/util';
+  import {isLogin, formatImg, setTitle} from 'common/js/util';
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
-  import Scroll from 'base/scroll/scroll';
+  // import Swiper from 'base/swiper/swiper';
+  import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
-  import {getBbListData} from 'api/otc';
   export default {
     data() {
       return {
-        banners: [
-          './banner@2x.png'
-          // './banner@2x.png'
-        ]
+        banners: [],
+        isLoading: true,
+        data: '',
+        coinData: {}
       };
     },
     created() {
-      this.getInitData();
-      if(!isLogin()) {
-        this.$router.push('login');
-      }else {
-        this.$router.push('page');
-      }  
-    },
-    updated() {
-      //this.getInitData();
+      setTitle(this.$t('footer.navbar.page'));
+      getBannerList().then((data) => {
+        this.banners = data;
+        this.isLoading = false;
+      });
     },
     mounted() {
-      getBbListData().then(data => {
-        sessionStorage.setItem('coinData', JSON.stringify(data));
-      })
     },
     computed: {
     },
@@ -106,27 +97,22 @@
         let locale = this.$i18n.locale;
         locale === 'zh' ? this.$i18n.locale = 'en' : this.$i18n.locale = 'zh';
         LangStorage.setLang(this.$i18n.locale);// 将用户习惯存储到本地浏览器
-      },
-      getInitData() {
-        this.getBannerList();
-      },
-      getBannerList() {
-        return getBannerList().then((data) => {
-          this.banners = data;
-        });
+        setTitle(this.$t('footer.navbar.page'));
       },
       getImgSyl(imgs) {
         return {
           backgroundImage: `url(${formatImg(imgs)})`
         };
+      },
+      toUrl(url){
+        window.open(url);
       }
-    },
-    watch: {
     },
     components: {
       Slider,
-      Scroll,
-      Footer
+      // Swiper,
+      Footer,
+      FullLoading
     }
   };
 </script>
@@ -135,11 +121,7 @@
   @import "~common/scss/variable";
 
   .home-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    bottom: 1rem;
     background: #fff;
     font-size: 0;
 
@@ -170,13 +152,12 @@
       width: 100%;
       padding: 0 .3rem;
       border-radius: .08rem;
-
+      overflow: hidden;
       .slider, .home-slider {
         height: 100%;
         width: 100%;
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        @include bg-image('banner');
       }
 
     }
@@ -227,13 +208,14 @@
     .tab-wrapper {
       width: 92%;
       margin: .4rem auto .5rem;
+      padding-bottom: 1rem;
       display: flex;
       flex-wrap: wrap;
       justify-content:space-around ;
 
 
       .tabCar {
-        width: 47.8%;
+        width: 46.8%;
         height: 1.8rem;
         background-size: 100% 100%;
 

@@ -1,7 +1,7 @@
 import {setCookie, getCookie, delCookie} from './cookie';
+import './BigDecimal';
+import avatarDefault from '../image/avatar@2x.png';
 // import {setProfilePortrait} from 'common/js/message';
-import BigDecimal from './BigDecimal';
-import $ from 'jquery';
 // 日期格式化
 export function formatDate(date, fmt) {
   date = new Date(date);
@@ -37,14 +37,11 @@ export function getUserId() {
 export function setUser(data) {
   setCookie('userId', data.userId);
   setCookie('token', data.token);
-  // setCookie('__sig__', data.sig);
-  // setCookie('__accountType__', data.accountType);
-  // setCookie('__txAppCode__', data.txAppCode);
 }
 
 // 获取腾讯云登录的sig
-export function getSig () {
-  return getCookie('__sig__') || '';
+export function getSign () {
+  return getCookie('__sign__') || '';
 }
 
 // 获取腾讯云登录的accountType
@@ -60,7 +57,7 @@ export function getTxAppCode () {
 // 获取腾讯云登录的参数
 export function getTencentParams () {
   return {
-    sig: getSig(),
+    sig: getSign(),
     accountType: getAccountType(),
     txAppCode: getTxAppCode()
   };
@@ -70,9 +67,17 @@ export function getTencentParams () {
 export function clearUser() {
   delCookie('userId');
   delCookie('token');
-  delCookie('__sig__');
+  delCookie('__sign__');
   delCookie('__accountType__');
   delCookie('__txAppCode__');
+  window.localStorage.removeItem('__message__');
+  window.localStorage.removeItem('__usermap__');
+  sessionStorage.clear();
+}
+
+// 跳转登陆
+export function goLogin() {
+  location.href = location.href.split('://')[0] + '://' + location.host + '/login';
 }
 
 // 是否登录
@@ -108,14 +113,15 @@ export function formatImg(imgs, suffix = '?imageMogr2/auto-orient') {
 
 // 格式化头像
 export function formatAvatar(img, suffix = '?imageMogr2/auto-orient') {
-  if (!img) {
-    let avatar = require('../image/avatar@2x.png');
-    if (/^http|^data:image/i.test(avatar)) {
-      return avatar;
-    }
-    return location.origin + avatar;
-  }
-  return formatImg(img, suffix);
+  return isUnDefined(img) ? avatarDefault : formatImg(img, suffix);
+}
+
+// 格式化头像 - backgroundImage
+export function formatAvatarSyl(imgs) {
+  let img = isUnDefined(imgs) ? avatarDefault :  formatImg(imgs);
+  return {
+    backgroundImage: `url(${img})`
+  };
 }
 
 // 获得分享图片
@@ -130,17 +136,172 @@ export function getShareImg(imgs) {
   return formatImg(imgs);
 }
 
-// 格式化金额
-export function formatAmount(amount, len = 2) {
-  if (isUnDefined(amount)) {
-    return '--';
+/**
+ * 金额格式转化 根据币种格式化金额
+ * @param money
+ * @param format
+ * @param coin 币种
+ * @param isRe 是否去零
+ */
+export function formatAmount(money, format, coin, isRe = false) {
+  let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
+  let flag = false;// 是否是负数
+  if (isNaN(money)) {
+    return '-';
+  } else {
+    money = Number(money);
   }
-  amount = (+amount / 1000).toString();
-  let reg = new RegExp('(\\.\\d{' + len + 1 + '})\\d*', 'ig');
-  amount = +amount.replace(reg, '$1');
-  return amount.toFixed(len);
+  if (money < 0) {
+    money = -1 * money;
+    flag = true;
+  }
+  if (coin && isUnDefined(format)) {
+    format = 8;
+  }else if (isUnDefined(format) || typeof format === 'object') {// 默认格式为2位小数
+    format = 2;
+  }
+  
+  // 金额格式化 金额除以unit并保留format位小数
+  money = new BigDecimal(money.toString());
+  money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
+
+  // 是否去零
+  if (isRe) {
+    var re = /\d{1,3}(?=(\d{3})+$)/g;
+    money = money.replace(/^(\d+)((\.\d+)?)$/, (s, s1, s2) => (s1.replace(re, '$&,') + s2));
+  }
+  if (flag) {
+    money = '-' + money;
+  }
+  return money;
 }
 
+/**
+ * 把格式化金额去掉逗号
+ * @param money
+ */
+export function moneyReplaceComma(money) {
+  return ('' + money).replace(/,/g, '');
+}
+
+/**
+* 金额放大 根据币种的单位把金额放大
+* @param money
+* @param format
+* @param coin 币种
+*/
+export function formatMoneyMultiply(money, rate, coin) {
+  let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
+
+  if (isUnDefined(money) || money === '') {
+      return '-';
+  } else {
+    money = Number(money).toString()
+  }
+  rate = rate || new BigDecimal(unit);
+  money = new BigDecimal(money);
+  money = money.multiply(rate).toString();
+  return money;
+}
+
+/**
+ * 金额减法 s1 - s2
+ * @param s1
+ * @param s2
+ * @param coin 币种
+ */
+export function formatMoneySubtract(s1, s2, format, coin) {
+  if (isUnDefined(s1) || isUnDefined(s2) || s1 === '' || s2 === '') {
+      return '-';
+  }  else {
+    s1 = Number(s1);
+    s2 = Number(s2);
+  }
+  let num1 = new BigDecimal(s1.toString());
+  let num2 = new BigDecimal(s2.toString());
+  return formatAmount(num1.subtract(num2).toString(), format, coin);
+}
+
+/**
+ * 获取币种Data
+ * return {
+ *  'BTC': {
+ *      'coin': 'BTC',
+ *      'unit': '1e8',
+ *      'name': '比特币',
+ *      'type': '0',
+ *      'status': '0'
+ *  }
+ *}
+ */
+export function getCoinData() {
+  return JSON.parse(sessionStorage.getItem('coinData'));
+}
+
+/**
+* 获取币种列表
+* return [{
+*      key: 'BTC',
+*      value: '比特币'
+*}]
+*/
+export function getCoinList() {
+  return JSON.parse(sessionStorage.getItem('coinList'));
+}
+
+// 获取币种unit
+export function getCoinUnit(coin) {
+  if (!coin) {
+      console.log('coin不能为空');
+      return;
+  }
+  var unit = getCoinData()[coin].unit;
+  return unit;
+}
+
+//获取链接入参
+export function getUrlParam(name, locat) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var locat = locat ? "?" + locat.split("?")[1] : '';
+  var r = (locat ? locat : window.location.search).substr(1).match(reg);
+  if (r != null) return decodeURIComponent(r[2]);
+  return '';
+}
+
+//图片格式化
+export function getPic(pic, suffix) {
+  if (!pic) {
+      return "";
+  }
+  pic = pic.split(/\|\|/)[0];
+  if (!/^http|^data:image/i.test(pic)) {
+      suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
+      pic = PIC_PREFIX + pic + suffix;
+  }
+  return {
+    backgroundImage: `url(${pic})`
+  };
+}
+
+//图片格式化-头像
+var PHOTO_SUFFIX = '?imageMogr2/auto-orient/thumbnail/!150x150r';
+export function getAvatar(pic, suffix) {
+  var defaultAvatar = '';
+  var suffix = suffix || PHOTO_SUFFIX;
+  if (!pic) {
+      pic = defaultAvatar;
+  }
+  return getPic(pic, suffix);
+}
+
+//计算百分比
+export function getPercentum(n1, n2) {
+  if (n1 == '0' && n2 == '0') {
+      return '0';
+  }
+  var n = n1 / n2 * 100
+  return parseInt(n) + "%"
+}
 // 判断是否 ios
 export const ISIOS = /(iphone|ipod|ipad)/i.test(navigator.userAgent);
 
@@ -281,11 +442,20 @@ export function mobileValid(mobile) {
   if (isUnDefined(mobile)) {
     result.err = 1;
     result.msg = '不能为空';
-  } else if (!/^1[3|4|5|7|8]\d{9}$/.test(mobile)) {
+  } else if (!/^1[3|4|5|6|7|8]\d{9}$/.test(mobile)) {
     result.err = 1;
     result.msg = '格式错误';
   }
   return result;
+}
+
+// 检验邮箱格式
+export function CheckMail(mail) {
+  var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  if (filter.test(mail)) return true;
+  else {
+    alert('您的电子邮件格式不正确');
+    return false;}
 }
 
 // 支付密码校验
@@ -493,174 +663,11 @@ export function formatChatDate(timeStamp, param) {
   return param ? week[before.getDay()] + ' ' + formatDate(timeStamp, 'hh:mm') : week[before.getDay()];
 }
 
-/**
- * 金额格式转化 根据币种格式化金额
- * @param money
- * @param format
- * @param coin 币种
- * @param isRe 是否千分位转化
- */
-export function moneyFormat(money, format, coin, isRe = false) {
-  let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
-  let flag = false;// 是否是负数
-  if (isNaN(money)) {
-      return '-';
-  }
-  if (money < 0) {
-      money = -1 * money;
-      flag = true;
-  }
-  // 默认格式为2位小数
-  if (isUnDefined(format) || typeof format === 'object') {
-      format = 2;
-  }
-  if (coin) {
-      format = 8;
-  }
-  // 金额格式化 金额除以unit并保留format位小数
-  money = new BigDecimal(money.toString());
-  money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
-
-  // 是否千分位转化
-  if (isRe) {
-      var re = /\d{1,3}(?=(\d{3})+$)/g;
-      money = money.replace(/^(\d+)((\.\d+)?)$/, (s, s1, s2) => (s1.replace(re, '$&,') + s2));
-  }
-  if (flag) {
-      money = '-' + money;
-  }
-  return money;
+//计算日期相隔时间
+export function calculateDays (start, end) {
+  if (!start || !end)
+      return 0;
+  start = new Date(start);
+  end = new Date(end);
+  return (end - start) / (60 * 1000);
 }
-
-/**
-* 金额放大 根据币种的单位把金额放大
-* @param money
-* @param format
-* @param coin 币种
-*/
-export function moneyParse(money, rate, coin) {
-  let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
-
-  if (isUndefined(money)) {
-      return '-';
-  }
-  rate = rate || new BigDecimal(unit);
-  money = new BigDecimal(money);
-  money = money.multiply(rate).toString();
-  return money;
-}
-
-/**
-* 把格式化金额去掉逗号
-* @param money
-*/
-export function moneyReplaceComma(money) {
-  return ('' + money).replace(/,/g, '');
-}
-
-/**
- * 金额减法
- * @param s1
- * @param s2
- * @param coin 币种
- * @param coinList 币种列表
- */
-export function moneyFormatSubtract(s1, s2, format, coin, coinList) {
-  if (!isNumeric(s1) || !isNumeric(s2)) {
-      return '-';
-  }
-  let num1 = new BigDecimal(s1.toString());
-  let num2 = new BigDecimal(s2.toString());
-  return moneyFormat(num1.subtract(num2).toString(), format, coin, coinList);
-}
-
-
-/**
- * 获取币种Data
- * return {
- *  'BTC': {
- *      'coin': 'BTC',
- *      'unit': '1e8',
- *      'name': '比特币',
- *      'type': '0',
- *      'status': '0'
- *  }
- *}
- */
-export function getCoinData() {
-  return JSON.parse(sessionStorage.getItem('coinData'));
-}
-
-/**
-* 获取币种列表
-* return [{
-*      key: 'BTC',
-*      value: '比特币'
-*}]
-*/
-export function getCoinList() {
-  return JSON.parse(sessionStorage.getItem('coinList'));
-}
-
-// 获取币种unit
-export function getCoinUnit(coin) {
-  if (!coin) {
-      console.log('coin不能为空');
-      return;
-  }
-  var unit = getCoinData()[coin].unit;
-  return unit;
-}
-
-//获取链接入参
-export function getUrlParam(name, locat) {
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-  var locat = locat ? "?" + locat.split("?")[1] : '';
-  var r = (locat ? locat : window.location.search).substr(1).match(reg);
-  if (r != null) return decodeURIComponent(r[2]);
-  return '';
-}
-//图片格式化
-export function getPic(pic, suffix) {
-  if (!pic) {
-      return "";
-  }console.log(pic)
-  pic = pic.split(/\|\|/)[0];
-  if (!/^http|^data:image/i.test(pic)) {
-      suffix = suffix || "?imageMogr2/auto-orient/interlace/1"
-      pic = PIC_PREFIX + pic + suffix;
-  }
-  return pic;
-}
-//图片格式化-头像
-var PHOTO_SUFFIX = '?imageMogr2/auto-orient/thumbnail/!150x150r';
-export function getAvatar(pic, suffix) {
-  var defaultAvatar = '';
-  var suffix = suffix || PHOTO_SUFFIX;
-  if (!pic) {
-      pic = defaultAvatar;
-  }
-  return getPic(pic, suffix);
-}
-
-// export function setCoinData() {
-//   getCoinList().then(data => {
-//     let coinList = [];
-//     let coinData = {};
-//     data.map( d => {
-//       coinData[d.symbol] = {
-//         'coin': d.symbol,
-//         'unit': '1e' + d.unit,
-//         'name': d.cname,
-//         'type': d.type,
-//         'status': d.status
-//       };
-//       coinList.push({
-//         key: d.symbol,
-//         value: d.cname
-//       });
-//     });
-//     window.sessionStorage.setItem('cionData',JSON.stringify(coinData));
-//     window.sessionStorage.setItem('cionList',JSON.stringify(coinList));
-//   })
-// }

@@ -10,10 +10,23 @@
 </template>
 <script type="text/ecmascript-6">
   export default {
+    data(){
+      return {
+        showFlag: false
+      }
+    },
     props: {
       title: {
         type: String,
         default: '正在载入...'
+      }
+    },
+    methods: {
+      show(){
+        this.showFlag = true;
+      },
+      hide(){
+        this.showFlag = false;
       }
     }
   };
@@ -22,11 +35,13 @@
   @import "~common/scss/variable";
 
   .full-loading-wrapper {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
+    z-index: 99999;
     width: 100%;
     height: 100%;
+    // background-color: rgba(0, 0, 0, 0.4);
 
     .full-loading {
       position: absolute;

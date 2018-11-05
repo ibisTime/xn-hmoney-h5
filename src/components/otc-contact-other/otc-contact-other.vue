@@ -93,11 +93,11 @@ export default {
       }
 
       .ico1 {
-        @include bg-image("表情(1)");
+        background-image: url('./bq1.png');
         right: 1rem;
       }
       .ico2 {
-        @include bg-image("添加(2)");
+        background-image: url('./tj2.png');
         right: 0.3rem;
       }
     }

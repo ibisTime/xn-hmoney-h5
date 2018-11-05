@@ -1,15 +1,9 @@
 <template>
   <div class="security-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>安全中心</span>
-        </p>
-    </header>
     <div class='content cont1'>
-        <router-link class='tag' to='security-tradePassword'>
+        <router-link class='tag' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
             <p>
-            <span>交易密码</span>
+            <span>{{$t('securityCenter.subject.jymm')}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
@@ -17,64 +11,90 @@
     <div class='content cont1'>
         <router-link class='tag mb20' to='security-identity'>
             <p>
-            <span>身份认证</span>
+            <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to=''>
+        <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
             <p>
-            <span>谷歌认证</span>
+            <span>{{$t('securityCenter.subject.ggrz')}}</span>
             <i class='icon'></i>
+            <span class='tel'>{{googleAuthFlag == false ? '' : $t('securityCenter.subject.ykq')}}</span>
             </p>
         </router-link>
-        <router-link class='tag' to='security-bindingEmail'>
+        <router-link v-show="show" class='tag' to='security-bindingEmail'>
             <p>
-            <span>绑定邮箱</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-    </div>
-    <div class='content'>
-        <router-link class='tag mb20' to='security-email'>
-            <p>
-            <span>修改邮箱</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link v-show="show" class='tag mb20' to='security-phoneNumber'>
-            <p>
-            <span>修改手机号</span>
+            <span>{{$t('securityCenter.subject.bdyx')}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <div v-show="!show" class='tag mb20'>
             <p>
-            <span>修改手机号</span>
+            <span>{{$t('securityCenter.subject.ybdyx')}}</span>
             <i class='icon'></i>
-            <span class='tel'>13154785962</span>
+            <span class='tel'>{{email}}</span>
+            </p>
+        </div>
+    </div>
+    <div class='content'>
+        <router-link v-show="!mobile" class='tag mb20' to='security-phoneNumber'>
+            <p>
+            <span>{{$t('securityCenter.subject.bdsjh')}}</span>
+            <i class='icon'></i>
+            </p>
+        </router-link>
+        <div v-show="mobile" class='tag mb20'>
+            <p>
+            <span>{{$t('securityCenter.subject.ybdsjh')}}</span>
+            <i class='icon'></i>
+            <span class='tel'>{{mobile}}</span>
             </p>
         </div>
         <router-link class='tag mb20' to='security-loginPassword'>
             <p>
-            <span>修改登录密码</span>
+            <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
     </div>
     <div class="footer">
-        <button>退出登录</button>
+        <button @click="quitLogin">{{$t('securityCenter.subject.tcdl')}}</button>
     </div>
-
   </div>
 </template>
 <script>
+import {getUser} from '../../api/person';
+import { clearUser, setTitle } from 'common/js/util';
+
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      show1: true,
+      email: '',
+      mobile: '',
+      isTradepwdFlag: '',
+      googleAuthFlag: false
     };
   },
-  methods: {}
+  created() {
+    setTitle(this.$t('securityCenter.subject.aqzx'));
+    getUser().then((data) => {
+      this.mobile = data.mobile;
+      this.email = data.email;
+      this.isTradepwdFlag = data.tradepwdFlag ? 1 : 0;
+      data.emailBindFlag === false ? this.show = true : this.show = false;
+      this.googleAuthFlag = data.googleAuthFlag;
+    });
+  },
+  methods: {
+    quitLogin(){
+      clearUser();
+      setTimeout( () => {
+        this.$router.push('/login');
+      }, 500 );
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -107,7 +127,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -122,7 +142,7 @@ export default {
     padding: 0 0.3rem;
     line-height: 1rem;
     .mb20 {
-      border-bottom: 0.01rem solid #d8d8d8;
+      border-bottom: 0.01rem solid #eee;
     }
     .tag {
       display: block;
@@ -134,7 +154,7 @@ export default {
         height: 0.26rem;
         float: right;
         margin-top: 0.37rem;
-        @include bg-image("更多");
+        background-image: url('./more.png');
       }
       .tel {
         float: right;

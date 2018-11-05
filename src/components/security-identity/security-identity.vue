@@ -1,27 +1,24 @@
 <template>
   <div class="identity-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>身份认证</span>
-        </p>
-    </header>
     <div class='content cont1'>
-        <router-link class='tag mb20' to='security-idcard'>
+        <router-link class='tag mb20' :to='isRzNum == -1 ? "security-idcard/sfz" : ""' :class="{'show': isRzNum == '1' || !isSfRz}">
             <p>
-            <span>身份证认证</span>
+            <span>{{$t('securityIdentity.subject.sfzrz')}}</span>
+            <span class="rz-sp" :class="{'rz-col': isRzNum == '1'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to=''>
+        <router-link class='tag mb20' :to='isRzNum == -1 ? "security-idcard/hz" : ""' :class="{'show': isRzNum == '2' || !isHzRz}">
             <p>
-            <span>护照认证</span>
+            <span>{{$t('securityIdentity.subject.hzrz')}}</span>
+            <span class="rz-sp" :class="{'rz-col': isRzNum == '2'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag' to=''>
+        <router-link class='tag' :to='isRzNum == -1 ? "security-idcard/jz" : ""' :class="{'show': isRzNum == '3' || !isJzRz}">
             <p>
-            <span>驾照认证</span>
+            <span>{{$t('securityIdentity.subject.jzrz')}}</span>
+            <span class="rz-sp" :class="{'rz-col': isRzNum == '3'}">{{rzStatus}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
@@ -30,11 +27,46 @@
   </div>
 </template>
 <script>
+import { getDictList } from 'api/general';
+import { getUser } from 'api/user';
+import {setTitle} from 'common/js/util';
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      rzStatusList: {},
+      isRzNum: -1,
+      rzStatus: this.$t('securityIdentity.subject.wrz'),
+      isSfRz: false,
+      isHzRz: false,
+      isJzRz: false
     };
+  },
+  created() {
+    setTitle(this.$t('securityIdentity.subject.sfrz'));
+    getDictList("approve_status").then(data => {
+      data.forEach(item => {
+        this.rzStatusList[`${item.dkey}`] = item.dvalue;
+      });
+      let that = this;
+      getUser().then(data => {
+        let userIdAuthInfo = data.userIdAuthInfo;
+        if(userIdAuthInfo){
+          switch(userIdAuthInfo['idKind']){
+            case '1': this.isHzRz = true;this.isJzRz = true;break;
+            case '2': this.isSfRz = true;this.isJzRz = true;break;
+            case '3': this.isSfRz = true;this.isHzRz = true;break;
+          }
+          that.isRzNum = data['idKind'];
+          that.rzStatus = that.rzStatusList[userIdAuthInfo['status']];
+        }
+      });
+
+      function isRzFn(){
+
+      }
+
+    });
   },
   methods: {}
 };
@@ -69,7 +101,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -91,18 +123,30 @@ export default {
       width: 100%;
       font-size: 0.32rem;
       color: #333;
+      display: none;
       .icon {
         width: 0.16rem;
         height: 0.26rem;
         float: right;
         margin-top: 0.37rem;
-        @include bg-image("更多");
+        background-image: url('./more.png');
       }
       .tel {
         float: right;
         margin-right: .2rem;
       }
     }
+  }
+  .rz-sp{
+    font-size: 0.26rem;
+    padding: 0.04rem 0.1rem;
+    border: 1px solid #ccc;
+    margin-left: 0.14rem;
+    color: #666;
+  }
+  .rz-col{
+    color: #d53d3d;
+    border-color: #d53d3d;
   }
 
 }

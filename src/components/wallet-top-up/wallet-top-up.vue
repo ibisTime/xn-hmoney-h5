@@ -2,90 +2,335 @@
   <div class="top-up-wrapper" @click.stop>
     <header>
       <p>
-        <i class='icon'></i>
-        <span v-show="show" class='txt1'>购买X币</span>
-        <span v-show="!show" class='txt1'>出售X币</span>
+        <!-- <i class='icon'></i> -->
+        <span v-show="show" class='txt1'>{{$t('walletBuy.subject.gmb')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('walletBuy.subject.csb')}}</span>
         <router-link to='wallect-orderRecord' class='icon ico1'></router-link>
       </p>
     </header>
     <div class='tabs'>
         <p>
-            <span :class="[ show ? 'select' : '' ]" @click='buy'>买入</span>
+            <span :class="[ show ? 'select' : '' ]" @click='toBuy'>{{$t('common.mr')}}</span>
         </p>
         <p>
-            <span :class="[ !show ? 'select' : '' ]" @click='sell'>卖出</span>
+            <span :class="[ !show ? 'select' : '' ]" @click='toSell'>{{$t('common.mc')}}</span>
         </p>
     </div>
     <div class='public'>
-        <p class='text1'>自己币种（X）</p>
+        <p class='text1'>{{$t('walletBuy.subject.zjbz')}}（FMVP）</p>
         <p class='text2'>
-            <span class='txt1'>单价：<i class='txt2'>￥</i></span>
-            <span class='txt3'>44315</span>
+            <span class='txt1'>{{$t('walletBuy.subject.dj')}}：<i class='txt2'>￥</i></span>
+            <span class='txt3'>{{cnyMon}}</span>
         </p>
-        <i class='icon'></i>
+        <!-- <i class='icon'></i> -->
     </div>
 
     <div class='main'> 
         <!-- 买入显示内容 -->
         <div v-show='show' class='area'>
             <p class='tab'>
-                <span :class="[ show ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !show ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
             </p>
             <p class='inp'>
-                <input type="text" placeholder="输入购买金额">
-                <span class='txt1'>CNY</span>
+              <!--  + '(' + placeTxt + ')' -->
+                <input type="text" :placeholder="(showDet ? $t('walletBuy.subject.gmje') : $t('walletBuy.subject.gmsl'))" v-model="buyMonNumber">
+                <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈0.0000 X</span>
-                <span class=txt2>手续费：<i class=txt3>0.2%</i></span>
+                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((buyMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(buyMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
+                <span class=txt2>{{$t('walletBuy.subject.sxf')}}：<i class=txt3>{{buyFvData}}%</i></span>
             </p>
         </div>
         <!-- 卖出显示内容 -->
         <div v-show="!show" class='area'>
             <p class='tab'>
-                <span :class="[ show ? 'active text1' : 'text1' ]" @click='buy'>金额</span>
-                <span :class="[ !show ? 'active text2' : 'text2' ]" @click='sell'>数量</span>
-                <span class='text3'>可用<i>0.000000</i>X</span>
+                <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
+                <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
-                <input type="text" placeholder="输入卖出数量">
-                <span class='txt1'><i class='txt'>x</i>全部</span>
+                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.csje') : $t('walletBuy.subject.cssl')" v-model="sellMonNumber">
+                <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
-                <span class='txt1'>≈0.0000 CNY</span>
-                <span class=txt2>手续费：<i class=txt3>0.2%</i></span>
+                <span class='txt1'>≈ {{showDet && cnyMon > 0 ? ((Math.floor((sellMonNumber / cnyMon) * 100000000) / 100000000).toFixed(8)) : ((Math.floor(sellMonNumber * cnyMon * 100))/ 100).toFixed(2)}} {{!showDet ? 'CNY' : 'FMVP'}}</span>
+                <span class=txt2>{{$t('walletBuy.subject.sxf')}}：<i class=txt3>{{sellFvData}}%</i></span>
             </p>
         </div>
-
-        <div class='pay'>
-            <span>付款方式</span>
+        <!-- 去购买 -->
+        <div class='pay' v-show="show">  
+            <p>
+              <span>{{$t('walletBuy.subject.zffs')}}</span>
+              <span class='txt2 fr'>
+                  {{$t('common.zfb')}} {{bankcardNumber}}
+              </span>
+            </p>
+        </div>
+        <div class="pay-img" v-show="show">
+          <p :style="{backgroundImage: zfPic}"></p>
+        </div>
+        <div class="pay-note" v-show="show">
+          <div>
+            <textarea name="" id="" v-model="buyConfig.remark" :placeholder="$t('walletBuy.subject.qsrzh')"></textarea>
+          </div>
+          <div class="pay-tis" v-show="show">
+            <p>{{$t('walletBuy.subject.bzxx')}}</p>
+          </div>
+        </div>
+        <!-- 去出售 -->
+        <div class='pay' v-show="!show">
+            <span>{{$t('walletBuy.subject.zffs')}}</span>
             <span class='txt2'>
-                <i class='icon icon1'></i>
-                支付宝
+                <select name="" id="" v-model="sellConfig.receiveType">
+                  <option value="">{{$t('walletBuy.subject.qxz')}}</option>
+                  <option :value="sellItem.bankName" v-for="(sellItem, index) in gmBankList" :key="index">{{sellItem.bankName}}</option>
+                </select>
                 <i class='icon icon2'></i>
             </span>
         </div>
-        <button v-show='show'>确认购买</button>
-        <button v-show='!show'>确认出售</button>
-
+        <div class="payNum" v-show="!show">
+          <input type="text" :placeholder="$t('walletBuy.subject.zhhkh')" v-model="sellConfig.receiveCardNo">
+        </div>
+        <div class="payPaw" v-show="!show">
+          <p>{{$t('walletBuy.subject.zjmm')}}</p>
+          <input type="password" :placeholder="$t('walletBuy.subject.qszjmm')" v-model="sellConfig.tradePwd">
+        </div>
+        <div class="btn-box">
+          <button v-show='show' @click="toBuyClick">{{$t('walletBuy.subject.qrgm')}}</button>
+          <button v-show='!show' @click="toSellClick">{{$t('walletBuy.subject.qrcs')}}</button>
+        </div>
     </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+import {getAdverMessage} from 'api/otc';
+import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam, getPic} from 'common/js/util';
+import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
+import {getUser} from 'api/user';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
-      show: true
+      textMsg: this.$t('common.czcg'),
+      placeTxt: '',
+      type: '',
+      isLoading: true,
+      show: true,
+      showDet: true,
+      buyMonNumber: '',
+      bankcardNumber: '',
+      sellMonNumber: '',
+      buyFvData: '',
+      sellFvData: '',
+      cnyMon: '',
+      buyConfig: {
+        tradeCurrency: 'CNY',
+        tradePrice: '',
+        userId: getUserId(),
+        count: '',
+        receiveType: 'alipay',
+        tradeAmount: '',
+        remark: ''
+      },
+      sellConfig: {
+        userId: getUserId(),
+        tradeCurrency: 'CNY',
+        tradePrice: '',
+        count: '',
+        receiveCardNo: '',
+        receiveType: this.$t('common.zfb'),
+        tradeAmount: '',
+        tradePwd: ''       // 资金密码
+      },
+      zfType: {},      // 去购买支付方式
+      zfNumber: {},
+      gmType: {},       // 去出售支付方式
+      zfBankList: [],   // 去购买账号列表
+      gmBankList: [],   // 去出售账号列表
+      cdsMoney: '',
+      fmvpTypeData: {},   // 承兑商参数
+      zfPic: '',
+      istradepwdFlag: true
     };
   },
+  created() {
+    this.type = getUrlParam('type');
+    this.show = this.type == 'buy' ? true : false;
+    let text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
+    setTitle(text);
+    getAdverMessage('accept_rule').then(data => {
+      this.fmvpTypeData = data;
+      this.fmvpTypeData.accept_order_max_cny_amount = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
+      this.fmvpTypeData.accept_order_max_usd_amount = parseFloat(this.fmvpTypeData.accept_order_max_usd_amount);
+      this.fmvpTypeData.accept_order_min_cny_amount = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
+      this.fmvpTypeData.accept_order_min_usd_amount = parseFloat(this.fmvpTypeData.accept_order_min_usd_amount);
+      this.cnyMon = data.accept_cny_price;
+      this.buyConfig.tradePrice = data.accept_cny_price;
+      this.sellConfig.tradePrice = data.accept_cny_price;
+      this.buyFvData = parseFloat(data.accept_order_buy_fee_rate) * 100;
+      this.sellFvData = parseFloat(data.accept_order_sell_fee_rate) * 100;
+      this.placeTxt = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
+    });
+    getBankData().then(data => {
+      this.zfPic = getPic(data[0].pic).backgroundImage;
+      this.zfBankList = data;
+      data.forEach(item => {
+        this.zfType[item.bankName] = item.bankCode;
+        this.zfNumber[item.bankName] = item.bankcardNumber;
+      });
+      this.selBankcar();
+    });
+    // 数字货币折合
+    // getNumberMoney('FMVP', 'CNY').then(data => {
+    //   this.cnyMon = (Math.floor(parseFloat(data) * 100) / 100).toFixed(2);
+    //   this.buyConfig.tradePrice = this.cnyMon;
+    //   this.sellConfig.tradePrice = this.cnyMon;
+    // });
+    // 账户
+    wallet().then(res => {
+      let cdsList = res.filter(item => item.currency == 'FMVP')[0];
+      if(cdsList){
+        this.cdsMoney = formatMoneySubtract(`${cdsList.amount}`, `${cdsList.frozenAmount}`, '','FMVP');
+      }
+      getGmBankData().then(data => {
+        this.gmBankList = data;
+        data.forEach(item => {
+          this.gmType[item.bankName] = item.bankCode;
+        });
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
+    });
+
+    if(this.type == 'sell'){
+      this.pwdFlag();
+    }
+  },
   methods: {
+    // 验证资金密码
+    pwdFlag(){
+      getUser().then(data => {
+        if(!data.tradepwdFlag){
+          this.textMsg = this.$t('common.szzjmm');
+          this.$refs.toast.show();
+          this.istradepwdFlag = false;
+        }
+      });
+    },
     buy() {
-      this.show = true;
+      this.showDet = true;
     },
     sell() {
+      this.showDet = false;
+    },
+    toBuy() {
+      this.show = true;
+    },
+    toSell() {
       this.show = false;
+      this.pwdFlag();
+    },
+    selBankcar(){
+      let list = this.zfBankList.filter(item => item.bankCode == this.buyConfig.receiveType);
+      this.bankcardNumber = list[0].bankcardNumber;
+    },
+    toBuyClick(){
+      this.isLoading = true;
+      if(this.show){
+        if(this.buyConfig.remark === ''){
+          this.isLoading = false;
+          this.textMsg = this.$t('walletBuy.subject.dksm');
+          this.$refs.toast.show();
+          return false;
+        }
+      }
+      if(this.showDet){
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.buyMonNumber) && parseFloat(this.buyMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.buyConfig.tradeAmount = this.buyMonNumber;
+          let count = this.cnyMon > 0 ? ((Math.floor((this.buyMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
+          this.buyConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
+        }else{
+          this.scopeMoney();
+          this.isLoading = false;
+          return false;
+        }
+      }else{
+        let buyMon = this.buyMonNumber * this.cnyMon;
+        if(this.fmvpTypeData.accept_order_min_cny_amount <= buyMon && buyMon <= this.fmvpTypeData.accept_order_max_cny_amount){
+          this.buyConfig.count = formatMoneyMultiply(`${this.buyMonNumber}`, '', 'FMVP');
+          this.buyConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(buyMon * 100))/ 100).toFixed(2) : '0';
+        }else{
+          this.isLoading = false;
+          this.scopeMoney();
+          return false;
+        }
+      }
+      buyX(this.buyConfig).then(data => {
+        this.textMsg = this.$t('common.czcg');
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push('wallect-orderRecord')
+        }, 1500);
+        this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+      });
+    },
+    toSellClick(){
+      if(this.istradepwdFlag){
+        this.isLoading = true;
+        if(this.showDet){ // 金额
+          if(this.fmvpTypeData.accept_order_min_cny_amount <= parseFloat(this.sellMonNumber) && parseFloat(this.sellMonNumber) <= this.fmvpTypeData.accept_order_max_cny_amount){
+            this.sellConfig.tradeAmount = this.sellMonNumber;
+            let count = this.cnyMon > 0 ? ((Math.floor((this.sellMonNumber / this.cnyMon) * 100000000) / 100000000).toFixed(8)) : '0';
+            this.sellConfig.count = formatMoneyMultiply(`${count}`, '', 'FMVP');
+          }else{
+            this.isLoading = false;
+            this.scopeMoney();
+            return false;
+          }
+        }else{ // 数量
+          let sellMon = this.sellMonNumber * this.cnyMon;
+          if(this.fmvpTypeData.accept_order_min_cny_amount <= sellMon && sellMon <= this.fmvpTypeData.accept_order_max_cny_amount){
+            this.sellConfig.count = formatMoneyMultiply(`${this.sellMonNumber}`, '', 'FMVP');
+            this.sellConfig.tradeAmount = this.cnyMon > 0 ? ((Math.floor(sellMon * 100))/ 100).toFixed(2) : '0';
+          }else{
+            this.isLoading = false;
+            this.scopeMoney();
+            return false;
+          }
+        }
+        this.sellConfig.receiveType = this.gmType[this.sellConfig.receiveType];
+        sellX(this.sellConfig).then(data => {
+          this.$refs.toast.show();
+          setTimeout(() => {
+            this.$router.push('wallect-orderRecord')
+          }, 1000);
+          this.isLoading = false;
+          }, () => {
+            this.isLoading = false;
+        });
+      }else{
+        this.textMsg = this.$t('common.szzjmm');
+        this.$refs.toast.show();
+        setTimeout(() => {
+          this.$router.push('/security-tradePassword');
+        }, 1500);
+      }
+    },
+    scopeMoney(){
+      this.textMsg = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
+      this.$refs.toast.show();
     }
+  },
+  components: {
+    FullLoading,
+    Toast
   }
 };
 </script>
@@ -96,6 +341,7 @@ export default {
 .top-up-wrapper {
   font-size: 0.32rem;
   color: #333;
+  background-color: #f7f7f7;
 
   .icon {
     display: inline-block;
@@ -114,7 +360,7 @@ export default {
       .icon {
         width: 0.2rem;
         height: 0.36rem;
-        @include bg-image("返回");
+        background-image: url('./fhui.png');
         margin-top: 0.28rem;
         float: left;
       }
@@ -122,7 +368,7 @@ export default {
       .ico1 {
         width: .26rem;
         height: .3rem;
-        @include bg-image("账单");
+        background-image: url('./zdan.png');
         float: right;
       }
 
@@ -201,7 +447,7 @@ export default {
     .icon {
       width: 0.16rem;
       height: 0.26rem;
-      @include bg-image("更多");
+      background-image: url('./gduo.png');
       position: absolute;
       top: 1.07rem;
       right: 0.3rem;
@@ -215,19 +461,23 @@ export default {
       margin-bottom: 0.2rem;
       .tab {
         width: 100%;
-        padding: 0 .3rem 0 0.78rem;
+        padding: 0 .3rem 0 0.38rem;
         line-height: 0.87rem;
         box-shadow: 0 0.01rem 0 0 #ebebeb;
         background: rgba(242, 242, 242, 0);
         color: #999;
         margin-bottom: 0.24rem;
         .text1 {
-          margin-right: 1.25rem;
+          margin-right: 0.6rem;
         }
         .text3 {
             float: right;
             font-size: .28rem;
             color: #999;
+            max-width: 3.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             i {
                 color: #151515;
                 margin: 0 .1rem;
@@ -249,7 +499,9 @@ export default {
         border-bottom: .01rem solid #ebebeb;
 
         input {
+          width: 92%;
           color: #999;
+          border-bottom: .01rem solid #ebebeb;
         }
         .txt1 {
           font-weight: bold;
@@ -291,29 +543,99 @@ export default {
       justify-content: space-between;
       color: #323232;
       font-weight: bold;
+      position: relative;
+      .xz-i{
+        position: absolute;
+        right: 2rem;
+        top: 0%;
+      }
+      p{
+        width: 100%;
+      }
       .txt2 {
         font-size: 0.28rem;
+        float: right;
       }
       .icon1 {
         width: 0.48rem;
         height: 0.46rem;
-        @include bg-image("支付宝");
+        background-image: url('./zfb.png');
         vertical-align: middle;
         margin-right: 0.12rem;
       }
       .icon2 {
         width: 0.17rem;
         height: 0.26rem;
-        @include bg-image("更多");
+        background-image: url('./gduo.png');
         vertical-align: middle;
         margin-left: 0.12rem;
+      }
+    }
+    .payNum{
+      width: 100%;
+      padding: 0.1rem 0.3rem;
+      background-color: #fff;
+      line-height: 1.1rem;
+      color: #323232;
+      input{
+        width: 100%;
+        padding: 0.1rem 0.3rem;
+        border: 1px solid #eee;
+        border-radius: 0.08rem;
+        height: 0.8rem;
+      }
+    }
+    .pay-img{
+      padding: 0.1rem 0.3rem;
+      text-align: right;
+      margin: 0.2rem 0;
+      background-color: #fff;
+      p{
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+    }
+    .pay-note{
+      background-color: #fff;
+      padding: 0.3rem;
+      margin-bottom: 0.2rem;
+      textarea{
+        font-size: 0.3rem;
+        width: 100%;
+        height: 1.4rem;
+        padding: 0.1rem 0.12rem;
+        border: 1px solid #ccc;
+        border-radius: 0.02rem;
+      }
+    }
+    .pay-tis{
+      padding: 0.1rem 0;
+      font-size: 0.2rem;
+    }
+    .payPaw{
+      width: 100%;
+      padding: 0.1rem 0.3rem;
+      background-color: #fff;
+      color: #323232;
+      p{
+        margin-bottom: 0.2rem;
+      }
+      input{
+        width: 100%;
+        padding: 0.1rem 0.3rem;
+        border: 1px solid #eee;
+        border-radius: 0.08rem;
+        height: 0.8rem;
       }
     }
 
     button {
       width: 6.9rem;
       height: 1rem;
-      margin: 1.05rem 0.3rem 0;
+      margin: 0.1rem 0.3rem 0;
       background: #d53d3d;
       border-radius: 0.08rem;
       font-weight: bold;
@@ -321,6 +643,10 @@ export default {
       font-size: 0.32rem;
       line-height: 1.1rem;
     }
+  }
+  .btn-box{
+    background-color: #fff;
+    padding-bottom: 0.5rem;
   }
 }
 </style>

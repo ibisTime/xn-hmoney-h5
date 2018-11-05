@@ -32,10 +32,10 @@ export function wxLogin(code, userReferee, activityCode, mobile, smsCaptcha) {
  * 获取腾讯云IM签名、账号
  */
 export function getTencentParamsAPi() {
-  return fetch(805953, {
+  return fetch(805087, {
     userId: getUserId()
   }).then((data) => {
-    setCookie('__sig__', data.sig);
+    setCookie('__sign__', data.sign);
     setCookie('__accountType__', data.accountType);
     setCookie('__txAppCode__', data.txAppCode);
     return Promise.resolve(data);
@@ -325,5 +325,31 @@ export function editIntroduce (introduce) {
   return fetch(805098, {
     introduce,
     userId: getUserId()
+  });
+}
+
+/**
+ * 用户认证
+ */
+export function userAttestation (config) {
+  return fetch(805160, config);
+}
+
+// 修改头像
+export function changePhoto(photo) {
+  return fetch("805080", {
+      photo,
+      userId: getUserId()
+  });
+}
+
+/**
+ * 忘記密码/重置密码
+ * @param config {mobile, newLoginPwd, smsCaptcha}
+ */
+export function resetPwd(config) {
+  return fetch('805063', {
+      kind: 'C',
+      ...config
   });
 }

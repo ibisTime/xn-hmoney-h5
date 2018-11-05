@@ -7,40 +7,40 @@
         <div class='person'>
           <div class='pic'></div>
           <div class='text'>
-            <p class='name'>Linxiang<span class='icon'>支付宝</span></p>
-            <p class='num'>限额：100-102 CNY</p>
+            <p class='name'>{{data.user.nickname}}<span class='icon'>{{bizTypeList[data.payType]}}</span></p>
+            <p class='num'>限额：{{data.minTrade}}-{{data.maxTrade}} CNY</p>
           </div>
-          <div class='money'>345685622 CNY</div>
+          <div class='money'>{{data.truePrice.toFixed(2)}} CNY</div>
         </div>
         <div class='about'>
           <div>
-            <p>67</p>
+            <p>{{data.userStatistics.jiaoYiCount}}</p>
             <span>交易次数</span>
           </div>
           <div>
-            <p>25</p>
+            <p>{{data.userStatistics.beiXinRenCount}}</p>
             <span>信任次数</span>
           </div>
           <div>
-            <p>10%</p>
+            <p>{{data.userStatistics.beiPingJiaCount != 0 ? getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount) : '0'}}</p>
             <span>好评率</span>
           </div>
           <div>
-            <p>2890</p>
+            <p>{{data.userStatistics.totalTradeCount === '0' ? '0' : formatAmount(data.userStatistics.totalTradeCount, 0, data.tradeCoin) + '+' + data.tradeCoin}}</p>
             <span>历史交易</span>
           </div>
         </div>
       </div>
       <div class='message'>
-        广告留言：支持银行支付宝15890989876转账，谢谢，陈某某收
+        广告留言：{{data.leaveMessage}}
       </div>
       <div class='main'>
         <div class='want'>
           <p class='txt1'><span class='icon1'></span>你想出售多少？</p>
-          <p class='txt2'>可用余额：0.01234ETH</p>
+          <p class='txt2'>可用余额：{{data.user.tradeRate}}ETH</p>
           <div class='text'>
-          <p class='txt3'><span class='txt'>CNY</span><input class="inp1" type="text" placeholder="请输入数字"></p>
-          <p class=txt4><span class='icon2'></span><span class='txt'>ETH</span><input class="inp2" type="text" placeholder="请输入数值"></p>
+          <p class='txt3'><span class='txt'>CNY</span><input class="inp1" type="text" v-model="Cnum" @keyup="changeEnum" placeholder="请输入数字"></p>
+          <p class=txt4><span class='icon2'></span><span class='txt'>ETH</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="text" placeholder="请输入数值"></p>
           </div>
         </div>
       </div>
@@ -64,9 +64,9 @@
           <div class='ico'><span></span></div>
           <h3>下单确定</h3>
           <div class='text'>
-          <p><span class='txt1'>购买价格</span><span class='txt2'>345677.98CNY</span></p>
-          <p><span class='txt1'>购买金额</span><span class='txt2'>2345675.98CNY</span></p>
-          <p><span class='txt1'>购买数量</span><span class='txt2'>0.12234989ETH</span></p>
+          <p><span class='txt1'>购买价格</span><span class='txt2'>{{data.truePrice}}CNY</span></p>
+          <p><span class='txt1'>购买金额</span><span class='txt2'>{{data.truePrice*this.Cnum}}CNY</span></p>
+          <p><span class='txt1'>购买数量</span><span class='txt2'>{{this.Cnum}}ETH</span></p>
           </div>
           <div class='prompt'>
             <span class='icon'></span>
@@ -81,11 +81,46 @@
   </div>
 </template>
 <script>
+import { getUrlParam, formatAmount } from 'common/js/util';
+import { otcBuy } from "api/otc";
+
 export default {
   data() {
     return {
-      show: false
+      show: false,
+      data: [],
+      bizTypeList: {
+        "0": "支付宝",
+        "1": "微信",
+        "2": "银行卡转账"
+      },
+      rate: '',
+      Cnum: '',
+      Enum: ''
     };
+  },
+  created() {
+    this.otcBuy();
+  },
+  methods: {
+    getPercentum(num1, num2){
+      return getPercentum(num1, num2);
+    },
+    otcBuy() {
+      otcBuy(getUrlParam('adsCode'), getUrlParam('userId')).then((data) => {
+        this.data = data;
+        this.rate = data.marketPrice;
+      });
+    },
+    changeEnum() {
+      this.Enum = this.Cnum / this.rate;
+    },
+    formatAmount(money, format, coin) {
+      return formatAmount(money, format, coin);
+    },
+    changeCnum() {
+      this.Cnum = this.Enum * this.rate;
+    }
   }
 };
 </script>
@@ -132,7 +167,7 @@ export default {
     .person {
       display: flex;
       padding: 0 0.3rem;
-
+      width: 100%;
       .pic {
         width: 0.96rem;
         height: 0.96rem;
@@ -148,7 +183,7 @@ export default {
 
       .text {
         margin-top: 0.36rem;
-
+        width: 3.7rem;
         .name {
           font-size: 0.32rem;
           line-height: 0.28rem;
@@ -176,10 +211,11 @@ export default {
       }
 
       .money {
+        text-align: right;
+        width: 2.1rem;
         font-size: 0.3rem;
         color: #0ec55b;
-        padding-left: 1.1rem;
-        padding-top: 0.64rem;
+        line-height: 1.4rem;
       }
     }
 

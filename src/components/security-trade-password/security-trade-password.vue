@@ -1,37 +1,151 @@
 <template>
   <div class="password-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>修改交易密码</span>
-        </p>
-    </header>
     <div class="main">
-      <p class='text1'><span>中国</span><span class='txt2'>+86</span><i class='icon'></i></p>
-      <p>15868201234</p>
-      <p class='text3'><input type="text" placeholder="输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
-      <p><input type="password" placeholder="新密码(不少于6位)"></p>
-      <p><input type="password" placeholder="确认密码"></p>
+      <p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
+      <p v-if="mobile">{{mobile}}</p>
+      <p v-if="email != ''">{{email}}</p>
+      <p class='text3'>
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
+        <i v-show="!show" class='icon'></i>
+        <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
+      </p>
+      <p>
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
+        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+      </p>
+      <p>
+        <input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">
+        <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
+      </p>
     </div>
     <div class="foot">
-      <button>确 定</button>
-
+      <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
     </div>
    
-
+  <Toast :text="textMsg" ref="toast" />
+  <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
+import {getUser, changeTradPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import { setTradePwd } from 'api/user';
+import {captValid, rePwdValid, tradeValid, getUserId, setTitle, getUrlParam} from '../../common/js/util';
+import { resetPwd } from 'api/user';
+import Toast from 'base/toast/toast';
+import FullLoading from 'base/full-loading/full-loading';
 export default {
   data() {
     return {
-      show: true
+      time: 60,
+      textMsg: '',
+      show: true,
+      bizType: '805067',
+      mobile: '',
+      email: '',
+      smsCaptcha: '',
+      newPayPwd: '',
+      surePwd: '',
+      istw: '',
+      isLoading: false
     };
+  },
+  created() {
+    this.istw = getUrlParam('istw');      // 0设置 1修改
+    if(this.istw == '1'){
+      setTitle(this.$t('securityTradePassword.subject.xgjymm'));
+    }else{
+      this.bizType = '805066'
+      setTitle(this.$t('securityTradePassword.subject.szjymm'));
+    }
+    getUser().then((data) => {
+      if(data.mobile){
+        this.mobile = data.mobile;
+      }else{
+        if(data.email){
+          this.email = data.email;
+        }
+      }
+    });
   },
   methods: {
     get() {
       this.show = false;
+      this.isLoading = true;
+      if(this.mobile){
+        getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.show = true;
+          this.isLoading = false;
+        });
+      }
+      if(this.email){
+        getSmsCaptcha2(this.bizType, this.email).then(data => {
+          this.isLoading = false;
+          let times = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(times);
+              this.show = true;
+            }
+          }, 1000);
+        }, () => {
+          this.show = true;
+          this.isLoading = false;
+        });
+      }
+    },
+    changeTradPwd() {
+      if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
+        this.textMsg = this.$t('securityTradePassword.subject.txwz');
+        this.$refs.toast.show();
+        return;
+      }
+      if(this.newPayPwd !== this.surePwd){
+        this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
+        this.$refs.toast.show();
+        return;
+      }else{
+        if(!this.errors.any()){
+          this.isLoading = true;
+          if(this.istw == '1'){
+            changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
+              this.textMsg = this.$t('securityTradePassword.subject.czcg');
+              this.$refs.toast.show();
+              this.isLoading = false;
+              setTimeout(() => {
+                this.$router.push('mine');
+              }, 1500);
+            }, () => {
+              this.isLoading = false;
+            });
+          }else{
+            setTradePwd(this.newPayPwd, this.smsCaptcha).then(data => {
+              this.textMsg = this.$t('securityTradePassword.subject.szcg');
+              this.$refs.toast.show();
+              this.isLoading = false;
+              setTimeout(() => {
+                this.$router.push('mine');
+              }, 1500);
+            }, () => {
+              this.isLoading = false;
+            })
+          }
+        }
+      }
     }
+  },
+  components: {
+    Toast,
+    FullLoading
   }
 };
 </script>
@@ -43,6 +157,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
+  height: 12rem;
   background: #fff;
 
   .icon {
@@ -65,7 +180,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -96,7 +211,7 @@ export default {
       .icon {
         width: .18rem;
         height: .14rem;
-        @include bg-image("下啦");
+        background-image: url('./xl.png');
       }
     }
     .text3 {
@@ -130,7 +245,7 @@ export default {
       .icon {
           width: .34rem;
           height: .34rem;
-          @include bg-image("删除");
+          background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
       }
@@ -151,7 +266,10 @@ export default {
     }
   }
 
-  
+  .error-tip{
+    color: #d53d3d;
+    font-size: 0.26rem;
+  }
 
 
 }

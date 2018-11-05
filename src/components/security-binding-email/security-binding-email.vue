@@ -1,34 +1,75 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
-    <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>绑定邮箱</span>
-        </p>
-    </header>
     <div class="main">
-      <p><input type="text" placeholder="请输入邮箱"></p>
-      <p class='text3'><input type="text" placeholder="请输入验证码"><i v-show="!show" class='icon'></i><span v-show="show" @click="get" class='txt2'>获取验证码</span><span v-show="!show" class='txt1'>重新获取(60s)</span></p>
+      <p>
+        <input v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')">
+      <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
+      </p>
+      <p class='text3'>
+        <input v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
+        <i v-show="!show" class='icon' @click="captcha = ''"></i>
+        <span v-show="show" @click="get" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
+      </p>
 
     </div>
     <div class="foot">
-      <button>确 定</button>
+      <button @click="bindEmail">{{$t('bindEmail.subject.qd')}}</button>
     </div>
     
-
+  <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
+import {getUserId,CheckMail, setTitle} from '../../common/js/util';
+import {bindingEmail, getSmsCaptcha2} from '../../api/person';
+import FullLoading from 'base/full-loading/full-loading';
+
 export default {
   data() {
     return {
-      show: true
+      show: true,
+      email: '',
+      captcha: '',
+      bizType: '805086',
+      isLoading: false,
+      time: 60
     };
+  },
+  created() {
+    setTitle(this.$t('bindEmail.subject.bdyx'));
   },
   methods: {
     get() {
       this.show = false;
+      if(CheckMail(this.email) === true) {
+        this.isLoading = true;
+        getSmsCaptcha2(this.bizType, this.email).then(data => {
+          this.isLoading = false;
+          let phTime = setInterval(() => {
+            this.time --;
+            if(this.time < 0){
+              clearInterval(phTime);
+              this.show = true;
+              this.time = 60;
+            }
+          }, 1000);
+        }, () => {
+          this.isLoading = false;
+          this.show = true;
+        });
+      }
+    },
+    bindEmail() {
+      if(CheckMail(this.email) === true) {
+        bindingEmail(this.captcha, this.email, getUserId()).then(data => {
+          this.$router.push('security-center');
+        })
+      }
     }
+  },
+  components: {
+    FullLoading
   }
 };
 </script>
@@ -62,7 +103,7 @@ export default {
     .icon {
       width: 0.21rem;
       height: 0.36rem;
-      @include bg-image("返回");
+      background-image: url('./fh.png');
       float: left;
       margin-top: 0.31rem;
     }
@@ -75,6 +116,7 @@ export default {
     color: #333;
     font-weight: bold;
     p {
+      position: relative;
       height: 1.1rem;
       line-height: 1.1rem;
       margin-bottom: .1rem;
@@ -93,7 +135,7 @@ export default {
       .icon {
         width: .18rem;
         height: .14rem;
-        @include bg-image("下啦");
+        background-image: url('./xl.png');
       }
     }
     .text3 {
@@ -127,11 +169,15 @@ export default {
       .icon {
           width: .34rem;
           height: .34rem;
-          @include bg-image("删除");
+          background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
       }
     } 
+    .error-tip{
+      color: #d53d3d;
+      font-size: 0.28rem;
+    }
   }
 
   .foot {
