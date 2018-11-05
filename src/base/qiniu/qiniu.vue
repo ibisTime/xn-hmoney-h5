@@ -23,10 +23,10 @@
       },
       uploadUrl: {
         type: String,
-        default: 'http://up.qiniu.com' // http://up.qiniu.com    http://up-z2.qiniu.com
+        default: 'http://up-z0.qiniup.com' // 线上 http://up-z0.qiniup.com  测试研发   http://up-z2.qiniu.com  http://up.qiniup.com
       },
       token: {
-        type: String,
+        type: String, 
         default: '',
         required: true
       },

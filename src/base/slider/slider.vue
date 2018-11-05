@@ -4,9 +4,9 @@
       <slot>
       </slot>
     </div>
-    <!-- <div class="dots" v-if="showDots">
-      <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex === index}"></span>
-    </div> -->
+    <div class="dots">
+      <!-- <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex === index}"></span> -->
+    </div>
   </div>
 </template>
 
@@ -17,11 +17,16 @@
   export default {
     data() {
       return {
-        dots: [],
         currentPageIndex: 0
       };
     },
     props: {
+      dots: {
+        type: Array,
+        default: function(){
+          return [];
+        }
+      },
       loop: {
         type: Boolean,
         default: true
@@ -44,7 +49,7 @@
       }
     },
     mounted() {
-      setTimeout(() => {
+      setTimeout(() => {console.log(this.dots)
         if(this.dots.length > 1){
           this._setSliderWidth();
           if (this.showDots) {
@@ -102,7 +107,7 @@
         this.$refs.sliderGroup.style.width = width + 'px';
       },
       _initDots() {
-        this.dots = new Array(this.children.length);
+        // this.dots = new Array(this.children.length);
       },
       _initSlider() {
         this.slider = new BScroll(this.$refs.slider, {

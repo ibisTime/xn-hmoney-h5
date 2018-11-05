@@ -129,7 +129,7 @@ export default {
     });
   },
   mounted() {
-    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/
+    this.uploadUrl = 'http://up-z0.qiniup.com';  // http://pgf8juy5p.bkt.clouddn.com/  http://up-z0.qiniup.com
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     });

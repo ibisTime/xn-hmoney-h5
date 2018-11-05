@@ -5,7 +5,7 @@
       <span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>
     </div>
     <div class="slider-wrapper">
-        <slider v-if="banners.length">
+        <slider v-if="banners.length" :dots="banners">
           <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
@@ -82,7 +82,7 @@
     },
     created() {
       setTitle(this.$t('footer.navbar.page'));
-      getBannerList().then((data) => {
+      getBannerList().then((data) => {console.log(data)
         this.banners = data;
         this.isLoading = false;
       });
@@ -101,6 +101,8 @@
       },
       getImgSyl(imgs) {
         return {
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
           backgroundImage: `url(${formatImg(imgs)})`
         };
       },

@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="slider-wrapper">
-        <slider v-if="banners.length">
+        <slider v-if="banners.length" :dots="banners">
           <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
@@ -272,6 +272,8 @@ export default {
     },
     getImgSyl(imgs) {
       return {
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
         backgroundImage: `url(${formatImg(imgs)})`
       };
     },
