@@ -101,7 +101,7 @@ export function chatOrderBuy(adsCode) {
 }
 //出售开始聊天，提交交易订单
 export function chatOrderSell(adsCode) {
-  return Ajax.get("625248", {
+  return fetch("625248", {
     sellUser: getUserId(),
     adsCode
   });

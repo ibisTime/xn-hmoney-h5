@@ -49,7 +49,7 @@
       }
     },
     mounted() {
-      setTimeout(() => {console.log(this.dots)
+      setTimeout(() => {
         if(this.dots.length > 1){
           this._setSliderWidth();
           if (this.showDots) {

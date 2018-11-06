@@ -57,15 +57,14 @@ export default {
       },
       config: {
         start: 1,
-        limit: 10,
-        objectUserId: getUserId()
+        limit: 10
       }
     };
   },
   created() {
     setTitle('用户评价');
-    // this.userId = getUrlParam('userId');
-    // this.config.objectUserId = this.userId;
+    this.userId = getUrlParam('userId');
+    this.config.objectUserId = this.userId;
     this.userEvaluate();
   },
   methods: {

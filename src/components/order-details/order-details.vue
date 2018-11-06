@@ -27,14 +27,14 @@
             <p class="titly">{{$t('orderDetail.subject.ggly')}}：</p>
             <p class='text2'>{{orderDetailData.leaveMessage}}</p>
         </div>
-        <div class='appraise' v-show="pjComment">
+        <div class='appraise'>
           <p class='txt1'>
             {{$t('myOrderDetail.subject.pj')}} 
             <span class="fr" :class="ishpTxt == $t('common.hp') ? 'hptxt' : 'cptxt'">
               <i class="icon pjback" :style="pjback"></i>{{ishpTxt}}
             </span>
             </p>
-          <p class='txt2'>{{pjComment}}</p>
+          <p class='txt2'>{{pjComment ? pjComment : ''}}</p>
         </div>
     </div>
     <div class='window'>
@@ -214,9 +214,11 @@
         }
         // 当前用户为买家
         if (data.buyUser == getUserId()) {
-          this.pjback = data.sbComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+          if(data.sbComment){
+            this.pjback = data.sbComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+          }
           this.pjComment = data.sbCommentContent;
-          this.ishpTxt = this.pjList[data.sbComment];
+          this.ishpTxt = data.sbComment ? this.pjList[data.sbComment] : '';
           if(data.status == 0){
             this.btns = `<button class="o-btn payBtn">
                           ${this.$t('myOrderDetail.subject.bjfk')}
@@ -225,7 +227,7 @@
                           ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
           }else if(data.status == "2"){
-            if (data.bsComment != "0" && data.bsComment != "1") {
+            if (!data.bsComment) {
               this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
             }
           }
@@ -233,15 +235,17 @@
             this.btns = `<button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`
           }
         }else{  // 当前用户为卖家
-        this.pjback = data.bsComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+        if(data.bsComment){
+          this.pjback = data.bsComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+        }
         this.pjComment = data.bsCommentContent;
-        this.ishpTxt = this.pjList[data.bsComment];
+        this.ishpTxt = data.bsComment ? this.pjList[data.bsComment] : '';
           //待支付
           if (data.status == "1") {
               this.btns = `<button class="o-btn releaseBtn">${this.$t('myOrderDetail.subject.sfhb')}</button>
                           <button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`;
           } else if (data.status == "2") {
-              if (data.sbComment != "0" && data.sbComment != "1") {
+              if (!data.sbComment) {
                 this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
               }
           }
@@ -251,6 +255,20 @@
           this.btns = `<button class="o-btn qx-btn cancelBtn">
                           ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
+          if(data.type == 'buy'){
+                if(data.buyUser == getUserId()){
+                    this.btns += `<button class="o-btn qx-btn buyBtn" data-ocode="${data.adsCode}" data-user="${data.sellUser}">
+                              ${this.$t('wallet.subject.cz')}
+                            </button>`;
+                }
+            }
+          if(data.type == 'sell'){
+              if(data.sellUser == getUserId()){
+                  this.btns += `<button class="o-btn qx-btn sellBtn" data-ocode="${data.adsCode}" data-user="${data.buyUser}">
+                              ${this.$t('wallet.subject.tx')}
+                            </button>`;
+              }
+          }
         }
 
         // 系统自动取消
@@ -269,6 +287,18 @@
       let toast = this.$refs.toast;
       if(target.localName === 'button'){
         this.isLoading = true;
+        // 去购买 buyBtn
+        if(target.classList.contains('buyBtn')){
+          let code = target.dataset.ocode;
+          let user = target.dataset.user;
+          this.$router.push(`otc-buy?userId=${user}&adsCode=${code}&type=1`);
+        }
+        // 去出售 sellBtn
+        if(target.classList.contains('sellBtn')){
+          let code = target.dataset.ocode;
+          let user = target.dataset.user;
+          this.$router.push(`otc-buy?userId=${user}&adsCode=${code}&type=0`);
+        }
         // 标记付款 payOrder
         if(target.classList.contains('payBtn')){
           payOrder(this.code).then(data => {

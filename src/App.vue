@@ -46,6 +46,17 @@
         showFlag: true
       }
     },
+    beforeCreate(){
+      let that = this;
+      window.onload = function(){
+        let href = location.href;
+        if(href.search(/page|system-notice|about-platformIntroduced\?ckey=about_us|trading|otc|login|registered|security-loginPassword/) == -1){
+          if(!isLogin()){
+            that.$router.push('/login');
+          }
+        };
+      }
+    },
     created() {
       this.$router.beforeEach((to, from, next) => {
         this.$refs.touchDemo.style.right = '0.5rem';
@@ -91,7 +102,7 @@
             }, 1500);
           }
         }
-      })
+      });
     },
     mounted() {
       this.$refs.touchDemo.style.right = '0.5rem';

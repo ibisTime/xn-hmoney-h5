@@ -101,7 +101,7 @@
 </template>
 <script>
 import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar, getPercentum } from 'common/js/util';
-import { otcBuy, buyETH, sellBB, chatOrderBuy } from "api/otc";
+import { otcBuy, buyETH, sellBB, chatOrderBuy, chatOrderSell } from "api/otc";
 import {getUser} from 'api/person';
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
@@ -178,15 +178,24 @@ export default {
     })
   },
   methods: {
-    // 购买开始聊天，提交交易订单
+    // 开始聊天，提交交易订单
     getChatOrderBuy() {
       this.isLoading = true;
-      chatOrderBuy(this.config.adsCode).then(data => {
-        this.isLoading = false;
-        this.goChat(data.code);
-      }).catch(() => {
-        this.isLoading = false
-      });
+      if(this.type == '0'){
+        chatOrderSell(this.config.adsCode).then(data => {
+          this.isLoading = false;
+          this.goChat(data.code);
+        }).catch(() => {
+          this.isLoading = false
+        });
+      }else{
+        chatOrderBuy(this.config.adsCode).then(data => {
+          this.isLoading = false;
+          this.goChat(data.code);
+        }).catch(() => {
+          this.isLoading = false
+        });
+      }
     },
     goChat(orderCode) {
       this.$router.push(`/message/${orderCode}`);
