@@ -69,6 +69,7 @@ export const messageMixin = {
               newMsg.fromAccountNick = user.nickname;
             }
             photo = user.photo;
+            console.log(newMsg);
             this.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
           } else {
             let self = this;
@@ -141,7 +142,7 @@ export const messageMixin = {
           self.setGourpList(groupList);
         },
         function (err) {
-          alert(err.ErrorInfo);
+          console.log(err.ErrorInfo);
         }
       );
     },
@@ -184,7 +185,8 @@ export const messageMixin = {
         'isLogOn': false
       };
       let self = this;
-      if (!this.tencentLogined) {
+      let flag = this.tencentLogined;
+      if (!flag) {
         webim.login(loginInfo, listeners, options, function () {
           getUser().then((data) => {
             self.setUser(data);
@@ -194,17 +196,18 @@ export const messageMixin = {
             setProfilePortrait({gender, nickname, photo});
           });
           self.getMyGroup(loginInfo);
-          self.setTententLogined(true);
-          self.onMsgNotify();
+          self.setTencentLogined(true);
+          // self.onMsgNotify();
         }, function () {
-          self.setTententLogined(false);
+          self.setTencentLogined(false);
+          this.login(loginInfo);
         });
-      } else if(this.tencentLogined && this.isMessageWindow()) {
+      } else if(flag) {
         self.getMyGroup(loginInfo);
       }
     },
     ...mapMutations({
-      setTententLogined: SET_TENCENT_LOGINED,
+      setTencentLogined: SET_TENCENT_LOGINED,
       setUser: SET_USER_STATE,
       setUnreadMsgNum: SET_UNREAD_MSG_NUM,
       setGourpList: SET_GROUP_LIST

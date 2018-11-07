@@ -1,6 +1,5 @@
 <template>
   <transition  name="slide">
-
     <div class="chat-wrapper" @click='hide'>
       <div class="message-wrapper">
         <scroll :data="curChatList"
@@ -14,7 +13,7 @@
           </div>
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
-            <div class="receive" v-if="!info.isSend">
+            <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -27,6 +26,11 @@
                 </i>
               </div>
             </div>
+            <div class="time-split" v-if="info.fromAccount === 'admin'"><div class="time-content">
+              <template v-for="item in getContent(info)">
+                <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
+              </template>
+            </div></div>
             <div v-else class="post clearfix">
               <span class="avatar avatarDefault" v-if="isUnDefined(user.photo)">{{getDefaultPhoto(user)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(user.photo)"></span>
@@ -60,7 +64,6 @@
       <toast :text="text" ref="toast"></toast>
       <full-loading v-show="loadingFlag"></full-loading>
     </div>
-
   </transition>
 </template>
 <script>
@@ -263,12 +266,14 @@
       },
       getHistoryMessage() {
         // 获取更早的群历史消息
-        let obj = this.getPrePageGroupHistoryMsgs(function (newList)  {
-          return newList;
+        let obj = [];
+        this.getPrePageGroupHistoryMsgs(function (list)  {
+          obj = list;
         });
         if (this.start >= 0 && obj) {
           let newList = this.getNewList(obj);
           let oriList = this.curChatList.slice();
+          let min = Math.max(0, this.start - REQMSGCOUNT);
           this.setCurChatList(newList.concat(oriList));
           this.hasMore = min !== 0;
           this.start -= REQMSGCOUNT;
@@ -374,7 +379,7 @@
       },
       //获取历史消息(c2c或者group)成功回调函数
       //msgList 为消息数组，结构为[Msg]
-      getHistoryMsgCallback(msgList, prepage) {
+      getHistoryMsgCallback(msgList, prepage, cbOk) {
         var msg;
         prepage = prepage || false;
         let self = this;
@@ -395,7 +400,9 @@
         }
         //消息已读上报，并将当前会话的消息设置成自动已读
         webim.setAutoRead(self.selSess, true, true);
-        return newList;
+        if (cbOk) {
+          cbOk(newList);
+        }
       },
       //向上翻页，获取更早的群历史消息
       getPrePageGroupHistoryMsgs(cbOk) {
@@ -430,7 +437,11 @@
             };
 
             if (cbOk) {
-              cbOk(this.getHistoryMsgCallback(msgList, true));
+              let newList = [];
+              this.getHistoryMsgCallback(msgList, true, function (list) {
+                newList = list;
+              });
+              cbOk(newList);
             }
           },
           function(err) {

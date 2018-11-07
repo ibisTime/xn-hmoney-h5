@@ -145,7 +145,7 @@
       },
       // 切换状态
       changeStatus(type) {
-        if (type === 'ended') {
+        if(type === 'ended') {
           this.show = false;
         } else {
           this.show = true;
@@ -171,12 +171,13 @@
         }
         myOrder(statusList, this.start, this.limit).then(data => {
           let startingUnread = this.startingUnread;
-          let endedUnread = this.startingUnread;
+          let endedUnread = this.endedUnread;
           data.list.map(v => {
             v.countString = formatAmount(v.countString, '', v.tradeCoin);
             v.unreadMsgNum = this.groupList[v.code];
             if (v.unreadMsgNum > 0 && firstLoad) {
               // 判断未读消息的订单状态
+              console.log(this.statusList['starting'].indexOf(v.status) > -1);
               if (this.statusList['starting'].indexOf(v.status) > -1) {
                 startingUnread += v.unreadMsgNum;
               } else {
@@ -195,7 +196,6 @@
             this.list = [...this.list, ...data.list];
             this.start++;
           }
-          ;
           // 第一次加载统计 未读消息数
           if (firstLoad) {
             this.startingUnread = startingUnread;
