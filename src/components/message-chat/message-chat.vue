@@ -1,5 +1,6 @@
 <template>
   <transition  name="slide">
+
     <div class="chat-wrapper" @click='hide'>
       <div class="message-wrapper">
         <scroll :data="curChatList"
@@ -13,7 +14,7 @@
           </div>
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
-            <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
+            <div class="receive" v-if="!info.isSend">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -26,11 +27,6 @@
                 </i>
               </div>
             </div>
-            <div class="time-split" v-if="info.fromAccount === 'admin'"><div class="time-content">
-              <template v-for="item in getContent(info)">
-                <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
-              </template>
-            </div></div>
             <div v-else class="post clearfix">
               <span class="avatar avatarDefault" v-if="isUnDefined(user.photo)">{{getDefaultPhoto(user)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(user.photo)"></span>
@@ -64,6 +60,7 @@
       <toast :text="text" ref="toast"></toast>
       <full-loading v-show="loadingFlag"></full-loading>
     </div>
+
   </transition>
 </template>
 <script>
@@ -103,12 +100,11 @@
         showEmoji: false,
         token: '',
         sendMessage: false,
-        groupId: '',
         getPrePageGroupHistroyMsgInfoMap: {}
       };
     },
     created() {
-      this.groupId = this.$route.query.code;
+      this.groupId = this.$route.params.id;
       this.firstUpdate = true;
       this.firstFetching = true;
       this.userId = getUserId();
@@ -135,7 +131,6 @@
     computed: {
       loadingFlag() {
         if (this.user && this.receiver && this.tencentLogined && this.token) {
-          console.log(this.curChatList);
           return !((!this.curChatList.length && !this.hasMore) || this.curChatList.length);
         }
         return true;
@@ -178,7 +173,7 @@
           if (data.buyUser === this.userId) {
             receiver = data.sellUserInfo;
           } else {
-            receiver = data.buyUserInfo;
+            receiver = data.sellUserInfo;
           }
           this.receiver = new User(receiver);
           setTitle(this.receiver.nickname);
@@ -268,14 +263,12 @@
       },
       getHistoryMessage() {
         // 获取更早的群历史消息
-        let obj = [];
-        this.getPrePageGroupHistoryMsgs(function (list)  {
-          obj = list;
+        let obj = this.getPrePageGroupHistoryMsgs(function (newList)  {
+          return newList;
         });
         if (this.start >= 0 && obj) {
           let newList = this.getNewList(obj);
           let oriList = this.curChatList.slice();
-          let min = Math.max(0, this.start - REQMSGCOUNT);
           this.setCurChatList(newList.concat(oriList));
           this.hasMore = min !== 0;
           this.start -= REQMSGCOUNT;
@@ -381,7 +374,7 @@
       },
       //获取历史消息(c2c或者group)成功回调函数
       //msgList 为消息数组，结构为[Msg]
-      getHistoryMsgCallback(msgList, prepage, cbOk) {
+      getHistoryMsgCallback(msgList, prepage) {
         var msg;
         prepage = prepage || false;
         let self = this;
@@ -400,12 +393,9 @@
             newList.push(msg);
           }
         }
-        debugger;
         //消息已读上报，并将当前会话的消息设置成自动已读
         webim.setAutoRead(self.selSess, true, true);
-        if (cbOk) {
-          cbOk(newList);
-        }
+        return newList;
       },
       //向上翻页，获取更早的群历史消息
       getPrePageGroupHistoryMsgs(cbOk) {
@@ -440,11 +430,7 @@
             };
 
             if (cbOk) {
-              let newList = [];
-              this.getHistoryMsgCallback(msgList, true, function (list) {
-                newList = list;
-              });
-              cbOk(newList);
+              cbOk(this.getHistoryMsgCallback(msgList, true));
             }
           },
           function(err) {
