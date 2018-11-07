@@ -51,6 +51,7 @@
           <p>{{$t('myOrder.subject.zwdd')}}</p>
         </div>
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -60,6 +61,7 @@ import { formatAmount, getAvatar, setTitle } from "common/js/util";
 import Scroll from 'base/scroll/scroll';
 import { getUserId } from '../../common/js/util';
 import HeadPic from 'base/head-pic/headPic';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
@@ -78,7 +80,8 @@ export default {
       statusValueList: {},
       type: 's',
       statusList: ['0', '-1', '1', '5'],
-      orderType: ''
+      orderType: '',
+      isLoading: true
     };
   },
   created() {
@@ -122,6 +125,7 @@ export default {
       this.start1 = 1;
       this.list = [];
       this.statusList = ['0', '-1', '1', '5'];
+      this.isLoading = true;
       this.getOrderList(this.type);
     },
     ended() {
@@ -131,6 +135,7 @@ export default {
       this.start2 = 1;
       this.list = [];
       this.statusList = ['2', '3', '4'];
+      this.isLoading = true;
       this.getOrderList(this.type);
     },
     getOrderList(type){
@@ -138,11 +143,15 @@ export default {
       if(type == 's'){
         myOrder(this.statusList, this.start1, this.limit).then( data => {
           clData(data, that, this.start1, 's');
-        })
+        }, () => {
+          this.isLoading = false;
+        });
       }else{
         myOrder(this.statusList, this.start2, this.limit).then( data => {
           clData(data, that, this.start2, 'e');
-        })
+        }, () => {
+          this.isLoading = false;
+        });
       }
 
       function clData(data, that, start, type){
@@ -162,6 +171,7 @@ export default {
         }else{
           that.start2 ++;
         }
+        that.isLoading = false;
       }
     },
     // 个人主页
@@ -178,7 +188,8 @@ export default {
   },
   components: {
       Scroll,
-      HeadPic
+      HeadPic,
+      FullLoading
   }
 };
 </script>
@@ -300,6 +311,7 @@ export default {
 
       .txt2 {
         font-size: 0.24rem;
+        margin-bottom: 0.1rem;
       }
     }
 
@@ -325,7 +337,7 @@ export default {
 
   .list-start {
     height: 12rem;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
     overflow: scroll;
       .list {
           .text1 {

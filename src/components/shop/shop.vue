@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     toGame(){
-      window.location.href = this.gUrl;
+      window.open(this.gUrl);
     }
   },
   components: {

@@ -75,6 +75,11 @@
       }
     },
     created() {
+      
+    },
+    mounted() {
+      this.$refs.touchDemo.style.right = '0.5rem';
+      this.$refs.touchDemo.style.bottom = '1rem';
       this.$router.beforeEach((to, from, next) => {
         this.$refs.touchDemo.style.right = '0.5rem';
         this.$refs.touchDemo.style.bottom = '1rem';
@@ -120,10 +125,6 @@
           }
         }
       });
-    },
-    mounted() {
-      this.$refs.touchDemo.style.right = '0.5rem';
-      this.$refs.touchDemo.style.bottom = '1rem';
     },
     components: {
       Toast

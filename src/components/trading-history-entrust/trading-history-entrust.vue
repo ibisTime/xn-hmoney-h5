@@ -147,7 +147,7 @@ export default {
         overflow: scroll;
         background-color: #fff;
         padding: 0 .3rem;
-        padding-bottom: 1rem;
+        padding-bottom: 2rem;
         .red {
             color: #d53d3d;
         }

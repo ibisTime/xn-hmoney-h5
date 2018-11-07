@@ -17,13 +17,13 @@
     <div class="cates-wrapper">
       <router-link to="shop" tag="div" class="cate-item">
         <i class="cate-icon game-icon"></i>
-        <p>{{ $t('page.cate.game') }}</p>
+        <p>{{ $t('page.cate.xss') }}</p>
       </router-link>
       <router-link to="shop-usedCar" class="cate-item">
         <i class="cate-icon exchange-icon"></i>
         <p>{{ $t('page.cate.exchange') }}</p>
       </router-link>
-      <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
+      <router-link to='otc' tag="div" class="cate-item" @click.native="toOtcFn">
         <i class="cate-icon otc-icon"></i>
         <p>{{ $t('page.cate.otc') }}</p>
       </router-link>
@@ -114,6 +114,7 @@
         window.open(url);
       },
       toOtcFn(){
+        sessionStorage.removeItem('coin');
         sessionStorage.setItem('tradeType', '1');
       }
     },

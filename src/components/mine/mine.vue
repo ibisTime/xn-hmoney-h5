@@ -28,7 +28,7 @@
           <i></i>
           <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
-        <router-link to="otc" class="sell item-1">
+        <router-link to="otc" class="sell item-1" @click.native="toOtcFn">
           <i></i>
           <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>
@@ -40,7 +40,7 @@
           <span class='txt'>{{$t('mine.subject.wdgg')}}</span>
           <span class='icon'></span>
         </router-link>
-        <router-link to="my-order" class="item item-4">
+        <router-link to="my-order" class="item item-4" @click.native="toOrderFn">
             <i></i>
             <span class="txt">{{$t('mine.subject.wddd')}}</span>
             <span class='icon'>{{getUnreadMsgNum ? $t('mine.subject.nyxxx') : ''}}</span>
@@ -212,6 +212,13 @@ export default {
     },
     uploadPhoto(base64, key) {
       return this.$refs.qiniu.uploadByBase64(base64, key);
+    },
+    toOrderFn(){
+      sessionStorage.setItem('ordering', 'starting');
+    },
+    toOtcFn(){
+      sessionStorage.removeItem('coin');
+      sessionStorage.setItem('tradeType', '1');
     }
   },
   components: {

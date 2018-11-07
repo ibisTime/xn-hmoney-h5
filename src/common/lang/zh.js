@@ -226,7 +226,7 @@ export default {
       cx: '撤销',
       sjcj: '实际成交',
       zwdd: '暂无订单',
-
+      zxj: '最新价'
     },
     bbDepth: {
       xj: '现价',

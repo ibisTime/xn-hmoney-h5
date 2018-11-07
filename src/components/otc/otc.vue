@@ -183,8 +183,8 @@ export default {
       this.flag1 = false;
       this.flag2 = true;
     }
-    let coin = sessionStorage.getItem('coin') || 'FMVP';
-    this.config.coin = coin != 'undefined' ? coin : 'FMVP';
+    let coin = sessionStorage.getItem('coin') || this.bbList[0];
+    this.config.coin = coin != 'undefined' ? coin : this.bbList[0];
     this.getBBListData();
   },
   computed: {
