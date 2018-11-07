@@ -43,7 +43,7 @@
         <router-link to="my-order" class="item item-4">
             <i></i>
             <span class="txt">{{$t('mine.subject.wddd')}}</span>
-            <span class='icon'>{{getUnreadMsgNum ? '您有新消息' : ''}}</span>
+            <span class='icon'>{{getUnreadMsgNum() ? '您有新消息' : ''}}</span>
         </router-link>
       </div>
 

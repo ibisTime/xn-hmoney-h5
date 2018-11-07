@@ -22,6 +22,7 @@ const state = {
   curChatUserId: '',
   tencentLogined: false,
   unreadMsgNum: 0,
+  groupList: {},
   userMap: loadUserMap()
 };
 

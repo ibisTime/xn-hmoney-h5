@@ -1,11 +1,5 @@
 <template>
   <div class="order-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon' @click='goBack'></i>
-        <span class='title'>我的订单</span>
-        </p>
-    </header> -->
     <div class='tabs'>
         <p>
             <span :class="[ show ? 'select' : '' ]" @click='starting'>{{$t('myOrder.subject.jxz')}}</span>
@@ -15,7 +9,7 @@
         </p>
     </div>
     <div class='list-start'>
-        <Scroll 
+        <Scroll
           ref="scroll"
           :data="list"
           :hasMore="hasMore"
@@ -24,8 +18,8 @@
         >
             <div class='list' @click='goDetails(item.code, item.status)' v-for='(item,index) in list' :key="index">
                 <div class='pic' @click.stop="toHomePage(item.sellUser, item.buyUser, item.tradeCoin)">
-                    <p 
-                      :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)" 
+                    <p
+                      :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)"
                       :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
                     >
                     </p>
@@ -70,7 +64,7 @@ export default {
       list: [],
       start1: 1,
       start2: 1,
-      limit: 10,
+      limit: 50,
       typeList: {
         "sell": this.$t('common.cs'),
         "buy": this.$t('common.gm')
@@ -78,8 +72,15 @@ export default {
       statusValueList: {},
       type: 's',
       statusList: ['0', '-1', '1', '5'],
-      orderType: ''
+      orderType: '',
+      startingUnread: 0,
+      endedUnread: 0
     };
+  },
+  computed: {
+  ...mapGetters([
+      'groupList'
+    ])
   },
   created() {
     setTitle(this.$t('myOrder.subject.wddd'));
@@ -137,31 +138,30 @@ export default {
       let that = this;
       if(type == 's'){
         myOrder(this.statusList, this.start1, this.limit).then( data => {
-          clData(data, that, this.start1, 's');
+          this.clData(data, that, this.start1, 's');
         })
       }else{
         myOrder(this.statusList, this.start2, this.limit).then( data => {
-          clData(data, that, this.start2, 'e');
+          this.clData(data, that, this.start2, 'e');
         })
       }
-
-      function clData(data, that, start, type){
-        data.list.map( v => {
-          v.countString = formatAmount(v.countString, '', v.tradeCoin);
-        });
-        that.hasMore = true;
-        if(data.totalPage < start){
-          that.list = [];
-        }
-        if (data.totalPage <= start) {
-          that.hasMore = false;
-        }
-        that.list = [...that.list, ...data.list];
-        if(type == 's'){
-          that.start1 ++;
-        }else{
-          that.start2 ++;
-        }
+    },
+    clData(data, that, start, type){
+      data.list.map( v => {
+        v.countString = formatAmount(v.countString, '', v.tradeCoin);
+      });
+      that.hasMore = true;
+      if(data.totalPage < start){
+        that.list = [];
+      }
+      if (data.totalPage <= start) {
+        that.hasMore = false;
+      }
+      that.list = [...that.list, ...data.list];
+      if(type === 's'){
+        that.start1 ++;
+      }else{
+        that.start2 ++;
       }
     },
     // 个人主页
@@ -173,7 +173,7 @@ export default {
         //当前用户为卖家
         this.$router.push(`/homepage?userId=${buyUser}&currency=${tradeCoin}`);
       }
-      
+
     }
   },
   components: {
@@ -221,7 +221,6 @@ export default {
     display: flex;
     line-height: 0.9rem;
     text-align: center;
-    width: 100%;
     padding: 0 0.3rem;
     background: #fff;
     margin-bottom: 0.21rem;
@@ -232,7 +231,7 @@ export default {
       color: #666;
       span {
         padding-bottom: 0.22rem;
-        
+
       }
       .select {
         border-bottom: 0.04rem solid #d53d3d;
@@ -255,7 +254,7 @@ export default {
       margin-right: 0.22rem;
       p{
         width: 100%;
-        height: 100%;    
+        height: 100%;
         background-position: center;
         background-size: cover;
         border-radius: 100%;
