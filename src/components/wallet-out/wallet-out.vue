@@ -32,7 +32,7 @@
     </div>
     <div class='plan'>
       <p class='kgfee'>
-        {{$t('walletOut.subject.kgf')}}：{{feeAmount}}
+        {{$t('walletOut.subject.kgf')}}：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
       </p>
       <p class='text2'>
         {{$t('walletOut.subject.kgfzz')}}
@@ -84,7 +84,7 @@ export default {
     this.config.accountNumber = getUrlParam('accountNumber');
     this.config.payCardInfo = this.currency;
     getSysConfig('withdraw_fee').then(data => {
-      this.feeAmount = data.cvalue;
+      this.feeAmount = (data.cvalue * 100) + '%';
     })
   },
   methods: {
@@ -240,6 +240,10 @@ export default {
           text-align: left;
           padding-top: 0.4rem;
           padding-bottom: 0.2rem;
+          .cur_fee{
+            font-size: 0.28rem;
+            color: #666;
+          }
         }
       .text1 {
         padding-top: .34rem;

@@ -57,6 +57,7 @@
 <script>
 import { setTitle } from "common/js/util";
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
     };

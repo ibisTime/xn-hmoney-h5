@@ -76,6 +76,7 @@
   import LangStorage from '../../common/js/cookie';
 
   export default {
+    name: 'test-keep-alive',
     data() {
       return {
         banners: [],
@@ -111,6 +112,9 @@
       },
       toUrl(url) {
         window.open(url);
+      },
+      toOtcFn(){
+        sessionStorage.setItem('tradeType', '1');
       }
     },
     components: {
@@ -164,8 +168,9 @@
       .slider, .home-slider {
         height: 100%;
         width: 100%;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
+        // background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
       }
 
     }

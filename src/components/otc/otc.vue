@@ -35,12 +35,12 @@
             </p>
         </div>
       </div>
-      <div class="slider-wrapper">
+      <!-- <div class="slider-wrapper">
         <slider v-if="banners.length" :dots="banners">
           <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
-      </div>
+      </div> -->
       <!-- 买币 -->
       <div class='main'>
         <Scroll 
@@ -183,8 +183,8 @@ export default {
       this.flag1 = false;
       this.flag2 = true;
     }
-    let coin = sessionStorage.getItem('coin') || 'ETH';
-    this.config.coin = coin != 'undefined' ? coin : 'ETH';
+    let coin = sessionStorage.getItem('coin') || 'FMVP';
+    this.config.coin = coin != 'undefined' ? coin : 'FMVP';
     this.getBBListData();
   },
   computed: {
@@ -444,7 +444,7 @@ export default {
 
     select {
       font-weight: bold;
-      
+      font-size: 0.32rem;
       .sicon {
         display: inline-block;
         width: .23rem;

@@ -23,23 +23,30 @@
           </div>
           <div id='qrcode'></div>
       </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template> 
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId, setTitle} from 'common/js/util';
+import FullLoading from 'base/full-loading/full-loading';
 import {getUser} from 'api/user';
 
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
-        nickName: ''
+        nickName: '',
+        isLoading: true
     };
   },
   mounted() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
     getUser().then(data => {
         this.nickName = data.nickname;
+        this.isLoading = false;
+    }, () => {
+        this.isLoading = false;
     });
     this.userId = getUserId();
     this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
@@ -50,6 +57,9 @@ export default {
       foreground: '#000000'
     });
     qr.make(this.wxUrl);
+  },
+  components: {
+      FullLoading
   }
 };
 </script>

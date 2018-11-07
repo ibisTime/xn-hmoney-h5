@@ -28,7 +28,7 @@
           <i></i>
           <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
-        <router-link to="wallet-top-up?type=sell" class="sell item-1">
+        <router-link to="otc" class="sell item-1">
           <i></i>
           <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>
@@ -41,9 +41,9 @@
           <span class='icon'></span>
         </router-link>
         <router-link to="my-order" class="item item-4">
-            <i></i>
-            <span class="txt">{{$t('mine.subject.wddd')}}</span>
-            <span class='icon'>{{getUnreadMsgNum() ? '您有新消息' : ''}}</span>
+          <i></i>
+          <span class="txt">{{$t('mine.subject.wddd')}}</span>
+          <span class='icon'>{{getUnreadMsgNum() ? $t('mine.subject.nyxxx') : ''}}</span>
         </router-link>
       </div>
 
@@ -94,6 +94,7 @@ import {mapGetters} from 'vuex';
 import HeadPic from 'base/head-pic/headPic';
 
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
       isLoading: true,

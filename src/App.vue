@@ -1,11 +1,14 @@
 <template>
   <div id="app">
     <div class="">
-      <router-view></router-view>
+      <keep-alive include="test-keep-alive">
+        <router-view></router-view>
+      </keep-alive> 
     </div>
     <Toast :text="textMsg" ref="toast"/>
     <div 
       class="tobuy"
+      id="touchDemo"
       @click="toBuy"
       ref="touchDemo"
       @touchstart.stop="fbTouchStartFn"
@@ -50,9 +53,23 @@
       let that = this;
       window.onload = function(){
         let href = location.href;
+        getBbListData().then(data => {
+          for(let i = 0; i < data.length; i ++){
+            let obj = {
+              ...data[i],
+              unit: '1e' + data[i].unit
+            };
+            that.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+          }
+          sessionStorage.setItem('coinData', JSON.stringify(that.coinData));
+          that.isLoading = false;
+        }, () => {
+          that.isLoading = false;
+        });
         if(href.search(/page|system-notice|about-platformIntroduced\?ckey=about_us|trading|otc|login|registered|security-loginPassword/) == -1){
           if(!isLogin()){
             that.$router.push('/login');
+            return;
           }
         };
       }

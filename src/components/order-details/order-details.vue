@@ -351,15 +351,19 @@
       if(this.reason == ''){
         this.textMsg = this.$t('myOrderDetail.subject.sqlybk');
         this.$refs.toast.show();
+        return;
       }
       let config = {
         code: this.code,
         reason: this.reason
       };
+      this.isLoading = true;
       arbitrationlOrder(config).then(data => {
         this.textMsg = this.$t('myOrderDetail.subject.fqcg');
         this.$refs.toast.show();
         this.orderMessage();
+      }, () => {
+        this.isLoading = false;
       });
     },
   },
