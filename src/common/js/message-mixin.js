@@ -100,8 +100,7 @@ export const messageMixin = {
 
 		  // 不是订单聊天界面 unreadMsgNum +1
       } else {
-        let sessMap = webim.MsgStore.sessMap();
-		    // this.setUnreadMsgNum(this.unreadMsgNum + 1);
+		    this.setUnreadMsgNum(this.unreadMsgNum + 1);
       }
     },
     // 被其他登录实例踢下线
@@ -149,7 +148,7 @@ export const messageMixin = {
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
-      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/order-details')[1])) {
+      if (isUnDefined(this.$route.path.split('/message/')[1])) {
         flag = false;
       }
       return flag;

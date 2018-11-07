@@ -173,7 +173,7 @@
           if (data.buyUser === this.userId) {
             receiver = data.sellUserInfo;
           } else {
-            receiver = data.sellUserInfo;
+            receiver = data.buyUserInfo;
           }
           this.receiver = new User(receiver);
           setTitle(this.receiver.nickname);

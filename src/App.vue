@@ -3,10 +3,10 @@
     <div class="">
       <keep-alive include="test-keep-alive">
         <router-view></router-view>
-      </keep-alive> 
+      </keep-alive>
     </div>
     <Toast :text="textMsg" ref="toast"/>
-    <div 
+    <div
       class="tobuy"
       id="touchDemo"
       @click="toBuy"
@@ -75,11 +75,10 @@
       }
     },
     created() {
+      if (isLogin()) {
+        this.goTencentLogin();
+      }
       this.$router.beforeEach((to, from, next) => {
-        this.$refs.touchDemo.style.right = '0.5rem';
-        this.$refs.touchDemo.style.bottom = '1rem';
-        this.$refs.touchDemo.style.left = '';
-        this.$refs.touchDemo.style.top = '';
         if(!sessionStorage.getItem('coinData')){
           getBbListData().then(data => {
             for(let i = 0; i < data.length; i ++){
@@ -95,10 +94,8 @@
             this.isLoading = false;
           });
         }
-        
+
         if (isLogin()) {
-          // 腾讯云登陆
-          this.tencentLogin();
           next();
         } else {
           if (to.path == '/' ||
@@ -124,6 +121,8 @@
     mounted() {
       this.$refs.touchDemo.style.right = '0.5rem';
       this.$refs.touchDemo.style.bottom = '1rem';
+      this.$refs.touchDemo.style.left = '';
+      this.$refs.touchDemo.style.top = '';
     },
     components: {
       Toast
@@ -139,7 +138,7 @@
         }else{
           touch = event.changedTouches[0];
         }
-        
+
         this.docuWidth = document.body.clientWidth - 150;
         this.docuHeight = document.body.clientHeight - 50;
         this.position.x = touch.clientX;
@@ -181,6 +180,10 @@
       },
       fbTouchEndFn(){
         this.flags = false;
+      },
+      // 腾讯云登陆
+      goTencentLogin() {
+        this.tencentLogin();
       },
       toBuy(){
         this.$router.push('wallet-top-up?type=buy');
