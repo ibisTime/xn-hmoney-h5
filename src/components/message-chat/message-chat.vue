@@ -14,7 +14,7 @@
           </div>
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
-            <div class="receive" v-if="!info.isSend">
+            <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -25,6 +25,13 @@
                     <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content"/>
                   </template>
                 </i>
+              </div>
+            </div>
+            <div class="time-split" v-if="info.fromAccount === 'admin'">
+              <div class="time-content">
+                <template v-for="item in getContent(info)">
+                  <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
+                </template>
               </div>
             </div>
             <div v-else class="post clearfix">
@@ -104,7 +111,7 @@
       };
     },
     created() {
-      this.groupId = this.$route.params.id;
+      this.groupId = this.$route.query.code;
       this.firstUpdate = true;
       this.firstFetching = true;
       this.userId = getUserId();
@@ -173,7 +180,7 @@
           if (data.buyUser === this.userId) {
             receiver = data.sellUserInfo;
           } else {
-            receiver = data.sellUserInfo;
+            receiver = data.buyUserInfo;
           }
           this.receiver = new User(receiver);
           setTitle(this.receiver.nickname);
@@ -399,6 +406,7 @@
       },
       //向上翻页，获取更早的群历史消息
       getPrePageGroupHistoryMsgs(cbOk) {
+        let self = this;
         var tempInfo = this.getPrePageGroupHistroyMsgInfoMap[this.groupId]; //获取下一次拉取的群消息seq
         var reqMsgSeq;
         if (tempInfo) {
@@ -425,12 +433,12 @@
               return;
             }
             var msgSeq = msgList[0].seq - 1;
-            this.getPrePageGroupHistroyMsgInfoMap[this.groupId] = {
+            self.getPrePageGroupHistroyMsgInfoMap[self.groupId] = {
               "ReqMsgSeq": msgSeq
             };
 
             if (cbOk) {
-              cbOk(this.getHistoryMsgCallback(msgList, true));
+              cbOk(self.getHistoryMsgCallback(msgList, true));
             }
           },
           function(err) {
