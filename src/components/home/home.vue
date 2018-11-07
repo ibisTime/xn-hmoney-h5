@@ -4,63 +4,66 @@
       <p class="title">{{ $t('page.navbar.title') }}</p>
       <span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>
     </div>
-    <div class="slider-wrapper">
+    <div class="banner-wrap">
+      <div class="slider-wrapper">
         <slider v-if="banners.length" :dots="banners">
-          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
+          <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)"
+               @click="toUrl(item.url)">
           </div>
         </slider>
-        <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
       </div>
-      <div class="cates-wrapper">
-          <router-link to="shop" tag="div" class="cate-item">
-            <i class="cate-icon game-icon"></i>
-            <p>{{ $t('page.cate.game') }}</p>
-          </router-link>
-          <router-link to="shop-usedCar" class="cate-item">
-            <i class="cate-icon exchange-icon"></i>
-            <p>{{ $t('page.cate.exchange') }}</p>
-          </router-link>
-          <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
-            <i class="cate-icon otc-icon"></i>
-            <p>{{ $t('page.cate.otc') }}</p>
-          </router-link>
+      <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
+    </div>
+    <div class="cates-wrapper">
+      <router-link to="shop" tag="div" class="cate-item">
+        <i class="cate-icon game-icon"></i>
+        <p>{{ $t('page.cate.game') }}</p>
+      </router-link>
+      <router-link to="shop-usedCar" class="cate-item">
+        <i class="cate-icon exchange-icon"></i>
+        <p>{{ $t('page.cate.exchange') }}</p>
+      </router-link>
+      <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
+        <i class="cate-icon otc-icon"></i>
+        <p>{{ $t('page.cate.otc') }}</p>
+      </router-link>
+    </div>
+    <div class="tab-wrapper">
+      <div class="tabCar fun">
+        <router-link to='shop'>
+          <div class="tab-text">
+            <p class="tit">{{ $t('page.navbar.title') }}</p>
+            <p class="con">{{ $t('page.cate.splendid') }}</p>
+          </div>
+        </router-link>
       </div>
-      <div class="tab-wrapper">
-          <div class="tabCar fun">
-            <router-link to='shop'>
-              <div class="tab-text">
-                <p class="tit">{{ $t('page.navbar.title') }}</p>
-                <p class="con">{{ $t('page.cate.splendid') }}</p>
-              </div>
-            </router-link>           
+      <div class="tabCar bibi">
+        <router-link to='trading'>
+          <div class="tab-text">
+            <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
+            <p class="con">{{ $t('page.cate.realTime') }}</p>
           </div>
-          <div class="tabCar bibi">
-            <router-link to='trading'>
-              <div class="tab-text">
-                <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
-                <p class="con">{{ $t('page.cate.realTime') }}</p>
-              </div>
-            </router-link>           
-          </div>
-          <div class="tabCar notice">
-            <router-link to='system-notice'>
-              <div class="tab-text">
-                <p class="tit">{{ $t('page.cate.xtgg') }}</p>
-                <p class="con">{{ $t('page.cate.sstsjcnr') }}</p>
-              </div>
-            </router-link>
-          </div>
-          <div class="tabCar introduce">
-            <router-link to='about-platformIntroduced?ckey=about_us'>
-              <div class="tab-text">
-                <p class="tit">{{ $t('page.cate.ptjs') }}</p>
-                <p class="con">{{ $t('page.cate.ljwm') }}</p>
-              </div>
-            </router-link>
-          </div>
+        </router-link>
       </div>
+      <div class="tabCar notice">
+        <router-link to='system-notice'>
+          <div class="tab-text">
+            <p class="tit">{{ $t('page.cate.xtgg') }}</p>
+            <p class="con">{{ $t('page.cate.sstsjcnr') }}</p>
+          </div>
+        </router-link>
+      </div>
+      <div class="tabCar introduce">
+        <router-link to='about-platformIntroduced?ckey=about_us'>
+          <div class="tab-text">
+            <p class="tit">{{ $t('page.cate.ptjs') }}</p>
+            <p class="con">{{ $t('page.cate.ljwm') }}</p>
+          </div>
+        </router-link>
+      </div>
+    </div>
     <Footer></Footer>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -71,6 +74,7 @@
   import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
+
   export default {
     data() {
       return {
@@ -89,8 +93,7 @@
     },
     mounted() {
     },
-    computed: {
-    },
+    computed: {},
     methods: {
       // 语言切换
       changeLocale() {
@@ -106,7 +109,7 @@
           backgroundImage: `url(${formatImg(imgs)})`
         };
       },
-      toUrl(url){
+      toUrl(url) {
         window.open(url);
       }
     },
@@ -133,10 +136,10 @@
       color: #323232;
       position: relative;
       height: .88rem;
-      margin-bottom: .2rem;
+      margin-bottom: .1rem;
 
       .title {
-        font:.36rem/.88rem PingFangSC-Medium;
+        font: .36rem/.88rem PingFangSC-Medium;
       }
 
       .lang-change {
@@ -147,14 +150,17 @@
       }
 
     }
-
+    .banner-wrap{
+      width: 100%;
+      padding: 0 .3rem;
+    }
     .slider-wrapper {
       position: relative;
       height: 2.9rem;
       width: 100%;
-      padding: 0 .3rem;
       border-radius: .08rem;
       overflow: hidden;
+      box-shadow: 0 0 0.3rem rgba(99,99,99,0.08);
       .slider, .home-slider {
         height: 100%;
         width: 100%;
@@ -204,7 +210,6 @@
 
       }
 
-      
     }
 
     .tab-wrapper {
@@ -213,8 +218,7 @@
       padding-bottom: 1rem;
       display: flex;
       flex-wrap: wrap;
-      justify-content:space-around ;
-
+      justify-content: space-around;
 
       .tabCar {
         width: 46.8%;
@@ -225,11 +229,11 @@
           margin: .3rem 0 0 .3rem;
           color: #fff;
           .tit {
-            font:.28rem/.4rem PingFangSC-Semibold;
+            font: .28rem/.4rem PingFangSC-Semibold;
             margin-bottom: .1rem;
           }
           .con {
-            font:.22rem/.3rem PingFangSC-Medium;
+            font: .22rem/.3rem PingFangSC-Medium;
           }
         }
 
@@ -252,7 +256,6 @@
       .introduce {
         @include bg-image('introduce');
       }
-
 
     }
 
