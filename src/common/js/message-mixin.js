@@ -69,7 +69,6 @@ export const messageMixin = {
               newMsg.fromAccountNick = user.nickname;
             }
             photo = user.photo;
-            console.log(newMsg);
             this.saveChatHistory(addMsg(newMsg, newMsg.getSession().id(), photo));
           } else {
             let self = this;
@@ -149,7 +148,7 @@ export const messageMixin = {
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
-      if (isUnDefined(this.$route.path.split('/message/')[1])) {
+      if (isUnDefined(this.$route.path.split('/messageCart')[1])) {
         flag = false;
       }
       return flag;

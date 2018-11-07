@@ -103,11 +103,12 @@
         showEmoji: false,
         token: '',
         sendMessage: false,
+        groupId: '',
         getPrePageGroupHistroyMsgInfoMap: {}
       };
     },
     created() {
-      this.groupId = this.$route.params.id;
+      this.groupId = this.$route.query.code;
       this.firstUpdate = true;
       this.firstFetching = true;
       this.userId = getUserId();
@@ -134,6 +135,7 @@
     computed: {
       loadingFlag() {
         if (this.user && this.receiver && this.tencentLogined && this.token) {
+          console.log(this.curChatList);
           return !((!this.curChatList.length && !this.hasMore) || this.curChatList.length);
         }
         return true;
@@ -398,6 +400,7 @@
             newList.push(msg);
           }
         }
+        debugger;
         //消息已读上报，并将当前会话的消息设置成自动已读
         webim.setAutoRead(self.selSess, true, true);
         if (cbOk) {
