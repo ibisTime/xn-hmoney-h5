@@ -2,7 +2,7 @@ import {getSign, getAccountType, getTxAppCode, getUserId, clearUser, goLogin, is
 import {addMsg, setProfilePortrait, getProfilePortrait} from 'common/js/message';
 import {getTencentParamsAPi, getUser} from 'api/user';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM} from 'store/mutation-types';
+import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_GROUP_LIST} from 'store/mutation-types';
 import Message from 'base/message/message';
 
 const message = new Message();
@@ -14,7 +14,8 @@ export const messageMixin = {
       'userMap',
       'user',
       'unreadMsgNum',
-      'tencentLogined'
+      'tencentLogined',
+      'groupList'
     ])
   },
   methods: {
@@ -45,7 +46,6 @@ export const messageMixin = {
     // 监听新消息
     onMsgNotify(newMsgList) {
       // debugger;
-      console.log(newMsgList);
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
         let selSess;
@@ -100,7 +100,7 @@ export const messageMixin = {
 
 		  // 不是订单聊天界面 unreadMsgNum +1
       } else {
-        this.setUnreadMsgNum(this.unreadMsgNum + 1);
+		    this.setUnreadMsgNum(this.unreadMsgNum + 1);
       }
     },
     // 被其他登录实例踢下线
@@ -130,10 +130,15 @@ export const messageMixin = {
             return;
           }
           let unreadMsgNum = 0;
+          let groupList = {};
           for (let i = 0; i < resp.GroupIdList.length; i++) {
             unreadMsgNum += resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
+            groupList[resp.GroupIdList[i].GroupId] = resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
           }
+          // 保存未读消息数
           self.setUnreadMsgNum(unreadMsgNum);
+          // 保存订单的未读消息数
+          self.setGourpList(groupList);
         },
         function (err) {
           alert(err.ErrorInfo);
@@ -143,7 +148,7 @@ export const messageMixin = {
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
-      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/order-details')[1])) {
+      if (isUnDefined(this.$route.path.split('/message/')[1])) {
         flag = false;
       }
       return flag;
@@ -201,7 +206,8 @@ export const messageMixin = {
     ...mapMutations({
       setTententLogined: SET_TENCENT_LOGINED,
       setUser: SET_USER_STATE,
-      setUnreadMsgNum: SET_UNREAD_MSG_NUM
+      setUnreadMsgNum: SET_UNREAD_MSG_NUM,
+      setGourpList: SET_GROUP_LIST
     }),
     ...mapActions([
       'saveChatHistory',

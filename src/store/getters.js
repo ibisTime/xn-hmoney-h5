@@ -41,3 +41,5 @@ export const tencentLogined = state => state.tencentLogined;
 export const userMap = state => state.userMap;
 
 export const unreadMsgNum = state => state.unreadMsgNum;
+
+export const groupList = state => state.groupList;

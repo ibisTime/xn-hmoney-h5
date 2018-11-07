@@ -64,7 +64,7 @@ export function getTencentParams () {
 }
 
 // 删除用户登录信息
-export function clearUser() {
+export function clearUser(flag) {
   delCookie('userId');
   delCookie('token');
   delCookie('__sign__');

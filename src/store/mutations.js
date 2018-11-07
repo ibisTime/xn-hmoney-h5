@@ -114,6 +114,9 @@ const mutations = {
   },
   [types.SET_UNREAD_MSG_NUM](state, num) {
     state.unreadMsgNum = num;
+  },
+  [types.SET_GROUP_LIST](state, groupList) {
+    state.groupList = groupList;
   }
 };
 
