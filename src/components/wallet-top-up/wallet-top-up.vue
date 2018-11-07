@@ -113,6 +113,7 @@ import {getUser} from 'api/user';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
       textMsg: this.$t('common.czcg'),

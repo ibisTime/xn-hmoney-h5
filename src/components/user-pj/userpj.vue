@@ -32,8 +32,8 @@
                 <p>暂无信息</p>
             </div>
         </div>
-
     </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template>
 <script>
@@ -41,6 +41,7 @@ import { userEvaluate } from "../../api/person";
 import { getAvatar, setTitle, getUrlParam, getUserId, formatDate } from "../../common/js/util";
 import Scroll from 'base/scroll/scroll';
 import HeadPic from 'base/head-pic/headPic';
+import FullLoading from 'base/full-loading/full-loading';
 
 export default {
   data() {
@@ -58,7 +59,8 @@ export default {
       config: {
         start: 1,
         limit: 10
-      }
+      },
+      isLoading: true
     };
   },
   created() {
@@ -84,12 +86,16 @@ export default {
         this.list = [...this.list, ...data.list];
         this.len = this.list.length;
         this.start++;
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
       });
     }
   },
   components: {
       Scroll,
-      HeadPic
+      HeadPic,
+      FullLoading
   }
 };
 </script>

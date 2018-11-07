@@ -282,10 +282,30 @@ export default {
       });
     },
     changeEnum() {
-      this.Enum = this.Cnum / this.rate;
+      this.Enum = (Math.floor((this.Cnum / this.rate) * 1e8) / 1e8).toFixed(8);
+      let numLeft = this.Cnum.split('.')[0];
+      let numRight = this.Cnum.split('.')[1];
+      if(numRight){
+        if(numRight.length > 2){
+          this.textMsg = this.$t('trading.bbDepth.xsldy');
+          this.$refs.toast.show();
+          numRight = numRight.substring(0, 2);
+          this.Cnum = numLeft + '.' + numRight;
+        }
+      }
     },
     changeCnum() {
-      this.Cnum = this.Enum * this.rate;
+      this.Cnum = ((Math.floor(this.Enum * this.rate * 100)) / 100).toFixed(2);
+      let numLeft = this.Enum.split('.')[0];
+      let numRight = this.Enum.split('.')[1];
+      if(numRight){
+        if(numRight.length > 8){
+          this.textMsg = this.$t('trading.bbDepth.xsbdy');
+          this.$refs.toast.show();
+          numRight = numRight.substring(0, 8);
+          this.Enum = numLeft + '.' + numRight;
+        }
+      }
     },
     // 确认购买
     qrBuy(){

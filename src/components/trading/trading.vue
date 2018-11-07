@@ -352,7 +352,9 @@ export default {
     });
   },
   mounted() {
-    
+    let touchDemo = document.getElementById('touchDemo');
+    touchDemo.style.right = '0.5rem';
+    touchDemo.style.bottom = '2rem';
   },
   methods: {
     getMidPrice(){

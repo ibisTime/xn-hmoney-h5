@@ -48,9 +48,10 @@ export default {
     },
     cate: {
       game: '游戏',
-      exchange: '车辆交换',
+      xss: '驯兽师',
+      exchange: '二手车兑换',
       otc: '场外交易',
-      splendid: '混乱世界、精彩画面',
+      splendid: '精彩画面，任你游',
       bbDeal: '币币交易',
       realTime: '24h全球实时行情',
       xtgg: '系统公告',
@@ -237,7 +238,8 @@ export default {
       sdt: '深度图',
       jj: '简介',
       bkbwl: '不能为空或小于等于零',
-      xsbdy: '小数部分不得大于8位'
+      xsbdy: '小数部分不得大于8位',
+      xsldy: '小数部分不得大于2位'
     }
   },
   // 历史委托
@@ -406,7 +408,7 @@ export default {
       grzx: '个人中心',
       ghcg: '更换成功',
       tpsc: '图片上传出错',
-
+      nyxxx: '您有新消息'
     }
   },
   // 我的广告

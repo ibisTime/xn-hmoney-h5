@@ -14,13 +14,13 @@
       <div class="cates-wrapper">
           <router-link to="shop" tag="div" class="cate-item">
             <i class="cate-icon game-icon"></i>
-            <p>{{ $t('page.cate.game') }}</p>
+            <p>{{ $t('page.cate.xss') }}</p>
           </router-link>
           <router-link to="shop-usedCar" class="cate-item">
             <i class="cate-icon exchange-icon"></i>
             <p>{{ $t('page.cate.exchange') }}</p>
           </router-link>
-          <router-link to='otc' tag="div" class="cate-item" @click="sessionStorage.setItem('tradeType', '1');">
+          <router-link to='otc' tag="div" class="cate-item" @click="toOtcFn">
             <i class="cate-icon otc-icon"></i>
             <p>{{ $t('page.cate.otc') }}</p>
           </router-link>
@@ -72,6 +72,7 @@
   import Footer from 'components/footer/footer';
   import LangStorage from '../../common/js/cookie';
   export default {
+    name: 'test-keep-alive',
     data() {
       return {
         banners: [],
@@ -108,6 +109,9 @@
       },
       toUrl(url){
         window.open(url);
+      },
+      toOtcFn(){
+        sessionStorage.setItem('tradeType', '1');
       }
     },
     components: {
@@ -152,14 +156,14 @@
       position: relative;
       height: 2.9rem;
       width: 100%;
-      padding: 0 .3rem;
       border-radius: .08rem;
       overflow: hidden;
       .slider, .home-slider {
         height: 100%;
         width: 100%;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
+        // background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
       }
 
     }
