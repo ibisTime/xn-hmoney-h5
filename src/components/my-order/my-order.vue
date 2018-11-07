@@ -67,6 +67,7 @@
   import {formatAmount, getAvatar, setTitle, getUserId} from 'common/js/util';
   import Scroll from 'base/scroll/scroll';
   import HeadPic from 'base/head-pic/headPic';
+  import FullLoading from 'base/full-loading/full-loading';
 
   export default {
     data() {
@@ -90,7 +91,8 @@
         orderType: '',
         startingUnread: 0,
         endedUnread: 0,
-        firstLoad: true
+        firstLoad: true,
+        isLoading: true
       };
     },
     computed: {
@@ -119,6 +121,9 @@
           }
           this.getOrderList(type);
         }
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
       });
     },
     methods: {
