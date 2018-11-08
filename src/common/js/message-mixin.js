@@ -198,7 +198,6 @@ export const messageMixin = {
           });
           self.getMyGroup(loginInfo);
           self.setTencentLogined(true);
-          // self.onMsgNotify();
         }, function () {
           self.setTencentLogined(false);
           this.login(loginInfo);
