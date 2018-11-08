@@ -70,7 +70,8 @@ export default {
     },
     subject: {
       yxye: '游戏余额',
-      jryx: '进入游戏'
+      jryx: '进入游戏',
+      cz: '充值'
     }
   },
   // 系统公告

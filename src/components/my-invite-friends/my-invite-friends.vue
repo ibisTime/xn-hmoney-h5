@@ -2,26 +2,13 @@
   <div class="invite-friends-wrapper" @click.stop>
       <div class='friends icon'>
           <div class='content'>
-            <div class='logo'></div>
             <div class="pic icon"></div>
-            <div class="text1">
-                {{$t('myInviteFriends.subject.snyf')}}<span class='red1'>{{$t('myInviteFriends.subject.szzc')}}</span>
-            </div>
-            <i class='icon ico1'></i>
-            <p class='text2 red2'> {{$t('myInviteFriends.subject.mgryg')}}</p>
-            <p class='text3'>{{$t('myInviteFriends.subject.ynsn')}}</p>
-            <p class="text4">{{$t('myInviteFriends.subject.snesn')}}</p>
-
+            <div id='qrcode'></div>
           </div>
-
       </div>
-      <div class='main'>
-          <div class='text'>
-              <p class='txt1'>{{nickName}}</p>
-              <p class='txt2'>{{$t('myInviteFriends.subject.yqnjr')}}</p>
-              <p class='txt2'>{{$t('myInviteFriends.subject.casb')}}</p>
-          </div>
-          <div id='qrcode'></div>
+      <div class='main-btn'>
+          <span class="icon ic_bz"></span>
+          保存至本地
       </div>
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
@@ -68,10 +55,14 @@ export default {
 @import "~common/scss/variable";
 
 .invite-friends-wrapper {
+    position: relative;
     width: 100%;
+    height: 100%;
     background: #fff;
     font-size: .32rem;
     color: #333;
+    background-image: url('./yqbj.png');
+    background-size: 100% 100%;
     .red1 {
         color: #e55151;
     }
@@ -87,8 +78,6 @@ export default {
 
     .friends {
         width: 100%;
-        height: 10.96rem;
-        background-image: url('./yqbj.png');
         position: relative;
         .content {
             width: 100%;
@@ -107,61 +96,24 @@ export default {
                 @include bg-image("FUNMVP");
                 margin-bottom: .4rem;
             }
-            .text1 {
-                width: 3.8rem;
-                margin: 0 auto;
-                padding: .26rem 0;
-                font-size: .45rem;
-                color: #fff;
-                border-top: .02rem solid #fff;
-                border-bottom: .02rem solid #fff;
-            }
-            .ico1 {
-                width: .24rem;
-                margin: .8rem auto .6rem;
-                height: .12rem;
-                background-image: url('./yqhysjx.png');
-            }
-            .text2 {
-                font-size: .34rem;
-                font-weight: bold;
-                padding-bottom: .48rem;
-            }
-            .text3, .text4 {
-                font-size: .2rem;
-                color: #fff;
-            }
-            .text3 {
-                padding-bottom: .25rem;
-            }
         }
     }
-    .main {
+    .main-btn{
+        position: absolute;
+        bottom: 0;
         width: 100%;
-        height: 2.38rem;
-        background: #fff;
-        padding: .26rem .48rem .66rem .48rem;
-        display: flex;
-        justify-content: space-between;
-        .text {
-            padding-top: .22rem;
-            .txt1 {
-                font-size: .44rem;
-                font-weight: bold;
-                padding-bottom: .2rem;
-            }
-            .txt2 {
-                font-size: .32rem;
-                padding-bottom: .1rem;
-            }
-            .txt3 {
-                font-size: .22rem;
-                color: #999;
-            }
-        }
-        #qrcode {
-            width: 1.66rem;
-            height: 1.66rem;
+        height: 0.98rem;
+        line-height: 0.98rem;
+        font-size: 0.6rem;
+        color: #fff;
+        text-align: center;
+        .ic_bz{
+            display: inline-block;
+            width: 0.3rem;
+            height: 0.3rem;
+            background-image: url('./bcbd.png');
+            margin-right: 0.14rem;
+            vertical-align: middle;
         }
     }
 

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="">
+    <div class="all-content">
       <keep-alive include="test-keep-alive">
         <router-view></router-view>
       </keep-alive>
@@ -193,9 +193,15 @@
 </script>
 <style lang="scss">
   #app {
+    height: 100%;
     overflow-x: hidden;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
+  }
+  .all-content{
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
   }
 
   .loading-container {

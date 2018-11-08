@@ -10,9 +10,12 @@
       <p class='text1'>{{ $t('shop.subject.yxye') }}</p>
       <p class='text2'>{{gMon}}</p>
       <p class='text3'></p>
-      <a :href='gUrl' target="view_window" class='btn' _brank>
+      <span class='btn'  @click="toGame">
         {{ $t('shop.subject.jryx') }}
-      </a>
+      </span>
+      <router-link to='/shop-cz' class='btn' >
+        {{ $t('shop.subject.cz') }}
+      </router-link>
     </div>
     <div class="main" @click="toGame">
     </div>
@@ -125,7 +128,10 @@ export default {
     }
     .btn {
       display: inline-block;
-      padding: 0.1rem 0.4rem 0.12rem;
+      margin: 0 0.1rem;
+      padding: 0 0.4rem;
+      height: 0.6rem;
+      line-height: 0.55rem;
       font-size: .28rem;
       color: #fff;
       border-radius: .06rem;
@@ -141,7 +147,7 @@ export default {
     background-image: url('./95650.jpg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 100%;
+    background-size: 100%;
   }
 
 

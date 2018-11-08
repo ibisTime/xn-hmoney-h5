@@ -11,6 +11,8 @@ const Login = () => import('components/login/login');
 const Registered = () => import('components/registered/registered');
 // 商城
 const Shop = () => import('components/shop/shop');
+// 游戏充值
+const ShopCz = () => import('components/shop-cz/shop-cz');
 // 商城 -- 转币
 const ShopTurnMoney = () => import('components/shop-turn-money/shop-turn-money');
 // 商城 -- 二手车
@@ -119,6 +121,10 @@ export default new Router({
     {
       path: '/shop',
       component: Shop
+    },
+    {
+      path: '/shop-cz',
+      component: ShopCz
     },
     {
       path: '/shop-turn',
