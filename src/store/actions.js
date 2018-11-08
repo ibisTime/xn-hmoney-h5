@@ -1,6 +1,6 @@
 import * as types from './mutation-types';
 import {saveSearch, clearSearch, deleteSearch, saveChatData, updateChatData, saveUserMap} from 'common/js/cache';
-import {isUnDefined, deepCopy} from 'common/js/util';
+import {isUnDefined} from 'common/js/util';
 
 function _getOrderList(state, code, prevStatus, nextStatus) {
   let allList = null;

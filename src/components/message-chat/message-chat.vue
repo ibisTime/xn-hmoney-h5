@@ -160,6 +160,7 @@
         }).catch(() => {});
         let self = this;
         this.getLastGroupHistoryMsgs(function(msgList) {
+          self.getHistoryMsgCallback(msgList);
           self.setCurChatList(msgList);
         }, function(err) {
           alert(err.ErrorInfo);
@@ -384,24 +385,24 @@
       getHistoryMsgCallback(msgList, prepage) {
         var msg;
         prepage = prepage || false;
-        let self = this;
 
         //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下
         if (prepage) {
           msgList.reverse();
         }
         let newList = [];
+        let selSess = null;
         //		console.log('History', msgList);
         for (var j in msgList) { //遍历新消息
           msg = msgList[j];
           if (msg.getSession().id() === this.groupId) { //为当前聊天对象的消息
-            self.selSess = msg.getSession();
+            selSess = msg.getSession();
             //在聊天窗体中新增一条消息
             newList.push(msg);
           }
         }
         //消息已读上报，并将当前会话的消息设置成自动已读
-        webim.setAutoRead(self.selSess, true, true);
+        webim.setAutoRead(selSess, true, true);
         return newList;
       },
       //向上翻页，获取更早的群历史消息

@@ -48,7 +48,7 @@ export const messageMixin = {
       // debugger;
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
-        let selSess;
+        let selSess = null;
         for (let j in newMsgList) {
           let newMsg = newMsgList[j];
           // 判断是自己 不用添加消息
@@ -96,6 +96,8 @@ export const messageMixin = {
             }
           }
         }
+
+        console.log(selSess);
         webim.setAutoRead(selSess, true, true);
 
 		  // 不是订单聊天界面 unreadMsgNum +1

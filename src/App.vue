@@ -75,9 +75,6 @@
       }
     },
     created() {
-      if (isLogin()) {
-        this.goTencentLogin();
-      }
       this.$router.beforeEach((to, from, next) => {
         if(!sessionStorage.getItem('coinData')){
           getBbListData().then(data => {
@@ -123,6 +120,9 @@
       this.$refs.touchDemo.style.bottom = '1rem';
       this.$refs.touchDemo.style.left = '';
       this.$refs.touchDemo.style.top = '';
+      if (isLogin()) {
+        this.goTencentLogin();
+      }
     },
     components: {
       Toast
