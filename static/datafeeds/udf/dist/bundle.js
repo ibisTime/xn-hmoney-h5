@@ -105,6 +105,7 @@
         endDatetime: formatDate(new Date(rangeEndDate * 1000), 'yyyy-MM-dd hh:mm')
       };
 
+      // 保存下一次结束时间 这一次结尾时间是前一次的开始时间 时间是右往左
       if ($('#tv_chart_container').attr('firstLoad') === '1') {
         $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
         requestParams.endDatetime = $('#tv_chart_container').attr('startDatetime');
@@ -124,14 +125,14 @@
           let meta = {
             noData: false
           };
+          // 如果是第一次加载
           if ($('#tv_chart_container').attr('firstLoad') === '0') {
             $('#tv_chart_container').attr('firstLoad', '1');
+            // 这一次结尾时间是前一次的开始时间 时间是右往左
             $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
           }
           if (response.length <= 0) {
-            //              if (response.length <= 0) {
             meta.noData = true;
-            // meta.nextTime = parseInt((new Date().getTime() + 1000 * 60 * 5) / 1000);
           } else {
             for (let i = 0; i < response.length; ++i) {
               let barValue = {
@@ -150,6 +151,10 @@
               }
               bars.push(barValue);
             }
+          }
+          // 500数据线限制
+          if (bars.length >= 500) {
+            $('#tv_chart_container').attr('startDatetime', bars[499].time);
           }
           // console.log(bars, meta);
           resolve({
