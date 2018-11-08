@@ -16,7 +16,8 @@
             </div>
           </div>
       </div>
-      <div class='main-btn' @click="saveImgFn" id="down">
+      <a id="down" download="邀请好友"></a>
+      <div class='main-btn' @click="saveImgFn">
           <span class="icon ic_bz"></span>
           {{$t('myInviteFriends.subject.bzbd')}}
       </div>
