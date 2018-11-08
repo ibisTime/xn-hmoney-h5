@@ -160,7 +160,7 @@ export function formatAmount(money, format, coin, isRe = false) {
   }else if (isUnDefined(format) || typeof format === 'object') {// 默认格式为2位小数
     format = 2;
   }
-  
+
   // 金额格式化 金额除以unit并保留format位小数
   money = new BigDecimal(money.toString());
   money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
@@ -671,3 +671,21 @@ export function calculateDays (start, end) {
   end = new Date(end);
   return (end - start) / (60 * 1000);
 }
+
+// 深拷贝
+export function deepCopy(initalObj, finalObj) {
+    var obj = finalObj || {};
+    for (var i in initalObj) {
+      var prop = initalObj[i];
+      // 避免相互引用对象导致死循环，如initalObj.a = initalObj的情况
+      if (prop === obj) {
+        continue;
+      }
+      if (typeof prop === 'object') {
+        obj[i] = (prop.constructor === Array) ? [] : Object.create(prop);
+      } else {
+        obj[i] = prop;
+      }
+    }
+    return obj;
+  }

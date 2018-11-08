@@ -1,7 +1,7 @@
 <template>
   <div class="otcbuy-wrapper" @click.stop>
       <!-- <header>
-        <i class='icon'></i><span class='title'>购买</span> 
+        <i class='icon'></i><span class='title'>购买</span>
       </header> -->
       <div class='header'>
         <div class='person'>
@@ -198,7 +198,7 @@ export default {
       }
     },
     goChat(orderCode) {
-      this.$router.push(`/message/${orderCode}`);
+      this.$router.push(`/messageCart?code=${orderCode}`);
     },
     getPercentum(num1, num2){
       return getPercentum(num1, num2);
@@ -387,7 +387,7 @@ export default {
       display: flex;
       width: 100%;
       padding: 0 .3rem;
-      
+
       .pic {
         width: 0.96rem;
         height: 0.96rem;
@@ -545,7 +545,7 @@ export default {
             background-image: url('./z_h.png');
             margin-right: .1rem;
             vertical-align: middle;
-           
+
           }
 
           input {
@@ -727,7 +727,7 @@ export default {
         }
       }
   }
-  
+
 
 }
 </style>

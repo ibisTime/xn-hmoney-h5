@@ -48,7 +48,7 @@ export const messageMixin = {
       // debugger;
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
-        let selSess;
+        let selSess = null;
         for (let j in newMsgList) {
           let newMsg = newMsgList[j];
           // 判断是自己 不用添加消息
@@ -96,6 +96,8 @@ export const messageMixin = {
             }
           }
         }
+
+        console.log(selSess);
         webim.setAutoRead(selSess, true, true);
 
 		  // 不是订单聊天界面 unreadMsgNum +1
@@ -141,14 +143,14 @@ export const messageMixin = {
           self.setGourpList(groupList);
         },
         function (err) {
-          alert(err.ErrorInfo);
+          console.log(err.ErrorInfo);
         }
       );
     },
     // 判断是否在聊天界面
     isMessageWindow() {
       let flag = true;
-      if (isUnDefined(this.$route.path.split('/message/')[1])) {
+      if (isUnDefined(this.$route.path.split('/messageCart')[1])) {
         flag = false;
       }
       return flag;
@@ -184,7 +186,8 @@ export const messageMixin = {
         'isLogOn': false
       };
       let self = this;
-      if (!this.tencentLogined) {
+      let flag = this.tencentLogined;
+      if (!flag) {
         webim.login(loginInfo, listeners, options, function () {
           getUser().then((data) => {
             self.setUser(data);
@@ -194,17 +197,18 @@ export const messageMixin = {
             setProfilePortrait({gender, nickname, photo});
           });
           self.getMyGroup(loginInfo);
-          self.setTententLogined(true);
-          self.onMsgNotify();
+          self.setTencentLogined(true);
+          // self.onMsgNotify();
         }, function () {
-          self.setTententLogined(false);
+          self.setTencentLogined(false);
+          this.login(loginInfo);
         });
-      } else if(this.tencentLogined && this.isMessageWindow()) {
+      } else if(flag) {
         self.getMyGroup(loginInfo);
       }
     },
     ...mapMutations({
-      setTententLogined: SET_TENCENT_LOGINED,
+      setTencentLogined: SET_TENCENT_LOGINED,
       setUser: SET_USER_STATE,
       setUnreadMsgNum: SET_UNREAD_MSG_NUM,
       setGourpList: SET_GROUP_LIST

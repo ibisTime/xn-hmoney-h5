@@ -29,7 +29,7 @@
         </div>
         <div class='appraise'>
           <p class='txt1'>
-            {{$t('myOrderDetail.subject.pj')}} 
+            {{$t('myOrderDetail.subject.pj')}}
             <span class="fr" :class="ishpTxt == $t('common.hp') ? 'hptxt' : 'cptxt'">
               <i class="icon pjback" :style="pjback"></i>{{ishpTxt}}
             </span>
@@ -307,7 +307,7 @@
             this.isLoading = false;
           });
         }
-        // 取消订单 cancelOrder 
+        // 取消订单 cancelOrder
         if(target.classList.contains('cancelBtn')){
           cancelOrder(this.code).then(data => {
             this.orderMessage();
@@ -320,7 +320,7 @@
           this.isLoading = false;
           this.zcShow = true;
         }
-        // 释放货币 releaseOrder 
+        // 释放货币 releaseOrder
         if(target.classList.contains('releaseBtn')){
           releaseOrder(this.code).then(data => {
             this.orderMessage();
@@ -329,7 +329,7 @@
           });
         }
 
-        // 评价 
+        // 评价
         if(target.classList.contains('pjBtn')){
           this.showFlag = true;
           this.isLoading = false;
@@ -342,7 +342,7 @@
     },
     // 联系对方
     goChat(orderCode) {
-      this.$router.push(`/message/${orderCode}`);
+      this.$router.push(`/messageCart?code=${orderCode}`);
     },
     qxReason(){
       this.zcShow = false;
@@ -413,7 +413,7 @@
   .order {
     width: 100%;
     padding: 0.15rem 0.3rem;
-    background: #fff;    
+    background: #fff;
     line-height: 1rem;
     p {
       border-bottom: 0.01rem solid #e5e5e5;
@@ -634,7 +634,7 @@
       }
 
     }
-    
+
   }
 
   .zc-box{
