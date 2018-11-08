@@ -15,6 +15,7 @@
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
             <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
+              {{index}}
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -27,7 +28,7 @@
                 </i>
               </div>
             </div>
-            <div class="time-split" v-if="info.fromAccount === 'admin'">
+            <div class="time-split" v-else-if="info.fromAccount === 'admin'">
               <div class="time-content">
                 <template v-for="item in getContent(info)">
                   <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
@@ -35,6 +36,7 @@
               </div>
             </div>
             <div v-else class="post clearfix">
+              {{index}}
               <span class="avatar avatarDefault" v-if="isUnDefined(user.photo)">{{getDefaultPhoto(user)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(user.photo)"></span>
               <div class="p-content">
@@ -239,7 +241,7 @@
           this.onSendMsg(this.emoji, (info) => {
             this.saveChatHistory(info);
             // setTimeout(() => {
-              // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
+              // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this..length - 1], 100);
               // this.scroll.scrollIntoViewIfNeeded();
             // }, 40);
           });
@@ -276,9 +278,8 @@
         });
         if (this.start >= 0 && obj) {
           let newList = this.getNewList(obj);
-          let oriList = this.curChatList.slice();
-          this.setCurChatList(newList.concat(oriList));
-          this.hasMore = min !== 0;
+          // let oriList = this..slice();
+          this.setCurChatList(newList);
           this.start -= REQMSGCOUNT;
           if (this.firstFetching) {
             this.updateChatData();
