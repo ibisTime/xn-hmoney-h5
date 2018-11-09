@@ -122,9 +122,10 @@ export default {
 @import "~common/scss/variable";
 
 .invite-friends-wrapper {
-    position: relative;
+    position: fixed;
     width: 100%;
     height: 100%;
+    z-index: 1;
     background: #fff;
     font-size: .32rem;
     color: #333;
@@ -205,7 +206,7 @@ export default {
         }
         .qr-txt{
             position: absolute;
-            bottom: 2rem;
+            bottom: 1.7rem;
             z-index: 99;
             width: 100%;
             text-align: center;

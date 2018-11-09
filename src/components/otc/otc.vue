@@ -765,7 +765,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("叉");
+    background-image: url('./cha.png');
     position: absolute;
     bottom: .6rem;
     left: 50%;

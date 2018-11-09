@@ -408,7 +408,7 @@
 
   .list-start {
     height: 12rem;
-    // padding-bottom: 2rem;
+    padding-bottom: 2rem;
     overflow: scroll;
       .list {
         .text1 {

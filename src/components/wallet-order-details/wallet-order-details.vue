@@ -104,8 +104,8 @@ export default {
   },
   methods: {
     getOrderDetail(){
-        getCTSDetail(this.config).then(data => {console.log(data)
-            this.realName = data.bankcard ? data.bankcard.realName : data.user.realName;
+        getCTSDetail(this.config).then(data => {
+            this.realName = data.bankcard ? data.bankcard.realName : data.user.nickname;
             this.receiveCardNo = data.receiveCardNo;
             this.receiveInfo = data.receiveInfo;
             this.receiveType = data.receiveType;

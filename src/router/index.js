@@ -33,8 +33,6 @@ const tradingHistoryEntrust = () => import('components/trading-history-entrust/t
 const Otc = () => import('components/otc/otc');
 // 场外交易 -- 购买
 const OtcBuy = () => import('components/otc-buy/otc-buy');
-// 场外交易 -- 出售
-const OtcSell = () => import('components/otc-sell/otc-sell');
 // 联系对方
 const otcContactOther = () => import('components/otc-contact-other/otc-contact-other');
 // 购买发布
@@ -199,10 +197,6 @@ export default new Router({
     {
       path: '/otc-buy',
       component: OtcBuy
-    },
-    {
-      path: '/otc-sell',
-      component: OtcSell
     },
     {
       path: '/otc-contactOther',

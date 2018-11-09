@@ -60,25 +60,34 @@ export default {
       list: [],
       watlleType: [
         {
-          key: '',
+          key: [],
           value: this.$t('walletBill.subject.qb')
         },{
-          key: 'charge',
+          key: ['charge'],
           value: this.$t('walletBill.subject.cb')
         },{
-          key: 'withdraw',
+          key: ['withdraw'],
           value: this.$t('walletBill.subject.tb')
         },{
-          key: 'ccorder_buy',
+          key: ['ccorder_buy', 'bborder_buy'],
           value: this.$t('walletBill.subject.jymr')
         },{
-          key:'ccorder_sell',
+          key: ['ccorder_sell', 'bborder_sell'],
           value: this.$t('walletBill.subject.jymc')
         },{
-          key: 'ccorder_fee',
+          key: ['accept_buy'],
+          value: '场外承兑商购买'
+        },{
+          key: ['accept_sell'],
+          value: '场外承兑商出售'
+        },{
+          key: ['ccorder_fee', 'bborder_fee'],
           value: this.$t('walletBill.subject.jysxf')
         },{
-          key: 'withdraw_fee',
+          key: ['withdraw_fee'],
+          value: this.$t('walletBill.subject.txsxf')
+        },{
+          key: ['ccorder_frozen', 'bborder_frozen'],
           value: this.$t('walletBill.subject.txsxf')
         }
       ],
@@ -87,7 +96,6 @@ export default {
       limit: 10,
       config: {
         accountNumber: '',
-        bizType: '',
         start: 1,
         limit: 10
       },
@@ -108,7 +116,11 @@ export default {
     walletTypeFn(){
       // 筛选
       this.FullLoading = true;
-      this.config.bizType = this.billType;
+      if(this.billType.length > 0){
+        this.config.bizTypeList = this.billType;
+      }else{
+        delete this.config.bizTypeList;
+      }
       this.hasMore = true;
       this.start = 1;
       this.list = [];
@@ -284,7 +296,7 @@ export default {
   .list-wrap{
     position: relative;
     height: 13rem;
-    // padding-bottom: 2rem;
+    padding-bottom: 2rem;
     overflow: scroll;
     .wallet-p{
       position: absolute;

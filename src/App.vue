@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <div class="all-content">
-      <keep-alive include="test-keep-alive">
-        <router-view></router-view>
-      </keep-alive>
+      <router-view></router-view>
     </div>
     <Toast :text="textMsg" ref="toast"/>
     <div
@@ -98,6 +96,7 @@
         } else {
           if (to.path == '/' ||
             to.path == '/page' ||
+            to.path == '/shop-usedCar' ||
             to.path == '/system-notice' ||
             to.path == '/about-platformIntroduced?ckey=about_us' ||
             to.path == '/trading' ||
@@ -187,14 +186,12 @@
 </script>
 <style lang="scss">
   #app {
-    height: 100%;
     overflow-x: hidden;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
   }
   .all-content{
     width: 100%;
-    height: 100%;
     margin: 0 auto;
   }
 

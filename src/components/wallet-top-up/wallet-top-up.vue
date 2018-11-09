@@ -101,6 +101,21 @@
           <button v-show='!show' @click="toSellClick">{{$t('walletBuy.subject.qrcs')}}</button>
         </div>
     </div>
+    <div class="show-box" v-show="isBuyCount">
+      <div class="ress-box" @click.stop>
+        <span class="out" @click="dzfPay">×</span>
+        <div class="am-modal-header">
+            <p><span class="currency"></span>支付宝(<span>{{bankcardNumber}}</span>)</p>
+        </div>
+        <div id="paginationAddress">
+          <p :style="{backgroundImage: zfPic}"></p>
+        </div>
+        <div class="am-modal-footer">
+          <div class="am-button-gray qxBuy" @click="qxBuy">取消支付</div>
+          <div class="am-button-red qrBuy" @click="qrBuy">标记付款</div>
+        </div>
+      </div>
+    </div>
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
@@ -108,7 +123,7 @@
 <script>
 import {getAdverMessage} from 'api/otc';
 import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam, getPic} from 'common/js/util';
-import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
+import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet, bjPlayfo, qxOrder,} from 'api/person';
 import {getUser} from 'api/user';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -156,7 +171,12 @@ export default {
       fmvpTypeData: {},   // 承兑商参数
       zfPic: '',
       istradepwdFlag: true,
-      text: ''
+      text: '',
+      isBuyCount: false,
+      jyConfig: {              // 交易操作参数
+        userId: getUserId(),
+        code: ''
+      },
     };
   },
   created() {
@@ -278,12 +298,9 @@ export default {
         }
       }
       buyX(this.buyConfig).then(data => {
-        this.textMsg = this.$t('common.czcg');
-        this.$refs.toast.show();
-        setTimeout(() => {
-          this.$router.push('wallect-orderRecord')
-        }, 1500);
+        this.isBuyCount = true;
         this.isLoading = false;
+        this.jyConfig.code = data.code;
         }, () => {
           this.isLoading = false;
       });
@@ -333,6 +350,35 @@ export default {
     scopeMoney(){
       this.textMsg = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
       this.$refs.toast.show();
+    },
+    qxBuy(){
+      this.isLoading = true;
+      qxOrder(this.jyConfig).then(data => {
+        this.isLoading = false;
+        this.buyMonNumber = '';
+        this.buyConfig.remark = '';
+        this.textMsg = '已取消支付';
+        this.$refs.toast.show();
+      }, () => {
+        this.isLoading = false;
+      });
+      this.isBuyCount = false;
+    },
+    qrBuy(){
+      bjPlayfo(this.jyConfig).then(data => {
+        this.isLoading = true;
+        setTimeout(() => {
+          this.$router.push('wallect-orderRecord');
+        }, 1000);
+      }, () => {
+        this.isLoading = false;
+      });
+    },
+    dzfPay(){
+      this.isLoading = true;
+      setTimeout(() => {
+        this.$router.push('wallect-orderRecord');
+      }, 1000);
     }
   },
   components: {
@@ -654,6 +700,65 @@ export default {
   .btn-box{
     background-color: #fff;
     padding-bottom: 0.5rem;
+  }
+  .show-box{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .ress-box{
+    position: absolute;
+    z-index: 999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 5rem;
+    border-radius: 0.2rem;
+    padding: 0.3rem;
+    background-color: #fff;
+   .out{
+     position: absolute;
+     right: 0.1rem;
+     top: 0.1rem;
+     font-size: 0.6rem;
+     color: #666;
+   }
+   .am-modal-header{
+     text-align: center;
+     font-size: 0.3rem;
+     margin-bottom: 0.15rem;
+   }
+   #paginationAddress{
+     width: 3.2rem;
+     height: 3.2rem;
+     margin: 0 auto;
+     margin-bottom: 0.2rem;
+     p{
+       width: 100%;
+       height: 100%;
+       background-size: 100% 100%;
+     }
+   }
+   .am-modal-footer{
+     display: flex;
+     justify-content: space-around;
+     div{
+       text-align: center;
+       width: 35%;
+       padding: 0.12rem;
+       font-size: 0.3rem;
+       border-radius: 0.06rem;
+       background-color: #ccc;
+       color: #fff;
+       &:nth-of-type(2){
+         background-color: #d53d3d;
+       }
+     }
+   }
   }
 }
 </style>

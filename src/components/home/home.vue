@@ -32,7 +32,7 @@
       <div class="tabCar fun">
         <router-link to='shop'>
           <div class="tab-text">
-            <p class="tit">{{ $t('page.navbar.title') }}</p>
+            <p class="tit">{{ $t('page.cate.game') }}</p>
             <p class="con">{{ $t('page.cate.splendid') }}</p>
           </div>
         </router-link>
