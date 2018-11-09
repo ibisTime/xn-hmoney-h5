@@ -88,7 +88,7 @@
 
   const selType = webim.SESSION_TYPE.GROUP;
   const subType = webim.GROUP_MSG_SUB_TYPE.COMMON;
-  const REQMSGCOUNT = 10;
+  const REQMSGCOUNT = 20;
   const ERR = -1;
   const SENDING = 0;
   const SUCCESS = 1;
