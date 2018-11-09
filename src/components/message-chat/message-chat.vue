@@ -72,7 +72,7 @@
 </template>
 <script>
   import {mapGetters, mapActions, mapMutations} from 'vuex';
-  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE, SET_UNREAD_MSG_NUM} from 'store/mutation-types';
+  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_NEW_MSG} from 'store/mutation-types';
   import Scroll from 'base/scroll/scroll';
   import FullLoading from 'base/full-loading/full-loading';
   import Loading from 'base/loading/loading';
@@ -88,7 +88,7 @@
 
   const selType = webim.SESSION_TYPE.GROUP;
   const subType = webim.GROUP_MSG_SUB_TYPE.COMMON;
-  const REQMSGCOUNT = 20;
+  const REQMSGCOUNT = 10;
   const ERR = -1;
   const SENDING = 0;
   const SUCCESS = 1;
@@ -148,7 +148,8 @@
         'curChatList',
         'curChatUserId',
         'tencentLogined',
-        'userMap'
+        'userMap',
+        'newMsg',
       ])
     },
     methods: {
@@ -161,7 +162,19 @@
         let self = this;
         this.getLastGroupHistoryMsgs(function(msgList) {
           self.getHistoryMsgCallback(msgList);
-          self.setCurChatList(msgList);
+          let list = msgList.map(v => ({
+            fromAccount: v.fromAccount,
+            fromAccountNick: v.fromAccountNick,
+            seq: v.seq,
+            time: v.time,
+            uniqueId: v.uniqueId,
+            random: v.random,
+            isSend: v.isSend,
+            icon: v.icon,
+            elems: v.elems.slice()
+          }));
+          self.setCurChatList(list);
+          self.scrollToElement();
         }, function(err) {
           alert(err.ErrorInfo);
         });
@@ -204,14 +217,6 @@
       },
       isUnDefined(value) {
         return isUnDefined(value);
-      },
-      scroll(pos) {
-        if (pos.y > -20 && !this.fetching && !this.firstFetching && this.hasMore) {
-          this.fetching = true;
-          setTimeout(() => {
-            this.getHistoryMessage();
-          }, 200);
-        }
       },
       show() {
         if (this.showEmoji) {
@@ -270,25 +275,42 @@
         return arr;
       },
       getHistoryMessage() {
-        // 获取更早的群历史消息
-        let obj = this.getPrePageGroupHistoryMsgs(function (newList)  {
-          return newList;
-        });
-        if (this.start >= 0 && obj) {
-          let newList = this.getNewList(obj);
-          let oriList = this.curChatList.slice();
-          this.setCurChatList(oriList.concat(newList));
-          this.hasMore = false;
-          this.start -= REQMSGCOUNT;
-          if (this.firstFetching) {
-            this.updateChatData();
-            this.scrollToElement();
-          } else {
-            this.scrollToTop();
-          }
-        } else {
-          this.hasMore = false;
+        if(!this.hasMore) {
+          return;
         }
+        let self = this;
+        // 获取更早的群历史消息
+        self.getPrePageGroupHistoryMsgs(function (newList)  {
+          let list = newList.map(v => ({
+            fromAccount: v.fromAccount,
+            fromAccountNick: v.fromAccountNick,
+            seq: v.seq,
+            time: v.time,
+            uniqueId: v.uniqueId,
+            random: v.random,
+            isSend: v.isSend,
+            icon: v.icon,
+            elems: v.elems.slice()
+          }));
+          if(list.length > 0) {
+            let newList = self.getNewList(list);
+            let oriList = self.curChatList.slice();
+            self.setCurChatList(newList.concat(oriList));
+            if(list.length < REQMSGCOUNT) {
+              self.hasMore = false;
+            } else {
+              self.hasMore = true;
+            }
+            if (self.firstFetching) {
+              self.updateChatData();
+              self.scrollToElement();
+            } else {
+              self.scrollToTop();
+            }
+          } else {
+            self.hasMore = false;
+          }
+        });
       },
       //读取群组基本资料-高级接口
       getGroupInfo(group_id, cbOK, cbErr) {
@@ -386,10 +408,10 @@
         var msg;
         prepage = prepage || false;
 
-        //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下
-        if (prepage) {
-          msgList.reverse();
-        }
+        //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下 web需要 这里不需要
+        // if (prepage) {
+        //   msgList.reverse();
+        // }
         let newList = [];
         let selSess = null;
         //		console.log('History', msgList);
@@ -447,7 +469,16 @@
           }
         );
       },
+      scroll(pos) {
+        if (pos.y > -20 && !this.fetching && !this.firstFetching && this.hasMore) {
+          this.fetching = true;
+          setTimeout(() => {
+            this.getHistoryMessage();
+          }, 200);
+        }
+      },
       scrollToElement() {
+        this.setNewMsg(false);
         setTimeout(() => {
           this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
           setTimeout(() => {
@@ -711,6 +742,7 @@
       ...mapMutations({
         setCurChatUserId: SET_CHAT_USERID,
         setCurChatList: SET_CHAT_LIST,
+        setNewMsg: SET_NEW_MSG,
         setUser: SET_USER_STATE
       }),
       ...mapActions([
@@ -736,6 +768,11 @@
       receiver(newVal) {
         if (this.user && newVal && this.tencentLogined) {
           this.getHistoryMessage();
+        }
+      },
+      newMsg(newVal) {
+        if(newVal) {
+          this.scrollToElement();
         }
       }
     },
@@ -939,6 +976,7 @@
       top: 0;
       bottom: 1rem;
       width: 100%;
+      z-index: 8;
     }
 
     .message-footer {
@@ -948,6 +986,7 @@
       width: 100%;
       height: 1rem;
       background-color: #fff;
+      z-index: 9;
 
       .message-input {
         position: fixed;
@@ -1031,5 +1070,6 @@
         }
       }
     }
+
   }
 </style>

@@ -42,4 +42,7 @@ export const userMap = state => state.userMap;
 
 export const unreadMsgNum = state => state.unreadMsgNum;
 
+export const newMsg = state => state.newMsg;
+
 export const groupList = state => state.groupList;
+
