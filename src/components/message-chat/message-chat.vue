@@ -175,6 +175,11 @@
           }));
           self.setCurChatList(list);
           self.scrollToElement();
+          if(list.length < REQMSGCOUNT) {
+            self.hasMore = false;
+          } else {
+            self.hasMore = true;
+          }
         }, function(err) {
           alert(err.ErrorInfo);
         });
