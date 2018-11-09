@@ -1,7 +1,7 @@
 <template>
   <div class="invite-friends-wrapper" @click.stop>
       <div class='friends icon'>
-            <div class='content'>
+            <div class='content' ref="copyImg" @click="isFz = true;">
                 <div class="pic icon"></div>
                 <div class="yq-box">
                     <p class="yq_p1">{{nickName}}</p>
@@ -10,22 +10,21 @@
                 <div class="rq-code">
                     <div id='qrcode'></div>
                 </div>
-                <div class="qr-txt">
-                    {{$t('myInviteFriends.subject.fuzzs')}}
-                    <span @click="isFz = false;">{{$t('myInviteFriends.subject.fz')}}</span>
-                </div>
             </div>
-            <a id="down" download="邀请好友"></a>
-            <div class='main-btn' @click="saveImgFn">
-                <span class="icon ic_bz"></span>
+            <img src="" alt="" class="con-img" ref="conImg" @click="isFz = true;">
+            <div class="qr-txt">
                 {{$t('myInviteFriends.subject.bzbd')}}
             </div>
+            <!-- <a id="down" download="邀请好友"></a> -->
+            <div class='main-btn' @click.stop="isFz = false;">
+                {{$t('myInviteFriends.subject.fuzzs')}}
+            </div>
       </div>
-      <div class="ress-box" v-show="!isFz">
+      <div class="ress-box" v-show="!isFz" @click.stop>
           <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl">
           </textarea>
           <div class="ress-btn" ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj" @click='CopyUrl'>
-              复制
+              {{$t('myInviteFriends.subject.fz')}}
           </div>
       </div>
     <Toast :text="textMsg" ref="toast" />
@@ -56,26 +55,28 @@ export default {
   },
   created() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
+    this.userId = getUserId();
   },
   activated() {
     this.$set(document, 'title', this.$t('myInviteFriends.subject.yqhy'));
+    this.userId = getUserId();
   },
   mounted() {
     getUser().then(data => {
         this.nickName = data.nickname;
         this.isLoading = false;
+        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
+        this.container = document.getElementById('qrcode');
+        const qr = new QRCode(this.container, {
+        typeNumber: -1,
+        correctLevel: 2,
+        foreground: '#000000'
+        });
+        qr.make(this.wxUrl);
+        this.saveImgFn();
     }, () => {
         this.isLoading = false;
     });
-    this.userId = getUserId();
-    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
-    this.container = document.getElementById('qrcode');
-    const qr = new QRCode(this.container, {
-      typeNumber: -1,
-      correctLevel: 2,
-      foreground: '#000000'
-    });
-    qr.make(this.wxUrl);
     this.copyBtn = new this.clipboard(this.$refs.copy);
   },
   methods: {
@@ -107,11 +108,12 @@ export default {
         });
     },
     saveImgFn(){
-        html2canvas(this.container).then((canvas) => {
-            let down = document.getElementById('down');
+        html2canvas(this.$refs.copyImg).then((canvas) => {
+            // let down = document.getElementById('down');
             var url = canvas.toDataURL('image/png');
-            down.setAttribute('href', url);
-            down.click();
+            this.$refs.conImg.setAttribute('src', url);
+            // down.setAttribute('href', url);
+            // down.click();
         });
     }
   },
@@ -132,7 +134,6 @@ export default {
     background: #fff;
     font-size: .32rem;
     color: #333;
-    background-image: url('./yqbj.png');
     background-size: 100% 100%;
     .red1 {
         color: #e55151;
@@ -153,7 +154,8 @@ export default {
         position: relative;
         .content {
             width: 100%;
-            height: calc(100% - 0.98rem);
+            height: 100%;
+            background-image: url('./yqbj.png');
             position: relative;
             text-align: center;
             overflow: hidden;
@@ -176,6 +178,7 @@ export default {
                     margin-top: 4%;
                 }
                 .yq_p1{
+                    height: 0.42rem;
                     font-size: 0.42rem;
                 }
                 .yq_p2{
@@ -191,24 +194,40 @@ export default {
                 background-color: #fff;
                 padding: 0.28rem;
             }
-            .qr-txt{
-                height: 0.96rem;
-                line-height: 0.96rem;
-                color: #fff;
-                font-size: 0.26rem;
-                span{
-                    display: inline-block;
-                    border-radius: 0.04rem;
-                    border: 1px solid #fff;
-                    margin-left: 0.2rem;
-                    line-height: 1;
-                    vertical-align: middle;
-                    padding: 0.1rem 0.25rem;
-                }
+        }
+        .con-img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9;
+        }
+        .qr-txt{
+            position: absolute;
+            bottom: 1.98rem;
+            z-index: 99;
+            width: 100%;
+            text-align: center;
+            height: 0.96rem;
+            line-height: 0.96rem;
+            color: #fff;
+            font-size: 0.26rem;
+            span{
+                display: inline-block;
+                border-radius: 0.04rem;
+                border: 1px solid #fff;
+                margin-left: 0.2rem;
+                line-height: 1;
+                vertical-align: middle;
+                padding: 0.1rem 0.25rem;
             }
         }
     }
     .main-btn{
+        position: absolute;
+        bottom: 0;
+        z-index: 99;
         width: 100%;
         height: 0.98rem;
         line-height: 0.98rem;
@@ -229,6 +248,7 @@ export default {
     }
     .ress-box{
         position: absolute;
+        z-index: 999;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
