@@ -18,7 +18,7 @@
         <p class='txt'>{{$t('walletInto.subject.dz')}} <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link></p>
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
-    <button @click='CopyUrl'>{{$t('walletInto.subject.fzskdz')}}</button>
+    <button @click='CopyUrl' ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj">{{$t('walletInto.subject.fzskdz')}}</button>
     <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
@@ -33,7 +33,8 @@ export default {
       textMsg: '',
       adress: '',
       currency: '',
-      accountNumber: ''
+      accountNumber: '',
+      copyBtn: null
     };
   },
   created() {
@@ -41,16 +42,6 @@ export default {
     this.adress = getUrlParam('adress');
     this.currency = getUrlParam('currency');
     this.accountNumber = getUrlParam('accountNumber');
-  },
-  methods: {
-    CopyUrl() {
-      let url = document.querySelector('#copyObj');
-      url.select(); // 选择对象
-      if(!document.execCommand('Copy')){
-        this.textMsg = this.$t('walletInto.subject.gbzc');
-        this.$refs.toast.show();
-      }
-    }
   },
   mounted() {
     const container = document.getElementById('qrcode');
@@ -60,6 +51,27 @@ export default {
       foreground: '#000000'
     });
     qr.make(this.adress);
+    this.copyBtn = new this.clipboard(this.$refs.copy);
+  },
+  methods: {
+    CopyUrl() {
+      // let url = document.querySelector('#copyObj');
+      // url.select(); // 选择对象
+      // if(!document.execCommand('Copy')){
+      //   this.textMsg = this.$t('walletInto.subject.gbzc');
+      //   this.$refs.toast.show();
+      // }
+      let _this = this;
+      let clipboard = _this.copyBtn;
+      clipboard.on('success', function() {
+          _this.textMsg = '复制成功';
+          _this.$refs.toast.show();
+      });
+      clipboard.on('error', function() {
+          _this.textMsg = _this.$t('walletInto.subject.gbzc');
+          _this.$refs.toast.show();
+      });
+    }
   },
   components: {
     Toast

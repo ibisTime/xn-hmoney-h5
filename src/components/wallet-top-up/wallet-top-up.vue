@@ -155,14 +155,15 @@ export default {
       cdsMoney: '',
       fmvpTypeData: {},   // 承兑商参数
       zfPic: '',
-      istradepwdFlag: true
+      istradepwdFlag: true,
+      text: ''
     };
   },
   created() {
     this.type = getUrlParam('type');
     this.show = this.type == 'buy' ? true : false;
-    let text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
-    setTitle(text);
+    this.text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
+    setTitle(this.text);
     getAdverMessage('accept_rule').then(data => {
       this.fmvpTypeData = data;
       this.fmvpTypeData.accept_order_max_cny_amount = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
@@ -212,6 +213,9 @@ export default {
       this.pwdFlag();
     }
   },
+  activated() {
+    this.$set(document, 'title', this.text);
+  },
   methods: {
     // 验证资金密码
     pwdFlag(){
@@ -231,9 +235,11 @@ export default {
     },
     toBuy() {
       this.show = true;
+      this.$set(document, 'title', this.$t('common.gm'));
     },
     toSell() {
       this.show = false;
+      this.$set(document, 'title', this.$t('common.cs'));
       this.pwdFlag();
     },
     selBankcar(){

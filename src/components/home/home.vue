@@ -92,6 +92,9 @@
         this.isLoading = false;
       });
     },
+    activated() {
+      this.$set(document, 'title', this.$t('footer.navbar.page'));
+    },
     mounted() {
     },
     computed: {},

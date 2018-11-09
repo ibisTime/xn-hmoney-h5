@@ -48,7 +48,7 @@ export default {
     },
     cate: {
       game: '游戏',
-      xss: '驯兽师',
+      xss: '游戏驯兽师',
       exchange: '二手车兑换',
       otc: '场外交易',
       splendid: '精彩画面，任你游',

@@ -1,27 +1,27 @@
 <template>
   <div class="invite-friends-wrapper" @click.stop>
       <div class='friends icon'>
-          <div class='content'>
-            <div class="pic icon"></div>
-            <div class="yq-box">
-                <p class="yq_p1">{{nickName}}</p>
-                <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
+            <div class='content'>
+                <div class="pic icon"></div>
+                <div class="yq-box">
+                    <p class="yq_p1">{{nickName}}</p>
+                    <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
+                </div>
+                <div class="rq-code">
+                    <div id='qrcode'></div>
+                </div>
+                <div class="qr-txt">
+                    {{$t('myInviteFriends.subject.fuzzs')}}
+                    <span @click="isFz = false;">{{$t('myInviteFriends.subject.fz')}}</span>
+                </div>
             </div>
-            <div class="rq-code">
-                <div id='qrcode'></div>
+            <a id="down" download="邀请好友"></a>
+            <div class='main-btn' @click="saveImgFn">
+                <span class="icon ic_bz"></span>
+                {{$t('myInviteFriends.subject.bzbd')}}
             </div>
-            <div class="qr-txt">
-                {{$t('myInviteFriends.subject.fuzzs')}}
-                <span @click="isFz = false;">{{$t('myInviteFriends.subject.fz')}}</span>
-            </div>
-          </div>
       </div>
-      <a id="down" download="邀请好友"></a>
-      <div class='main-btn' @click="saveImgFn">
-          <span class="icon ic_bz"></span>
-          {{$t('myInviteFriends.subject.bzbd')}}
-      </div>
-      <div class="ress-box" :class="{'hidden': isFz}">
+      <div class="ress-box" v-show="!isFz">
           <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl">
           </textarea>
           <div class="ress-btn" ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj" @click='CopyUrl'>
@@ -54,8 +54,13 @@ export default {
         copyBtn: null
     };
   },
-  mounted() {
+  created() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
+  },
+  activated() {
+    this.$set(document, 'title', this.$t('myInviteFriends.subject.yqhy'));
+  },
+  mounted() {
     getUser().then(data => {
         this.nickName = data.nickname;
         this.isLoading = false;
@@ -93,7 +98,7 @@ export default {
             _this.textMsg = '复制成功';
             _this.$refs.toast.show();
             setTimeout(() => {
-                this.isFz = true;
+                _this.isFz = true;
             }, 1000);
         });
         clipboard.on('error', function() {
@@ -144,9 +149,12 @@ export default {
 
     .friends {
         width: 100%;
+        height: 100%;
         position: relative;
         .content {
             width: 100%;
+            height: calc(100% - 0.98rem);
+            position: relative;
             text-align: center;
             overflow: hidden;
             .logo {
@@ -158,17 +166,17 @@ export default {
                 margin: 0 auto;
                 height: 2.25rem;
                 background-image: url('./logo.png');
-                margin-top: 1.06rem;
-                margin-bottom: 1rem;
+                margin-top: 12%;
+                margin-bottom: 9%;
             }
             .yq-box{
                 color: #fff;
-                margin-bottom: 0.32rem;
+                margin-bottom: 4%;
                 p{
-                    margin-top: 0.22rem;
+                    margin-top: 4%;
                 }
                 .yq_p1{
-                    font-size: 0.32rem;
+                    font-size: 0.42rem;
                 }
                 .yq_p2{
                     font-size: 0.28rem;
@@ -179,7 +187,7 @@ export default {
                 width: 3.6rem;
                 height: 3.6rem;
                 border-radius: 0.12rem;
-                margin-bottom: 0.38rem;
+                margin-bottom: 4.5%;
                 background-color: #fff;
                 padding: 0.28rem;
             }
@@ -201,8 +209,6 @@ export default {
         }
     }
     .main-btn{
-        position: absolute;
-        bottom: 0;
         width: 100%;
         height: 0.98rem;
         line-height: 0.98rem;
@@ -211,7 +217,7 @@ export default {
         text-align: center;
         background-color: #141e68;
         opacity: 0.8;
-        border-bottom: 2px solid #687cfd;
+        border-top: 2px solid #687cfd;
         .ic_bz{
             display: inline-block;
             width: 0.3rem;

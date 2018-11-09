@@ -129,6 +129,9 @@ export default {
       this.isLoading = false;
     });
   },
+  activated() {
+    this.$set(document, 'title', this.$t('mine.subject.grzx'));
+  },
   mounted() {
     this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/  http://up-z0.qiniup.com
     getQiniuToken().then(data => {

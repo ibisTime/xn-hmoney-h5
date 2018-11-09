@@ -65,6 +65,9 @@ export default {
   created() {
     setTitle(this.$t('aboutprivacy.subject.gywm'));
   },
+  activated() {
+    this.$set(document, 'title', this.$t('aboutprivacy.subject.gywm'));
+  },
   methods: {}
 };
 </script>
