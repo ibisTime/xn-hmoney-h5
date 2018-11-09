@@ -2,7 +2,7 @@ import {getSign, getAccountType, getTxAppCode, getUserId, clearUser, goLogin, is
 import {addMsg, setProfilePortrait, getProfilePortrait} from 'common/js/message';
 import {getTencentParamsAPi, getUser} from 'api/user';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_GROUP_LIST} from 'store/mutation-types';
+import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_NEW_MSG, SET_GROUP_LIST} from 'store/mutation-types';
 import Message from 'base/message/message';
 
 const message = new Message();
@@ -14,6 +14,7 @@ export const messageMixin = {
       'userMap',
       'user',
       'unreadMsgNum',
+      'newMsg',
       'tencentLogined',
       'groupList'
     ])
@@ -45,7 +46,6 @@ export const messageMixin = {
     },
     // 监听新消息
     onMsgNotify(newMsgList) {
-      // debugger;
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
         let selSess = null;
@@ -96,8 +96,7 @@ export const messageMixin = {
             }
           }
         }
-
-        console.log(selSess);
+        this.setNewMsg(true);
         webim.setAutoRead(selSess, true, true);
 
 		  // 不是订单聊天界面 unreadMsgNum +1
@@ -149,9 +148,9 @@ export const messageMixin = {
     },
     // 判断是否在聊天界面
     isMessageWindow() {
-      let flag = true;
-      if (isUnDefined(this.$route.path.split('/messageCart')[1])) {
-        flag = false;
+      let flag = false;
+      if (this.$route.path.indexOf('/messageCart') > -1) {
+        flag = true;
       }
       return flag;
     },
@@ -210,6 +209,7 @@ export const messageMixin = {
       setTencentLogined: SET_TENCENT_LOGINED,
       setUser: SET_USER_STATE,
       setUnreadMsgNum: SET_UNREAD_MSG_NUM,
+      setNewMsg: SET_NEW_MSG,
       setGourpList: SET_GROUP_LIST
     }),
     ...mapActions([

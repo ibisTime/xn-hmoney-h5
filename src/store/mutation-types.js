@@ -60,5 +60,7 @@ export const SET_TENCENT_LOGINED = 'SET_TENCENT_LOGINED';
 export const SET_USER_MAP = 'SET_USER_MAP';
 // 设置新消息数
 export const SET_UNREAD_MSG_NUM = 'SET_UNREAD_MSG_NUM';
+// 聊天界面 是否有新消息
+export const SET_NEW_MSG = 'SET_NEW_MSG';
 // 设置订单消息数列表
 export const SET_GROUP_LIST = 'SET_GROUP_LIST';

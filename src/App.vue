@@ -120,6 +120,13 @@
       this.$refs.touchDemo.style.bottom = '1rem';
       this.$refs.touchDemo.style.left = '';
       this.$refs.touchDemo.style.top = '';
+
+      if (this.isMessageWindow()) {
+        this.showFlag = false;
+      } else {
+        this.showFlag = true;
+      }
+
       if (isLogin()) {
         this.goTencentLogin();
       }
@@ -128,6 +135,14 @@
       Toast
     },
     methods: {
+      // 判断是否在聊天界面
+      isMessageWindow() {
+        let flag = false;
+        if (this.$route.path.indexOf('/messageCart') > -1) {
+          flag = true;
+        }
+        return flag;
+      },
       // 实现 发布 拖动
       fbTouchStartFn(){
         this.touchDemo = this.$refs.touchDemo;
