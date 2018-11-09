@@ -15,7 +15,6 @@
             <div class="qr-txt">
                 {{$t('myInviteFriends.subject.bzbd')}}
             </div>
-            <!-- <a id="down" download="邀请好友"></a> -->
             <div class='main-btn' @click.stop="isFz = false;">
                 {{$t('myInviteFriends.subject.fuzzs')}}
             </div>
@@ -40,7 +39,6 @@ import {getUser} from 'api/user';
 import html2canvas from 'html2canvas';
 
 export default {
-  name: 'test-keep-alive',
   data() {
     return {
         nickName: '',
@@ -55,10 +53,6 @@ export default {
   },
   created() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
-    this.userId = getUserId();
-  },
-  activated() {
-    this.$set(document, 'title', this.$t('myInviteFriends.subject.yqhy'));
     this.userId = getUserId();
   },
   mounted() {
@@ -159,6 +153,12 @@ export default {
             position: relative;
             text-align: center;
             overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             .logo {
                 width: 1.1rem;
                 height: .48rem;
@@ -168,8 +168,8 @@ export default {
                 margin: 0 auto;
                 height: 2.25rem;
                 background-image: url('./logo.png');
-                margin-top: 12%;
-                margin-bottom: 9%;
+                margin-top: 11%;
+                margin-bottom: 8%;
             }
             .yq-box{
                 color: #fff;
@@ -205,7 +205,7 @@ export default {
         }
         .qr-txt{
             position: absolute;
-            bottom: 1.98rem;
+            bottom: 2rem;
             z-index: 99;
             width: 100%;
             text-align: center;
