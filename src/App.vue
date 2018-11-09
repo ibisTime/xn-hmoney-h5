@@ -93,6 +93,7 @@
         }
 
         if (isLogin()) {
+          this.tencentLogin();
           next();
         } else {
           if (to.path == '/' ||
@@ -120,9 +121,6 @@
       this.$refs.touchDemo.style.bottom = '1rem';
       this.$refs.touchDemo.style.left = '';
       this.$refs.touchDemo.style.top = '';
-      if (isLogin()) {
-        this.goTencentLogin();
-      }
     },
     components: {
       Toast
@@ -180,10 +178,6 @@
       },
       fbTouchEndFn(){
         this.flags = false;
-      },
-      // 腾讯云登陆
-      goTencentLogin() {
-        this.tencentLogin();
       },
       toBuy(){
         this.$router.push('wallet-top-up?type=buy');

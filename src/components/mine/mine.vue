@@ -43,7 +43,7 @@
         <router-link to="my-order" class="item item-4" @click.native="toOrderFn">
             <i></i>
             <span class="txt">{{$t('mine.subject.wddd')}}</span>
-            <span class='icon' v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</span>
+          <span class='icon'><samp v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp></span>
         </router-link>
       </div>
 
