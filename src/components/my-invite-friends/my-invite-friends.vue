@@ -16,14 +16,15 @@
             </div>
           </div>
       </div>
-      <div class='main-btn'>
+      <a id="down" download="邀请好友"></a>
+      <div class='main-btn' @click="saveImgFn">
           <span class="icon ic_bz"></span>
           {{$t('myInviteFriends.subject.bzbd')}}
       </div>
       <div class="ress-box" :class="{'hidden': isFz}">
           <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl">
           </textarea>
-          <div class="ress-btn" @click='CopyUrl'>
+          <div class="ress-btn" ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj" @click='CopyUrl'>
               复制
           </div>
       </div>
@@ -37,6 +38,7 @@ import {getUserId, setTitle} from 'common/js/util';
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
 import {getUser} from 'api/user';
+import html2canvas from 'html2canvas';
 
 export default {
   name: 'test-keep-alive',
@@ -47,7 +49,9 @@ export default {
         wxUrl: '',
         userId: '',
         isFz: true,
-        textMsg: ''
+        textMsg: '',
+        container: '',
+        copyBtn: null
     };
   },
   mounted() {
@@ -60,28 +64,50 @@ export default {
     });
     this.userId = getUserId();
     this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
-    const container = document.getElementById('qrcode');
-    const qr = new QRCode(container, {
+    this.container = document.getElementById('qrcode');
+    const qr = new QRCode(this.container, {
       typeNumber: -1,
       correctLevel: 2,
       foreground: '#000000'
     });
     qr.make(this.wxUrl);
+    this.copyBtn = new this.clipboard(this.$refs.copy);
   },
   methods: {
     CopyUrl() {
-        let url = document.querySelector('#copyObj');
-        url.select(); // 选择对象
-        if(!document.execCommand('Copy')){
-            this.textMsg = this.$t('walletInto.subject.gbzc');
-            this.$refs.toast.show();
-        }else{
-            this.textMsg = '复制成功';
-            this.$refs.toast.show();
+        // let url = document.querySelector('#copyObj');
+        // url.select(); // 选择对象
+        // if(!document.execCommand('Copy')){
+        //     this.textMsg = this.$t('walletInto.subject.gbzc');
+        //     this.$refs.toast.show();
+        // }else{
+        //     this.textMsg = '复制成功';
+        //     this.$refs.toast.show();
+        //     setTimeout(() => {
+        //         this.isFz = true;
+        //     }, 1000);
+        // }
+        let _this = this;
+        let clipboard = _this.copyBtn;
+        clipboard.on('success', function() {
+            _this.textMsg = '复制成功';
+            _this.$refs.toast.show();
             setTimeout(() => {
                 this.isFz = true;
             }, 1000);
-        }
+        });
+        clipboard.on('error', function() {
+            _this.textMsg = _this.$t('walletInto.subject.gbzc');
+            _this.$refs.toast.show();
+        });
+    },
+    saveImgFn(){
+        html2canvas(this.container).then((canvas) => {
+            let down = document.getElementById('down');
+            var url = canvas.toDataURL('image/png');
+            down.setAttribute('href', url);
+            down.click();
+        });
     }
   },
   components: {

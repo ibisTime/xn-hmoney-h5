@@ -46,7 +46,7 @@ import Toast from 'base/toast/toast';
                     this.$refs.toast.show();
                     return;
                 }
-                getUser(getUserId()).then(res => {
+                getUser(getUserId()).then(res => {console.log(res)
                     if (res.tradepwdFlag) {
                         this.config.count = formatMoneyMultiply(this.count, '', 'FMVP');
                         rechargeGram(this.config).then(data => {
@@ -65,8 +65,8 @@ import Toast from 'base/toast/toast';
                         this.textMsg = '请先设置资金密码';
                         this.$refs.toast.show();
                         setTimeout(function () {
-                            this.$router.push('security-tradePassword?istw=0');
-                        }, 1800)
+                            this.$router.push('/security-tradePassword?istw=0');
+                        }, 1500)
                     } 
                 });
             }
