@@ -16,8 +16,8 @@
     <div class="foot">
       <button @click="bindEmail">{{$t('bindEmail.subject.qd')}}</button>
     </div>
-    
-  <FullLoading ref="fullLoading" v-show="isLoading"/> 
+
+  <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -121,6 +121,7 @@ export default {
       line-height: 1.1rem;
       margin-bottom: .1rem;
       border-bottom: .01rem solid #e3e3e3;
+      position: relative;
     }
     input {
       height: 1rem;
@@ -164,7 +165,7 @@ export default {
         background: #ccc;
         font-size: .22rem;
         text-align: center;
-        color: #fff;       
+        color: #fff;
       }
       .icon {
           width: .34rem;
@@ -173,10 +174,14 @@ export default {
           margin-top: .29rem;
           margin-right: -.2rem;
       }
-    } 
+    }
     .error-tip{
       color: #d53d3d;
       font-size: 0.28rem;
+      position: absolute;
+      right: 0.1rem;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 

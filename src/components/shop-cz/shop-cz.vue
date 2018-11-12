@@ -3,7 +3,7 @@
         <div class="cz-box">
             <p>充值FMVP</p>
             <div class="cz-iup"><input type="number" v-model="count" placeholder="请输入充值数量"></div>
-            <div class="cz-iup"><input type="password" v-model="config.tradePwd" placeholder="请输入交易密码"></div>
+            <!--<div class="cz-iup"><input type="password" v-model="config.tradePwd" placeholder="请输入交易密码"></div>-->
         </div>
         <div class="qr-box" @click="qrczFn">
             确定
@@ -24,8 +24,8 @@ import Toast from 'base/toast/toast';
             return {
                 config: {
                     userId: getUserId(),
-                    count: '',
-                    tradePwd: ''
+                    count: ''
+                    // tradePwd: ''
                 },
                 count: '',
                 textMsg: '',
@@ -41,34 +41,37 @@ import Toast from 'base/toast/toast';
                     this.textMsg = '充值数量不能为空';
                     this.$refs.toast.show();
                     return;
-                }else if(this.config.tradePwd == ''){
-                    this.textMsg = '请输入交易密码';
-                    this.$refs.toast.show();
-                    return;
+                // }else if(this.config.tradePwd == ''){
+                //     this.textMsg = '请输入交易密码';
+                //     this.$refs.toast.show();
+                //     return;
                 }
-                getUser(getUserId()).then(res => {console.log(res)
-                    if (res.tradepwdFlag) {
+                // getUser(getUserId()).then(res => {console.log(res)
+                //     if (res.tradepwdFlag) {
+                        this.isLoading = true;
                         this.config.count = formatMoneyMultiply(this.count, '', 'FMVP');
                         rechargeGram(this.config).then(data => {
                             if(data.code){
-                                this.textMsg = '充值成功';
+                              this.isLoading = false;
+                              this.textMsg = '充值成功';
                                 this.$refs.toast.show();
                                 setTimeout(() => {
                                     this.$router.push('/shop');
                                 }, 1500);
                             }
                         }, () => {
-                            this.count = '';
-                            this.config.tradePwd = '';
+                          this.isLoading = false;
+                          this.count = '';
+                            // this.config.tradePwd = '';
                         });
-                    } else{
-                        this.textMsg = '请先设置资金密码';
-                        this.$refs.toast.show();
-                        setTimeout(function () {
-                            this.$router.push('/security-tradePassword?istw=0');
-                        }, 1500)
-                    } 
-                });
+                //     } else{
+                //         this.textMsg = '请先设置资金密码';
+                //         this.$refs.toast.show();
+                //         setTimeout(function () {
+                //             this.$router.push('/security-tradePassword?istw=0');
+                //         }, 1500)
+                //     }
+                // });
             }
         },
         components: {
