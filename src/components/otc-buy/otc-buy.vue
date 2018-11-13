@@ -211,7 +211,7 @@ export default {
       this.config.count = formatMoneyMultiply(this.Enum, '', this.data.tradeCoin);
       this.config.tradeAmount = this.Cnum.toString();
     },
-    // 资金密码弹框、出售
+    // 交易密码弹框、出售
     qrMoney(){
       this.showBuy = true;
       this.show = false;

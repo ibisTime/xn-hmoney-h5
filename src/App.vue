@@ -116,10 +116,12 @@
       });
     },
     mounted() {
-      this.$refs.touchDemo.style.right = '0.5rem';
-      this.$refs.touchDemo.style.bottom = '1rem';
-      this.$refs.touchDemo.style.left = '';
-      this.$refs.touchDemo.style.top = '';
+      if (this.$refs.touchDemo) {
+        this.$refs.touchDemo.style.right = '0.5rem';
+        this.$refs.touchDemo.style.bottom = '1rem';
+        this.$refs.touchDemo.style.left = '';
+        this.$refs.touchDemo.style.top = '';
+      }
     },
     components: {
       Toast

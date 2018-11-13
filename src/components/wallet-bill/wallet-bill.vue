@@ -5,7 +5,7 @@
       <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
         <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
         </select>
-      <Scroll 
+      <Scroll
         ref="scroll"
         :data="list"
         :hasMore="hasMore"
@@ -41,7 +41,7 @@
       </p> -->
 
     </div>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -69,26 +69,34 @@ export default {
           key: ['withdraw'],
           value: this.$t('walletBill.subject.tb')
         },{
-          key: ['ccorder_buy', 'bborder_buy'],
+          key: ['ccorder_buy', 'bborder_buy', 'accept_buy'],
           value: this.$t('walletBill.subject.jymr')
         },{
-          key: ['ccorder_sell', 'bborder_sell'],
+          key: ['ccorder_sell', 'bborder_sell', 'accept_sell'],
           value: this.$t('walletBill.subject.jymc')
         },{
-          key: ['accept_buy'],
-          value: '场外承兑商购买'
+          key: ['ccorder_fee', 'bborder_fee', 'withdraw_fee'],
+          value: '手续费'
         },{
-          key: ['accept_sell'],
-          value: '场外承兑商出售'
+          key: ['game_in'],
+          value: '游戏转入'
         },{
-          key: ['ccorder_fee', 'bborder_fee'],
-          value: this.$t('walletBill.subject.jysxf')
+          key: ['game_out'],
+          value: '游戏转出'
         },{
-          key: ['withdraw_fee'],
-          value: this.$t('walletBill.subject.txsxf')
-        },{
-          key: ['ccorder_frozen', 'bborder_frozen'],
-          value: this.$t('walletBill.subject.txsxf')
+          key: [
+            'ccorder_frozen',
+            'ccorder_unfrozen_revoke',
+            'ccorder_unfrozen_trade',
+            'bborder_frozen',
+            'bborder_unfrozen_revoke',
+            'bborder_unfrozen_trade',
+            'withdraw_frozen',
+            'withdraw_unfrozen',
+            'accept_frozen',
+            'accept_unfrozen'
+          ],
+          value: '冻结解冻'
         }
       ],
       code: '12345',
@@ -160,7 +168,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   overflow: auto;
-  
+
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -249,7 +257,7 @@ export default {
         .collect {
           display: flex;
           justify-content: space-between;
-         
+
           .txt1 {
             font-size: .28rem;
             font-weight: bold;
@@ -296,7 +304,6 @@ export default {
   .list-wrap{
     position: relative;
     height: 13rem;
-    padding-bottom: 2rem;
     overflow: scroll;
     .wallet-p{
       position: absolute;

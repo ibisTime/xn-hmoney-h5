@@ -22,10 +22,13 @@
             <span class='txt1'>{{$t('walletBuy.subject.dj')}}：<i class='txt2'>￥</i></span>
             <span class='txt3'>{{cnyMon}}</span>
         </p>
+        <p class='text3'>
+          <span class='txt1'>{{$t('walletBuy.subject.dbxz')}}：{{showData.minMoney}} - {{showData.maxMoney}} CNY</span>
+        </p>
         <!-- <i class='icon'></i> -->
     </div>
 
-    <div class='main'> 
+    <div class='main'>
         <!-- 买入显示内容 -->
         <div v-show='show' class='area'>
             <p class='tab'>
@@ -46,11 +49,11 @@
         <div v-show="!show" class='area'>
             <p class='tab'>
                 <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
-                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell(sell)'>{{$t('common.sl')}}</span>
                 <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.csje') : $t('walletBuy.subject.cssl')" v-model="sellMonNumber">
+                <input type="text" :placeholder="sellInputPlaceholder(showDet)" v-model="sellMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
@@ -59,7 +62,7 @@
             </p>
         </div>
         <!-- 去购买 -->
-        <div class='pay' v-show="show">  
+        <div class='pay' v-show="show">
             <p>
               <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
@@ -117,7 +120,7 @@
       </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -160,7 +163,7 @@ export default {
         receiveCardNo: '',
         receiveType: this.$t('common.zfb'),
         tradeAmount: '',
-        tradePwd: ''       // 资金密码
+        tradePwd: ''       // 交易密码
       },
       zfType: {},      // 去购买支付方式
       zfNumber: {},
@@ -177,6 +180,10 @@ export default {
         userId: getUserId(),
         code: ''
       },
+      showData: {
+        minMoney: 0,
+        maxMoney: 0,
+      }
     };
   },
   created() {
@@ -186,6 +193,9 @@ export default {
     setTitle(this.text);
     getAdverMessage('accept_rule').then(data => {
       this.fmvpTypeData = data;
+      this.showData.minMoney = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
+      this.showData.maxMoney = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
+
       this.fmvpTypeData.accept_order_max_cny_amount = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
       this.fmvpTypeData.accept_order_max_usd_amount = parseFloat(this.fmvpTypeData.accept_order_max_usd_amount);
       this.fmvpTypeData.accept_order_min_cny_amount = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
@@ -237,7 +247,7 @@ export default {
     this.$set(document, 'title', this.text);
   },
   methods: {
-    // 验证资金密码
+    // 验证交易密码
     pwdFlag(){
       getUser().then(data => {
         if(!data.tradepwdFlag){
@@ -250,7 +260,7 @@ export default {
     buy() {
       this.showDet = true;
     },
-    sell() {
+    sell(type) {
       this.showDet = false;
     },
     toBuy() {
@@ -379,6 +389,15 @@ export default {
       setTimeout(() => {
         this.$router.push('wallect-orderRecord');
       }, 1000);
+    },
+    // 出售输入框提示
+    sellInputPlaceholder(showDet) {
+      let min = ',' + this.$t('walletBuy.subject.zded') + this.showData.minMoney + 'CNY';
+      if(showDet) {
+        return this.$t('walletBuy.subject.csje')  + min;
+      } else {
+        return this.$t('walletBuy.subject.cssl')  + min;
+      }
     }
   },
   components: {
@@ -477,7 +496,6 @@ export default {
     }
 
     .text2 {
-      padding-bottom: 0.58rem;
 
       .txt1 {
         font-size: 0.24rem;
@@ -494,6 +512,14 @@ export default {
         font-size: 0.48rem;
         font-weight: bold;
         line-height: 0.67rem;
+      }
+    }
+    .text3 {
+      padding-bottom: 0.5rem;
+      .txt1 {
+        font-size: 0.24rem;
+        line-height: 0.33rem;
+        color: #999;
       }
     }
 
@@ -535,7 +561,7 @@ export default {
                 color: #151515;
                 margin: 0 .1rem;
             }
-            
+
         }
         .active {
           color: #d53d3d;

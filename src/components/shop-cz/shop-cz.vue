@@ -65,7 +65,7 @@ import Toast from 'base/toast/toast';
                             // this.config.tradePwd = '';
                         });
                 //     } else{
-                //         this.textMsg = '请先设置资金密码';
+                //         this.textMsg = '请先设置交易密码';
                 //         this.$refs.toast.show();
                 //         setTimeout(function () {
                 //             this.$router.push('/security-tradePassword?istw=0');

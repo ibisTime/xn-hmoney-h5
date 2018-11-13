@@ -16,7 +16,7 @@ export default {
   // 公共文字
   common: {
     zwgg: '暂无广告',
-    szzjmm: '请设置资金密码',
+    szzjmm: '请设置交易密码',
     jzz: '加载中',
     jzwb: '已经全部加载完毕',
     czcg: '操作成功',
@@ -173,14 +173,14 @@ export default {
       srsz: '请输入数字',
       srsi: '请输入数值',
       xldf: '联系对方',
-      zjmm: '资金密码',
-      qsrzj: '请输入资金密码',
+      zjmm: '交易密码',
+      qsrzj: '请输入交易密码',
       xdqr: '下单确定',
       xdtxt: '提醒：请确认价格再下单，下单后此交易的',
       xdtxw: '将冻结锁定，请放心',
       fq: '放弃',
       qr: '确认',
-      qszjmm: '请输入资金密码',
+      qszjmm: '请输入交易密码',
       ddtjcg: '订单提交成功',
       gmslje: '请输入购买数量与购买金额',
       ddtjcg: '订单提交成功',
@@ -271,7 +271,7 @@ export default {
       ddjl: '订单记录',
       wdzc: '我的资产',
       xyzsf: '请先进行身份验证',
-      szjymm: '请先设置资金密码',
+      szjymm: '请先设置交易密码',
     }
   },
   // 转入
@@ -299,8 +299,8 @@ export default {
       qsrzzdz: '请输入转币地址',
       zzsl: '转账数量',
       qsrsl: '请输入转币数量',
-      zjmm: '资金密码',
-      qsrzjmm: '请输入资金密码',
+      zjmm: '交易密码',
+      qsrzjmm: '请输入交易密码',
       txsm: '提现说明',
       qsrsm: '请输入提现说明',
       kgf: '矿工费率',
@@ -353,15 +353,17 @@ export default {
       bzxx: '付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。',
       qxz: '请选择',
       zhhkh: '请输入账号或卡号',
-      zjmm: '资金密码',
-      qszjmm: '请输入资金密码',
+      zjmm: '交易密码',
+      qszjmm: '请输入交易密码',
       qrgm: '确认购买',
       qrcs: '确认出售',
       dksm: '请填写打款说明',
       jeyzzj: '金额应在1与2之间',
       jeyz: '金额应在',
       y: '与',
-      zj: '之间'
+      zj: '之间',
+      dbxz: '单笔限制',
+      zded: '最低额度'
     }
   },
   // 订单记录
@@ -501,7 +503,7 @@ export default {
   // 安全中心
   securityCenter: {
     subject: {
-      jymm: '资金密码',
+      jymm: '交易密码',
       sfrz: '身份认证',
       ggrz: '谷歌认证',
       ykq: '已开启',
@@ -514,7 +516,7 @@ export default {
       aqzx: '安全中心'
     }
   },
-  // 修改资金密码
+  // 修改交易密码
   securityTradePassword: {
     subject: {
       zg: '中国',
@@ -524,8 +526,8 @@ export default {
       mmjw: '密码6位-16位',
       qrmm: '确认密码',
       qd: '确 定',
-      xgjymm: '修改资金密码',
-      szjymm: '设置资金密码',
+      xgjymm: '修改交易密码',
+      szjymm: '设置交易密码',
       txwz: '请填写完整',
       mmbyz: '密码不一致，请重新输入',
       czcg: '重置密码成功',
