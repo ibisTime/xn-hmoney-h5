@@ -198,7 +198,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.32rem 0;
+    padding: 0.32rem 0 0.4rem;
     font-size: 0;
 
     .before-trigger {

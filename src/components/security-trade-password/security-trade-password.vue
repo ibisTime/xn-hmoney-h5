@@ -22,7 +22,7 @@
     <div class="foot">
       <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
     </div>
-   
+
   <Toast :text="textMsg" ref="toast" />
   <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
@@ -197,6 +197,7 @@ export default {
       line-height: 1.1rem;
       margin-bottom: .1rem;
       border-bottom: .01rem solid #e3e3e3;
+      position: relative;
     }
     input {
       height: 1rem;
@@ -240,7 +241,7 @@ export default {
         background: #ccc;
         font-size: .22rem;
         text-align: center;
-        color: #fff;       
+        color: #fff;
       }
       .icon {
           width: .34rem;
@@ -249,7 +250,7 @@ export default {
           margin-top: .29rem;
           margin-right: -.2rem;
       }
-    } 
+    }
   }
 
   .foot {
@@ -269,6 +270,10 @@ export default {
   .error-tip{
     color: #d53d3d;
     font-size: 0.26rem;
+    position: absolute;
+    right: 0.1rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
 

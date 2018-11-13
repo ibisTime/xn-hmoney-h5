@@ -296,6 +296,7 @@ export default {
   }
   .adver{
       height: 12rem;
+      padding-bottom: 2rem;
       overflow: scroll;
   }
 

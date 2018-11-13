@@ -1,7 +1,7 @@
 <template>
   <div class="otcbuy-wrapper" @click.stop>
       <!-- <header>
-        <i class='icon'></i><span class='title'>购买</span> 
+        <i class='icon'></i><span class='title'>购买</span>
       </header> -->
       <div class='header'>
         <div class='person'>
@@ -101,7 +101,7 @@
 </template>
 <script>
 import { formatAmount, setTitle, getUrlParam, formatMoneySubtract, formatMoneyMultiply, getAvatar, getPercentum } from 'common/js/util';
-import { otcBuy, buyETH, sellBB, chatOrderBuy } from "api/otc";
+import { otcBuy, buyETH, sellBB, chatOrderBuy, chatOrderSell } from "api/otc";
 import {getUser} from 'api/person';
 import { getSysConfig } from "api/general";
 import { wallet } from "api/person";
@@ -178,18 +178,27 @@ export default {
     })
   },
   methods: {
-    // 购买开始聊天，提交交易订单
+    // 开始聊天，提交交易订单
     getChatOrderBuy() {
       this.isLoading = true;
-      chatOrderBuy(this.config.adsCode).then(data => {
-        this.isLoading = false;
-        this.goChat(data.code);
-      }).catch(() => {
-        this.isLoading = false
-      });
+      if(this.type == '0'){
+        chatOrderSell(this.config.adsCode).then(data => {
+          this.isLoading = false;
+          this.goChat(data.code);
+        }).catch(() => {
+          this.isLoading = false
+        });
+      }else{
+        chatOrderBuy(this.config.adsCode).then(data => {
+          this.isLoading = false;
+          this.goChat(data.code);
+        }).catch(() => {
+          this.isLoading = false
+        });
+      }
     },
     goChat(orderCode) {
-      this.$router.push(`/message/${orderCode}`);
+      this.$router.push(`/messageCart?code=${orderCode}`);
     },
     getPercentum(num1, num2){
       return getPercentum(num1, num2);
@@ -202,7 +211,7 @@ export default {
       this.config.count = formatMoneyMultiply(this.Enum, '', this.data.tradeCoin);
       this.config.tradeAmount = this.Cnum.toString();
     },
-    // 资金密码弹框、出售
+    // 交易密码弹框、出售
     qrMoney(){
       this.showBuy = true;
       this.show = false;
@@ -273,10 +282,30 @@ export default {
       });
     },
     changeEnum() {
-      this.Enum = this.Cnum / this.rate;
+      this.Enum = (Math.floor((this.Cnum / this.rate) * 1e8) / 1e8).toFixed(8);
+      let numLeft = this.Cnum.split('.')[0];
+      let numRight = this.Cnum.split('.')[1];
+      if(numRight){
+        if(numRight.length > 2){
+          this.textMsg = this.$t('trading.bbDepth.xsldy');
+          this.$refs.toast.show();
+          numRight = numRight.substring(0, 2);
+          this.Cnum = numLeft + '.' + numRight;
+        }
+      }
     },
     changeCnum() {
-      this.Cnum = this.Enum * this.rate;
+      this.Cnum = ((Math.floor(this.Enum * this.rate * 100)) / 100).toFixed(2);
+      let numLeft = this.Enum.split('.')[0];
+      let numRight = this.Enum.split('.')[1];
+      if(numRight){
+        if(numRight.length > 8){
+          this.textMsg = this.$t('trading.bbDepth.xsbdy');
+          this.$refs.toast.show();
+          numRight = numRight.substring(0, 8);
+          this.Enum = numLeft + '.' + numRight;
+        }
+      }
     },
     // 确认购买
     qrBuy(){
@@ -358,7 +387,7 @@ export default {
       display: flex;
       width: 100%;
       padding: 0 .3rem;
-      
+
       .pic {
         width: 0.96rem;
         height: 0.96rem;
@@ -516,7 +545,7 @@ export default {
             background-image: url('./z_h.png');
             margin-right: .1rem;
             vertical-align: middle;
-           
+
           }
 
           input {
@@ -698,7 +727,7 @@ export default {
         }
       }
   }
-  
+
 
 }
 </style>

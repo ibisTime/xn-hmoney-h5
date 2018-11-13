@@ -2,7 +2,7 @@ import {getSign, getAccountType, getTxAppCode, getUserId, clearUser, goLogin, is
 import {addMsg, setProfilePortrait, getProfilePortrait} from 'common/js/message';
 import {getTencentParamsAPi, getUser} from 'api/user';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM} from 'store/mutation-types';
+import {SET_TENCENT_LOGINED, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_NEW_MSG, SET_GROUP_LIST} from 'store/mutation-types';
 import Message from 'base/message/message';
 
 const message = new Message();
@@ -14,7 +14,9 @@ export const messageMixin = {
       'userMap',
       'user',
       'unreadMsgNum',
-      'tencentLogined'
+      'newMsg',
+      'tencentLogined',
+      'groupList'
     ])
   },
   methods: {
@@ -44,11 +46,9 @@ export const messageMixin = {
     },
     // 监听新消息
     onMsgNotify(newMsgList) {
-      // debugger;
-      console.log(newMsgList);
       // 判断是否在订单聊天界面
 		  if (this.isMessageWindow()) {
-        let selSess;
+        let selSess = null;
         for (let j in newMsgList) {
           let newMsg = newMsgList[j];
           // 判断是自己 不用添加消息
@@ -96,11 +96,12 @@ export const messageMixin = {
             }
           }
         }
+        this.setNewMsg(true);
         webim.setAutoRead(selSess, true, true);
 
 		  // 不是订单聊天界面 unreadMsgNum +1
       } else {
-        this.setUnreadMsgNum(this.unreadMsgNum + 1);
+		    this.setUnreadMsgNum(this.unreadMsgNum + 1);
       }
     },
     // 被其他登录实例踢下线
@@ -130,21 +131,26 @@ export const messageMixin = {
             return;
           }
           let unreadMsgNum = 0;
+          let groupList = {};
           for (let i = 0; i < resp.GroupIdList.length; i++) {
             unreadMsgNum += resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
+            groupList[resp.GroupIdList[i].GroupId] = resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
           }
+          // 保存未读消息数
           self.setUnreadMsgNum(unreadMsgNum);
+          // 保存订单的未读消息数
+          self.setGourpList(groupList);
         },
         function (err) {
-          alert(err.ErrorInfo);
+          console.log(err.ErrorInfo);
         }
       );
     },
     // 判断是否在聊天界面
     isMessageWindow() {
-      let flag = true;
-      if (isUnDefined(this.$route.path.split('/message/')[1]) || isUnDefined(this.$route.path.split('/order-details')[1])) {
-        flag = false;
+      let flag = false;
+      if (this.$route.path.indexOf('/messageCart') > -1) {
+        flag = true;
       }
       return flag;
     },
@@ -179,7 +185,8 @@ export const messageMixin = {
         'isLogOn': false
       };
       let self = this;
-      if (!this.tencentLogined) {
+      let flag = this.tencentLogined;
+      if (!flag) {
         webim.login(loginInfo, listeners, options, function () {
           getUser().then((data) => {
             self.setUser(data);
@@ -189,19 +196,21 @@ export const messageMixin = {
             setProfilePortrait({gender, nickname, photo});
           });
           self.getMyGroup(loginInfo);
-          self.setTententLogined(true);
-          self.onMsgNotify();
+          self.setTencentLogined(true);
         }, function () {
-          self.setTententLogined(false);
+          self.setTencentLogined(false);
+          this.login(loginInfo);
         });
-      } else if(this.tencentLogined && this.isMessageWindow()) {
+      } else if(flag) {
         self.getMyGroup(loginInfo);
       }
     },
     ...mapMutations({
-      setTententLogined: SET_TENCENT_LOGINED,
+      setTencentLogined: SET_TENCENT_LOGINED,
       setUser: SET_USER_STATE,
-      setUnreadMsgNum: SET_UNREAD_MSG_NUM
+      setUnreadMsgNum: SET_UNREAD_MSG_NUM,
+      setNewMsg: SET_NEW_MSG,
+      setGourpList: SET_GROUP_LIST
     }),
     ...mapActions([
       'saveChatHistory',

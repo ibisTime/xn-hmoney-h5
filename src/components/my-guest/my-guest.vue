@@ -177,6 +177,7 @@ export default {
   .main {
     width: 100%;
     height: 12rem;
+    padding-bottom: 2rem;
     overflow: scroll;
     background: #fff;
     .list-wrap {

@@ -1,7 +1,7 @@
 <template>
   <div class="list-wrapper" >
     <scroll :data="list" :hasMore="hasMore">
-      <div v-for="item in list" class="list-item" @click ="goChat(item.userId)" >
+      <div v-for="(item, index) in list" class="list-item" @click ="goChat(item.userId)" :key="index">
         <div class="headPic">
           <img :src="item.icon"/>
         </div>

@@ -57,12 +57,16 @@
 <script>
 import { setTitle } from "common/js/util";
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
     };
   },
   created() {
     setTitle(this.$t('aboutprivacy.subject.gywm'));
+  },
+  activated() {
+    this.$set(document, 'title', this.$t('aboutprivacy.subject.gywm'));
   },
   methods: {}
 };

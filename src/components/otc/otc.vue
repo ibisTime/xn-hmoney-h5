@@ -35,13 +35,13 @@
             </p>
         </div>
       </div>
-      <div class="slider-wrapper">
-        <slider v-if="banners.length">
+      <!-- <div class="slider-wrapper">
+        <slider v-if="banners.length" :dots="banners">
           <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
           </div>
         </slider>
-      </div>
-      <!-- 买币、卖币 -->
+      </div> -->
+      <!-- 买币 -->
       <div class='main'>
         <Scroll 
           ref="scroll"
@@ -183,8 +183,8 @@ export default {
       this.flag1 = false;
       this.flag2 = true;
     }
-    let coin = sessionStorage.getItem('coin') || 'ETH';
-    this.config.coin = coin != 'undefined' ? coin : 'ETH';
+    let coin = sessionStorage.getItem('coin') || this.bbList[0];
+    this.config.coin = coin != 'undefined' ? coin : this.bbList[0];
     this.getBBListData();
   },
   computed: {
@@ -272,6 +272,8 @@ export default {
     },
     getImgSyl(imgs) {
       return {
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
         backgroundImage: `url(${formatImg(imgs)})`
       };
     },
@@ -423,7 +425,7 @@ export default {
 @import "~common/scss/variable";
 
 .otc-wrapper {
-  font-family: 'PingFangSC-Medium';
+  font-family: PingFangSC-Medium;
   font-size: .3rem;
   color: #333;
   height: 100%;
@@ -442,7 +444,7 @@ export default {
 
     select {
       font-weight: bold;
-      
+      font-size: 0.32rem;
       .sicon {
         display: inline-block;
         width: .23rem;
@@ -570,7 +572,7 @@ export default {
 
   .main {
     height: 7rem;
-    padding-bottom: 0.2rem;
+    padding-bottom: 0.6rem;
     overflow: scroll;
     .content {
       width: 92%;
@@ -763,7 +765,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("叉");
+    background-image: url('./cha.png');
     position: absolute;
     bottom: .6rem;
     left: 50%;

@@ -5,7 +5,7 @@
       <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
         <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
         </select>
-      <Scroll 
+      <Scroll
         ref="scroll"
         :data="list"
         :hasMore="hasMore"
@@ -41,7 +41,7 @@
       </p> -->
 
     </div>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -60,26 +60,43 @@ export default {
       list: [],
       watlleType: [
         {
-          key: '',
+          key: [],
           value: this.$t('walletBill.subject.qb')
         },{
-          key: 'charge',
+          key: ['charge'],
           value: this.$t('walletBill.subject.cb')
         },{
-          key: 'withdraw',
+          key: ['withdraw'],
           value: this.$t('walletBill.subject.tb')
         },{
-          key: 'ccorder_buy',
+          key: ['ccorder_buy', 'bborder_buy', 'accept_buy'],
           value: this.$t('walletBill.subject.jymr')
         },{
-          key:'ccorder_sell',
+          key: ['ccorder_sell', 'bborder_sell', 'accept_sell'],
           value: this.$t('walletBill.subject.jymc')
         },{
-          key: 'ccorder_fee',
-          value: this.$t('walletBill.subject.jysxf')
+          key: ['ccorder_fee', 'bborder_fee', 'withdraw_fee'],
+          value: '手续费'
         },{
-          key: 'withdraw_fee',
-          value: this.$t('walletBill.subject.txsxf')
+          key: ['game_in'],
+          value: '游戏转入'
+        },{
+          key: ['game_out'],
+          value: '游戏转出'
+        },{
+          key: [
+            'ccorder_frozen',
+            'ccorder_unfrozen_revoke',
+            'ccorder_unfrozen_trade',
+            'bborder_frozen',
+            'bborder_unfrozen_revoke',
+            'bborder_unfrozen_trade',
+            'withdraw_frozen',
+            'withdraw_unfrozen',
+            'accept_frozen',
+            'accept_unfrozen'
+          ],
+          value: '冻结解冻'
         }
       ],
       code: '12345',
@@ -87,7 +104,6 @@ export default {
       limit: 10,
       config: {
         accountNumber: '',
-        bizType: '',
         start: 1,
         limit: 10
       },
@@ -108,7 +124,11 @@ export default {
     walletTypeFn(){
       // 筛选
       this.FullLoading = true;
-      this.config.bizType = this.billType;
+      if(this.billType.length > 0){
+        this.config.bizTypeList = this.billType;
+      }else{
+        delete this.config.bizTypeList;
+      }
       this.hasMore = true;
       this.start = 1;
       this.list = [];
@@ -148,7 +168,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   overflow: auto;
-  
+
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -237,7 +257,7 @@ export default {
         .collect {
           display: flex;
           justify-content: space-between;
-         
+
           .txt1 {
             font-size: .28rem;
             font-weight: bold;

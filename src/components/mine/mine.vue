@@ -28,7 +28,7 @@
           <i></i>
           <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
-        <router-link to="wallet-top-up?type=sell" class="sell item-1">
+        <router-link to="otc" class="sell item-1" @click.native="toOtcFn">
           <i></i>
           <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>
@@ -40,10 +40,10 @@
           <span class='txt'>{{$t('mine.subject.wdgg')}}</span>
           <span class='icon'></span>
         </router-link>
-        <router-link to="my-order" class="item item-4">
+        <router-link to="my-order" class="item item-4" @click.native="toOrderFn">
             <i></i>
             <span class="txt">{{$t('mine.subject.wddd')}}</span>
-            <span class='icon'>{{getUnreadMsgNum ? '您有新消息' : ''}}</span>
+          <span class='icon'><samp v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp></span>
         </router-link>
       </div>
 
@@ -94,6 +94,7 @@ import {mapGetters} from 'vuex';
 import HeadPic from 'base/head-pic/headPic';
 
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
       isLoading: true,
@@ -128,8 +129,11 @@ export default {
       this.isLoading = false;
     });
   },
+  activated() {
+    this.$set(document, 'title', this.$t('mine.subject.grzx'));
+  },
   mounted() {
-    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/
+    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/  http://up-z0.qiniup.com
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     });
@@ -211,6 +215,13 @@ export default {
     },
     uploadPhoto(base64, key) {
       return this.$refs.qiniu.uploadByBase64(base64, key);
+    },
+    toOrderFn(){
+      sessionStorage.setItem('ordering', 'starting');
+    },
+    toOtcFn(){
+      sessionStorage.removeItem('coin');
+      sessionStorage.setItem('tradeType', '1');
     }
   },
   components: {
@@ -229,7 +240,6 @@ export default {
 
 .mine-wrapper {
   width: 100%;
-  height: 100%;
   background-color: #fff;
 
   .mine-header {

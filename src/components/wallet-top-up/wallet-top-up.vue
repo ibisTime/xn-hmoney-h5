@@ -22,10 +22,13 @@
             <span class='txt1'>{{$t('walletBuy.subject.dj')}}：<i class='txt2'>￥</i></span>
             <span class='txt3'>{{cnyMon}}</span>
         </p>
+        <p class='text3'>
+          <span class='txt1'>{{$t('walletBuy.subject.dbxz')}}：{{showData.minMoney}} - {{showData.maxMoney}} CNY</span>
+        </p>
         <!-- <i class='icon'></i> -->
     </div>
 
-    <div class='main'> 
+    <div class='main'>
         <!-- 买入显示内容 -->
         <div v-show='show' class='area'>
             <p class='tab'>
@@ -46,11 +49,11 @@
         <div v-show="!show" class='area'>
             <p class='tab'>
                 <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
-                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell'>{{$t('common.sl')}}</span>
+                <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell(sell)'>{{$t('common.sl')}}</span>
                 <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
-                <input type="text" :placeholder="showDet ? $t('walletBuy.subject.csje') : $t('walletBuy.subject.cssl')" v-model="sellMonNumber">
+                <input type="text" :placeholder="sellInputPlaceholder(showDet)" v-model="sellMonNumber">
                 <span class='txt1'>{{showDet ? 'CNY' : 'FMVP'}}</span>
             </p>
             <p class='money'>
@@ -59,7 +62,7 @@
             </p>
         </div>
         <!-- 去购买 -->
-        <div class='pay' v-show="show">  
+        <div class='pay' v-show="show">
             <p>
               <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
@@ -101,18 +104,34 @@
           <button v-show='!show' @click="toSellClick">{{$t('walletBuy.subject.qrcs')}}</button>
         </div>
     </div>
+    <div class="show-box" v-show="isBuyCount">
+      <div class="ress-box" @click.stop>
+        <span class="out" @click="dzfPay">×</span>
+        <div class="am-modal-header">
+            <p><span class="currency"></span>支付宝(<span>{{bankcardNumber}}</span>)</p>
+        </div>
+        <div id="paginationAddress">
+          <p :style="{backgroundImage: zfPic}"></p>
+        </div>
+        <div class="am-modal-footer">
+          <div class="am-button-gray qxBuy" @click="qxBuy">取消支付</div>
+          <div class="am-button-red qrBuy" @click="qrBuy">标记付款</div>
+        </div>
+      </div>
+    </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
 import {getAdverMessage} from 'api/otc';
 import {getUserId, formatMoneyMultiply, formatMoneySubtract, setTitle, getUrlParam, getPic} from 'common/js/util';
-import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet} from 'api/person';
+import {getBankData, getGmBankData, getNumberMoney, buyX, sellX, wallet, bjPlayfo, qxOrder,} from 'api/person';
 import {getUser} from 'api/user';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 export default {
+  name: 'test-keep-alive',
   data() {
     return {
       textMsg: this.$t('common.czcg'),
@@ -144,7 +163,7 @@ export default {
         receiveCardNo: '',
         receiveType: this.$t('common.zfb'),
         tradeAmount: '',
-        tradePwd: ''       // 资金密码
+        tradePwd: ''       // 交易密码
       },
       zfType: {},      // 去购买支付方式
       zfNumber: {},
@@ -154,16 +173,29 @@ export default {
       cdsMoney: '',
       fmvpTypeData: {},   // 承兑商参数
       zfPic: '',
-      istradepwdFlag: true
+      istradepwdFlag: true,
+      text: '',
+      isBuyCount: false,
+      jyConfig: {              // 交易操作参数
+        userId: getUserId(),
+        code: ''
+      },
+      showData: {
+        minMoney: 0,
+        maxMoney: 0,
+      }
     };
   },
   created() {
     this.type = getUrlParam('type');
     this.show = this.type == 'buy' ? true : false;
-    let text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
-    setTitle(text);
+    this.text = this.type == 'buy' ? this.$t('common.gm') : this.$t('common.cs');
+    setTitle(this.text);
     getAdverMessage('accept_rule').then(data => {
       this.fmvpTypeData = data;
+      this.showData.minMoney = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
+      this.showData.maxMoney = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
+
       this.fmvpTypeData.accept_order_max_cny_amount = parseFloat(this.fmvpTypeData.accept_order_max_cny_amount);
       this.fmvpTypeData.accept_order_max_usd_amount = parseFloat(this.fmvpTypeData.accept_order_max_usd_amount);
       this.fmvpTypeData.accept_order_min_cny_amount = parseFloat(this.fmvpTypeData.accept_order_min_cny_amount);
@@ -211,8 +243,11 @@ export default {
       this.pwdFlag();
     }
   },
+  activated() {
+    this.$set(document, 'title', this.text);
+  },
   methods: {
-    // 验证资金密码
+    // 验证交易密码
     pwdFlag(){
       getUser().then(data => {
         if(!data.tradepwdFlag){
@@ -225,14 +260,16 @@ export default {
     buy() {
       this.showDet = true;
     },
-    sell() {
+    sell(type) {
       this.showDet = false;
     },
     toBuy() {
       this.show = true;
+      this.$set(document, 'title', this.$t('common.gm'));
     },
     toSell() {
       this.show = false;
+      this.$set(document, 'title', this.$t('common.cs'));
       this.pwdFlag();
     },
     selBankcar(){
@@ -271,12 +308,9 @@ export default {
         }
       }
       buyX(this.buyConfig).then(data => {
-        this.textMsg = this.$t('common.czcg');
-        this.$refs.toast.show();
-        setTimeout(() => {
-          this.$router.push('wallect-orderRecord')
-        }, 1500);
+        this.isBuyCount = true;
         this.isLoading = false;
+        this.jyConfig.code = data.code;
         }, () => {
           this.isLoading = false;
       });
@@ -326,6 +360,44 @@ export default {
     scopeMoney(){
       this.textMsg = `${this.$t('walletBuy.subject.jeyz')}${this.fmvpTypeData.accept_order_min_cny_amount}${this.$t('walletBuy.subject.y')}${this.fmvpTypeData.accept_order_max_cny_amount}${this.$t('walletBuy.subject.zj')}`;
       this.$refs.toast.show();
+    },
+    qxBuy(){
+      this.isLoading = true;
+      qxOrder(this.jyConfig).then(data => {
+        this.isLoading = false;
+        this.buyMonNumber = '';
+        this.buyConfig.remark = '';
+        this.textMsg = '已取消支付';
+        this.$refs.toast.show();
+      }, () => {
+        this.isLoading = false;
+      });
+      this.isBuyCount = false;
+    },
+    qrBuy(){
+      bjPlayfo(this.jyConfig).then(data => {
+        this.isLoading = true;
+        setTimeout(() => {
+          this.$router.push('wallect-orderRecord');
+        }, 1000);
+      }, () => {
+        this.isLoading = false;
+      });
+    },
+    dzfPay(){
+      this.isLoading = true;
+      setTimeout(() => {
+        this.$router.push('wallect-orderRecord');
+      }, 1000);
+    },
+    // 出售输入框提示
+    sellInputPlaceholder(showDet) {
+      let min = ',' + this.$t('walletBuy.subject.zded') + this.showData.minMoney + 'CNY';
+      if(showDet) {
+        return this.$t('walletBuy.subject.csje')  + min;
+      } else {
+        return this.$t('walletBuy.subject.cssl')  + min;
+      }
     }
   },
   components: {
@@ -424,7 +496,6 @@ export default {
     }
 
     .text2 {
-      padding-bottom: 0.58rem;
 
       .txt1 {
         font-size: 0.24rem;
@@ -441,6 +512,14 @@ export default {
         font-size: 0.48rem;
         font-weight: bold;
         line-height: 0.67rem;
+      }
+    }
+    .text3 {
+      padding-bottom: 0.5rem;
+      .txt1 {
+        font-size: 0.24rem;
+        line-height: 0.33rem;
+        color: #999;
       }
     }
 
@@ -482,7 +561,7 @@ export default {
                 color: #151515;
                 margin: 0 .1rem;
             }
-            
+
         }
         .active {
           color: #d53d3d;
@@ -647,6 +726,65 @@ export default {
   .btn-box{
     background-color: #fff;
     padding-bottom: 0.5rem;
+  }
+  .show-box{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .ress-box{
+    position: absolute;
+    z-index: 999;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 5rem;
+    border-radius: 0.2rem;
+    padding: 0.3rem;
+    background-color: #fff;
+   .out{
+     position: absolute;
+     right: 0.1rem;
+     top: 0.1rem;
+     font-size: 0.6rem;
+     color: #666;
+   }
+   .am-modal-header{
+     text-align: center;
+     font-size: 0.3rem;
+     margin-bottom: 0.15rem;
+   }
+   #paginationAddress{
+     width: 3.2rem;
+     height: 3.2rem;
+     margin: 0 auto;
+     margin-bottom: 0.2rem;
+     p{
+       width: 100%;
+       height: 100%;
+       background-size: 100% 100%;
+     }
+   }
+   .am-modal-footer{
+     display: flex;
+     justify-content: space-around;
+     div{
+       text-align: center;
+       width: 35%;
+       padding: 0.12rem;
+       font-size: 0.3rem;
+       border-radius: 0.06rem;
+       background-color: #ccc;
+       color: #fff;
+       &:nth-of-type(2){
+         background-color: #d53d3d;
+       }
+     }
+   }
   }
 }
 </style>

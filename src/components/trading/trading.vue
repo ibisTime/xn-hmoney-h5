@@ -9,7 +9,7 @@
         </select>
         <i class='icon' :class="{'icon-bai': !show2}"></i>
       </p>
-      <router-link to='otc'>{{$t('trading.bbDeal.cwjy')}}</router-link>
+      <router-link to='otc' @click.native="toOtcFn">{{$t('trading.bbDeal.cwjy')}}</router-link>
     </div>
       
     <div v-show="show2" class='One'>
@@ -176,7 +176,7 @@
     <!-- K线图 -->
     <div v-show="!show2" class='Two'>
       <div class="top-mian">
-        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>{{$t('trading.bbDepth.xj')}} </span><span class='red txt3'>&nbsp;&nbsp;{{ gkdsList.price}}</span><span class='red txt4'>≈ {{(Math.floor(gkdsList.currencyPrice * 100) / 100).toFixed(2)}} CNY</span></p>
+        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>{{$t('trading.bbDeal.zxj')}} </span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
         <div class='text2'>
           <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate * 100}} %</span></p>
           <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{dayLineInfo ? dayLineInfo.high : '0'}}</span></p>
@@ -330,7 +330,6 @@ export default {
         this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
         // this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.symbol);
       }
-      this.getMidPrice();
       this.handicapData();
       this.realTimeData();
       if(getUserId()){
@@ -345,6 +344,7 @@ export default {
           this.getUserWalletData();
           this.myOrderTicket();
         }
+        this.getMidPrice();
         this.handicapData();
         this.realTimeData();
       }, 5000);
@@ -352,7 +352,9 @@ export default {
     });
   },
   mounted() {
-    
+    let touchDemo = document.getElementById('touchDemo');
+    touchDemo.style.right = '0.5rem';
+    touchDemo.style.bottom = '2rem';
   },
   methods: {
     getMidPrice(){
@@ -389,7 +391,6 @@ export default {
       sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
       this.handicapData();
       this.realTimeData();
-      this.getMidPrice();
       getBazaarData().then(data => {
         // 获取涨幅
         let gkData = data.list.filter(item => {
@@ -416,6 +417,7 @@ export default {
           this.getUserWalletData();
           this.myOrderTicket();
         }
+        this.getMidPrice();
         this.handicapData();
         this.realTimeData();
       }, 5000);
@@ -675,6 +677,10 @@ export default {
       if(this.downConfig.type == '1'){
         this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, '', this.setBazDeal.toSymbol) : '';
       }
+    },
+    toOtcFn(){
+      sessionStorage.removeItem('coin');
+      sessionStorage.setItem('tradeType', '1');
     }
   },
   components: {
@@ -862,7 +868,7 @@ export default {
           padding: 0 0.2rem;
           border: .01rem solid #eee;
           display: flex;
-          font-size: 0.26rem;
+          font-size: 0.22rem;
           justify-content: space-between;
           line-height: .9rem;
           input[attr="placeholder"] {
@@ -871,7 +877,7 @@ export default {
           input {
             width: 85%;
             height: .87rem;
-            font-size: .28rem;
+            font-size: .26rem;
             line-height: .87rem;
           }
           span{
@@ -898,6 +904,7 @@ export default {
           font-size: .2rem;
           color: #999;
           line-height: .2rem;
+          padding-left: 0.2rem;
         }
         button {
           width: 100%;

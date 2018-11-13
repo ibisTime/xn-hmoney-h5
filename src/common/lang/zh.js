@@ -16,7 +16,7 @@ export default {
   // 公共文字
   common: {
     zwgg: '暂无广告',
-    szzjmm: '请设置资金密码',
+    szzjmm: '请设置交易密码',
     jzz: '加载中',
     jzwb: '已经全部加载完毕',
     czcg: '操作成功',
@@ -48,9 +48,10 @@ export default {
     },
     cate: {
       game: '游戏',
-      exchange: '车辆交换',
+      xss: '游戏驯兽师',
+      exchange: '二手车兑换',
       otc: '场外交易',
-      splendid: '混乱世界、精彩画面',
+      splendid: '精彩画面，任你游',
       bbDeal: '币币交易',
       realTime: '24h全球实时行情',
       xtgg: '系统公告',
@@ -69,7 +70,8 @@ export default {
     },
     subject: {
       yxye: '游戏余额',
-      jryx: '进入游戏'
+      jryx: '进入游戏',
+      cz: '充值'
     }
   },
   // 系统公告
@@ -171,14 +173,14 @@ export default {
       srsz: '请输入数字',
       srsi: '请输入数值',
       xldf: '联系对方',
-      zjmm: '资金密码',
-      qsrzj: '请输入资金密码',
+      zjmm: '交易密码',
+      qsrzj: '请输入交易密码',
       xdqr: '下单确定',
       xdtxt: '提醒：请确认价格再下单，下单后此交易的',
       xdtxw: '将冻结锁定，请放心',
       fq: '放弃',
       qr: '确认',
-      qszjmm: '请输入资金密码',
+      qszjmm: '请输入交易密码',
       ddtjcg: '订单提交成功',
       gmslje: '请输入购买数量与购买金额',
       ddtjcg: '订单提交成功',
@@ -225,7 +227,7 @@ export default {
       cx: '撤销',
       sjcj: '实际成交',
       zwdd: '暂无订单',
-
+      zxj: '最新价'
     },
     bbDepth: {
       xj: '现价',
@@ -237,7 +239,8 @@ export default {
       sdt: '深度图',
       jj: '简介',
       bkbwl: '不能为空或小于等于零',
-      xsbdy: '小数部分不得大于8位'
+      xsbdy: '小数部分不得大于8位',
+      xsldy: '小数部分不得大于2位'
     }
   },
   // 历史委托
@@ -268,7 +271,7 @@ export default {
       ddjl: '订单记录',
       wdzc: '我的资产',
       xyzsf: '请先进行身份验证',
-      szjymm: '请先设置资金密码',
+      szjymm: '请先设置交易密码',
     }
   },
   // 转入
@@ -296,11 +299,11 @@ export default {
       qsrzzdz: '请输入转币地址',
       zzsl: '转账数量',
       qsrsl: '请输入转币数量',
-      zjmm: '资金密码',
-      qsrzjmm: '请输入资金密码',
+      zjmm: '交易密码',
+      qsrzjmm: '请输入交易密码',
       txsm: '提现说明',
       qsrsm: '请输入提现说明',
-      kgf: '矿工费',
+      kgf: '矿工费率',
       kgfzz: '矿工费将在可用余额中扣除，余额不足将从转账金额扣除',
       zzssmf: '在平台内相互转账是实时到账且免费的。',
       qrzz: '确认转账',
@@ -350,15 +353,17 @@ export default {
       bzxx: '付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。',
       qxz: '请选择',
       zhhkh: '请输入账号或卡号',
-      zjmm: '资金密码',
-      qszjmm: '请输入资金密码',
+      zjmm: '交易密码',
+      qszjmm: '请输入交易密码',
       qrgm: '确认购买',
       qrcs: '确认出售',
       dksm: '请填写打款说明',
       jeyzzj: '金额应在1与2之间',
       jeyz: '金额应在',
       y: '与',
-      zj: '之间'
+      zj: '之间',
+      dbxz: '单笔限制',
+      zded: '最低额度'
     }
   },
   // 订单记录
@@ -385,7 +390,8 @@ export default {
       ywc: '已完成',
       yqx: '已取消',
       ptyqx: '平台已取消',
-      ddxq: '订单详情'
+      ddxq: '订单详情',
+      ggly: '广告留言'
     }
   },
   // 个人主页
@@ -405,7 +411,7 @@ export default {
       grzx: '个人中心',
       ghcg: '更换成功',
       tpsc: '图片上传出错',
-
+      nyxxx: '您有新消息'
     }
   },
   // 我的广告
@@ -486,16 +492,18 @@ export default {
       mgryg: '每个人都应该拥有一些比特币',
       ynsn: '1年内，你就会明白它的珍贵；3年内，你就会明白它的价值；',
       snesn: '10年内，它会给你一个新的世界；20年内，它就是你的生活方式',
-      fdg: '梵蒂冈',
-      yqnjr: '邀请你加入FUNMVP',
+      yqnjr: '邀请您加入FUNMVP',
       casb: '长按识别二维码',
-      yqhy: '邀请好友'
+      yqhy: '邀请好友',
+      fuzzs: '复制您的专属邀请链接',
+      fz: '复制',
+      bzbd: '请长按保存图片至本地'
     }
   },
   // 安全中心
   securityCenter: {
     subject: {
-      jymm: '资金密码',
+      jymm: '交易密码',
       sfrz: '身份认证',
       ggrz: '谷歌认证',
       ykq: '已开启',
@@ -508,7 +516,7 @@ export default {
       aqzx: '安全中心'
     }
   },
-  // 修改资金密码
+  // 修改交易密码
   securityTradePassword: {
     subject: {
       zg: '中国',
@@ -518,8 +526,8 @@ export default {
       mmjw: '密码6位-16位',
       qrmm: '确认密码',
       qd: '确 定',
-      xgjymm: '修改资金密码',
-      szjymm: '设置资金密码',
+      xgjymm: '修改交易密码',
+      szjymm: '设置交易密码',
       txwz: '请填写完整',
       mmbyz: '密码不一致，请重新输入',
       czcg: '重置密码成功',

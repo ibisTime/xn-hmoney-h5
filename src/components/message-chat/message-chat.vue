@@ -14,7 +14,7 @@
           </div>
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
-            <div class="receive" v-if="!info.isSend">
+            <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -25,6 +25,13 @@
                     <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content"/>
                   </template>
                 </i>
+              </div>
+            </div>
+            <div class="time-split" v-else-if="info.fromAccount === 'admin'">
+              <div class="time-content">
+                <template v-for="item in getContent(info)">
+                  <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
+                </template>
               </div>
             </div>
             <div v-else class="post clearfix">
@@ -65,7 +72,7 @@
 </template>
 <script>
   import {mapGetters, mapActions, mapMutations} from 'vuex';
-  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE, SET_UNREAD_MSG_NUM} from 'store/mutation-types';
+  import {SET_CHAT_USERID, SET_CHAT_LIST, SET_USER_STATE, SET_UNREAD_MSG_NUM, SET_NEW_MSG} from 'store/mutation-types';
   import Scroll from 'base/scroll/scroll';
   import FullLoading from 'base/full-loading/full-loading';
   import Loading from 'base/loading/loading';
@@ -104,7 +111,7 @@
       };
     },
     created() {
-      this.groupId = this.$route.params.id;
+      this.groupId = this.$route.query.code;
       this.firstUpdate = true;
       this.firstFetching = true;
       this.userId = getUserId();
@@ -141,7 +148,8 @@
         'curChatList',
         'curChatUserId',
         'tencentLogined',
-        'userMap'
+        'userMap',
+        'newMsg',
       ])
     },
     methods: {
@@ -153,7 +161,25 @@
         }).catch(() => {});
         let self = this;
         this.getLastGroupHistoryMsgs(function(msgList) {
-          self.setCurChatList(msgList);
+          self.getHistoryMsgCallback(msgList);
+          let list = msgList.map(v => ({
+            fromAccount: v.fromAccount,
+            fromAccountNick: v.fromAccountNick,
+            seq: v.seq,
+            time: v.time,
+            uniqueId: v.uniqueId,
+            random: v.random,
+            isSend: v.isSend,
+            icon: v.icon,
+            elems: v.elems.slice()
+          }));
+          self.setCurChatList(list);
+          self.scrollToElement();
+          if(list.length < REQMSGCOUNT) {
+            self.hasMore = false;
+          } else {
+            self.hasMore = true;
+          }
         }, function(err) {
           alert(err.ErrorInfo);
         });
@@ -173,7 +199,7 @@
           if (data.buyUser === this.userId) {
             receiver = data.sellUserInfo;
           } else {
-            receiver = data.sellUserInfo;
+            receiver = data.buyUserInfo;
           }
           this.receiver = new User(receiver);
           setTitle(this.receiver.nickname);
@@ -196,14 +222,6 @@
       },
       isUnDefined(value) {
         return isUnDefined(value);
-      },
-      scroll(pos) {
-        if (pos.y > -20 && !this.fetching && !this.firstFetching && this.hasMore) {
-          this.fetching = true;
-          setTimeout(() => {
-            this.getHistoryMessage();
-          }, 200);
-        }
       },
       show() {
         if (this.showEmoji) {
@@ -231,7 +249,7 @@
           this.onSendMsg(this.emoji, (info) => {
             this.saveChatHistory(info);
             // setTimeout(() => {
-              // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
+              // this.$refs.scroll.scrollToElement(this.$refs.mesRef[this..length - 1], 100);
               // this.scroll.scrollIntoViewIfNeeded();
             // }, 40);
           });
@@ -262,25 +280,42 @@
         return arr;
       },
       getHistoryMessage() {
-        // 获取更早的群历史消息
-        let obj = this.getPrePageGroupHistoryMsgs(function (newList)  {
-          return newList;
-        });
-        if (this.start >= 0 && obj) {
-          let newList = this.getNewList(obj);
-          let oriList = this.curChatList.slice();
-          this.setCurChatList(newList.concat(oriList));
-          this.hasMore = min !== 0;
-          this.start -= REQMSGCOUNT;
-          if (this.firstFetching) {
-            this.updateChatData();
-            this.scrollToElement();
-          } else {
-            this.scrollToTop();
-          }
-        } else {
-          this.hasMore = false;
+        if(!this.hasMore) {
+          return;
         }
+        let self = this;
+        // 获取更早的群历史消息
+        self.getPrePageGroupHistoryMsgs(function (newList)  {
+          let list = newList.map(v => ({
+            fromAccount: v.fromAccount,
+            fromAccountNick: v.fromAccountNick,
+            seq: v.seq,
+            time: v.time,
+            uniqueId: v.uniqueId,
+            random: v.random,
+            isSend: v.isSend,
+            icon: v.icon,
+            elems: v.elems.slice()
+          }));
+          if(list.length > 0) {
+            let newList = self.getNewList(list);
+            let oriList = self.curChatList.slice();
+            self.setCurChatList(newList.concat(oriList));
+            if(list.length < REQMSGCOUNT) {
+              self.hasMore = false;
+            } else {
+              self.hasMore = true;
+            }
+            if (self.firstFetching) {
+              self.updateChatData();
+              self.scrollToElement();
+            } else {
+              self.scrollToTop();
+            }
+          } else {
+            self.hasMore = false;
+          }
+        });
       },
       //读取群组基本资料-高级接口
       getGroupInfo(group_id, cbOK, cbErr) {
@@ -377,28 +412,29 @@
       getHistoryMsgCallback(msgList, prepage) {
         var msg;
         prepage = prepage || false;
-        let self = this;
 
-        //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下
-        if (prepage) {
-          msgList.reverse();
-        }
+        //如果是加载前几页的消息，消息体需要prepend，所以先倒排一下 web需要 这里不需要
+        // if (prepage) {
+        //   msgList.reverse();
+        // }
         let newList = [];
+        let selSess = null;
         //		console.log('History', msgList);
         for (var j in msgList) { //遍历新消息
           msg = msgList[j];
           if (msg.getSession().id() === this.groupId) { //为当前聊天对象的消息
-            self.selSess = msg.getSession();
+            selSess = msg.getSession();
             //在聊天窗体中新增一条消息
             newList.push(msg);
           }
         }
         //消息已读上报，并将当前会话的消息设置成自动已读
-        webim.setAutoRead(self.selSess, true, true);
+        webim.setAutoRead(selSess, true, true);
         return newList;
       },
       //向上翻页，获取更早的群历史消息
       getPrePageGroupHistoryMsgs(cbOk) {
+        let self = this;
         var tempInfo = this.getPrePageGroupHistroyMsgInfoMap[this.groupId]; //获取下一次拉取的群消息seq
         var reqMsgSeq;
         if (tempInfo) {
@@ -425,12 +461,12 @@
               return;
             }
             var msgSeq = msgList[0].seq - 1;
-            this.getPrePageGroupHistroyMsgInfoMap[this.groupId] = {
+            self.getPrePageGroupHistroyMsgInfoMap[self.groupId] = {
               "ReqMsgSeq": msgSeq
             };
 
             if (cbOk) {
-              cbOk(this.getHistoryMsgCallback(msgList, true));
+              cbOk(self.getHistoryMsgCallback(msgList, true));
             }
           },
           function(err) {
@@ -438,7 +474,16 @@
           }
         );
       },
+      scroll(pos) {
+        if (pos.y > -20 && !this.fetching && !this.firstFetching && this.hasMore) {
+          this.fetching = true;
+          setTimeout(() => {
+            this.getHistoryMessage();
+          }, 200);
+        }
+      },
       scrollToElement() {
+        this.setNewMsg(false);
         setTimeout(() => {
           this.$refs.scroll.scrollToElement(this.$refs.mesRef[this.curChatList.length - 1], 100);
           setTimeout(() => {
@@ -702,6 +747,7 @@
       ...mapMutations({
         setCurChatUserId: SET_CHAT_USERID,
         setCurChatList: SET_CHAT_LIST,
+        setNewMsg: SET_NEW_MSG,
         setUser: SET_USER_STATE
       }),
       ...mapActions([
@@ -727,6 +773,11 @@
       receiver(newVal) {
         if (this.user && newVal && this.tencentLogined) {
           this.getHistoryMessage();
+        }
+      },
+      newMsg(newVal) {
+        if(newVal) {
+          this.scrollToElement();
         }
       }
     },
@@ -930,6 +981,7 @@
       top: 0;
       bottom: 1rem;
       width: 100%;
+      z-index: 8;
     }
 
     .message-footer {
@@ -939,6 +991,7 @@
       width: 100%;
       height: 1rem;
       background-color: #fff;
+      z-index: 9;
 
       .message-input {
         position: fixed;
@@ -1022,5 +1075,6 @@
         }
       }
     }
+
   }
 </style>

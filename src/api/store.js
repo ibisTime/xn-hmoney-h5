@@ -9,3 +9,8 @@ export function gramUrl() {
 export function gramMoney() {
     return fetch("600104", {}, true);
 }
+
+// 充币
+export function rechargeGram(config) {
+    return fetch("600105", config);
+}

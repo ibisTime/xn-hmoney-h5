@@ -11,6 +11,8 @@ const Login = () => import('components/login/login');
 const Registered = () => import('components/registered/registered');
 // 商城
 const Shop = () => import('components/shop/shop');
+// 游戏充值
+const ShopCz = () => import('components/shop-cz/shop-cz');
 // 商城 -- 转币
 const ShopTurnMoney = () => import('components/shop-turn-money/shop-turn-money');
 // 商城 -- 二手车
@@ -25,14 +27,12 @@ const TradingPutUp = () => import('components/trading-put-up/trading-put-up');
 const TradingClinchadeal = () => import('components/trading-clinchadeal/trading-clinchadeal');
 // k线图深度图
 const tradingDepthMap = () => import('components/trading-depth-map/trading-depth-map');
-// 交易 -- 历史委托 
+// 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
 // 场外交易
 const Otc = () => import('components/otc/otc');
 // 场外交易 -- 购买
 const OtcBuy = () => import('components/otc-buy/otc-buy');
-// 场外交易 -- 出售
-const OtcSell = () => import('components/otc-sell/otc-sell');
 // 联系对方
 const otcContactOther = () => import('components/otc-contact-other/otc-contact-other');
 // 购买发布
@@ -57,17 +57,17 @@ const Mine = () => import('components/mine/mine');
 const mySecurityCenter = () => import('components/my-security-center/my-security-center');
 // 安全中心 -- 谷歌认证
 const securityGoogle = () => import('components/security-google-certification/security-google');
-// 安全中心 -- 交易密码 
+// 安全中心 -- 交易密码
 const securityTradePassword = () => import('components/security-trade-password/security-trade-password');
-// 安全中心 -- 身份认证 
+// 安全中心 -- 身份认证
 const securityIdentity = () => import('components/security-identity/security-identity');
-// 身份认证 -- 身份证认证 
+// 身份认证 -- 身份证认证
 const securityIdcard = () => import('components/security-idcard/security-idcard');
-// 安全中心 -- 绑定邮箱 
+// 安全中心 -- 绑定邮箱
 const securityBindingEmail = () => import('components/security-binding-email/security-binding-email');
-// 安全中心 -- 修改手机号 
+// 安全中心 -- 修改手机号
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
-// 安全中心 -- 修改登录密码 
+// 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
 // 我的 -- 我的广告
 const myAdvertising = () => import('components/my-advertising/my-advertising');
@@ -119,6 +119,10 @@ export default new Router({
     {
       path: '/shop',
       component: Shop
+    },
+    {
+      path: '/shop-cz',
+      component: ShopCz
     },
     {
       path: '/shop-turn',
@@ -193,10 +197,6 @@ export default new Router({
     {
       path: '/otc-buy',
       component: OtcBuy
-    },
-    {
-      path: '/otc-sell',
-      component: OtcSell
     },
     {
       path: '/otc-contactOther',
@@ -296,13 +296,11 @@ export default new Router({
     },
     {
       path: '/message',
-      component: Message,
-      children: [
-        {
-          path: ':id',
-          component: MessageChat
-        }
-      ]
+      component: Message
+    },
+    {
+      path: '/messageCart',
+      component: MessageChat
     }
   ],
   mode: 'history',

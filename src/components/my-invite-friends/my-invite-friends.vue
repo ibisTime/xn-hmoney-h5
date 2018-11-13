@@ -1,55 +1,119 @@
 <template>
   <div class="invite-friends-wrapper" @click.stop>
       <div class='friends icon'>
-          <div class='content'>
-            <div class='logo'></div>
-            <div class="pic icon"></div>
-            <div class="text1">
-                {{$t('myInviteFriends.subject.snyf')}}<span class='red1'>{{$t('myInviteFriends.subject.szzc')}}</span>
+            <div class='content' ref="copyImg" @click="isFz = true;">
+                <div class="pic icon"></div>
+                <div class="yq-box">
+                    <p class="yq_p1">{{nickName}}</p>
+                    <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
+                </div>
+                <div class="rq-code">
+                    <div id='qrcode'></div>
+                </div>
             </div>
-            <i class='icon ico1'></i>
-            <p class='text2 red2'> {{$t('myInviteFriends.subject.mgryg')}}</p>
-            <p class='text3'>{{$t('myInviteFriends.subject.ynsn')}}</p>
-            <p class="text4">{{$t('myInviteFriends.subject.snesn')}}</p>
-
-          </div>
-
+            <img src="" alt="" class="con-img" ref="conImg" @click="isFz = true;">
+            <div class="qr-txt">
+                {{$t('myInviteFriends.subject.bzbd')}}
+            </div>
+            <div class='main-btn' @click.stop="isFz = false;">
+                {{$t('myInviteFriends.subject.fuzzs')}}
+            </div>
       </div>
-      <div class='main'>
-          <div class='text'>
-              <p class='txt1'>{{nickName}}</p>
-              <p class='txt2'>{{$t('myInviteFriends.subject.yqnjr')}}</p>
-              <p class='txt2'>{{$t('myInviteFriends.subject.casb')}}</p>
+      <div class="ress-box" v-show="!isFz" @click.stop>
+          <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl">
+          </textarea>
+          <div class="ress-btn" ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj" @click='CopyUrl'>
+              {{$t('myInviteFriends.subject.fz')}}
           </div>
-          <div id='qrcode'></div>
       </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/> 
   </div>
 </template> 
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId, setTitle} from 'common/js/util';
+import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 import {getUser} from 'api/user';
+import html2canvas from 'html2canvas';
 
 export default {
   data() {
     return {
-        nickName: ''
+        nickName: '',
+        isLoading: true,
+        wxUrl: '',
+        userId: '',
+        isFz: true,
+        textMsg: '',
+        container: '',
+        copyBtn: null
     };
   },
-  mounted() {
+  created() {
     setTitle(this.$t('myInviteFriends.subject.yqhy'));
+    this.userId = getUserId();
+  },
+  mounted() {
     getUser().then(data => {
         this.nickName = data.nickname;
+        this.isLoading = false;
+        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
+        this.container = document.getElementById('qrcode');
+        const qr = new QRCode(this.container, {
+        typeNumber: -1,
+        correctLevel: 2,
+        foreground: '#000000'
+        });
+        qr.make(this.wxUrl);
+        this.saveImgFn();
+    }, () => {
+        this.isLoading = false;
     });
-    this.userId = getUserId();
-    this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
-    const container = document.getElementById('qrcode');
-    const qr = new QRCode(container, {
-      typeNumber: -1,
-      correctLevel: 2,
-      foreground: '#000000'
-    });
-    qr.make(this.wxUrl);
+    this.copyBtn = new this.clipboard(this.$refs.copy);
+  },
+  methods: {
+    CopyUrl() {
+        // let url = document.querySelector('#copyObj');
+        // url.select(); // 选择对象
+        // if(!document.execCommand('Copy')){
+        //     this.textMsg = this.$t('walletInto.subject.gbzc');
+        //     this.$refs.toast.show();
+        // }else{
+        //     this.textMsg = '复制成功';
+        //     this.$refs.toast.show();
+        //     setTimeout(() => {
+        //         this.isFz = true;
+        //     }, 1000);
+        // }
+        let _this = this;
+        let clipboard = _this.copyBtn;
+        clipboard.on('success', function() {
+            _this.textMsg = '复制成功';
+            _this.$refs.toast.show();
+            setTimeout(() => {
+                _this.isFz = true;
+            }, 1000);
+        });
+        clipboard.on('error', function() {
+            _this.textMsg = _this.$t('walletInto.subject.gbzc');
+            _this.$refs.toast.show();
+        });
+    },
+    saveImgFn(){
+        html2canvas(this.$refs.copyImg).then((canvas) => {
+            // let down = document.getElementById('down');
+            var url = canvas.toDataURL('image/png');
+            this.$refs.conImg.setAttribute('src', url);
+            // down.setAttribute('href', url);
+            // down.click();
+        });
+    }
+  },
+  components: {
+      FullLoading,
+      Toast
   }
 };
 </script>
@@ -58,10 +122,14 @@ export default {
 @import "~common/scss/variable";
 
 .invite-friends-wrapper {
+    position: fixed;
     width: 100%;
+    height: 100%;
+    z-index: 1;
     background: #fff;
     font-size: .32rem;
     color: #333;
+    background-size: 100% 100%;
     .red1 {
         color: #e55151;
     }
@@ -77,81 +145,142 @@ export default {
 
     .friends {
         width: 100%;
-        height: 10.96rem;
-        background-image: url('./yqbj.png');
+        height: 100%;
         position: relative;
         .content {
             width: 100%;
+            height: 100%;
+            background-image: url('./yqbj.png');
+            position: relative;
             text-align: center;
-            position: absolute;
-            top: .96rem;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             .logo {
                 width: 1.1rem;
                 height: .48rem;
-                padding-bottom: .74rem;
             }
             .pic {
-                width: 3.89rem;
+                width: 2.5rem;
                 margin: 0 auto;
-                height: .63rem;
-                @include bg-image("FUNMVP");
-                margin-bottom: .4rem;
+                height: 2.25rem;
+                background-image: url('./logo.png');
+                margin-top: 11%;
+                margin-bottom: 8%;
             }
-            .text1 {
-                width: 3.8rem;
+            .yq-box{
+                color: #fff;
+                margin-bottom: 4%;
+                p{
+                    margin-top: 4%;
+                }
+                .yq_p1{
+                    height: 0.42rem;
+                    font-size: 0.42rem;
+                }
+                .yq_p2{
+                    font-size: 0.28rem;
+                }
+            }
+            .rq-code{
                 margin: 0 auto;
-                padding: .26rem 0;
-                font-size: .45rem;
-                color: #fff;
-                border-top: .02rem solid #fff;
-                border-bottom: .02rem solid #fff;
+                width: 3.6rem;
+                height: 3.6rem;
+                border-radius: 0.12rem;
+                margin-bottom: 4.5%;
+                background-color: #fff;
+                padding: 0.28rem;
             }
-            .ico1 {
-                width: .24rem;
-                margin: .8rem auto .6rem;
-                height: .12rem;
-                background-image: url('./yqhysjx.png');
-            }
-            .text2 {
-                font-size: .34rem;
-                font-weight: bold;
-                padding-bottom: .48rem;
-            }
-            .text3, .text4 {
-                font-size: .2rem;
-                color: #fff;
-            }
-            .text3 {
-                padding-bottom: .25rem;
+        }
+        .con-img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9;
+        }
+        .qr-txt{
+            position: absolute;
+            bottom: 1.7rem;
+            z-index: 99;
+            width: 100%;
+            text-align: center;
+            height: 0.96rem;
+            line-height: 0.96rem;
+            color: #fff;
+            font-size: 0.26rem;
+            span{
+                display: inline-block;
+                border-radius: 0.04rem;
+                border: 1px solid #fff;
+                margin-left: 0.2rem;
+                line-height: 1;
+                vertical-align: middle;
+                padding: 0.1rem 0.25rem;
             }
         }
     }
-    .main {
+    .main-btn{
+        position: absolute;
+        bottom: 0;
+        z-index: 99;
         width: 100%;
-        height: 2.38rem;
-        background: #fff;
-        padding: .26rem .48rem .66rem .48rem;
-        display: flex;
-        justify-content: space-between;
-        .text {
-            padding-top: .22rem;
-            .txt1 {
-                font-size: .44rem;
-                font-weight: bold;
-                padding-bottom: .2rem;
-            }
-            .txt2 {
-                font-size: .32rem;
-                padding-bottom: .1rem;
-            }
-            .txt3 {
-                font-size: .22rem;
-                color: #999;
-            }
+        height: 0.98rem;
+        line-height: 0.98rem;
+        font-size: 0.3rem;
+        color: #fff;
+        text-align: center;
+        background-color: #141e68;
+        opacity: 0.8;
+        border-top: 2px solid #687cfd;
+        .ic_bz{
+            display: inline-block;
+            width: 0.3rem;
+            height: 0.3rem;
+            background-image: url('./bcbd.png');
+            margin-right: 0.14rem;
+            vertical-align: middle;
         }
-        #qrcode {
-            width: 1.66rem;
-            height: 1.66rem;
+    }
+    .ress-box{
+        position: absolute;
+        z-index: 999;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 5rem;
+        border-radius: 0.2rem;
+        padding: 0.3rem;
+        background-color: #fff;
+        .ress{
+            width: 100%;
+            height: 3rem;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 0.15rem;
+            padding-top: 0.2rem;
+            border-radius: 0.1rem;
+            font-size: 0.34rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .ress-btn{
+            margin-top: 0.35rem;
+            width: 100%;
+            height: 1rem;
+            line-height: 1rem;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 0.34rem;
+            letter-spacing: 0.04rem;
+            color: #333;
+            border-radius: 0.06rem;
         }
     }
 

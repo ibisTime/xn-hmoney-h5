@@ -111,7 +111,7 @@ export default {
     setTitle(this.rzText + this.$t('securityIdcard.subject.rz'));
   },
   mounted() {
-    this.uploadUrl = 'http://up-z0.qiniu.com';
+    this.uploadUrl = 'http://up.qiniup.com';
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     })

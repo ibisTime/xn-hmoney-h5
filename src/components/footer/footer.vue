@@ -8,7 +8,7 @@
       <i></i>
       <p>{{ $t('footer.navbar.shop') }}</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-2" to="/otc">
+    <router-link tag="div" class="foot-item item-2" to="/otc" @click.native="toOtcFn">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
     </router-link>
@@ -38,6 +38,10 @@
       // 是否显示小红点
       getUnreadMsgNum() {
         return this.unreadMsgNum > 0;
+      },
+      toOtcFn(){
+        sessionStorage.removeItem('coin');
+        sessionStorage.setItem('tradeType', '1');
       }
     },
     components: {}

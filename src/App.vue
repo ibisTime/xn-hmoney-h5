@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <div class="">
+    <div class="all-content">
       <router-view></router-view>
     </div>
     <Toast :text="textMsg" ref="toast"/>
-    <div 
+    <div
       class="tobuy"
+      id="touchDemo"
       @click="toBuy"
       ref="touchDemo"
       @touchstart.stop="fbTouchStartFn"
@@ -46,12 +47,33 @@
         showFlag: true
       }
     },
+    beforeCreate(){
+      let that = this;
+      window.onload = function(){
+        let href = location.href;
+        getBbListData().then(data => {
+          for(let i = 0; i < data.length; i ++){
+            let obj = {
+              ...data[i],
+              unit: '1e' + data[i].unit
+            };
+            that.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+          }
+          sessionStorage.setItem('coinData', JSON.stringify(that.coinData));
+          that.isLoading = false;
+        }, () => {
+          that.isLoading = false;
+        });
+        if(href.search(/page|system-notice|about-platformIntroduced\?ckey=about_us|trading|otc|login|registered|security-loginPassword/) == -1){
+          if(!isLogin()){
+            that.$router.push('/login');
+            return;
+          }
+        };
+      }
+    },
     created() {
       this.$router.beforeEach((to, from, next) => {
-        this.$refs.touchDemo.style.right = '0.5rem';
-        this.$refs.touchDemo.style.bottom = '1rem';
-        this.$refs.touchDemo.style.left = '';
-        this.$refs.touchDemo.style.top = '';
         if(!sessionStorage.getItem('coinData')){
           getBbListData().then(data => {
             for(let i = 0; i < data.length; i ++){
@@ -67,14 +89,14 @@
             this.isLoading = false;
           });
         }
-        
+
         if (isLogin()) {
-          // 腾讯云登陆
           this.tencentLogin();
           next();
         } else {
           if (to.path == '/' ||
             to.path == '/page' ||
+            to.path == '/shop-usedCar' ||
             to.path == '/system-notice' ||
             to.path == '/about-platformIntroduced?ckey=about_us' ||
             to.path == '/trading' ||
@@ -91,11 +113,15 @@
             }, 1500);
           }
         }
-      })
+      });
     },
     mounted() {
-      this.$refs.touchDemo.style.right = '0.5rem';
-      this.$refs.touchDemo.style.bottom = '1rem';
+      if (this.$refs.touchDemo) {
+        this.$refs.touchDemo.style.right = '0.5rem';
+        this.$refs.touchDemo.style.bottom = '1rem';
+        this.$refs.touchDemo.style.left = '';
+        this.$refs.touchDemo.style.top = '';
+      }
     },
     components: {
       Toast
@@ -111,7 +137,7 @@
         }else{
           touch = event.changedTouches[0];
         }
-        
+
         this.docuWidth = document.body.clientWidth - 150;
         this.docuHeight = document.body.clientHeight - 50;
         this.position.x = touch.clientX;
@@ -165,6 +191,10 @@
     overflow-x: hidden;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
+  }
+  .all-content{
+    width: 100%;
+    margin: 0 auto;
   }
 
   .loading-container {

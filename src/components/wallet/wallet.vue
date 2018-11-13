@@ -41,7 +41,7 @@
       </div>
       <div class='operate' v-if="infoItem.currency === 'FMVP'">
         <router-link to='wallet-top-up?type=buy' class='txt1'>{{$t('wallet.subject.cz')}}</router-link>
-        <router-link to='wallet-top-up?type=sell' class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
+        <router-link to='otc' @click.native="toOtcFn" class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
         <router-link to='wallect-orderRecord' class='txt2'>{{$t('wallet.subject.ddjl')}}</router-link>
       </div>
     </div>
@@ -118,6 +118,10 @@
       },
       formatMoneySubtract(s1, s2, format, coin) {
         return formatMoneySubtract(s1, s2, format, coin);
+      },
+      toOtcFn(){
+        sessionStorage.removeItem('coin');
+        sessionStorage.setItem('tradeType', '1');
       }
     },
     components: {

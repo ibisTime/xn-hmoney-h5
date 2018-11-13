@@ -8,16 +8,16 @@
     </header>
     <div class="banner">
       <p class='text1'>游戏余额</p>
-      <p class='text2'>100.00 X</p>
+      <p class='text2'>100.00 </p>
     </div>
     <div class='main'>
         <input type="number" placeholder="请输入转入数量">
-        <p>可用币数：100.00X</p>
+        <p>可用币数：100.00</p>
     </div>
     <button @click='goShop'>确认转币</button>
 
   </div>
-  
+
 </template>
 <script>
 export default {
@@ -90,8 +90,8 @@ export default {
       line-height: .56rem;
     }
 
-  } 
-  
+  }
+
   .main {
       width: 100%;
       padding: 0 .3rem;

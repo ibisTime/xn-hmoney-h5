@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import { setTitle } from 'common/js/util';
+import { setTitle, formatDate } from 'common/js/util';
 import { notice } from 'api/general';
 import Scroll from 'base/scroll/scroll';
 export default {
@@ -49,6 +49,9 @@ export default {
   methods: {
     getNotice(){
       notice(this.start).then(data => {
+        data.list.map(item => {
+          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+        });
         if(data.totalPage <= this.start){
           this.hasMore = false;
         }
@@ -101,6 +104,7 @@ export default {
     width: 100%;
     height: 12rem;
     padding: 0 .3rem;
+    padding-bottom: 1rem;
     margin-top: 0.3rem;
     .list {
       width: 100%;
