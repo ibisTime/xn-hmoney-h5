@@ -11,7 +11,7 @@
       </p>
       <router-link to='otc' @click.native="toOtcFn">{{$t('trading.bbDeal.cwjy')}}</router-link>
     </div>
-      
+
     <div v-show="show2" class='One'>
       <div class="top">
         <p>
@@ -31,10 +31,10 @@
         <!-- 买入 -->
         <div v-show="show1" class="left">
           <p class='he9'>
-            <input 
-              type="number" 
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')" 
-              v-model="xjPrice" 
+            <input
+              type="number"
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')"
+              v-model="xjPrice"
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
             >
@@ -74,10 +74,10 @@
         <!-- 卖出 -->
         <div v-show="!show1" class="left">
           <p class='he9'>
-            <input 
-              type="number" 
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')" 
-              v-model="xjPrice" 
+            <input
+              type="number"
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')"
+              v-model="xjPrice"
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
             >
@@ -211,7 +211,7 @@
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -225,21 +225,21 @@ import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchade
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
 import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
 
-import { 
-  formatAmount, 
-  setTitle, 
-  getUserId, 
-  formatMoneyMultiply, 
-  formatDate 
+import {
+  formatAmount,
+  setTitle,
+  getUserId,
+  formatMoneyMultiply,
+  formatDate
 } from "common/js/util";
 import {wallet} from 'api/person';
 import {
-  getBazaarData, 
-  getBBExchange, 
-  getHandicapData, 
-  downBBOrder, 
-  getMyorderTicket, 
-  getRealTimeData, 
+  getBazaarData,
+  getBBExchange,
+  getHandicapData,
+  downBBOrder,
+  getMyorderTicket,
+  getRealTimeData,
   repOrder
 } from 'api/bb';
 export default {
@@ -359,7 +359,7 @@ export default {
   methods: {
     getMidPrice(){
       getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
-        this.toSyMid = data[0].mid;
+        this.toSyMid = data.mid;
       });
     },
     getUserWalletData(){
@@ -735,7 +735,7 @@ export default {
     display: inline-block;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 100%;    
+    background-size: 100% 100%;
   }
 
   .header {
@@ -939,14 +939,14 @@ export default {
             }
             .txt3 {
               float: right;
-            } 
+            }
           }
         }
         .middle {
           width: 100%;
           display: flex;
-          justify-content: space-between;         
-          margin: .36rem 0; 
+          justify-content: space-between;
+          margin: .36rem 0;
           .icon {
             width: .24rem;
             height: .24rem;
@@ -1119,7 +1119,7 @@ export default {
         display: flex;
         line-height: .8rem;
         span {
-          font-size: .28rem; 
+          font-size: .28rem;
           color: #fff;
           margin: 0 .35rem;
         }
@@ -1131,7 +1131,7 @@ export default {
           color: #d53d3d;
           border-bottom: .03rem solid #d53d3d;
         }
-        
+
       }
       .foot {
         width: 100%;
@@ -1151,7 +1151,7 @@ export default {
           color: #fff;
         }
       }
-      
+
 
     }
   }

@@ -2,16 +2,20 @@
   <div>
     <div class="chart-button-wrap" id="chartBtn">
       <div class="wrap">
-        <div class="chart-button btn" v-for="(item, index) in btnList" v-if="item.show" :key="index" :data-key="item.resolution" :class="item.resolution === resolution && !showMoreBtn ? 'selected' : ''">
-          <p>{{item.label}}</p>
+        <div class="chart-button btn" v-for="(item, index) in btnList" v-if="item.show" :key="index"
+             :data-key="item.resolution" :data-charttype="item.chartType"
+             :class="item.resolution === resolution && !showMoreBtn ? 'selected' : ''">
+          <p :class="item.class">{{item.label}}</p>
         </div>
         <div class="chart-button more" :class="showMoreBtn ? 'selected' : ''">
           <p>更多</p>
         </div>
       </div>
       <div class="hidden-wrap" v-show="showMore">
-        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-if="!item.show" :key="index" :data-key="item.resolution" :class="item.resolution === resolution ? 'selected' : ''">
-          <p>{{item.label}}</p>
+        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-if="!item.show" :key="index"
+             :data-key="item.resolution" :data-charttype="item.chartType"
+             :class="item.resolution === resolution ? 'selected' : ''">
+          <p :class="item.class">{{item.label}}</p>
         </div>
       </div>
     </div>
@@ -78,52 +82,68 @@
         resolution: '15', // 当前选中分时
         btnList: [ // 分时
           {
+            class: 'datetime',
+            label: '分时',
+            resolution: "",
+            show: true,
+            chartType: 3
+          },
+          {
+            class: '',
             label: '1min',
             resolution: "1",
             selected: true,
+            chartType: 1
           },
           {
             class: '',
             label: '5min',
-            resolution: "5"
+            resolution: "5",
+            chartType: 1
           },
           {
             class: '',
             label: '15min',
             resolution: "15",
-            show: true
+            show: true,
+            chartType: 1
           },
           {
             class: '',
             label: '30min',
             resolution: "30",
+            chartType: 1
           },
           {
             class: '',
             label: '1hour',
             resolution: "60",
-            show: true
+            show: true,
+            chartType: 1
           },
           {
             class: '',
             label: '4hour',
             resolution: "240",
-            show: true
+            show: true,
+            chartType: 1
           },
           {
             class: '',
             label: '1day',
             resolution: "1D",
-            show: true
+            show: true,
+            chartType: 1
           }, {
             class: '',
             label: '1week',
             resolution: "1W",
-            show: true
+            chartType: 1
           }, {
             class: '',
             label: '1month',
-            resolution: "1M"
+            resolution: "1M",
+            chartType: 1
           }
         ]
       }
@@ -238,11 +258,21 @@
             } else if (!$(this).hasClass('more-btn')) {
               _this.showMoreBtn = false;
             }
-            _this.resolution = $(this).attr('data-key');
+            _this.chartType = $(this).attr('data-charttype');
+
+            if ($(this).find('p').hasClass('datetime')) {
+              _this.resolution = chart.resolution()
+            } else {
+              _this.resolution = $(this).attr('data-key');
+            }
+
             if (chart.resolution() !== _this.resolution) {
               $("#tv_chart_container").attr("firstLoad", "0");
               $("#tv_chart_container").attr("startDatetime", '');
               chart.setResolution(_this.resolution);
+            }
+            if (chart.chartType() !== _this.chartType) {
+              chart.setChartType(Number(_this.chartType));
             }
           }
         });

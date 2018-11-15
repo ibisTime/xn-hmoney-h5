@@ -33,7 +33,7 @@ import Toast from 'base/toast/toast';
             }
         },
         created() {
-            setTitle('充值');
+            setTitle(this.$t('shop.subject.zryx'));
         },
         methods: {
             qrczFn(){

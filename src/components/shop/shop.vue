@@ -14,15 +14,15 @@
         {{ $t('shop.subject.jryx') }}
       </span>
       <router-link to='/shop-cz' class='btn' >
-        {{ $t('shop.subject.cz') }}
+        {{ $t('shop.subject.zryx') }}
       </router-link>
     </div>
     <div class="main" @click="toGame">
     </div>
       <Footer></Footer>
-      <FullLoading ref="fullLoading" v-show="isLoading"/> 
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
-  
+
 </template>
 <script>
 import { gramUrl, gramMoney } from 'api/store';
@@ -130,7 +130,6 @@ export default {
       display: inline-block;
       margin: 0 0.1rem;
       padding: 0 0.4rem;
-      height: 0.6rem;
       line-height: 0.55rem;
       font-size: .28rem;
       color: #fff;
@@ -138,7 +137,7 @@ export default {
       border: .01rem solid #fff;
     }
 
-  } 
+  }
 
   .main {
     width: 100%;
@@ -146,7 +145,7 @@ export default {
     margin-top: 0.6rem;
     background-image: url('./95650.jpg');
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: top;
     background-size: 100%;
   }
 

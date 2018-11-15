@@ -133,7 +133,7 @@ export default {
     this.$set(document, 'title', this.$t('mine.subject.grzx'));
   },
   mounted() {
-    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/  http://up-z0.qiniup.com
+    this.uploadUrl = PIC_PREFIX;
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     });
