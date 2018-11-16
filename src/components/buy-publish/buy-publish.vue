@@ -85,12 +85,12 @@
           <div class="select-time" v-show="!select">
             <p class='text2' v-for="(dayItem, index) in dayList" :key="index">
               <span class='txt1'>{{dayItem.week}}</span>
-              <select name="dayStart" id="dayStart" class="str_time">
-                <option :value="sItem" v-for="(sItem, sIndex) in startTimeList" :key="sIndex">{{sItem}}</option>
+              <select name="dayStart" id="dayStart" class="str_time" v-model="displayTime[index].startTime">
+                <option :value="sIndex" v-for="(sItem, sIndex) in startTimeList" :key="sIndex">{{sItem}}</option>
               </select>
               <span class='txt2'>-</span>
-              <select name="dayEnd" id="dayEnd" class="end_time">
-                <option :value="eItem" v-for="(eItem, eIndex) in endTimeList" :key="eIndex">{{eItem}}</option>
+              <select name="dayEnd" id="dayEnd" class="end_time" v-model="displayTime[index].endTime">
+                <option :value="eIndex" v-for="(eItem, eIndex) in endTimeList" :key="eIndex">{{eItem}}</option>
               </select>
             </p>
           </div>
@@ -112,8 +112,8 @@
       </div>
     </div>
     <div class='footer'>
-        <button @click="toOtcFn" :class="{'btn-w': isDetail}">{{ $t('buyPublish.subject.zjfb') }}</button>
-        <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
+      <button @click="toOtcFn" :class="{'btn-w': isDetail}">{{ $t('buyPublish.subject.zjfb') }}</button>
+      <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
     </div>
     <showMsg :text="text" ref="showMsg"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
@@ -185,7 +185,7 @@ export default {
         '06:00',
         '07:00',
         '08:00',
-        '08:00',
+        '09:00',
         '10:00',
         '11:00',
         '12:00',
@@ -200,6 +200,7 @@ export default {
         '21:00',
         '22:00',
         '23:00',
+        '关闭'
       ],
       endTimeList: [
         '00:00',
@@ -211,7 +212,7 @@ export default {
         '06:00',
         '07:00',
         '08:00',
-        '08:00',
+        '09:00',
         '10:00',
         '11:00',
         '12:00',
@@ -226,8 +227,37 @@ export default {
         '21:00',
         '22:00',
         '23:00',
+        '关闭'
       ],
-      displayTime: [],
+      displayTime: [{
+        startTime: '24',
+        endTime: '24',
+        week: '1'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '2'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '3'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '4'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '5'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '6'
+      }, {
+        startTime: '24',
+        endTime: '24',
+        week: '7'
+      }],
       show: false,
       select: true,
       isReal: false,
@@ -372,22 +402,29 @@ export default {
           let str_ = document.querySelectorAll('.str_time');
           let end_ = document.querySelectorAll('.end_time');
           str_.forEach((item, index) => {
-            this.displayTime.push({
-              startTime: '',
-              endTime: '',
-              week: ''
-            })
-            this.displayTime[index]['startTime'] = this.startTimeList.indexOf(item.value).toString();
-            this.displayTime[index]['week'] = (index + 1).toString();
+            if (this.displayTime.length >=7) {
+              this.displayTime[index] && delete this.displayTime[index].adsCode;
+              this.displayTime[index] && delete this.displayTime[index].id;
+            } else {
+              this.displayTime.push({
+                startTime: '',
+                endTime: '',
+                week: ''
+              });
+            }
+            this.displayTime[index]['startTime'] = item.value;
           });
           end_.forEach((item, index) => {
-            this.displayTime[index]['endTime'] = this.endTimeList.indexOf(item.value).toString();
+            this.displayTime[index]['endTime'] = item.value;
           })
+          this.config.displayTime = this.displayTime;
+        } else {
+          delete this.config.displayTime;
         }
         this.config.leaveMessage = (this.$refs.leaveMessage.value).trim();
         let totalCount = '';
         this.config.totalCount = this.bbFormatAmount(this.count, '', this.config.tradeCoin);
-        this.config.displayTime = this.displayTime;
+
         this.config.premiumRate = this.yj_price / 100;
         if(!this.isDetail){
           let that = this;
@@ -471,6 +508,10 @@ export default {
           this.getBbPrice(this.config.tradeCoin);
           this.getUserWallet();
           // this.config.price = this.bbPrice * (100 - this.yj_price) / 100;
+          if (data.displayTime.length && data.displayTime.length > 0) {
+            this.select = false;
+            this.displayTime = data.displayTime;
+          };
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
