@@ -20,9 +20,11 @@ export default function fetch(code, param) {
   };
 
   param = 'code=' + code + '&json=' + encodeURIComponent(JSON.stringify(data));
+  let locale = window.localStorage.getItem('user_lang');
   return axios.post(url, param, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
+      "Accept-Language": locale === 'en' ? "en_US" : 'zh-CN,zh'
     }
   }).then((res) => {
     res = res.data;

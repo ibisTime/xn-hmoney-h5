@@ -65,7 +65,7 @@
           <span class='ico' @click.stop="showMsg('qx')"></span>
         </p> -->
     </div>
-    <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage">  
+    <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage">
     </textarea>
     <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
     <div class='select' @click="show = !show">
@@ -116,7 +116,7 @@
         <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
     </div>
     <showMsg :text="text" ref="showMsg"/>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
     <Toast :text="textMsg" ref="toast" />
   </div>
 </template>
@@ -251,7 +251,7 @@ export default {
         tradeType: '0',      //0=买币，1=卖币
         payLimit: '',        // 超过时间
         leaveMessage: '',    // 广告留言
-        publishType: '0',    // "0", "存草稿" "1", "直接发布"	
+        publishType: '0',    // "0", "存草稿" "1", "直接发布"
         protectPrice: '',
         truePrice: '0',
         premiumRate: '0',   // 溢价率
@@ -289,7 +289,7 @@ export default {
     let coinList = JSON.parse(sessionStorage.getItem('coinData'));
     this.bbList = Object.keys(coinList);
     this.config.tradeCoin = this.bbList[0];
-    this.getBbPrice('BTC');
+    this.getBbPrice(this.config.tradeCoin);
     this.getAdverDetail();
   },
   methods: {
@@ -630,9 +630,10 @@ export default {
   .message {
     width: 100%;
     background: #fff;
-    padding: 0.1rem 0.2rem;
+    padding: 0.2rem 0.3rem;
     height: 2.2rem;
     font-size: 0.28rem;
+    line-height: 1.5;
     color: #333;
     margin-bottom: 0.2rem;
   }
@@ -680,7 +681,7 @@ export default {
 
   .select-box {
     margin-bottom: 0.54rem;
-  
+
     .select-time {
       width: 100%;
       padding: 0 .3rem;
@@ -702,7 +703,7 @@ export default {
           width: .3rem;
           height: .3rem;
           background-image: url('./xz.png');
-   
+
         }
 
 

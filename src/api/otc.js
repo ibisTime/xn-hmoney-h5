@@ -10,10 +10,10 @@ export function getBbListData(){
 
 // 获取广告价格
 export function getAdvertisePrice(coin, ctype) {
-    let refCurrency = ctype || 'CNY';
-    return fetch("625292", {
-        coin,
-        refCurrency
+    let referCurrency = ctype || 'CNY';
+    return fetch("650102", {
+        symbol: coin,
+        referCurrency: referCurrency
     });
 }
 
@@ -26,7 +26,7 @@ export function getAdvertiseDetail(adsCode, userId) {
 }
 
 //分页查广告
-/* 
+/*
     var config = {
         start: 1,
         limit: 10,
