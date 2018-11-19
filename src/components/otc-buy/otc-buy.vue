@@ -50,7 +50,7 @@
       </div>
 
       <div class='remind'>
-          <p class='txt1'><span class='icon1'></span>{{remark}}</p>
+          <p class='txt1'><span class='icon1'></span>{{$t('common.jytx')}}</p>
           <p class='cont' v-html="jyText"></p>
       </div>
       <div class='footer'>

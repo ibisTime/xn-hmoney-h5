@@ -15,7 +15,7 @@
               </p>
           </div>
       </div>
-      <FullLoading ref="fullLoading" v-show="isLoading"/> 
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -62,6 +62,7 @@ export default {
 .log-wrapper {
   width: 100%;
   position: relative;
+  padding-bottom: 0.5rem;
 
   .bg {
     width: 100%;

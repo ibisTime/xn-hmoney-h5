@@ -76,13 +76,13 @@ export default {
           value: this.$t('walletBill.subject.jymc')
         },{
           key: ['ccorder_fee', 'bborder_fee', 'withdraw_fee'],
-          value: '手续费'
+          value: this.$t('walletBill.subject.sxf')
         },{
           key: ['game_in'],
-          value: '游戏转入'
+          value:  this.$t('walletBill.subject.yxzr')
         },{
           key: ['game_out'],
-          value: '游戏转出'
+          value: this.$t('walletBill.subject.yxzc')
         },{
           key: [
             'ccorder_frozen',
@@ -96,7 +96,7 @@ export default {
             'accept_frozen',
             'accept_unfrozen'
           ],
-          value: '冻结解冻'
+          value: this.$t('walletBill.subject.djjd')
         }
       ],
       code: '12345',

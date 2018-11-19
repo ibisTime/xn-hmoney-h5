@@ -20,7 +20,7 @@
           <div class="top">
             <p class='code' :title="item.code">
               {{$t('myOrder.subject.ddbh')}}:{{item.code.substring(item.code.length-8)}}</p>
-            <p class="unread" v-if="item.unreadMsgNum > 0">未读({{item.unreadMsgNum <= 99 ? item.unreadMsgNum :
+            <p class="unread" v-if="item.unreadMsgNum > 0">{{$t('myOrder.subject.wd')}}({{item.unreadMsgNum <= 99 ? item.unreadMsgNum :
               '99+'}})</p>
           </div>
           <div class="content">

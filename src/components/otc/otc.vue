@@ -35,15 +35,9 @@
             </p>
         </div>
       </div>
-      <!-- <div class="slider-wrapper">
-        <slider v-if="banners.length" :dots="banners">
-          <div class="home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)" @click="toUrl(item.url)">
-          </div>
-        </slider>
-      </div> -->
       <!-- 买币 -->
       <div class='main'>
-        <Scroll 
+        <Scroll
           ref="scroll"
           :data="bbDataList"
           :hasMore="hasMore"
@@ -63,7 +57,7 @@
               </div>
               <div class='text'>
                 <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span></p>
-                <p class='disc'>{{ $t('otc.subject.jy') }}{{adverItem.userStatistics.jiaoYiCount}}{{ $t('otc.subject.hp') }}{{getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount)}}{{ $t('otc.subject.xr') }}{{adverItem.userStatistics.beiXinRenCount}}</p>
+                <p class='disc'>{{ $t('otc.subject.jy') }}·{{adverItem.userStatistics.jiaoYiCount}} {{ $t('otc.subject.hp') }}·{{getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount)}} {{ $t('otc.subject.xr') }}·{{adverItem.userStatistics.beiXinRenCount}}</p>
                 <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
               </div>
               <div class='number'>
@@ -78,8 +72,9 @@
           <p>{{ $t('common.zwgg') }}</p>
         </div>
       </div>
-      <div   
+      <div
         class='release'
+        :class="lang === 'cn' ? '' : 'en'"
         ref="touchDemo"
         @click='relShow'
         @touchstart.stop="fbTouchStartFn"
@@ -94,11 +89,11 @@
     <div class='main'>
       <div class='buy' @click.stop='goBuyPublish'>
         <span></span>
-        {{ $t('otc.subject.fbgm') }}
+        <p>{{ $t('otc.subject.fbgm') }}</p>
       </div>
       <div class='sell' @click.stop='goSellPublish'>
         <span></span>
-        {{ $t('otc.subject.fbcs') }}
+        <p>{{ $t('otc.subject.fbcs') }}</p>
       </div>
     </div>
     <div @click='relClose' class='close'></div>
@@ -164,14 +159,13 @@ export default {
           noMore: this.$t('common.jzwb')
         }
       },
-      loginStatus: ''
+      loginStatus: '',
+      lang: 'cn'
     };
   },
   created() {
     setTitle(this.$t('page.cate.otc'));
-    getBannerList().then((data) => {
-      this.banners = data;
-    });
+    this.lang = window.localStorage.getItem('user_lang') || 'cn';
   },
   updated() {
   },
@@ -325,7 +319,7 @@ export default {
           }, 1500);
         }
       });
-    }, 
+    },
     // 获取头像
     getUserPic(pic){
         return getAvatar(pic);
@@ -363,7 +357,7 @@ export default {
       }else{
         touch = event.changedTouches[0];
       }
-      
+
       this.docuWidth = document.body.clientWidth - 50;
       this.docuHeight = document.body.clientHeight - 150;
       this.position.x = touch.clientX;
@@ -491,7 +485,7 @@ export default {
       font-weight: bold;
       color: #333;
     }
-    
+
   }
 
   .top {
@@ -628,11 +622,10 @@ export default {
           }
           .name {
             display:block;
-            width: .76rem;
             height: .3rem;
             border-radius: .04rem;
             border: .01rem solid #d53d3d;
-            font: .18rem/.24rem PingFangSC-Medium;
+            font-size: 0.16rem;
             color:#d53d3d;
             margin-top: .1rem;
             text-align: center;
@@ -668,7 +661,7 @@ export default {
             line-height: .24rem;
             margin-bottom: .18rem;
           }
-          
+
         }
 
         .number {
@@ -708,6 +701,9 @@ export default {
     bottom: 1.82rem;
     opacity: 0.8;
 
+    &.en{
+      background-image: url('./fb_en.png');
+    }
   }
 }
 
@@ -727,12 +723,12 @@ export default {
     bottom: 2.26rem;
     font-size: .3rem;
     color:#333;
-    padding: 0 1.42rem;
+    padding: 0 0.4rem;
     display: flex;
     justify-content: space-between;
 
     span {
-      display: block;
+      display: inline-block;
       width: 1.35rem;
       height:1.35rem;
       background-repeat: no-repeat;
@@ -779,7 +775,7 @@ export default {
     -moz-filter: blur(.45rem);
     -o-filter: blur(.45rem);
     -ms-filter: blur(.45rem);
-    filter: blur(.45rem); 
+    filter: blur(.45rem);
 }
 
 

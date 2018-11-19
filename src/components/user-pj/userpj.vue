@@ -2,7 +2,7 @@
   <div class="guest-wrapper" @click.stop>
     <div class='main' >
         <div class='list-wrap'>
-            <Scroll 
+            <Scroll
             ref="scroll"
             :data="list"
             :hasMore="hasMore"
@@ -33,7 +33,7 @@
             </div>
         </div>
     </div>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -53,8 +53,8 @@ export default {
       len: '',
       userId: '',
       isGood: {
-          '0': '差评',
-          '2': '好评'
+        '0': this.$t('common.cp'),
+        '2': this.$t('common.hp')
       },
       config: {
         start: 1,
@@ -158,7 +158,7 @@ export default {
           margin-right: 0.22rem;
           p{
             width: 100%;
-            height: 100%;    
+            height: 100%;
             background-position: center;
             background-size: cover;
             border-radius: 100%;

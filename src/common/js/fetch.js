@@ -24,7 +24,7 @@ export default function fetch(code, param) {
   return axios.post(url, param, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      "Accept-Language": locale === 'en' ? "en_US" : 'zh-CN,zh'
+      "Accept-Language": locale === 'en' ? 'en_US' : 'zh_CN'
     }
   }).then((res) => {
     res = res.data;
