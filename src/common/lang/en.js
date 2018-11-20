@@ -17,15 +17,17 @@ export default {
     zwgg: 'No advertisement',
     szzjmm: 'Please enter transaction password',
     jzz: 'Loading',
+    zzzr: 'Loading...',
     jzwb: 'All loaded',
     czcg: 'operate successfully',
     txwz: 'Please complete',
     qx: 'cancel',
     fq: 'cancel',
-    qr: 'Ok ',
+    qr: 'Ok',
+    qd: 'Ok',
     jg: 'price',
-    je: 'amount',
-    sl: 'quantity',
+    je: 'Amount',
+    sl: 'Quantity',
     gm: 'Buy',
     cs: 'Sell',
     zfb: 'Alipay',
@@ -41,7 +43,10 @@ export default {
     cp: 'complaints',
     buyFMVP: 'Buy FMVP',
     qxdl: 'Please Login',
-    jytx: 'Transaction reminding'
+    jytx: 'Transaction reminding',
+    zwsj: 'No Data',
+    qxzf: 'Cancel',
+    bjfk: 'Mark payment',
   },
   // page页
   page: {
@@ -73,7 +78,10 @@ export default {
     subject: {
       yxye: 'Game balances',
       jryx: 'Enter the game',
-      zryx: 'Rechange'
+      zryx: 'Recharge',
+      cz: 'Recharge',
+      qsrczsl: 'Rechange amount',
+      czslbnwk: 'The amount of recharge can not be empty'
     }
   },
   // 系统公告
@@ -101,14 +109,15 @@ export default {
       ysm: 'Auth',
       wsm: 'UnAuth',
       jy: 'Trades',
-      hp: 'praises',
-      xr: 'trust',
+      hp: 'Praises',
+      xr: 'Trust',
       xe: 'Limit',
       bj: 'Edit',
       cs: 'Sell',
       gm: 'Buy',
       fbgm: 'Release buying advertisement',
       fbcs: 'Release selling advertisement',
+      fb: 'Post'
     }
   },
   // 发布广告
@@ -154,7 +163,8 @@ export default {
       xqw: 'Friday',
       xql: 'Saturday',
       xqt: 'Sunday',
-      yjlv: 'The premium rate should be between -50 and 50'
+      yjlv: 'The premium rate should be between -50 and 50',
+      gb: 'close'
     }
   },
   // 购买页面
@@ -240,7 +250,11 @@ export default {
       jj: 'Introduction',
       bkbwl: 'Cannot be null or less than or equal to zero',
       xsbdy: 'No more than 8 decimal places',
-      xsldy: 'No more than 2 decimal places'
+      xsldy: 'No more than 2 decimal places',
+      cjsj: 'Time',
+      cjjg: 'Price',
+      cjl: 'Volume',
+      more: 'More'
     }
   },
   // 历史委托
@@ -286,7 +300,8 @@ export default {
       jl: 'Records',
       fzskdz: 'Copy payment address',
       zr: 'transferred-in',
-      gbzc: 'The mobile model does not support click copy, please long press the text to copy.'
+      gbzc: 'The mobile model does not support click copy, please long press the text to copy.',
+      fzcg: 'Replicating success'
     }
   },
   // 转出
@@ -370,7 +385,7 @@ export default {
   // 订单记录
   walletRecord: {
     subject: {
-      zje:'The total amount',
+      zje:'Total',
       zwdd: 'No orders',
       ddjl: 'Orders records'
     }
@@ -384,8 +399,8 @@ export default {
       zh: 'account number',
       khh: 'Bank',
       ptrz: 'Beneficiary account has been certified via platform, please feel free to collect payment.',
-      wcfk: 'I have completed the payment',
-      qxjy: 'Cancel the transaciotn',
+      wcfk: 'Already paid',
+      qxjy: 'Cancel',
       dzf: 'Pending to pay',
       dqr: 'Pending to confirm',
       ywc: 'Completed',
@@ -669,10 +684,8 @@ export default {
     subject: {
       ltnr: 'Enter to chat',
       sdsm: 'say something',
-      fs: 'Send'
-    },
-    system: {
-      '系统消息：买家已标记打款': 'System Message: Buyer has marked the payment'
+      fs: 'Send',
+      xxnrbnwk: 'Message content can not be empty'
     }
   }
 };

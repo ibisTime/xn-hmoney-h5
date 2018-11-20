@@ -251,6 +251,7 @@ export default {
     @include bg-image("mine");
     text-align: center;
     position: relative;
+    z-index: 8;
 
     h4 {
       padding-top: 0.58rem;
@@ -312,10 +313,11 @@ export default {
 
   .mine-main {
     width: 92%;
-    margin: 0 auto;
-    margin-top: -0.86rem;
+    margin: -0.86rem auto 0;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 9;
 
     .item-top {
       width: 100%;

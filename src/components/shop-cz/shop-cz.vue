@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <div class="cz-box">
-            <p>充值FMVP</p>
-            <div class="cz-iup"><input type="number" v-model="count" placeholder="请输入充值数量"></div>
-            <!--<div class="cz-iup"><input type="password" v-model="config.tradePwd" placeholder="请输入交易密码"></div>-->
-        </div>
-        <div class="qr-box" @click="qrczFn">
-            确定
-        </div>
-      <Toast :text="textMsg" ref="toast" />
-      <FullLoading ref="fullLoading" v-show="isLoading"/>
+  <div class="template-wrapper bg_white">
+    <div class="content-wrapper">
+      <div class="cz-box">
+        <p>{{$t('shop.subject.cz')}}FMVP</p>
+        <div class="cz-iup"><input type="number" v-model="count" :placeholder="$t('shop.subject.qsrczsl')"></div>
+        <!--<div class="cz-iup"><input type="password" v-model="config.tradePwd" placeholder="请输入交易密码"></div>-->
+      </div>
+      <div class="qr-box" @click="qrczFn">{{$t('common.qd')}}</div>
     </div>
+    <Toast :text="textMsg" ref="toast" />
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
+  </div>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ import Toast from 'base/toast/toast';
         methods: {
             qrczFn(){
                 if(this.count == ''){
-                    this.textMsg = '充值数量不能为空';
+                    this.textMsg = this.$t('shop.subject.czslbnwk');
                     this.$refs.toast.show();
                     return;
                 // }else if(this.config.tradePwd == ''){
@@ -81,7 +81,7 @@ import Toast from 'base/toast/toast';
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .cz-box{
     background-color: #fff;
     padding: 0.4rem 0.2rem 0.8rem;
@@ -102,8 +102,7 @@ import Toast from 'base/toast/toast';
     border-bottom: 1px solid #ddd;
 }
 .qr-box{
-    margin: 0 auto;
-    margin-top: 0.3rem;
+    margin: 1rem auto 0;
     background-color: #d53d3d;
     color: #fff;
     width: 90%;

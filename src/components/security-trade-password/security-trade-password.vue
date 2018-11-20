@@ -30,7 +30,7 @@
 <script>
 import {getUser, changeTradPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
 import { setTradePwd } from 'api/user';
-import {captValid, rePwdValid, tradeValid, getUserId, setTitle, getUrlParam} from '../../common/js/util';
+import {getUserId, setTitle, getUrlParam} from '../../common/js/util';
 import { resetPwd } from 'api/user';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';

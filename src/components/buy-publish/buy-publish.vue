@@ -200,7 +200,7 @@ export default {
         '21:00',
         '22:00',
         '23:00',
-        '关闭'
+        this.$t('buyPublish.subject.gb')
       ],
       endTimeList: [
         '00:00',
@@ -227,7 +227,7 @@ export default {
         '21:00',
         '22:00',
         '23:00',
-        '关闭'
+        this.$t('buyPublish.subject.gb')
       ],
       displayTime: [{
         startTime: '24',

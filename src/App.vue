@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <div class="all-content">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
     <Toast :text="textMsg" ref="toast"/>
     <div
       class="tobuy"
@@ -72,6 +70,7 @@
           }
         }
       });
+      let self = this;
       this.$router.afterEach((to, from) => {
         if(!sessionStorage.getItem('coinData')){
           getBbListData().then(data => {
@@ -89,16 +88,16 @@
         if (isLogin()) {
           this.tencentLogin();
         } else {
-          if (to.path == '/' ||
-            to.path == '/page' ||
-            to.path == '/shop-usedCar' ||
-            to.path == '/system-notice' ||
-            to.path == '/about-platformIntroduced?ckey=about_us' ||
-            to.path == '/trading' ||
-            to.path == '/otc' ||
-            to.path == '/login' ||
-            to.path == '/registered' ||
-            to.path == '/security-loginPassword') {
+          if (to.path === '/' ||
+            to.path === '/page' ||
+            to.path === '/shop-usedCar' ||
+            to.path === '/system-notice' ||
+            to.path === '/about-platformIntroduced?ckey=about_us' ||
+            to.path === '/trading' ||
+            to.path === '/otc' ||
+            to.path === '/login' ||
+            to.path === '/registered' ||
+            to.path === '/security-loginPassword') {
           } else {
             this.textMsg = this.$t('common.qxdl');
             this.$refs.toast.show();
@@ -106,6 +105,12 @@
               this.$router.push('/login');
             }, 1500);
           }
+        }
+        if (this.$refs.touchDemo && (to.path === '/buy-publish' || to.path === '/login' ||
+          to.path === '/registered' || to.path === '/message-chat' || to.path === '/wallet-orderDetails')) {
+          self.$refs.touchDemo.style.display = 'none';
+        } else {
+          self.$refs.touchDemo.style.display = 'block';
         }
       });
     },
@@ -115,6 +120,7 @@
         this.$refs.touchDemo.style.bottom = '1rem';
         this.$refs.touchDemo.style.left = '';
         this.$refs.touchDemo.style.top = '';
+        this.$refs.touchDemo.style.display = 'none';
       }
     },
     components: {
@@ -185,6 +191,7 @@
     overflow-x: hidden;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
+    width: 100%;
   }
   .all-content{
     width: 100%;

@@ -80,7 +80,7 @@
   import Toast from 'base/toast/toast';
   import Qiniu from 'base/qiniu/qiniu';
   import {addMsg} from 'common/js/message';
-  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl} from 'common/js/util';
+  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl, getTranslateText} from 'common/js/util';
   import User from 'common/bean/user';
   import {getUser} from 'api/user';
   import {getOrderDetail} from 'api/person';
@@ -224,7 +224,7 @@
         return isUnDefined(value);
       },
       getSystem(content){
-        return this.$t('messageChat.system.'+ content);
+        return getTranslateText(content);
       },
       show() {
         if (this.showEmoji) {
@@ -258,7 +258,7 @@
           });
           this.emoji = '';
         } else {
-          this.showToast('消息内容不能为空');
+          this.showToast(this.$t('messageChat.subject.xxnrbnwk'));
         }
       },
       getContent(item) {

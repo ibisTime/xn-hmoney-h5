@@ -1,7 +1,9 @@
 import {setCookie, getCookie, delCookie} from './cookie';
 import './BigDecimal';
 import avatarDefault from '../image/avatar@2x.png';
+import Language from '../lang/language';
 // import {setProfilePortrait} from 'common/js/message';
+
 // 日期格式化
 export function formatDate(date, fmt) {
   date = new Date(date);
@@ -84,6 +86,17 @@ export function goLogin() {
 // 是否登录
 export function isLogin() {
   return !!getUserId();
+}
+
+// 获取当前语言
+export function getLangType () {
+  let locale = window.localStorage.getItem('user_lang') || 'zh';
+  return locale;
+}
+
+// 获取当前语言
+export function getTranslateText(text, lang) {
+  return Language.getText(text, lang);
 }
 
 // 是否为空

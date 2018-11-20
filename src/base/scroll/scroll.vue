@@ -22,6 +22,7 @@
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll';
   import Loading from 'base/loading/loading';
+  import {getTranslateText} from '../../common/js/util';
 
   const DIRECTION_H = 'horizontal';
   const DIRECTION_V = 'vertical';
@@ -96,7 +97,7 @@
     },
     computed: {
       pullUpTxt() {
-        return this.pullUpLoad && this.pullUpLoad.txt && this.pullUpLoad.txt.noMore;
+        return this.pullUpLoad && this.pullUpLoad.txt && this.getText(this.pullUpLoad.txt.noMore);
       }
     },
     created() {},
@@ -169,6 +170,9 @@
             this.$emit('pullingUp');
           }
         });
+      },
+      getText(text) {
+        return getTranslateText(text);
       }
     },
     watch: {

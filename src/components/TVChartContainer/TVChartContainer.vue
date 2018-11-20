@@ -8,7 +8,7 @@
           <p :class="item.class">{{item.label}}</p>
         </div>
         <div class="chart-button more" :class="showMoreBtn ? 'selected' : ''">
-          <p>更多</p>
+          <p>{{$t('trading.bbDepth.more')}}</p>
         </div>
       </div>
       <div class="hidden-wrap" v-show="showMore">

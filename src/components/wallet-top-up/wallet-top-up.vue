@@ -50,7 +50,7 @@
             <p class='tab'>
                 <span :class="[ showDet ? 'active text1' : 'text1' ]" @click='buy'>{{$t('common.je')}}</span>
                 <span :class="[ !showDet ? 'active text2' : 'text2' ]" @click='sell(sell)'>{{$t('common.sl')}}</span>
-                <span class='text3'>可用<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
+                <span class='text3'>{{$t('walletBuy.subject.ky')}}<i :title="cdsMoney">{{cdsMoney}}</i>FMVP</span>
             </p>
             <p class='inp'>
                 <input type="text" :placeholder="sellInputPlaceholder(showDet)" v-model="sellMonNumber">
@@ -66,13 +66,13 @@
             <p>
               <span>{{$t('walletBuy.subject.zffs')}}</span>
               <span class='txt2 fr'>
-                  {{$t('common.zfb')}} {{bankcardNumber}}
+                  {{$t('common.zfb')}}-{{bankcardNumber}}
               </span>
             </p>
         </div>
-        <div class="pay-img" v-show="show">
-          <p :style="{backgroundImage: zfPic}"></p>
-        </div>
+        <!--<div class="pay-img" v-show="show">-->
+          <!--<p :style="{backgroundImage: zfPic}"></p>-->
+        <!--</div>-->
         <div class="pay-note" v-show="show">
           <div>
             <textarea name="" id="" v-model="buyConfig.remark" :placeholder="$t('walletBuy.subject.qsrzh')"></textarea>
@@ -108,14 +108,14 @@
       <div class="ress-box" @click.stop>
         <span class="out" @click="dzfPay">×</span>
         <div class="am-modal-header">
-            <p><span class="currency"></span>支付宝(<span>{{bankcardNumber}}</span>)</p>
+            <p><span class="currency"></span>{{$t('common.zfb')}}(<span>{{bankcardNumber}}</span>)</p>
         </div>
         <div id="paginationAddress">
           <p :style="{backgroundImage: zfPic}"></p>
         </div>
         <div class="am-modal-footer">
-          <div class="am-button-gray qxBuy" @click="qxBuy">取消支付</div>
-          <div class="am-button-red qrBuy" @click="qrBuy">标记付款</div>
+          <div class="am-button-gray qxBuy" @click="qxBuy">{{$t('common.qxzf')}}</div>
+          <div class="am-button-red qrBuy" @click="qrBuy">{{$t('common.bjfk')}}</div>
         </div>
       </div>
     </div>
@@ -780,6 +780,7 @@ export default {
        border-radius: 0.06rem;
        background-color: #ccc;
        color: #fff;
+       white-space: nowrap;
        &:nth-of-type(2){
          background-color: #d53d3d;
        }
