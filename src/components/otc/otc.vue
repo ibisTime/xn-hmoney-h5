@@ -727,6 +727,7 @@
     bottom: 1.82rem;
     opacity: 0.8;
     text-align: center;
+    z-index: 12;
 
     .icon{
       display: inline-block;

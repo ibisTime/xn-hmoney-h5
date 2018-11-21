@@ -109,7 +109,7 @@ export default {
           if (data.type === '0'){
             this.realName = 'otc商家';
           } else {
-            this.realName = data.bankcard ? data.bankcard.realName : data.user.nickname;
+            this.realName = data.user.nickname;
           }
 
             this.receiveCardNo = data.receiveCardNo;

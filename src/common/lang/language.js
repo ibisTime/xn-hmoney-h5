@@ -56,37 +56,49 @@ const LANGUAGE = {
     'en': ''
   },
   '系统消息：交易已下单，等待买家标记打款': {
-    'zh': '系统消息：交易已下单等待买家标记打款',
-    'en': 'System Message: The transaction has placed an order waiting for the buyer to mark the payment'
+    'ZH': '系统消息：交易已下单，等待买家标记打款',
+    'EN': 'System Message: The transaction has placed an order waiting for the buyer to mark the payment'
   },
-  '系统消息：卖家已释放': {
-    'zh': '系统消息：卖家已释放',
-    'en': 'System Message: Seller has released'
+  '系统消息：订单支付超时，系统自动取消': {
+    'ZH': '系统消息：订单支付超时，系统自动取消',
+    'EN': 'System Message: Order payment timeout, system cancel automatically'
+  },
+  '系统消息：订单已取消': {
+    'ZH': '系统消息：订单已取消',
+    'EN': 'System Message: Order has cancelled'
   },
   '系统消息：买家已标记打款': {
-    'zh': '系统消息：买家已标记打款',
-    'en': 'System Message: Buyer has marked the payment'
+    'ZH': '系统消息：买家已标记打款',
+    'EN': 'System Message: Buyer has marked the payment'
+  },
+  '系统消息：卖家已释放': {
+    'ZH': '系统消息：卖家已释放',
+    'EN': 'System Message: Seller has released'
   },
   '系统消息：订单已申请仲裁': {
-    'zh': '系统消息：订单已申请仲裁',
-    'en': 'System Message: Order has applied for arbitration'
+    'ZH': '系统消息：订单已申请仲裁',
+    'EN': 'System Message: Order has applied for arbitration'
   },
   '系统消息：仲裁申请已处理完成': {
-    'zh': '系统消息：仲裁申请已处理完成',
-    'en': 'System Message: The arbitration application has been processed'
+    'ZH': '系统消息：仲裁申请已处理完成',
+    'EN': 'System Message: The arbitration application has been processed'
+  },
+  '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消': {
+    'ZH': '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消',
+    'EN': 'System Message: Buyer to apply for arbitration does not pass, the buyer is not actually paid, order cancelled'
+  },
+  '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻': {
+    'ZH': '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻',
+    'EN': 'System message: Buyer apply for arbitration through the buyer has actually paid, automatic thawing'
   },
   '系统消息：买家已评价': {
-    'zh': '系统消息：买家已评价',
-    'en': 'System Message: Buyer has evaluated'
+    'ZH': '系统消息：买家已评价',
+    'EN': 'System Message: Buyer has evaluated'
   },
   '系统消息：卖家已评价': {
-    'zh': '系统消息：卖家已评价',
-    'en': 'System Message: Seller has evaluated'
-  },
-  '订单已完成': {
-    'zh': '订单已完成',
-    'en': 'Order has been completed'
-  },
+    'ZH': '系统消息：卖家已评价',
+    'EN': 'System Message: Seller has evaluated'
+  }
 };
 export default {
   getText(text, lang) {
