@@ -35,7 +35,7 @@
         </p>
         <p class='text4'>
             <span class='txt1'>{{$t('orderDetail.subject.khh')}}：</span>
-            <span class='txt2'>{{receiveInfo}}</span>
+            <span class='txt2'>{{zfType[receiveType]}}</span>
         </p>
         <p class='text5'><i class='icon'></i><span>{{$t('orderDetail.subject.ptrz')}}</span></p>
         <div v-show="btnStatus">
@@ -107,7 +107,7 @@ export default {
         getCTSDetail(this.config).then(data => {
           // 类型 买入
           if (data.type === '0'){
-            this.realName = 'otc商家';
+            this.realName = this.$t('orderDetail.subject.otcBusiness');
           } else {
             this.realName = data.user.nickname;
           }

@@ -17,17 +17,17 @@
               <span class='txt1'>{{$t('billDetail.subject.bdhje')}}</span>
               <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
-          <div class='list'>
-              <span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>
-              <span class='txt2'>{{type == '提币' || type == '提币冻结' || type == '提币手续费' || type == '提币解冻'? fee : '-'}}</span>
-          </div>
+          <!--<div class='list'>-->
+              <!--<span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>-->
+              <!--<span class='txt2'>{{data.fee}}</span>-->
+          <!--</div>-->
           <div class='list'>
               <span class='txt1'>{{$t('billDetail.subject.bdsj')}}</span>
               <span class='txt2'>{{data.createDatetime}}</span>
           </div>
           <div class='list'>
               <span class='txt1'>{{$t('billDetail.subject.jymx')}}</span>
-              <span class='txt2'>{{data.bizNote}}</span>
+              <span class='txt2'>{{getBizNote(data)}}</span>
           </div>
           <!-- <div class='list'>
               <span class='txt1'>明细摘要</span>
@@ -38,9 +38,9 @@
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
+import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText } from 'common/js/util';
 import { billDetails } from 'api/person';
-import { getSysConfig } from 'api/general';
+import { getSysConfig, getDictList } from 'api/general';
 import FullLoading from 'base/full-loading/full-loading';
 
 export default {
@@ -49,19 +49,25 @@ export default {
             data: [],
             type: '',
             fee: '',
-            isLoading: true
+            isLoading: true,
+            bizTypeValueList: []
         }
     },
     created() {
         setTitle(this.$t('billDetail.subject.zdxq'));
         this.type = getUrlParam('type');
-        this.billDetails();
+        getDictList('jour_biz_type_user').then(data => {
+          data.forEach((item) => {
+            this.bizTypeValueList[item.dkey] = item.dvalue;
+          });
+        });
         getSysConfig('withdraw_fee').then(data => {
-            this.fee = data.cvalue * 100 + '%';
-            this.isLoading = false;
+          this.fee = data.cvalue * 100 + '%';
+          this.isLoading = false;
         }, () => {
-            this.isLoading = false;
-        })
+          this.isLoading = false;
+        });
+        this.billDetails();
     },
     methods: {
         billDetails() {
@@ -72,6 +78,27 @@ export default {
                 this.data = data;
                 this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd hh:mm:ss');
             });
+        },
+        getBizNote(item) {
+          // 币币交易买入卖出
+          if (item.bizType === 'bborder_frozen') {
+            return getTranslateText(item.bizNote);
+            // 充值
+          } else if (item.bizType === 'charge') {
+            if(item.bizNote.indexOf('充币-来自地址') > -1) {
+              return item.bizNote.replace('充币-来自地址', getTranslateText('充币-来自地址'));
+            } else if(item.bizNote.indexOf('充币-来自交易') > -1) {
+              return item.bizNote.replace('充币-来自交易', getTranslateText('充币-来自交易'));
+            } else if(item.bizNote.indexOf('充币-交易id') > -1) {
+              return item.bizNote.replace('充币-交易id', getTranslateText('充币-交易id'));
+            } else if(item.bizNote.indexOf('充币-来自地址') > -1) {
+              return item.bizNote.replace('充币-外部地址', getTranslateText('充币-外部地址'));
+            } else {
+              return this.bizTypeValueList[item.bizType];
+            }
+          } else {
+            return this.bizTypeValueList[item.bizType];
+          }
         }
     },
     components: {
@@ -107,7 +134,7 @@ export default {
         font-size: .36rem;
         line-height: .5rem ;
         color: #fff;
-        
+
         p {
             padding-top: .18rem;
 
@@ -116,7 +143,7 @@ export default {
                 left: 50%;
                 transform: translateX(-50%);
             }
-            
+
             .icon {
                 float: left;
                 width: .2rem;
@@ -165,7 +192,7 @@ export default {
         .list {
             width: 100%;
             padding: 0 .3rem;
-            display: flex;   
+            display: flex;
             box-shadow: 0 .01rem 0 0 #E5E5E5;
             .txt1 {
                 width: 1.92rem;

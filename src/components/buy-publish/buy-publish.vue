@@ -466,7 +466,7 @@ export default {
     },
     toOtcFn(){
       this.config.publishType = '1';
-      if(this.errors.any() || this.config.protectPrice == ''){
+      if(this.errors.any() || this.config.protectPrice === '' || (this.$refs.leaveMessage.value).trim() === ''){
         this.textMsg = this.$t('common.txwz');
         this.$refs.toast.show();
         this.isOk = true;
@@ -476,6 +476,12 @@ export default {
     },
     //保存草稿
     saveOtcData(){
+      if(this.errors.any() || this.config.protectPrice === '' || (this.$refs.leaveMessage.value).trim() === ''){
+        this.textMsg = this.$t('common.txwz');
+        this.$refs.toast.show();
+        this.isOk = true;
+        return;
+      }
       if(!this.isCg){
         this.config.publishType = '0';
         this.changeConfig('/my-advertising');

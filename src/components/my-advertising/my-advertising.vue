@@ -9,7 +9,7 @@
         </p>
     </div>
     <div class='adver'>
-        <Scroll 
+        <Scroll
           ref="scroll"
           :data="myWillAdverList"
           :hasMore="hasMore"
@@ -49,7 +49,7 @@
           <p>{{$t('myAdvertising.subject.zwgg')}}</p>
         </div>
         <Toast :text="textMsg" ref="toast" />
-        <FullLoading ref="fullLoading" v-show="isLoading"/> 
+        <FullLoading ref="fullLoading" v-show="isLoading"/>
         <Confirm ref="confirm" :text="'是否下架？'" :confirmBtnText="'确定'" :cancelBtnText="'取消'" @confirm="confirmAdverFn"/>
     </div>
   </div>
@@ -98,7 +98,7 @@ export default {
         tradeType: '0',      //0=买币，1=卖币
         payLimit: '',        // 超过时间
         leaveMessage: '',    // 广告留言
-        publishType: '0',    // "0", "存草稿" "1", "直接发布"	
+        publishType: '0',    // "0", "存草稿" "1", "直接发布"
         protectPrice: '',
         truePrice: '0',
         premiumRate: '0',   // 溢价率
@@ -269,6 +269,11 @@ export default {
   font-size: 0.28rem;
   color: #333;
   overflow: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 
   .icon {
     display: inline-block;
@@ -295,9 +300,13 @@ export default {
     }
   }
   .adver{
-      height: 12rem;
-      padding-bottom: 2rem;
-      overflow: scroll;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 1.1rem;
+    z-index: 8;
   }
 
   .tabs {
@@ -308,7 +317,9 @@ export default {
     width: 100%;
     padding: 0 0.3rem;
     background: #fff;
-    margin-bottom: 0.18rem;
+    margin-bottom: 0.2rem;
+    position: relative;
+    z-index: 9;
 
     p {
       flex: 1;

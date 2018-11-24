@@ -409,7 +409,8 @@ export default {
       yqx: '已取消',
       ptyqx: '平台已取消',
       ddxq: '订单详情',
-      ggly: '广告留言'
+      ggly: '广告留言',
+      otcBusiness: 'otc商家'
     }
   },
   // 个人主页

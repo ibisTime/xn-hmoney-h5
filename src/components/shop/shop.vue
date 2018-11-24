@@ -42,7 +42,7 @@ export default {
   },
   mounted() {
     gramUrl().then(data => {
-      this.gUrl = `${data.gameUrl}?userId=${data.userId}&phone=${data.phone}&hashID=${data.hashID}&sign=${data.sign}`;
+      this.gUrl = `${data.gameUrl}?userId=${data.userId}&phone=${data.phone}&hashID=${data.hashID}&sign=${data.sign}&timestamp=${data.timestamp}`;
     });
     gramMoney().then(data => {
       this.gMon = (Math.floor(parseFloat(data.balance) * 100000000) / 100000000).toFixed(8) + data.currency;

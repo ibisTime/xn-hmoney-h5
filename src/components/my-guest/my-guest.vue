@@ -9,7 +9,7 @@
     </header>
     <div class='main' >
         <div class='list-wrap'>
-            <Scroll 
+            <Scroll
             ref="scroll"
             :data="list"
             :hasMore="hasMore"
@@ -42,7 +42,7 @@
         </div>
 
     </div>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -143,7 +143,11 @@ export default {
 .guest-wrapper {
   font-size: 0.28rem;
   color: #333;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
   .red {
     color: #d53d3d;
   }
@@ -159,7 +163,7 @@ export default {
   }
 
   header {
-    line-height: 0.88rem;
+    line-height: 0.9rem;
     text-align: center;
     font-size: 0.36rem;
     font-weight: bold;
@@ -167,6 +171,8 @@ export default {
     width: 100%;
     padding: 0 0.3rem;
     margin-bottom: 0.2rem;
+    position: relative;
+    z-index: 9;
     p{
       display: flex;
       justify-content: space-around;
@@ -175,10 +181,13 @@ export default {
     }
   }
   .main {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 12rem;
-    padding-bottom: 2rem;
-    overflow: scroll;
+    height: 100%;
+    padding-top: 1.1rem;
+    z-index: 8;
     background: #fff;
     .list-wrap {
       display: block;

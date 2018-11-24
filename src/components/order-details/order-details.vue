@@ -89,7 +89,7 @@
   </div>
 </template>
 <script>
-  import { getUrlParam, formatAmount, formatDate, getUserId, setTitle } from 'common/js/util';
+  import { getUrlParam, formatAmount, formatDate, getUserId, setTitle, getLangType } from 'common/js/util';
   import { getOrderDetail, releaseOrder, payOrder, cancelOrder, arbitrationlOrder, commentOrder } from 'api/person';
   import { getDictList } from "api/general";
   import Toast from 'base/toast/toast';
@@ -273,7 +273,12 @@
 
         // 系统自动取消
         if( data.status == '4' || data.status == '5' || data.status == '3'){
-          this.yjTitle = data.remark;
+          if(getLangType() === 'en') {
+            this.yjTitle = this.statusValueList[data.status];
+          } else {
+            this.yjTitle = data.remark;
+          }
+
           this.btns = '';
         }
         this.btns += `<button class="o-btn qx-btn chatBtn">

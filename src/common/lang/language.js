@@ -56,48 +56,81 @@ const LANGUAGE = {
     'en': ''
   },
   '系统消息：交易已下单，等待买家标记打款': {
-    'ZH': '系统消息：交易已下单，等待买家标记打款',
-    'EN': 'System Message: The transaction has placed an order waiting for the buyer to mark the payment'
+    'zh': '系统消息：交易已下单，等待买家标记打款',
+    'en': 'System Message: The transaction has placed an order waiting for the buyer to mark the payment'
   },
   '系统消息：订单支付超时，系统自动取消': {
-    'ZH': '系统消息：订单支付超时，系统自动取消',
-    'EN': 'System Message: Order payment timeout, system cancel automatically'
+    'zh': '系统消息：订单支付超时，系统自动取消',
+    'en': 'System Message: Order payment timeout, system cancel automatically'
   },
   '系统消息：订单已取消': {
-    'ZH': '系统消息：订单已取消',
-    'EN': 'System Message: Order has cancelled'
+    'zh': '系统消息：订单已取消',
+    'en': 'System Message: Order has cancelled'
   },
   '系统消息：买家已标记打款': {
-    'ZH': '系统消息：买家已标记打款',
-    'EN': 'System Message: Buyer has marked the payment'
+    'zh': '系统消息：买家已标记打款',
+    'en': 'System Message: Buyer has marked the payment'
   },
   '系统消息：卖家已释放': {
-    'ZH': '系统消息：卖家已释放',
-    'EN': 'System Message: Seller has released'
+    'zh': '系统消息：卖家已释放',
+    'en': 'System Message: Seller has released'
   },
   '系统消息：订单已申请仲裁': {
-    'ZH': '系统消息：订单已申请仲裁',
-    'EN': 'System Message: Order has applied for arbitration'
+    'zh': '系统消息：订单已申请仲裁',
+    'en': 'System Message: Order has applied for arbitration'
   },
   '系统消息：仲裁申请已处理完成': {
-    'ZH': '系统消息：仲裁申请已处理完成',
-    'EN': 'System Message: The arbitration application has been processed'
+    'zh': '系统消息：仲裁申请已处理完成',
+    'en': 'System Message: The arbitration application has been processed'
   },
   '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消': {
-    'ZH': '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消',
-    'EN': 'System Message: Buyer to apply for arbitration does not pass, the buyer is not actually paid, order cancelled'
+    'zh': '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消',
+    'en': 'System Message: Buyer to apply for arbitration does not pass, the buyer is not actually paid, order cancelled'
   },
   '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻': {
-    'ZH': '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻',
-    'EN': 'System message: Buyer apply for arbitration through the buyer has actually paid, automatic thawing'
+    'zh': '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻',
+    'en': 'System message: Buyer apply for arbitration through the buyer has actually paid, automatic thawing'
   },
   '系统消息：买家已评价': {
-    'ZH': '系统消息：买家已评价',
-    'EN': 'System Message: Buyer has evaluated'
+    'zh': '系统消息：买家已评价',
+    'en': 'System Message: Buyer has evaluated'
   },
   '系统消息：卖家已评价': {
-    'ZH': '系统消息：卖家已评价',
-    'EN': 'System Message: Seller has evaluated'
+    'zh': '系统消息：卖家已评价',
+    'en': 'System Message: Seller has evaluated'
+  },
+  // 流水
+  '提交卖出[FMVP/ETH]委托单': {
+    'zh': '提交卖出[FMVP/ETH]委托单',
+    'en': 'Commit sell FMVP/ETH order'
+  },
+  '提交购买[FMVP/ETH]委托单': {
+    'zh': '提交购买[FMVP/ETH]委托单',
+    'en': 'Commit buy FMVP/ETH order'
+  },
+  '提交卖出[FMVP/BTC]委托单': {
+    'zh': '提交卖出[FMVP/BTC]委托单',
+    'en': 'Commit sell FMVP/BTC order'
+  },
+  '提交购买[FMVP/BTC]委托单': {
+    'zh': '提交购买[FMVP/BTC]委托单',
+    'en': 'Commit buy FMVP/BTC order'
+  },
+  '充币-来自地址': {
+    'zh': '充币-来自地址',
+    'en': 'Charge-from address '
+  },
+  '充币-来自交易': {
+    'zh': '充币-来自交易',
+    'en': 'Charge-from transactional '
+  },
+  '充币-交易id': {
+    'zh': '充币-交易id',
+    'en': 'Charge-from id'
+  },
+  '充币-外部地址': {
+    'zh': '充币-外部地址',
+    'en': 'Charge-from external address'
   }
 };
 export default {
