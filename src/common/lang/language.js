@@ -35,9 +35,9 @@ const LANGUAGE = {
     'zh': '密码格式不正确',
     'en': 'Formatting error'
   },
-  '昵称2-10位': {
-    'zh': '昵称2-10位',
-    'en': 'Nickname 2-10'
+  '昵称2-20位': {
+    'zh': '昵称2-20位',
+    'en': 'Nickname 2-20'
   },
   '密码长度为6位且为数字': {
     'zh': '密码长度为6位且为数字',
@@ -56,16 +56,24 @@ const LANGUAGE = {
     'en': ''
   },
   '系统消息：交易已下单，等待买家标记打款': {
-    'zh': '系统消息：交易已下单等待买家标记打款',
+    'zh': '系统消息：交易已下单，等待买家标记打款',
     'en': 'System Message: The transaction has placed an order waiting for the buyer to mark the payment'
   },
-  '系统消息：卖家已释放': {
-    'zh': '系统消息：卖家已释放',
-    'en': 'System Message: Seller has released'
+  '系统消息：订单支付超时，系统自动取消': {
+    'zh': '系统消息：订单支付超时，系统自动取消',
+    'en': 'System Message: Order payment timeout, system cancel automatically'
+  },
+  '系统消息：订单已取消': {
+    'zh': '系统消息：订单已取消',
+    'en': 'System Message: Order has cancelled'
   },
   '系统消息：买家已标记打款': {
     'zh': '系统消息：买家已标记打款',
     'en': 'System Message: Buyer has marked the payment'
+  },
+  '系统消息：卖家已释放': {
+    'zh': '系统消息：卖家已释放',
+    'en': 'System Message: Seller has released'
   },
   '系统消息：订单已申请仲裁': {
     'zh': '系统消息：订单已申请仲裁',
@@ -75,6 +83,14 @@ const LANGUAGE = {
     'zh': '系统消息：仲裁申请已处理完成',
     'en': 'System Message: The arbitration application has been processed'
   },
+  '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消': {
+    'zh': '系统消息：买家申请仲裁不通过，买家实际未付款，订单取消',
+    'en': 'System Message: Buyer to apply for arbitration does not pass, the buyer is not actually paid, order cancelled'
+  },
+  '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻': {
+    'zh': '系统消息：买家申请仲裁通过，买家实际已付款，自动解冻',
+    'en': 'System message: Buyer apply for arbitration through the buyer has actually paid, automatic thawing'
+  },
   '系统消息：买家已评价': {
     'zh': '系统消息：买家已评价',
     'en': 'System Message: Buyer has evaluated'
@@ -83,10 +99,39 @@ const LANGUAGE = {
     'zh': '系统消息：卖家已评价',
     'en': 'System Message: Seller has evaluated'
   },
-  '订单已完成': {
-    'zh': '订单已完成',
-    'en': 'Order has been completed'
+  // 流水
+  '提交卖出[FMVP/ETH]委托单': {
+    'zh': '提交卖出[FMVP/ETH]委托单',
+    'en': 'Commit sell FMVP/ETH order'
   },
+  '提交购买[FMVP/ETH]委托单': {
+    'zh': '提交购买[FMVP/ETH]委托单',
+    'en': 'Commit buy FMVP/ETH order'
+  },
+  '提交卖出[FMVP/BTC]委托单': {
+    'zh': '提交卖出[FMVP/BTC]委托单',
+    'en': 'Commit sell FMVP/BTC order'
+  },
+  '提交购买[FMVP/BTC]委托单': {
+    'zh': '提交购买[FMVP/BTC]委托单',
+    'en': 'Commit buy FMVP/BTC order'
+  },
+  '充币-来自地址': {
+    'zh': '充币-来自地址',
+    'en': 'Charge-from address '
+  },
+  '充币-来自交易': {
+    'zh': '充币-来自交易',
+    'en': 'Charge-from transactional '
+  },
+  '充币-交易id': {
+    'zh': '充币-交易id',
+    'en': 'Charge-from id'
+  },
+  '充币-外部地址': {
+    'zh': '充币-外部地址',
+    'en': 'Charge-from external address'
+  }
 };
 export default {
   getText(text, lang) {

@@ -23,7 +23,7 @@
                 <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
               </p>
               <p class='time'>{{item.createDatetime}}</p>
-              <p class='explain'>{{item.bizNote}}</p>
+              <p class='explain'>{{getBizNote(item)}}</p>
             </div>
           </div>
         </router-link>
@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate, formatAmount, setTitle } from 'common/js/util';
+import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText } from 'common/js/util';
 import { walletBill } from 'api/person';
 import { getDictList } from 'api/general';
 import Scroll from 'base/scroll/scroll';
@@ -152,6 +152,28 @@ export default {
       }, () => {
         this.isLoading = false;
       });
+    },
+    getBizNote(item) {
+      // 币币交易买入卖出
+      if (item.bizType === 'bborder_frozen') {
+        console.log(getTranslateText(item.bizNote));
+        return getTranslateText(item.bizNote);
+        // 充值
+      } else if (item.bizType === 'charge') {
+        if(item.bizNote.indexOf('充币-来自地址') > -1) {
+          return item.bizNote.replace('充币-来自地址', getTranslateText('充币-来自地址'));
+        } else if(item.bizNote.indexOf('充币-来自交易') > -1) {
+          return item.bizNote.replace('充币-来自交易', getTranslateText('充币-来自交易'));
+        } else if(item.bizNote.indexOf('充币-交易id') > -1) {
+          return item.bizNote.replace('充币-交易id', getTranslateText('充币-交易id'));
+        } else if(item.bizNote.indexOf('充币-来自地址') > -1) {
+          return item.bizNote.replace('充币-外部地址', getTranslateText('充币-外部地址'));
+        } else {
+          return this.bizTypeValueList[item.bizType];
+        }
+      } else {
+        return this.bizTypeValueList[item.bizType];
+      }
     }
   },
   components: {

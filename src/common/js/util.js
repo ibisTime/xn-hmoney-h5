@@ -513,9 +513,9 @@ export function nicknameValid(nickname) {
   if (isUnDefined(nickname)) {
     result.err = 1;
     result.msg = '昵称不能为空';
-  } else if (nickname.length > 10) {
-    result.err = 1;
-    result.msg = '昵称不能超过10位';
+  // } else if (nickname.length > 20) {
+  //   result.err = 1;
+  //   result.msg = '昵称不能超过20位';
   }
   return result;
 }

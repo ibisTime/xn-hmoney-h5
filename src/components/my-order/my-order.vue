@@ -20,7 +20,8 @@
           <div class="top">
             <p class='code' :title="item.code">
               {{$t('myOrder.subject.ddbh')}}:{{item.code.substring(item.code.length-8)}}</p>
-            <p class="unread" v-if="item.unreadMsgNum > 0">{{$t('myOrder.subject.wd')}}({{item.unreadMsgNum <= 99 ? item.unreadMsgNum :
+            <p class="unread" v-if="item.unreadMsgNum > 0">{{$t('myOrder.subject.wd')}}({{item.unreadMsgNum <= 99 ?
+              item.unreadMsgNum :
               '99+'}})</p>
           </div>
           <div class="content">
@@ -145,7 +146,7 @@
       },
       // 切换状态
       changeStatus(type) {
-        if(type === 'ended') {
+        if (type === 'ended') {
           this.show = false;
         } else {
           this.show = true;
@@ -218,8 +219,8 @@
       Scroll,
       HeadPic,
       FullLoading
-  }
-}
+    }
+  };
 </script>
 <style lang="scss" scoped>
   @import "~common/scss/mixin";
@@ -229,6 +230,11 @@
     font-size: 0.28rem;
     color: #323232;
     overflow: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 
     .icon {
       display: inline-block;
@@ -262,7 +268,9 @@
       text-align: center;
       padding: 0 0.3rem;
       background: #fff;
-      margin-bottom: 0.21rem;
+      margin-bottom: 0.2rem;
+      position: relative;
+      z-index: 9;
 
       p {
         flex: 1;
@@ -285,14 +293,14 @@
       background: #fff;
       margin-bottom: 0.2rem;
 
-      .content{
+      .content {
         width: 100%;
         display: flex;
         padding: 0.3rem 0 0.2rem;
         position: relative;
       }
 
-      .top{
+      .top {
         width: 100%;
         overflow: hidden;
         border-bottom: 0.01rem solid #ebebeb;
@@ -372,7 +380,7 @@
         .txt2, .txt3 {
           font-size: 0.24rem;
         }
-        .txt2{
+        .txt2 {
           margin-bottom: 0.1rem;
           margin-top: 0.05rem;
         }
@@ -406,10 +414,14 @@
       }
     }
 
-  .list-start {
-    height: 12rem;
-    padding-bottom: 2rem;
-    overflow: scroll;
+    .list-start {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding-top: 1.1rem;
+      z-index: 8;
       .list {
         .text1 {
           .txt1 {

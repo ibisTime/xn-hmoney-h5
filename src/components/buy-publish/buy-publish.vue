@@ -123,7 +123,7 @@
 <script>
 import Message from 'base/message/message';
 import showMsg from 'base/showMsg/showMsg';
-import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract, formatAmount} from 'common/js/util';
+import {getUserId, getUrlParam, setTitle, formatMoneyMultiply, formatMoneySubtract, formatAmount, getLangType} from 'common/js/util';
 import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, ExitAdvertising, getAdverMessage} from 'api/otc';
 import { wallet } from 'api/person';
 import Toast from 'base/toast/toast';
@@ -340,16 +340,17 @@ export default {
     },
     //显示交易提示
     showMsg(type){
+      let langText = getLangType() === 'en' ? '_en' : '';
       switch(type){
-        case 'jg': this.text = this.MsgList.price;break;
-        case 'jv': this.text = this.MsgList.premiumRate;break;
+        case 'jg': this.text = this.MsgList['price' + langText];break;
+        case 'jv': this.text = this.MsgList['premiumRate' + langText];break;
         case 'low': this.text = this.lowTxt;break;
-        case 'min': this.text = this.MsgList.minTrade;break;
-        case 'max': this.text = this.MsgList.maxTrade;break;
-        case 'ty': this.text = this.MsgList.payType;break;
-        case 'time': this.text = this.MsgList.displayTime;break;
-        case 'qx': this.text = this.MsgList.payLimit;break;
-        case 'fs': this.text = this.MsgList.trust;break;
+        case 'min': this.text = this.MsgList['minTrade' + langText];break;
+        case 'max': this.text = this.MsgList['maxTrade' + langText];break;
+        case 'ty': this.text = this.MsgList['payType' + langText];break;
+        case 'time': this.text = this.MsgList['displayTime' + langText];break;
+        case 'qx': this.text = this.MsgList['payLimit' + langText];break;
+        case 'fs': this.text = this.MsgList['trust' + langText];break;
       }
       this.$refs.showMsg.show();
     },
@@ -465,7 +466,7 @@ export default {
     },
     toOtcFn(){
       this.config.publishType = '1';
-      if(this.errors.any() || this.config.protectPrice == ''){
+      if(this.errors.any() || this.config.protectPrice === '' || (this.$refs.leaveMessage.value).trim() === ''){
         this.textMsg = this.$t('common.txwz');
         this.$refs.toast.show();
         this.isOk = true;
@@ -475,6 +476,12 @@ export default {
     },
     //保存草稿
     saveOtcData(){
+      if(this.errors.any() || this.config.protectPrice === '' || (this.$refs.leaveMessage.value).trim() === ''){
+        this.textMsg = this.$t('common.txwz');
+        this.$refs.toast.show();
+        this.isOk = true;
+        return;
+      }
       if(!this.isCg){
         this.config.publishType = '0';
         this.changeConfig('/my-advertising');

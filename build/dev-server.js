@@ -33,9 +33,16 @@ app.use(bodyParser.urlencoded({
 
 app.use('/api', function (req, res) {
   var url = 'http://120.26.6.213:2801/forward-service/api'
+  // var url = 'http://47.99.163.139:2801/forward-service/api'
   var _body = req.body;
   var param = 'code=' + _body.code + '&json=' + encodeURIComponent(_body.json);
-  axios.post(url, param).then((response) => {
+  // let locale = localStorage.getItem('user_lang');
+  axios.post(url, param, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      "Accept-Language": 'en_US'
+    }
+  }).then((response) => {
     var ret = response.data
     if (typeof ret === 'string') {
     var reg = /^\w+\(({[^()]+})\)$/

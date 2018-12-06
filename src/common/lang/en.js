@@ -347,7 +347,7 @@ export default {
       bdhje: 'Changed',
       sxf: 'Charges',
       bdsj: 'Time',
-      jymx: 'Status',
+      jymx: 'Instruction',
       zdxq: 'Billing details'
     }
   },
@@ -407,7 +407,8 @@ export default {
       yqx: 'Cancelled',
       ptyqx: 'FUNMVP cancelled',
       ddxq: 'Order details',
-      ggly: 'Advertising message'
+      ggly: 'Advertising message',
+      otcBusiness: 'Otc business'
     }
   },
   // 个人主页
