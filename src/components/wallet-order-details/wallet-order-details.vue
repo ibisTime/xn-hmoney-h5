@@ -44,7 +44,7 @@
         </div>
     </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -105,7 +105,13 @@ export default {
   methods: {
     getOrderDetail(){
         getCTSDetail(this.config).then(data => {
+          // 类型 买入
+          if (data.type === '0'){
+            this.realName = 'otc商家';
+          } else {
             this.realName = data.bankcard ? data.bankcard.realName : data.user.nickname;
+          }
+
             this.receiveCardNo = data.receiveCardNo;
             this.receiveInfo = data.receiveInfo;
             this.receiveType = data.receiveType;
@@ -308,12 +314,12 @@ export default {
           background: #fff6ef;
           font-size: .24rem;
           color: #fa7d0e;
-      } 
+      }
       .text4 {
         width: 92%;
         margin: 0 auto;
         line-height: 1rem;
-        border-bottom: .01rem solid #E5E5E5; 
+        border-bottom: .01rem solid #E5E5E5;
         display: flex;
         justify-content: space-between;
         text-align: left;
@@ -378,7 +384,7 @@ export default {
               color: #999;
           }
       }
-     
+
   }
 
 

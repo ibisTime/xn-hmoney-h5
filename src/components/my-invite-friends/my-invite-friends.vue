@@ -27,9 +27,9 @@
           </div>
       </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
-</template> 
+</template>
 <script>
 const QRCode = require('js-qrcode');
 import {getUserId, setTitle} from 'common/js/util';
@@ -90,7 +90,7 @@ export default {
         let _this = this;
         let clipboard = _this.copyBtn;
         clipboard.on('success', function() {
-            _this.textMsg = '复制成功';
+            _this.textMsg = _this.$t('walletInto.subject.fzcg');
             _this.$refs.toast.show();
             setTimeout(() => {
                 _this.isFz = true;
@@ -284,5 +284,5 @@ export default {
         }
     }
 
-} 
+}
 </style>

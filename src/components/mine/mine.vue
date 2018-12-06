@@ -26,7 +26,7 @@
       <div class="trading item-top ">
         <router-link to="wallet-top-up?type=buy" class="buy item-0">
           <i></i>
-          <span>{{$t('mine.subject.wygm')}}</span>
+            <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
         <router-link to="otc" class="sell item-1" @click.native="toOtcFn">
           <i></i>
@@ -133,7 +133,7 @@ export default {
     this.$set(document, 'title', this.$t('mine.subject.grzx'));
   },
   mounted() {
-    this.uploadUrl = 'http://pgf8juy5p.bkt.clouddn.com/';  // http://pgf8juy5p.bkt.clouddn.com/  http://up-z0.qiniup.com
+    this.uploadUrl = PIC_PREFIX;
     getQiniuToken().then(data => {
       this.token = data.uploadToken;
     });
@@ -251,6 +251,7 @@ export default {
     @include bg-image("mine");
     text-align: center;
     position: relative;
+    z-index: 8;
 
     h4 {
       padding-top: 0.58rem;
@@ -312,10 +313,11 @@ export default {
 
   .mine-main {
     width: 92%;
-    margin: 0 auto;
-    margin-top: -0.86rem;
+    margin: -0.86rem auto 0;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 9;
 
     .item-top {
       width: 100%;
@@ -432,15 +434,18 @@ export default {
       background: #fdfeff;
       box-shadow: 0 0 0.36rem 0.04rem rgba(200,193,193,0.30);
       border-radius: 0.16rem;
-      text-align: center;
       letter-spacing: 0.0018rem;
       text-align: center;
-      display: flex;
-      justify-content: space-around;
       margin-bottom: 0.2rem;
+      overflow: hidden;
       a {
         font: 0.3rem/1.4rem PingFangSC-Regular;
         color: #333;
+        display: inline-block;
+        width: 49%;
+        height: 100%;
+        overflow: hidden;
+        float: left;
       }
       i {
         display: inline-block;
@@ -450,17 +455,19 @@ export default {
         background-position: center;
         background-size: 100% 100%;
         vertical-align: middle;
-        margin-bottom: 0.1rem;
         margin-right: 0.23rem;
       }
 
       .item-0 {
+        position: relative;
         i {
           background-image: url('./wbuy.png');
         }
-        span {
-          border-right: 0.01rem solid #ccc;
-          padding-right: 0.78rem;
+        &:after{
+          content: '|';
+          position: absolute;
+          right: 0;
+          color: #ccc;
         }
       }
 

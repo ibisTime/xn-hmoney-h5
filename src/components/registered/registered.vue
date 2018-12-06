@@ -50,7 +50,7 @@
         <div class="cla-contant" v-html="clauseText"></div>
       </div>
       <Toast :text="textMsg" ref="toast" />
-      <FullLoading ref="fullLoading" v-show="isLoading"/> 
+      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -239,6 +239,7 @@ export default {
 .regist-wrapper {
   position: relative;
   background: #fff;
+  padding-bottom: 0.6rem;
   .header {
     width: 100%;
     height: 0.4rem;
@@ -293,8 +294,8 @@ export default {
     .title {
       font: 0.52rem/0.73rem PingFangSC-Semibold;
       color: #333;
-      padding-top: 0.89rem;
-      padding-bottom: 0.62rem;
+      padding-top: 0.6rem;
+      padding-bottom: 0.4rem;
     }
 
     #tabs .tab-item {

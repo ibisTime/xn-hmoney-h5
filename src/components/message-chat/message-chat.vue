@@ -30,7 +30,7 @@
             <div class="time-split" v-else-if="info.fromAccount === 'admin'">
               <div class="time-content">
                 <template v-for="item in getContent(info)">
-                  <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
+                  <template v-if="item.type==='TIMTextElem'">{{getSystem(item.content)}}</template>
                 </template>
               </div>
             </div>
@@ -54,9 +54,9 @@
       </div>
       <div class="message-footer">
         <div class="message-input">
-          <input type="text" placeholder="输入聊天内容" ref="inputText" v-model="emoji" @keyup.enter="dealMessage" class="msgedit"/>
+          <input type="text" :placeholder="$t('messageChat.subject.ltnr')" ref="inputText" v-model="emoji" @keyup.enter="dealMessage" class="msgedit"/>
           <span @click.stop="show"></span>
-          <div class="sendMessage" v-show="sendMessage" @click.stop="dealMessage">发送</div>
+          <div class="sendMessage" v-show="sendMessage" @click.stop="dealMessage">{{$t('messageChat.subject.fs')}}</div>
           <emoji ref="emoji" @select="selectItem"></emoji>
           <i @click="show"></i>
           <div class="file" v-if="token">
@@ -80,7 +80,7 @@
   import Toast from 'base/toast/toast';
   import Qiniu from 'base/qiniu/qiniu';
   import {addMsg} from 'common/js/message';
-  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl} from 'common/js/util';
+  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl, getTranslateText} from 'common/js/util';
   import User from 'common/bean/user';
   import {getUser} from 'api/user';
   import {getOrderDetail} from 'api/person';
@@ -223,6 +223,9 @@
       isUnDefined(value) {
         return isUnDefined(value);
       },
+      getSystem(content){
+        return getTranslateText(content);
+      },
       show() {
         if (this.showEmoji) {
           this.$refs.emoji.hide();
@@ -255,7 +258,7 @@
           });
           this.emoji = '';
         } else {
-          this.showToast('消息内容不能为空');
+          this.showToast(this.$t('messageChat.subject.xxnrbnwk'));
         }
       },
       getContent(item) {

@@ -87,10 +87,7 @@
     },
     created() {
       setTitle(this.$t('footer.navbar.page'));
-      getBannerList().then((data) => {
-        this.banners = data;
-        this.isLoading = false;
-      });
+      this.getBanner();
     },
     activated() {
       this.$set(document, 'title', this.$t('footer.navbar.page'));
@@ -105,6 +102,14 @@
         locale === 'zh' ? this.$i18n.locale = 'en' : this.$i18n.locale = 'zh';
         LangStorage.setLang(this.$i18n.locale);// 将用户习惯存储到本地浏览器
         setTitle(this.$t('footer.navbar.page'));
+        this.getBanner();
+      },
+      getBanner() {
+        this.isLoading = true;
+        getBannerList().then((data) => {
+          this.banners = data;
+          this.isLoading = false;
+        })
       },
       getImgSyl(imgs) {
         return {

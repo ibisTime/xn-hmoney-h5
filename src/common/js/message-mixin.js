@@ -199,7 +199,7 @@ export const messageMixin = {
           self.setTencentLogined(true);
         }, function () {
           self.setTencentLogined(false);
-          this.login(loginInfo);
+          // self.login(loginInfo);
         });
       } else if(flag) {
         self.getMyGroup(loginInfo);

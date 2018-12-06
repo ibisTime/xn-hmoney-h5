@@ -3,12 +3,14 @@
     <div class="full-loading">
       <div class="inner-loading">
         <img src="./loading.gif">
-        <p class="desc">{{title}}</p>
+        <p class="desc">{{getTitle(title)}}</p>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import {getTranslateText} from '../../common/js/util';
+
   export default {
     data(){
       return {
@@ -18,7 +20,7 @@
     props: {
       title: {
         type: String,
-        default: '正在载入...'
+        default: '正在载入'
       }
     },
     methods: {
@@ -27,6 +29,9 @@
       },
       hide(){
         this.showFlag = false;
+      },
+      getTitle(text) {
+        return getTranslateText(text);
       }
     }
   };

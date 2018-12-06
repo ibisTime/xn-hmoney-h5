@@ -11,7 +11,7 @@
       </p>
       <router-link to='otc' @click.native="toOtcFn">{{$t('trading.bbDeal.cwjy')}}</router-link>
     </div>
-      
+
     <div v-show="show2" class='One'>
       <div class="top">
         <p>
@@ -24,17 +24,17 @@
           <i class='icon'></i>
           <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
           <span class='txt5'>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</span>
-          <span class='txt6'>{{$t('common.sl')}}({{setBazDeal.symbol}})</span>
+          <span class='txt6'>{{$t('common.sl')}}</span>
         </p>
       </div>
       <div class="main">
         <!-- 买入 -->
         <div v-show="show1" class="left">
           <p class='he9'>
-            <input 
-              type="number" 
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')" 
-              v-model="xjPrice" 
+            <input
+              type="number"
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')"
+              v-model="xjPrice"
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
             >
@@ -42,8 +42,7 @@
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
           <p class='text2' v-show="downConfig.type == '1'">
-            <span>{{$t('trading.bbDeal.zh')}}CNY</span>
-            <span class='red max-len' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
+            <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
           </p>
           <p class='he9 mb20'>
             <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -74,10 +73,10 @@
         <!-- 卖出 -->
         <div v-show="!show1" class="left">
           <p class='he9'>
-            <input 
-              type="number" 
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')" 
-              v-model="xjPrice" 
+            <input
+              type="number"
+              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')"
+              v-model="xjPrice"
               :disabled="downConfig.type == '0'"
               @keyup="qrLength"
             >
@@ -85,8 +84,7 @@
           </p>
           <p class='text2' v-show="downConfig.type == '0'"></p>
           <p class='text2' v-show="downConfig.type == '1'">
-            <span>{{$t('trading.bbDeal.zh')}}CNY</span>
-            <span class='red'>￥{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}</span>
+            <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
           </p>
           <p class='he9 mb20'>
             <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -176,9 +174,9 @@
     <!-- K线图 -->
     <div v-show="!show2" class='Two'>
       <div class="top-mian">
-        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span>{{$t('trading.bbDeal.zxj')}} </span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
+        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
         <div class='text2'>
-          <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate * 100}} %</span></p>
+          <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate}} %</span></p>
           <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{dayLineInfo ? dayLineInfo.high : '0'}}</span></p>
         </div>
         <div class='text3'>
@@ -211,7 +209,7 @@
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -225,21 +223,21 @@ import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchade
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
 import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
 
-import { 
-  formatAmount, 
-  setTitle, 
-  getUserId, 
-  formatMoneyMultiply, 
-  formatDate 
+import {
+  formatAmount,
+  setTitle,
+  getUserId,
+  formatMoneyMultiply,
+  formatDate
 } from "common/js/util";
 import {wallet} from 'api/person';
 import {
-  getBazaarData, 
-  getBBExchange, 
-  getHandicapData, 
-  downBBOrder, 
-  getMyorderTicket, 
-  getRealTimeData, 
+  getBazaarData,
+  getBBExchange,
+  getHandicapData,
+  downBBOrder,
+  getMyorderTicket,
+  getRealTimeData,
   repOrder
 } from 'api/bb';
 export default {
@@ -323,6 +321,7 @@ export default {
       let gkData = data.list.filter(item => {
         return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
       });
+      gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
       this.gkdsList = gkData[0];
       this.dayLineInfo = this.gkdsList.dayLineInfo;
       if(this.dayLineInfo){
@@ -359,7 +358,7 @@ export default {
   methods: {
     getMidPrice(){
       getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
-        this.toSyMid = data[0].mid;
+        this.toSyMid = data.mid;
       });
     },
     getUserWalletData(){
@@ -396,13 +395,14 @@ export default {
         let gkData = data.list.filter(item => {
           return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
         });
+        gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
         this.gkdsList = gkData[0];
         this.dayLineInfo = this.gkdsList.dayLineInfo;
-        if(this.dayLineInfo){
-          this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
-          this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
-          this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
-        }
+        // if(this.dayLineInfo){
+        //   this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
+        //   this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
+        //   // this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
+        // }
       });
       if(this.isLogin){
         this.getUserWalletData();
@@ -481,13 +481,23 @@ export default {
         ...this.realTimeConfig,
         ...this.setBazDeal
       }
-      getRealTimeData(this.realTimeConfig).then(data => {
-        if(data.list.length > 0){
-          this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
-        }else{
-          this.bb_zxj = 0;
-        }
+      getBazaarData().then(data => {
+        // 获取涨幅
+        let gkData = data.list.filter(item => {
+          return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
+        });
+        gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
+        this.gkdsList = gkData[0];
+        this.dayLineInfo = this.gkdsList.dayLineInfo;
+        this.bb_zxj = this.gkdsList.price;
       });
+      // getRealTimeData(this.realTimeConfig).then(data => {
+      //   if(data.list.length > 0){
+      //     this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
+      //   }else{
+      //     this.bb_zxj = 0;
+      //   }
+      // });
     },
     buy() {
       this.downConfig.direction = '0';
@@ -645,12 +655,12 @@ export default {
     },
     selectAsksPrice(index){  // 卖盘选中
       if(this.show1){
-        this.xjPrice = this.bbAsks[index] ? this.bbAsks[index].price : '0';
+        this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, '', this.setBazDeal.toSymbol) : '';
       }
     },
     selectBidsPrice(index){  // 买盘选中
       if(!this.show1){
-        this.xjPrice = this.bbBids[index] ? this.bbBids[index].price : '0';
+        this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, '', this.setBazDeal.toSymbol) : '';
       }
     },
     formatAmount(money, len, coin){
@@ -735,7 +745,7 @@ export default {
     display: inline-block;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 100%;    
+    background-size: 100% 100%;
   }
 
   .header {
@@ -892,6 +902,7 @@ export default {
         }
         .no-bor{
           border: none;
+          padding: 0;
         }
         .mb20 {
           margin-bottom: .2rem;
@@ -939,14 +950,14 @@ export default {
             }
             .txt3 {
               float: right;
-            } 
+            }
           }
         }
         .middle {
           width: 100%;
           display: flex;
-          justify-content: space-between;         
-          margin: .36rem 0; 
+          justify-content: space-between;
+          margin: .36rem 0;
           .icon {
             width: .24rem;
             height: .24rem;
@@ -1119,7 +1130,7 @@ export default {
         display: flex;
         line-height: .8rem;
         span {
-          font-size: .28rem; 
+          font-size: .28rem;
           color: #fff;
           margin: 0 .35rem;
         }
@@ -1131,7 +1142,7 @@ export default {
           color: #d53d3d;
           border-bottom: .03rem solid #d53d3d;
         }
-        
+
       }
       .foot {
         width: 100%;
@@ -1151,7 +1162,7 @@ export default {
           color: #fff;
         }
       }
-      
+
 
     }
   }

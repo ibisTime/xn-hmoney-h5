@@ -1,7 +1,7 @@
 <template>
   <div class="top-up-wrapper" @click.stop>
     <div class="main">
-      <Scroll 
+      <Scroll
         ref="scroll"
         :data="orderDataList"
         :hasMore="hasMore"
@@ -10,9 +10,8 @@
       >
         <router-link :to='"wallet-orderDetails?code=" + orderItem.code' class='list-wrap' v-for="(orderItem, index) in orderDataList" :key="index">
           <div class='list'>
-              <div class='pic'>
-                  <i :class='orderItem.type == "0" ? "icon" : "ico1"'></i>
-              </div>
+              <div v-if="orderItem.type === '0'" class='pic'>{{$t('common.mr')}}</div>
+              <div v-else class='pic1'>{{$t('common.mc')}}</div>
               <div class='text'>
                   <div class='text1'>
                       <p class='txt1'>{{$t('walletRecord.subject.zje')}}：{{(Math.floor(orderItem.tradeAmount * 100) / 100).toFixed(2)}} <span class='name'>{{orderItem.tradeCurrency}}</span></p>
@@ -31,7 +30,7 @@
         <p>{{$t('walletRecord.subject.zwdd')}}</p>
       </div>
     </div>
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -161,19 +160,25 @@ export default {
           width: 0.6rem;
           height: 0.6rem;
           border-radius: 50%;
+          overflow: hidden;
           margin-right: 0.32rem;
-          .icon {
-            width: 100%;
-            height: 100%;
-            background-image: url(./mr.png);
-          }
-          .ico1 {
-            display: inline-block;
-            width: 100%;
-            height: 100%;
-            background-image: url(./mc.png);
-            background-size: 100% 100%;
-          }
+          text-align: center;
+          line-height: 0.6rem;
+          font-size: 0.16rem;
+          color: #fff;
+          background-color: #e72834;
+        }
+        .pic1 {
+          width: 0.6rem;
+          height: 0.6rem;
+          border-radius: 50%;
+          overflow: hidden;
+          margin-right: 0.32rem;
+          text-align: center;
+          line-height: 0.6rem;
+          font-size: 0.16rem;
+          color: #fff;
+          background-color: #00ca4b;
         }
         .text {
           width: 87%;

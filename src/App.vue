@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <div class="all-content">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
     <Toast :text="textMsg" ref="toast"/>
     <div
       class="tobuy"
@@ -14,7 +12,7 @@
       @touchend.stop="fbTouchEndFn"
       v-show="showFlag"
     >
-      <div >去购买FMVP</div>
+      <div >{{$t('common.buyFMVP')}}</div>
     </div>
   </div>
 </template>
@@ -47,51 +45,9 @@
         showFlag: true
       }
     },
-    beforeCreate(){
-      let that = this;
-      window.onload = function(){
-        let href = location.href;
-        getBbListData().then(data => {
-          for(let i = 0; i < data.length; i ++){
-            let obj = {
-              ...data[i],
-              unit: '1e' + data[i].unit
-            };
-            that.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-          }
-          sessionStorage.setItem('coinData', JSON.stringify(that.coinData));
-          that.isLoading = false;
-        }, () => {
-          that.isLoading = false;
-        });
-        if(href.search(/page|system-notice|about-platformIntroduced\?ckey=about_us|trading|otc|login|registered|security-loginPassword/) == -1){
-          if(!isLogin()){
-            that.$router.push('/login');
-            return;
-          }
-        };
-      }
-    },
     created() {
       this.$router.beforeEach((to, from, next) => {
-        if(!sessionStorage.getItem('coinData')){
-          getBbListData().then(data => {
-            for(let i = 0; i < data.length; i ++){
-              let obj = {
-                ...data[i],
-                unit: '1e' + data[i].unit
-              };
-              this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-            }
-            sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-            this.isLoading = false;
-          }, () => {
-            this.isLoading = false;
-          });
-        }
-
         if (isLogin()) {
-          this.tencentLogin();
           next();
         } else {
           if (to.path == '/' ||
@@ -106,12 +62,55 @@
             to.path == '/security-loginPassword') {
             next();
           } else {
-            this.textMsg = '请先登录';
+            this.textMsg = this.$t('common.qxdl');
             this.$refs.toast.show();
             setTimeout(() => {
               next('/login');
             }, 1500);
           }
+        }
+      });
+      let self = this;
+      this.$router.afterEach((to, from) => {
+        if(!sessionStorage.getItem('coinData')){
+          getBbListData().then(data => {
+            for(let i = 0; i < data.length; i ++){
+              let obj = {
+                ...data[i],
+                unit: '1e' + data[i].unit
+              };
+              this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+            }
+            sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
+          }, () => {
+          });
+        }
+        if (isLogin()) {
+          this.tencentLogin();
+        } else {
+          if (to.path === '/' ||
+            to.path === '/page' ||
+            to.path === '/shop-usedCar' ||
+            to.path === '/system-notice' ||
+            to.path === '/about-platformIntroduced?ckey=about_us' ||
+            to.path === '/trading' ||
+            to.path === '/otc' ||
+            to.path === '/login' ||
+            to.path === '/registered' ||
+            to.path === '/security-loginPassword') {
+          } else {
+            this.textMsg = this.$t('common.qxdl');
+            this.$refs.toast.show();
+            setTimeout(() => {
+              this.$router.push('/login');
+            }, 1500);
+          }
+        }
+        if (this.$refs.touchDemo && (to.path === '/buy-publish' || to.path === '/login' ||
+          to.path === '/registered' || to.path === '/message-chat' || to.path === '/wallet-orderDetails')) {
+          self.$refs.touchDemo.style.display = 'none';
+        } else {
+          self.$refs.touchDemo.style.display = 'block';
         }
       });
     },
@@ -121,6 +120,7 @@
         this.$refs.touchDemo.style.bottom = '1rem';
         this.$refs.touchDemo.style.left = '';
         this.$refs.touchDemo.style.top = '';
+        this.$refs.touchDemo.style.display = 'none';
       }
     },
     components: {
@@ -191,6 +191,7 @@
     overflow-x: hidden;
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
+    width: 100%;
   }
   .all-content{
     width: 100%;
@@ -258,6 +259,7 @@
     height: 0.74rem;
     box-sizing: border-box;
     z-index: 999999;
+    text-align: center;
     div{
       padding: 0.2rem 0.4rem;
       border-radius: 0.4rem;

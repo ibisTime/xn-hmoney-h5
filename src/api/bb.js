@@ -10,7 +10,7 @@ export function getBazaarData() {
 
 // 获取币种汇率、行情
 export function getBBExchange(ex_type, toSymbol) {
-    return fetch('650101', {
+    return fetch('650102', {
         symbol: toSymbol,
         referCurrency: ex_type
     });

@@ -24,6 +24,7 @@ export default {
     qx: '取消',
     fq: '放弃',
     qr: '确认',
+    qd: '确定',
     jg: '价格',
     je: '金额',
     sl: '数量',
@@ -39,7 +40,13 @@ export default {
     jy: '交易',
     hp: '好评',
     xr: '信任',
-    cp: '差评'
+    cp: '差评',
+    buyFMVP: '去购买FMVP',
+    qxdl: '请先登录',
+    jytx: '交易提醒',
+    zwsj: '暂无数据',
+    qxzf: '取消支付',
+    bjfk: '标记付款'
   },
   // page页
   page: {
@@ -71,7 +78,10 @@ export default {
     subject: {
       yxye: '游戏余额',
       jryx: '进入游戏',
-      cz: '充值'
+      zryx: '转入游戏',
+      cz: '充值',
+      qsrczsl: '请输入充值数量',
+      czslbnwk: '充值数量不能为空'
     }
   },
   // 系统公告
@@ -107,6 +117,7 @@ export default {
       gm: '购买',
       fbgm: '发布购买',
       fbcs: '发布出售',
+      fb: '发布'
     }
   },
   // 发布广告
@@ -135,7 +146,7 @@ export default {
       fkqx: '付款期限',
       qsfkqx: '请输入付款期限',
       fz: '分钟',
-      ggly: '请写下您的广告留言吧',
+      ggly: '付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。',
       gjsz: '高级设置',
       kfsj: '开放时间',
       rhsh: '任何时候',
@@ -152,7 +163,8 @@ export default {
       xqw: '星期五',
       xql: '星期六',
       xqt: '星期天',
-      yjlv: '溢价率应在-50到50之间'
+      yjlv: '溢价率应在-50到50之间',
+      gb: '关闭'
     }
   },
   // 购买页面
@@ -181,7 +193,6 @@ export default {
       fq: '放弃',
       qr: '确认',
       qszjmm: '请输入交易密码',
-      ddtjcg: '订单提交成功',
       gmslje: '请输入购买数量与购买金额',
       ddtjcg: '订单提交成功',
     }
@@ -240,8 +251,12 @@ export default {
       jj: '简介',
       bkbwl: '不能为空或小于等于零',
       xsbdy: '小数部分不得大于8位',
-      xsldy: '小数部分不得大于2位'
-    }
+      xsldy: '小数部分不得大于2位',
+      cjsj: '成交时间',
+      cjjg: '成交价格',
+      cjl: '成交量',
+      more: '更多'
+    },
   },
   // 历史委托
   historyEntrust: {
@@ -277,7 +292,7 @@ export default {
   // 转入
   walletInto: {
     subject: {
-      qbtscz: 'ETH钱包地址禁止充值除ETH之外其他资产，任何ETH资产充值将不可找回',
+      qbtscz: '钱包地址禁止充值除此币种之外其他资产,任何此币种之外的资产充值将不可找回',
       qbjz: '钱包地址禁止充值除',
       qbzw: '之外其他资产，任何',
       qbzh: '资产充值将不可找回',
@@ -286,7 +301,8 @@ export default {
       jl: '记录',
       fzskdz: '复制收款地址',
       zr: '转入',
-      gbzc: '该机型不支持点击复制，请长按文本复制'
+      gbzc: '该机型不支持点击复制，请长按文本复制',
+      fzcg: '复制成功'
     }
   },
   // 转出
@@ -318,10 +334,11 @@ export default {
       tb: '提币',
       jymr: '交易买入',
       jymc: '交易卖出',
-      jysxf: '交易手续费',
-      txsxf: '提现手续费',
       zzjl: '转账记录',
-
+      sxf: '手续费',
+      yxzr: '游戏转入',
+      yxzc: '游戏转出',
+      djjd: '冻结解冻'
     }
   },
   // 账单详情
@@ -363,7 +380,8 @@ export default {
       y: '与',
       zj: '之间',
       dbxz: '单笔限制',
-      zded: '最低额度'
+      zded: '最低额度',
+      zfb: '最低额度'
     }
   },
   // 订单记录
@@ -437,7 +455,8 @@ export default {
       jysl: '交易数量',
       ddbh: '订单编号',
       zwdd: '暂无订单',
-      wddd: '我的订单'
+      wddd: '我的订单',
+      wd: '未读'
     }
   },
   // 我的订单详情
@@ -487,11 +506,6 @@ export default {
   // 邀请好友
   myInviteFriends: {
     subject: {
-      snyf: '送您一份',
-      szzc: '数字资产',
-      mgryg: '每个人都应该拥有一些比特币',
-      ynsn: '1年内，你就会明白它的珍贵；3年内，你就会明白它的价值；',
-      snesn: '10年内，它会给你一个新的世界；20年内，它就是你的生活方式',
       yqnjr: '邀请您加入FUNMVP',
       casb: '长按识别二维码',
       yqhy: '邀请好友',
@@ -659,7 +673,7 @@ export default {
       ptjs: '平台介绍',
       yhxy: '用户协议',
       ystk: '隐私条款',
-      flsm: '法律申明',
+      flsm: '法律声明',
       fvsm: '费率说明',
       lxwm: '联系我们',
       gg: '公告',
@@ -671,7 +685,9 @@ export default {
   messageChat: {
     subject: {
       ltnr: '输入聊天内容',
-      sdsm: '说点什么吧'
+      sdsm: '说点什么吧',
+      fs: '发送',
+      xxnrbnwk: '消息内容不能为空'
     }
   }
 };

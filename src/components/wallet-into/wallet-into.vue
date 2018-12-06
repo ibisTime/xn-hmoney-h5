@@ -64,7 +64,7 @@ export default {
       let _this = this;
       let clipboard = _this.copyBtn;
       clipboard.on('success', function() {
-          _this.textMsg = '复制成功';
+          _this.textMsg = _this.$t('walletInto.subject.fzcg');
           _this.$refs.toast.show();
       });
       clipboard.on('error', function() {

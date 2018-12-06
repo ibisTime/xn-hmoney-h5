@@ -25,7 +25,7 @@
         </p>
       </div>
       <div class='datil'>
-        <div class='box'><i class='icon ico1'></i>
+        <div class='box'><i class='icon icod'></i>
           <router-link
             :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">
             {{$t('wallet.subject.zr')}}
@@ -148,7 +148,7 @@
       display: inline-block;
       background-repeat: no-repeat;
       background-position: center;
-      background-size: 100% 100%;
+      background-size: 100%;
     }
 
     header {
@@ -168,6 +168,7 @@
       @include bg-image("banner");
       color: #fff;
       font-size: .22rem;
+      margin-bottom: 0.2rem;
 
       .txt1, .txt2 {
         text-align: center;
@@ -305,13 +306,15 @@
 
           a {
             color: #333;
+            display: inline-block;
           }
 
-          .ico1 {
-            width: .29rem;
-            height: .26rem;
+          .icod {
+            width: .3rem;
+            height: .3rem;
             background-image: url('./zr.png');
-            margin-right: 1.1rem;
+            background-size: .3rem;
+            vertical-align: middle;
           }
           .icoz {
             width: .3rem;
@@ -319,13 +322,15 @@
             background-image: url('./zc.png');
             margin-right: .1rem;
             vertical-align: middle;
+            background-size: .26rem;
           }
 
           .icoc {
-            width: .26rem;
+            width: .3rem;
             height: .3rem;
             background-image: url('./zd.png');
             margin-right: .1rem;
+            background-size: .26rem;
             vertical-align: middle;
           }
 

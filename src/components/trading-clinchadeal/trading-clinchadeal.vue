@@ -2,12 +2,12 @@
   <div class="clinch-wrapper" @click.stop>
      <div class='main'>
        <p class='title'>
-         <span class='left'>成交时间</span>
-         <span class="cont">成交价格({{setBazDeal.toSymbol}})</span>
-         <span class='right'>成交量({{setBazDeal.symbol}})</span>
+         <span class='left'>{{$t('trading.bbDepth.cjsj')}}</span>
+         <span class="cont">{{$t('trading.bbDepth.cjjg')}}({{setBazDeal.toSymbol}})</span>
+         <span class='right'>{{$t('trading.bbDepth.cjl')}}({{setBazDeal.symbol}})</span>
        </p>
         <div class="t-box">
-          <Scroll 
+          <Scroll
             ref="scroll"
             :data="realTimeList"
             :hasMore="hasMore"
@@ -22,7 +22,7 @@
           </Scroll>
           <div class="no-data" :class="{'hidden': realTimeList.length > 0}">
             <img src="./zwdata.png" />
-            <p>暂无数据</p>
+            <p>{{$t('common.zwsj')}}</p>
           </div>
         </div>
      </div>
@@ -151,7 +151,7 @@ import { formatDate, formatAmount } from 'common/js/util';
         text-align: center;
       }
 
-    } 
+    }
     .no-data{
       p{
         color: #fff;
