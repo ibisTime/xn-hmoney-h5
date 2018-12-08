@@ -107,7 +107,8 @@
           }
         }
         if (this.$refs.touchDemo && (to.path === '/buy-publish' || to.path === '/login' ||
-          to.path === '/registered' || to.path === '/message-chat' || to.path === '/wallet-orderDetails')) {
+          to.path === '/registered' || to.path === '/messageCart' || to.path === '/wallet-orderDetails' ||
+          to.path === '/order-details')) {
           self.$refs.touchDemo.style.display = 'none';
         } else {
           self.$refs.touchDemo.style.display = 'block';

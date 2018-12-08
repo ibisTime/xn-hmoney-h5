@@ -174,7 +174,9 @@
             elems: v.elems.slice()
           }));
           self.setCurChatList(list);
-          self.scrollToElement();
+          if (msgList.length > 0) {
+            self.scrollToElement();
+          } ;
           if(list.length < REQMSGCOUNT) {
             self.hasMore = false;
           } else {
@@ -384,6 +386,7 @@
           };
           if (options.ReqMsgSeq == null || options.ReqMsgSeq == undefined || options.ReqMsgSeq <= 0) {
             webim.Log.warn("该群还没有历史消息:options=" + JSON.stringify(options));
+            cbOk && cbOk([]);
             return;
           }
           self.selSess = null;
@@ -393,8 +396,9 @@
           webim.syncGroupMsgs(
             options,
             function(msgList) {
-              if (msgList.length == 0) {
+              if (msgList.length === 0) {
                 // webim.Log.warn("该群没有历史消息了:options=" + JSON.stringify(options));
+                cbOk && cbOk([]);
                 return;
               }
               var msgSeq = msgList[0].seq - 1;

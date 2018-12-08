@@ -119,7 +119,9 @@
         };
       },
       toUrl(url) {
-        window.open(url);
+        if (url !== '' && url) {
+          window.open(url);
+        };
       },
       toOtcFn(){
         sessionStorage.removeItem('coin');

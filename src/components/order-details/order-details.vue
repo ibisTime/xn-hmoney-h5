@@ -8,7 +8,7 @@
     </header> -->
     <div class='order'>
         <p>
-            <span class='num'><i class='icon'></i>{{$t('myOrderDetail.subject.ddbh')}}：{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
+            <span class='num'><i class='icon'></i>{{$t('myOrderDetail.subject.ddbh')}}{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
             <span class='state'>{{statusValueList[orderDetailData.status]}}</span>
         </p>
     </div>

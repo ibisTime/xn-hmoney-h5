@@ -71,6 +71,8 @@ export default {
     background-position: center;
     background-size: 100% 100%;
     @include bg-image("login");
+    position: relative;
+    z-index: 98;
 
     p {
       font: 0.8rem/1.12rem PingFangSC-Semibold;
@@ -87,10 +89,11 @@ export default {
     width: 6.9rem;
     height: 7.4rem;
     background: #fff;
-    margin: 0 auto;
-    margin-top: -1.1rem;
+    margin: -1.1rem auto 0;
     box-shadow: 0 0.08rem 0.16rem 0 #dcdcdc;
     border-radius: 0.16rem;
+    position: relative;
+    z-index: 99;
 
     .main {
       width: 6.3rem;

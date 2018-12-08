@@ -164,7 +164,8 @@ export default {
       xql: '星期六',
       xqt: '星期天',
       yjlv: '溢价率应在-50到50之间',
-      gb: '关闭'
+      gb: '关闭',
+      gglx: '广告类型'
     }
   },
   // 购买页面
@@ -444,7 +445,7 @@ export default {
       xj: '下架',
       zwgg: '暂无广告',
       wdgg: '我的广告',
-
+      type: '类型'
     }
   },
   // 我的订单
@@ -454,7 +455,7 @@ export default {
       yjs: '已结束',
       jyje: '交易金额',
       jysl: '交易数量',
-      ddbh: '订单编号',
+      ddbh: '订单编号：',
       zwdd: '暂无订单',
       wddd: '我的订单',
       wd: '未读'
@@ -463,7 +464,7 @@ export default {
   // 我的订单详情
   myOrderDetail: {
     subject: {
-      ddbh: '订单编号',
+      ddbh: '订单编号：',
       jyje: '交易金额',
       jysl: '交易数量',
       jyjg: '交易价格',

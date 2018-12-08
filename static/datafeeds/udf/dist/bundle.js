@@ -136,7 +136,7 @@
           } else {
             for (let i = 0; i < response.length; ++i) {
               let barValue = {
-                time: Date.parse(new Date(response[i].createDatetime)),
+                time: Date.parse(new Date(response[i].startDatetime)),
                 close: response[i].close,
                 open: response[i].open,
                 high: response[i].high,
@@ -175,7 +175,7 @@
       this._subscribers = {};
       this._requestsPending = 0;
       this._historyProvider = historyProvider;
-      //      setInterval(this._updateData.bind(this), updateFrequency);
+      setInterval(this._updateData.bind(this), updateFrequency);
     }
     DataPulseProvider.prototype.subscribeBars = function(symbolInfo, resolution, newDataCallback, listenerGuid) {
       if (this._subscribers.hasOwnProperty(listenerGuid)) {

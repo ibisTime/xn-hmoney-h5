@@ -7,7 +7,7 @@ export default {
     navbar: {
       page: 'Home',
       shop: 'Mall',
-      trading: 'Exchange',
+      trading: 'Trading',
       wallet: 'Wallet',
       mine: 'Me'
     }
@@ -15,17 +15,17 @@ export default {
   // 公共文字
   common: {
     zwgg: 'No advertisement',
-    szzjmm: 'Please enter transaction password',
+    szzjmm: 'Please enter trading password',
     jzz: 'Loading',
     zzzr: 'Loading...',
     jzwb: 'All loaded',
-    czcg: 'operate successfully',
+    czcg: 'Operate successfully',
     txwz: 'Please complete',
-    qx: 'cancel',
-    fq: 'cancel',
+    qx: 'Cancel',
+    fq: 'Cancel',
     qr: 'Ok',
     qd: 'Ok',
-    jg: 'price',
+    jg: 'Price',
     je: 'Amount',
     sl: 'Quantity',
     gm: 'Buy',
@@ -34,13 +34,13 @@ export default {
     wx: 'Wechat',
     yhkzz: 'Bankcard',
     qdlhcz: 'Please log in first',
-    xdcg: 'ordered successfully',
-    mr: 'buy',
-    mc: 'sell',
-    jy: 'trade',
-    hp: 'praises',
-    xr: 'trust',
-    cp: 'complaints',
+    xdcg: 'Ordered successfully',
+    mr: 'Buy',
+    mc: 'Sell',
+    jy: 'Trade',
+    hp: 'Praises',
+    xr: 'Trust',
+    cp: 'Complaints',
     buyFMVP: 'Buy FMVP',
     qxdl: 'Please Login',
     jytx: 'Transaction reminding',
@@ -76,11 +76,11 @@ export default {
       escdh: 'Used-car exchange'
     },
     subject: {
-      yxye: 'Game balances',
-      jryx: 'Enter the game',
-      zryx: 'Recharge',
-      cz: 'Recharge',
-      qsrczsl: 'Rechange amount',
+      yxye: 'Balances',
+      jryx: 'Enter',
+      zryx: 'Deposit',
+      cz: 'Deposit',
+      qsrczsl: 'Deposit amount',
       czslbnwk: 'The amount of recharge can not be empty'
     }
   },
@@ -88,7 +88,7 @@ export default {
   notice: {
     subject: {
       zwgg: 'No advertisement',
-      gg: 'announcement'
+      gg: 'Announcement'
     }
   },
   // 场外交易-列表页
@@ -133,11 +133,11 @@ export default {
       kjyzdj: 'Min limit',
       kyjzgj: 'Max limit',
       zxj: 'Minimum amount',
-      zced: 'Maximum amount',
+      zced: 'Minimum amount',
       zdjg: 'Maximum amount',
       zded: 'Maximum amount',
       zl: ' total amount',
-      ye: 'balances',
+      ye: 'Balances',
       sbzl: 'Please enter the total amount of coins sold',
       fkfs: 'Payment mehod',
       zfb: 'Alipay',
@@ -145,15 +145,15 @@ export default {
       yhk: 'Bankcard',
       fkqx: 'The payment term',
       qsfkqx: 'The payment term',
-      fz: 'minute',
+      fz: 'Minute',
       ggly: 'BTC/ETH/FMVP, digital currency, blockchain, etc. must not appear in the payment notes.',
       gjsz: 'Advanced settings',
       kfsj: 'Schedule',
-      rhsh: 'anytime',
-      zdy: 'user-defined',
-      jfs: 'fans only',
-      zjfb: 'release directly',
-      bccg: 'save drafts',
+      rhsh: 'Anytime',
+      zdy: 'User-defined',
+      jfs: 'Fans only',
+      zjfb: 'Release directly',
+      bccg: 'Save drafts',
       zgcjjg: 'The highest advertised price',
       zdcjjg: 'The lowest advertised price',
       xqy: 'Monday',
@@ -164,7 +164,8 @@ export default {
       xql: 'Saturday',
       xqt: 'Sunday',
       yjlv: 'The premium rate should be between -50 and 50',
-      gb: 'close'
+      gb: 'close',
+      gglx: 'Type'
     }
   },
   // 购买页面
@@ -185,14 +186,14 @@ export default {
       srsz: 'Please enter the number',
       srsi: 'Please enter the number',
       xldf: 'Contact',
-      zjmm: 'Transaction password',
-      qsrzj: 'Please enter transaction password',
+      zjmm: 'Trading password',
+      qsrzj: 'Please enter trading password',
       xdqr: 'Confirm the order',
       xdtxt: 'Please confirm the price and place an order again. After placing the order, the ',
       xdtxw: ' will be frozen and locked. Please rest assured.',
       fq: 'Give up',
       qr: 'ok',
-      qszjmm: 'Please enter transaction password',
+      qszjmm: 'Please enter trading password',
       gmslje: 'Please enter the purchase quantity and amount.',
       ddtjcg: 'Order submitted successfully',
     }
@@ -217,8 +218,8 @@ export default {
     bbDeal: {
       cwjy: 'Fiat',
       bbjy: 'Exchange',
-      mr: 'Buy',
-      mc: 'Sell',
+      mr: 'Buy ',
+      mc: 'Sell ',
       xj: 'Limit',
       sj: 'Market',
       pk: 'Trend',
@@ -227,10 +228,10 @@ export default {
       wtjg: 'Price',
       wtsl: 'Quantity',
       jye: 'Total',
-      ky: 'Available',
-      km: 'Available to buy',
-      dj: 'Frozen',
-      kmai: 'Available to sell',
+      ky: 'Available ',
+      km: 'Available to buy ',
+      dj: 'Frozen ',
+      kmai: 'Available to sell ',
       mai: '',
       m:'',
       dqwt: 'Open Orders',
@@ -251,7 +252,7 @@ export default {
       bkbwl: 'Cannot be null or less than or equal to zero',
       xsbdy: 'No more than 8 decimal places',
       xsldy: 'No more than 2 decimal places',
-      cjsj: 'Time',
+      cjsj: 'Date',
       cjjg: 'Price',
       cjl: 'Volume',
       more: 'More'
@@ -274,9 +275,9 @@ export default {
     subject: {
       zzc: 'Total value',
       b: 'coin',
-      bzzc: 'currency asset',
-      dj: 'Frozen',
-      ky: 'Available',
+      bzzc: ' currency asset ',
+      dj: 'Frozen ',
+      ky: 'Available ',
       zr: 'Deposit',
       zc: 'Withdraw',
       zd: 'Bill',
@@ -285,7 +286,7 @@ export default {
       ddjl: 'Orders records',
       wdzc: 'My balances',
       xyzsf: 'Please authenticate first',
-      szjymm: 'Please set the transaction password first',
+      szjymm: 'Please set the trading password first',
     }
   },
   // 转入
@@ -315,7 +316,7 @@ export default {
       zzsl: 'Amount',
       qsrsl: 'Please enter transfer amount',
       zjmm: 'Password',
-      qsrzjmm: 'Transaction password',
+      qsrzjmm: 'Trading password',
       txsm: 'Instructions',
       qsrsm: 'Please enter the withdrawal instructions',
       kgf: 'Miner fee',
@@ -346,7 +347,7 @@ export default {
       bdqje: 'Pre-change',
       bdhje: 'Changed',
       sxf: 'Charges',
-      bdsj: 'Time',
+      bdsj: 'Date',
       jymx: 'Instruction',
       zdxq: 'Billing details'
     }
@@ -363,14 +364,14 @@ export default {
       csje: 'Enter the selling amount',
       cssl: 'Enter the quantity for sale',
       sxf: 'Charges',
-      ky: 'Available',
+      ky: ' ',
       zffs: 'Payment mehod',
       qsrzh: 'Please enter your alipay account (for confirmation)',
       bzxx: 'BTC/ETH/FMVP, digital currency, blockchain, etc. must not appear in the payment notes.',
       qxz: 'Please choose',
       zhhkh: 'Please enter your account number or bank card number',
-      zjmm: 'Transaction password',
-      qszjmm: 'Please enter transaction password',
+      zjmm: 'Trading password',
+      qszjmm: 'Please enter trading password',
       qrgm: 'confirm to buy',
       qrcs: 'Confirm to sell',
       dksm: 'Please fill in the instructions',
@@ -442,7 +443,7 @@ export default {
       xj: 'Unrelease',
       zwgg: 'No advertisement',
       wdgg: 'My advertisement',
-
+      type: 'Type'
     }
   },
   // 我的订单
@@ -452,7 +453,7 @@ export default {
       yjs: 'Finished',
       jyje: 'Amount',
       jysl: 'Quantity',
-      ddbh: 'Order number',
+      ddbh: 'No.',
       zwdd: 'No orders',
       wddd: 'My Order',
       wd: 'Unread'
@@ -461,7 +462,7 @@ export default {
   // 我的订单详情
   myOrderDetail: {
     subject: {
-      ddbh: 'Order number',
+      ddbh: 'No.',
       jyje: 'Amount',
       jysl: 'Quantity',
       jyjg: 'Price',
@@ -516,7 +517,7 @@ export default {
   // 安全中心
   securityCenter: {
     subject: {
-      jymm: 'Transaction password',
+      jymm: 'Trading password',
       sfrz: 'ID Authentication',
       ggrz: 'Google authentication',
       ykq: 'Turned on',
@@ -539,8 +540,8 @@ export default {
       mmjw: 'Password 6-16 digits',
       qrmm: 'confirm password',
       qd: 'Submit',
-      xgjymm: 'Modify the transaction password',
-      szjymm: 'Set the transaction password',
+      xgjymm: 'Modify the trading password',
+      szjymm: 'Set the trading password',
       txwz: 'Please complete',
       mmbyz: 'Password is inconsistent, please re-enter',
       czcg: 'Reset password successfully',

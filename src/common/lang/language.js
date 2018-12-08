@@ -101,20 +101,20 @@ const LANGUAGE = {
   },
   // 流水
   '提交卖出[FMVP/ETH]委托单': {
-    'zh': '提交卖出[FMVP/ETH]委托单',
-    'en': 'Commit sell FMVP/ETH order'
+    'ZH': '提交卖出[FMVP/ETH]委托单',
+    'EN': 'Commit sell FMVP/ETH order'
   },
   '提交购买[FMVP/ETH]委托单': {
-    'zh': '提交购买[FMVP/ETH]委托单',
-    'en': 'Commit buy FMVP/ETH order'
+    'ZH': '提交购买[FMVP/ETH]委托单',
+    'EN': 'Commit buy FMVP/ETH order'
   },
   '提交卖出[FMVP/BTC]委托单': {
-    'zh': '提交卖出[FMVP/BTC]委托单',
-    'en': 'Commit sell FMVP/BTC order'
+    'ZH': '提交卖出[FMVP/BTC]委托单',
+    'EN': 'Selling orders [FMVP/BTC]'
   },
   '提交购买[FMVP/BTC]委托单': {
-    'zh': '提交购买[FMVP/BTC]委托单',
-    'en': 'Commit buy FMVP/BTC order'
+    'ZH': '提交购买[FMVP/BTC]委托单',
+    'EN': 'Buy FMVP/BTC order'
   },
   '充币-来自地址': {
     'zh': '充币-来自地址',

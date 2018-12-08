@@ -139,9 +139,14 @@ export default {
             toUser: this.userId,
             type
         }).then(data => {
-            this.isLoading = false;
+          getUser(this.userId).then(data => {
+            this.userDataList = data;
             this.$refs.toast.show();
             this.getGxFn();
+            this.isLoading = false;
+          }, () => {
+            this.isLoading = false;
+          });
         }, () => {
             this.isLoading = false;
         })
@@ -151,9 +156,14 @@ export default {
             type,
             toUser: this.userId
         }).then(data => {
-            this.isLoading = false;
+          getUser(this.userId).then(data => {
+            this.userDataList = data;
             this.$refs.toast.show();
             this.getGxFn();
+            this.isLoading = false;
+          }, () => {
+            this.isLoading = false;
+          });
         }, () => {
             this.isLoading = false;
         });

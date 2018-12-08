@@ -2,7 +2,7 @@
   <div class="template-wrapper bg_white">
     <div class="content-wrapper">
       <div class="cz-box">
-        <p>{{$t('shop.subject.cz')}}FMVP</p>
+        <p>{{$t('shop.subject.cz')}} FMVP</p>
         <div class="cz-iup"><input type="number" v-model="count" :placeholder="$t('shop.subject.qsrczsl')"></div>
         <!--<div class="cz-iup"><input type="password" v-model="config.tradePwd" placeholder="请输入交易密码"></div>-->
       </div>

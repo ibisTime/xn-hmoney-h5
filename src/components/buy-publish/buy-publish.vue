@@ -2,6 +2,10 @@
   <div class="publish-wrapper" @click.stop>
     <div class='publish-list'>
         <p>
+          <span class='txt1'>{{ $t('buyPublish.subject.gglx') }}<i></i></span>
+          <input type="text" readonly v-model="type">
+        </p>
+        <p>
           <span class='txt1'>{{ $t('buyPublish.subject.jybz') }}<i></i></span>
           <select name="tradeCoin" v-model="config.tradeCoin" @change="changePrice">
             <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}</option>

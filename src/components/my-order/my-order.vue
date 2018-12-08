@@ -19,7 +19,7 @@
         <div class='list' @click='goDetails(item.code, item.status)' v-for='(item,index) in list' :key="index">
           <div class="top">
             <p class='code' :title="item.code">
-              {{$t('myOrder.subject.ddbh')}}:{{item.code.substring(item.code.length-8)}}</p>
+              {{$t('myOrder.subject.ddbh')}}{{item.code.substring(item.code.length-8)}}</p>
             <p class="unread" v-if="item.unreadMsgNum > 0">{{$t('myOrder.subject.wd')}}({{item.unreadMsgNum <= 99 ?
               item.unreadMsgNum :
               '99+'}})</p>
