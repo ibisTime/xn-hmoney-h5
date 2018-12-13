@@ -2,17 +2,17 @@
   <div class="put-up-wrapper" @click.stop>
      <div class='main'>
        <p class='title1'>
-         <span>买盘20档</span>
-         <span>卖盘20档</span>
+         <span>{{$t('trading.putUp.buy20')}}</span>
+         <span>{{$t('trading.putUp.sell20')}}</span>
        </p>
         <div class='title2'>
           <p class='tit1'>
-            <span>数量({{setBazDeal.symbol}})</span>
-            <span>价格({{setBazDeal.toSymbol}})</span>
+            <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
+            <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
           </p>
           <p class='tit2'>
-            <span>价格({{setBazDeal.toSymbol}})</span>
-            <span>数量({{setBazDeal.symbol}})</span>
+            <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
+            <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
           </p>
         </div>
        <div class='content'>
@@ -70,15 +70,15 @@ import { getHandicapData } from 'api/bb';
             });
             this.bbAsks.map(item => {
               item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-              item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
+              item.price = (Math.floor(item.price * 100000000) / 100000000).toFixed(8);
               item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-              item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
+              item.count = (Math.floor(item.count * 100000000) / 100000000).toFixed(8);
             });
             this.bbBids.map(item => {
               item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-              item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
+              item.price = (Math.floor(item.price * 100000000) / 100000000).toFixed(8);
               item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-              item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
+              item.count = (Math.floor(item.count * 100000000) / 100000000).toFixed(8);
             });
           }
           return;
@@ -128,7 +128,7 @@ import { getHandicapData } from 'api/bb';
       span {
         flex: 1;
         text-align: center;
-        font-size: .28rem; 
+        font-size: .28rem;
         line-height: .8rem;
         color: #fff;
       }
@@ -147,7 +147,7 @@ import { getHandicapData } from 'api/bb';
           font-size: 0.2rem;
         }
       }
-      .tit1 {    
+      .tit1 {
         background: #d53d3d;
       }
       .tit2 {
@@ -165,21 +165,25 @@ import { getHandicapData } from 'api/bb';
       .left {
         flex: 1;
         p {
-          padding:0 .05rem 0 .3rem;
           display: flex;
           justify-content: space-around;
           line-height: .55rem;
           border-bottom: .01rem solid #1f2c3f;
+          span{
+            font-size: 0.2rem;
+          }
         }
       }
       .right {
         flex: 1;
         p {
-          padding:0 .3rem 0 .05rem;
           display: flex;
           justify-content: space-around;
           line-height: .55rem;
           border-bottom: .01rem solid #1f2c3f;
+          span{
+            font-size: 0.2rem;
+          }
         }
       }
 

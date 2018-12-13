@@ -29,6 +29,7 @@ import { gramUrl, gramMoney } from 'api/store';
 import { setTitle } from "common/js/util";
 import Footer from 'components/footer/footer';
 import FullLoading from 'base/full-loading/full-loading';
+import {isLogin} from 'common/js/util';
 export default {
   data() {
     return {
@@ -41,15 +42,20 @@ export default {
     setTitle(this.$t('shop.navbar.title'));
   },
   mounted() {
-    gramUrl().then(data => {
-      this.gUrl = `${data.gameUrl}?userId=${data.userId}&phone=${data.phone}&hashID=${data.hashID}&sign=${data.sign}&timestamp=${data.timestamp}`;
-    });
-    gramMoney().then(data => {
-      this.gMon = (Math.floor(parseFloat(data.balance) * 100000000) / 100000000).toFixed(8) + data.currency;
-      this.isLoading = false;
-    }, () => {
-      this.isLoading = false;
-    });
+    if (!isLogin()){
+      this.$router.push('/login');
+    } else {
+      gramUrl().then(data => {
+        this.gUrl = `${data.gameUrl}?userId=${data.userId}&phone=${data.phone}&hashID=${data.hashID}&sign=${data.sign}&timestamp=${data.timestamp}`;
+      });
+      gramMoney().then(data => {
+        this.gMon = (Math.floor(parseFloat(data.balance) * 100000000) / 100000000).toFixed(8) + data.currency;
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
+    }
+
   },
   methods: {
     toGame(){

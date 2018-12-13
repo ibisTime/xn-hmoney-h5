@@ -12,7 +12,7 @@
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|password'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
+        <input type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p v-show="!isEmail">

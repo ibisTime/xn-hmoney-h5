@@ -1,13 +1,14 @@
 <template>
   <div class="synopsis-wrapper" @click.stop>
      <div class='main'>
-      <h3 v-html="symbolData.cname"></h3>
+      <h3>{{symbolData.symbol}}</h3>
       <div class='text1' v-html="symbolData.introduction"></div>
      </div>
   </div>
 </template>
 <script>
 import { getSymbolDetail } from 'api/bb';
+import { getLangType } from 'common/js/util';
   export default {
     data(){
       return {
@@ -26,6 +27,9 @@ import { getSymbolDetail } from 'api/bb';
     methods: {
       symbolDetail(){// 查询资料
         getSymbolDetail(this.setBazDeal.symbol).then(data => {
+          if (getLangType() === 'en') {
+            data.introduction = data.enIntroduction;
+          };
           this.symbolData = data;
         })
       }

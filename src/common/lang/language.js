@@ -43,6 +43,10 @@ const LANGUAGE = {
     'zh': '密码长度为6位且为数字',
     'en': 'The password length is 6 bits and is numeric'
   },
+  '字母数字组合6-16位': {
+    'zh': '字母数字组合6-16位',
+    'en': 'Alphanumeric combination 6-16 bits'
+  },
   '不能少于': {
     'zh': '不能少于',
     'en': 'No less than '

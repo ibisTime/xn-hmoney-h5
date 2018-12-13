@@ -525,7 +525,7 @@ export default {
     },
     showHisto() {
       this.show3 = true;
-      this.$router.push('trading-historyEntrust');
+      this.$router.push('trading-historyEntrust?symbol=' + this.myOrderConfig.symbol + '&toSymbol=' + this.myOrderConfig.toSymbol);
     },
     showCurr() {
       this.show3 = false;

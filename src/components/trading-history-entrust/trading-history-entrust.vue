@@ -5,7 +5,7 @@
         <span class='txt1'>历史委托</span>
     </div> -->
     <div class='main'>
-        <Scroll 
+        <Scroll
           ref="scroll"
           :data="hisDataList"
           :hasMore="hasMore"
@@ -25,16 +25,16 @@
                     </div>
                     <div class='txt2'>
                         <p>{{$t('historyEntrust.subject.ze')}}({{item.toSymbol}})</p>
-                        <p class='black'>{{item.direction == 1 && item.type == 0 ? '-' : item.totalAmount}}</p>
+                        <p class='black'>{{item.direction == 0 && item.type == 0 ? item.totalAmount : item.totalCount}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>{{$t('common.sl')}}({{item.symbol}})</p>
-                        <p class='black'>{{item.direction == 0 && item.type == 0 ? '-' : item.totalCount}}</p>
+                        <p>{{$t('historyEntrust.subject.ycj')}}({{item.symbol}})</p>
+                        <p class='black'>{{item.direction == 0 && item.type == 0 ? item.tradedAmount : item.tradedCount}}</p>
                     </div>
-                    <div class='txt3'>
-                        <p>{{$t('historyEntrust.subject.sjcj')}}({{item.symbol}})</p>
-                        <p class='black'>{{item.tradedCount}}</p>
-                    </div>
+                    <!--<div class='txt3'>-->
+                        <!--<p>{{$t('historyEntrust.subject.sjcj')}}({{item.symbol}})</p>-->
+                        <!--<p class='black'>{{item.avgPrice}}</p>-->
+                    <!--</div>-->
                 </div>
             </div>
         </Scroll>
@@ -49,7 +49,7 @@
 <script>
 import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
-import { formatAmount, setTitle, formatDate, getUserId } from "common/js/util";
+import { getUrlParam, formatAmount, setTitle, formatDate, getUserId } from "common/js/util";
 import { getMyHistoryData } from "api/bb";
 import { getDictList } from 'api/general';
 export default {
@@ -62,7 +62,9 @@ export default {
         hisConfig: {
             userId: getUserId(),
             start: 1,
-            limit: 10
+            limit: 10,
+            symbol: 'FMVP',
+            toSymbol: 'BTC'
         },
         hisDataList: [],
         statusValueList: {}
@@ -70,6 +72,8 @@ export default {
   },
   created() {
     setTitle(this.$t('historyEntrust.subject.lswt'));
+    this.hisConfig.symbol = getUrlParam('symbol');
+    this.hisConfig.toSymbol = getUrlParam('toSymbol');
     getDictList('simu_order_status').then(data => {
         data.forEach((item) => {
             this.statusValueList[item.dkey] = item.dvalue;
@@ -89,7 +93,9 @@ export default {
                 item.price = formatAmount(`${item.price}`, '', item.toSymbol);
                 item.totalAmount = formatAmount(`${item.totalAmount}`, '', item.toSymbol);
                 item.totalCount = formatAmount(`${item.totalCount}`, '', item.symbol);
+                item.tradedAmount = formatAmount(`${item.tradedAmount}`, '', item.toSymbol);
                 item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
+                item.avgPrice = formatAmount(`${item.avgPrice}`, '', item.toSymbol);
                 item.status = this.statusValueList[item.status];
             });
             if (data.totalPage <= this.start) {
@@ -123,7 +129,7 @@ export default {
         display: inline-block;
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 100% 100%;    
+        background-size: 100% 100%;
     }
 
     .header {

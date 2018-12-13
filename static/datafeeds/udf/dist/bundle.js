@@ -1,6 +1,6 @@
-(function(global, factory) {
+(function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : (factory((global.Datafeeds = {})));
-}(this, (function(exports) {
+}(this, (function (exports) {
   'use strict';
   const PERIODLIST = ['1', '5', '15', '30', '60', '240', '1D', '1W', '1M'];
 
@@ -20,12 +20,23 @@
   ***************************************************************************** */
   /* global Reflect, Promise */
 
-  let extendStatics = Object.setPrototypeOf || ({ __proto__: [] } instanceof Array && function(d, b) { d.__proto__ = b; }) || function(d, b) { for (let p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
+  let extendStatics = Object.setPrototypeOf || ({__proto__: []} instanceof Array && function (d, b) {
+    d.__proto__ = b;
+  }) || function (d, b) {
+    for (let p in b) {
+      if (b.hasOwnProperty(p)) {
+        d[p] = b[p];
+      }
+    }
+  };
 
   function __extends(d, b) {
     extendStatics(d, b);
 
-    function __() { this.constructor = d; }
+    function __() {
+      this.constructor = d;
+    }
+
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
   }
 
@@ -49,8 +60,9 @@
     }
     return error.message;
   }
+
   // 日期格式化
-  Date.prototype.format = function(format) {
+  Date.prototype.format = function (format) {
     var o = {
       'M+': this.getMonth() + 1, // month
       'd+': this.getDate(), // day
@@ -77,12 +89,13 @@
     return date ? new Date(date).format(f) : '--';
   }
 
-  let HistoryProvider = /** @class */ (function() {
+  let HistoryProvider = /** @class */ (function () {
     function HistoryProvider(datafeedUrl, requester) {
       this._datafeedUrl = datafeedUrl;
       this._requester = requester;
     }
-    HistoryProvider.prototype.getBars = function(symbolInfo, resolution, rangeStartDate, rangeEndDate) {
+
+    HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate) {
       let period = '';
       let foramtList = {
         '1': '1min',
@@ -114,12 +127,12 @@
         code: '650066',
         json: JSON.stringify(requestParams)
       };
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         $.ajax({
           type: 'post',
           url: '/api',
           data: sendParam
-        }).then(function(res) {
+        }).then(function (res) {
           let response = res.data;
           let bars = [];
           let meta = {
@@ -161,7 +174,7 @@
             bars: bars,
             meta: meta
           });
-        }).fail(function(error) {
+        }).fail(function (error) {
           error && logMessage(error);
         });
       });
@@ -170,14 +183,15 @@
     return HistoryProvider;
   }());
 
-  let DataPulseProvider = /** @class */ (function() {
+  let DataPulseProvider = /** @class */ (function () {
     function DataPulseProvider(historyProvider, updateFrequency) {
       this._subscribers = {};
       this._requestsPending = 0;
       this._historyProvider = historyProvider;
       setInterval(this._updateData.bind(this), updateFrequency);
     }
-    DataPulseProvider.prototype.subscribeBars = function(symbolInfo, resolution, newDataCallback, listenerGuid) {
+
+    DataPulseProvider.prototype.subscribeBars = function (symbolInfo, resolution, newDataCallback, listenerGuid) {
       if (this._subscribers.hasOwnProperty(listenerGuid)) {
         logMessage('DataPulseProvider: already has subscriber with id=' + listenerGuid);
         return;
@@ -190,11 +204,11 @@
       };
       logMessage('DataPulseProvider: subscribed for #' + listenerGuid + ' - {' + symbolInfo.name + ', ' + resolution + '}');
     };
-    DataPulseProvider.prototype.unsubscribeBars = function(listenerGuid) {
+    DataPulseProvider.prototype.unsubscribeBars = function (listenerGuid) {
       delete this._subscribers[listenerGuid];
       logMessage('DataPulseProvider: unsubscribed for #' + listenerGuid);
     };
-    DataPulseProvider.prototype._updateData = function() {
+    DataPulseProvider.prototype._updateData = function () {
       let this$1 = this;
 
       let _this = this;
@@ -202,14 +216,14 @@
         return;
       }
       this._requestsPending = 0;
-      let _loop1 = function(listenerGuid) {
+      let _loop1 = function (listenerGuid) {
         _this1._requestsPending += 1;
         _this1._updateDataForSubscriber(listenerGuid)
-          .then(function() {
+          .then(function () {
             _this1._requestsPending -= 1;
             logMessage('DataPulseProvider: data for #' + listenerGuid + ' updated successfully, pending=' + _this._requestsPending);
           })
-          .catch(function(reason) {
+          .catch(function (reason) {
             _this1._requestsPending -= 1;
             logMessage('DataPulseProvider: data for #' + listenerGuid + ' updated with error=' + getErrorMessage(reason) + ', pending=' + _this._requestsPending);
           });
@@ -219,7 +233,7 @@
         _loop1(listenerGuid);
       }
     };
-    DataPulseProvider.prototype._updateDataForSubscriber = function(listenerGuid) {
+    DataPulseProvider.prototype._updateDataForSubscriber = function (listenerGuid) {
       let _this = this;
       let subscriptionRecord = this._subscribers[listenerGuid];
       let rangeEndTime = parseInt((Date.now() / 1000).toString());
@@ -227,11 +241,11 @@
       // see the explanation below. `10` is the `large enough` value to work around holidays
       let rangeStartTime = rangeEndTime - periodLengthSeconds(subscriptionRecord.resolution, 10);
       return this._historyProvider.getBars(subscriptionRecord.symbolInfo, subscriptionRecord.resolution, rangeStartTime, rangeEndTime)
-        .then(function(result) {
+        .then(function (result) {
           _this._onSubscriberDataReceived(listenerGuid, result);
         });
     };
-    DataPulseProvider.prototype._onSubscriberDataReceived = function(listenerGuid, result) {
+    DataPulseProvider.prototype._onSubscriberDataReceived = function (listenerGuid, result) {
       // means the subscription was cancelled while waiting for data
       if (!this._subscribers.hasOwnProperty(listenerGuid)) {
         logMessage('DataPulseProvider: Data comes for already unsubscribed subscription #' + listenerGuid);
@@ -276,7 +290,7 @@
     return daysCount * 24 * 60 * 60;
   }
 
-  let QuotesPulseProvider = /** @class */ (function() {
+  let QuotesPulseProvider = /** @class */ (function () {
     function QuotesPulseProvider(quotesProvider) {
       this._subscribers = {};
       this._requestsPending = 0;
@@ -284,7 +298,8 @@
       setInterval(this._updateQuotes.bind(this, 1), 10000);
       setInterval(this._updateQuotes.bind(this, 0), 60000);
     }
-    QuotesPulseProvider.prototype.subscribeQuotes = function(symbols, fastSymbols, onRealtimeCallback, listenerGuid) {
+
+    QuotesPulseProvider.prototype.subscribeQuotes = function (symbols, fastSymbols, onRealtimeCallback, listenerGuid) {
       this._subscribers[listenerGuid] = {
         symbols: symbols,
         fastSymbols: fastSymbols,
@@ -292,22 +307,22 @@
       };
       logMessage('QuotesPulseProvider: subscribed quotes with #' + listenerGuid);
     };
-    QuotesPulseProvider.prototype.unsubscribeQuotes = function(listenerGuid) {
+    QuotesPulseProvider.prototype.unsubscribeQuotes = function (listenerGuid) {
       delete this._subscribers[listenerGuid];
       logMessage('QuotesPulseProvider: unsubscribed quotes with #' + listenerGuid);
     };
-    QuotesPulseProvider.prototype._updateQuotes = function(updateType) {
+    QuotesPulseProvider.prototype._updateQuotes = function (updateType) {
       let this$1 = this;
 
       let _this = this;
       if (this._requestsPending > 0) {
         return;
       }
-      let _loop1 = function(listenerGuid) {
+      let _loop1 = function (listenerGuid) {
         _this1._requestsPending++;
         let subscriptionRecord = _this1._subscribers[listenerGuid];
         _this1._quotesProvider.getQuotes(updateType === 1 /* Fast */ ? subscriptionRecord.fastSymbols : subscriptionRecord.symbols)
-          .then(function(data) {
+          .then(function (data) {
             _this._requestsPending--;
             if (!_this._subscribers.hasOwnProperty(listenerGuid)) {
               return;
@@ -315,7 +330,7 @@
             subscriptionRecord.listener(data);
             logMessage('QuotesPulseProvider: data for #' + listenerGuid + ' (' + updateType + ') updated successfully, pending=' + _this._requestsPending);
           })
-          .catch(function(reason) {
+          .catch(function (reason) {
             _this._requestsPending--;
             logMessage('QuotesPulseProvider: data for #' + listenerGuid + ' (' + updateType + ') updated with error=' + getErrorMessage(reason) + ', pending=' + _this._requestsPending);
           });
@@ -332,7 +347,8 @@
     let value = data[field];
     return Array.isArray(value) ? value[arrayIndex] : value;
   }
-  let SymbolsStorage = /** @class */ (function() {
+
+  let SymbolsStorage = /** @class */ (function () {
     function SymbolsStorage(datafeedUrl, datafeedSupportedResolutions, requester) {
       this._exchangesList = ['NYSE', 'FOREX', 'AMEX'];
       this._symbolsInfo = {};
@@ -341,15 +357,16 @@
       this._datafeedSupportedResolutions = datafeedSupportedResolutions;
       this._requester = requester;
       this._readyPromise = this._init();
-      this._readyPromise.catch(function(error) {
+      this._readyPromise.catch(function (error) {
         // seems it is impossible
         console.error('SymbolsStorage: Cannot init, error=' + error.toString());
       });
     }
+
     // BEWARE: this function does not consider symbol's exchange
-    SymbolsStorage.prototype.resolveSymbol = function(symbolName) {
+    SymbolsStorage.prototype.resolveSymbol = function (symbolName) {
       let _this = this;
-      return this._readyPromise.then(function() {
+      return this._readyPromise.then(function () {
         let symbolInfo = _this._symbolsInfo[symbolName];
         if (symbolInfo === undefined) {
           return Promise.reject('invalid symbol');
@@ -357,13 +374,13 @@
         return Promise.resolve(symbolInfo);
       });
     };
-    SymbolsStorage.prototype.searchSymbols = function(searchString, exchange, symbolType, maxSearchResults) {
+    SymbolsStorage.prototype.searchSymbols = function (searchString, exchange, symbolType, maxSearchResults) {
       let _this = this;
-      return this._readyPromise.then(function() {
+      return this._readyPromise.then(function () {
         let weightedResult = [];
         let queryIsEmpty = searchString.length === 0;
         searchString = searchString.toUpperCase();
-        let _loop1 = function(symbolName) {
+        let _loop1 = function (symbolName) {
           let symbolInfo = _this._symbolsInfo[symbolName];
           if (symbolInfo === undefined) {
             return 'continue';
@@ -377,10 +394,12 @@
           let positionInName = symbolInfo.name.toUpperCase().indexOf(searchString);
           let positionInDescription = symbolInfo.description.toUpperCase().indexOf(searchString);
           if (queryIsEmpty || positionInName >= 0 || positionInDescription >= 0) {
-            let alreadyExists = weightedResult.some(function(item) { return item.symbolInfo === symbolInfo; });
+            let alreadyExists = weightedResult.some(function (item) {
+              return item.symbolInfo === symbolInfo;
+            });
             if (!alreadyExists) {
               let weight = positionInName >= 0 ? positionInName : 8000 + positionInDescription;
-              weightedResult.push({ symbolInfo: symbolInfo, weight: weight });
+              weightedResult.push({symbolInfo: symbolInfo, weight: weight});
             }
           }
         };
@@ -389,9 +408,11 @@
           _loop1(symbolName);
         }
         let result = weightedResult
-          .sort(function(item1, item2) { return item1.weight - item2.weight; })
+          .sort(function (item1, item2) {
+            return item1.weight - item2.weight;
+          })
           .slice(0, maxSearchResults)
-          .map(function(item) {
+          .map(function (item) {
             let symbolInfo = item.symbolInfo;
             return {
               symbol: symbolInfo.name,
@@ -406,7 +427,7 @@
         return Promise.resolve(result);
       });
     };
-    SymbolsStorage.prototype._init = function() {
+    SymbolsStorage.prototype._init = function () {
       let this$1 = this;
 
       let _this = this;
@@ -421,16 +442,16 @@
         promises.push(this$1._requestExchangeData(exchange));
       }
       return Promise.all(promises)
-        .then(function() {
+        .then(function () {
           _this._symbolsList.sort();
           logMessage('SymbolsStorage: All exchanges data loaded');
         });
     };
-    SymbolsStorage.prototype._requestExchangeData = function(exchange) {
+    SymbolsStorage.prototype._requestExchangeData = function (exchange) {
       let _this = this;
-      return new Promise(function(resolve, reject) {
-        _this._requester.sendRequest(_this._datafeedUrl, 'symbol_info', { group: exchange })
-          .then(function(response) {
+      return new Promise(function (resolve, reject) {
+        _this._requester.sendRequest(_this._datafeedUrl, 'symbol_info', {group: exchange})
+          .then(function (response) {
             try {
               _this._onExchangeDataReceived(exchange, response);
             } catch (error) {
@@ -439,13 +460,13 @@
             }
             resolve();
           })
-          .catch(function(reason) {
+          .catch(function (reason) {
             logMessage('SymbolsStorage: Request data for exchange ' + exchange + ' failed, reason=' + getErrorMessage(reason));
             resolve();
           });
       });
     };
-    SymbolsStorage.prototype._onExchangeDataReceived = function(exchange, data) {
+    SymbolsStorage.prototype._onExchangeDataReceived = function (exchange, data) {
       let this$1 = this;
 
       let symbolIndex = 0;
@@ -503,13 +524,16 @@
     let value = data[field];
     return Array.isArray(value) ? value[arrayIndex] : value;
   }
+
   /**
    * This class implements interaction with UDF-compatible datafeed.
    * See UDF protocol reference at https://github.com/tradingview/charting_library/wiki/UDF
    */
-  let UDFCompatibleDatafeedBase = /** @class */ (function() {
+  let UDFCompatibleDatafeedBase = /** @class */ (function () {
     function UDFCompatibleDatafeedBase(datafeedURL, quotesProvider, requester, updateFrequency) {
-      if (updateFrequency === void 0) { updateFrequency = 10 * 1000; }
+      if (updateFrequency === void 0) {
+        updateFrequency = 10 * 1000;
+      }
       let _this = this;
       this._configuration = defaultConfiguration();
       this._symbolsStorage = null;
@@ -520,32 +544,33 @@
       this._dataPulseProvider = new DataPulseProvider(this._historyProvider, updateFrequency);
       this._quotesPulseProvider = new QuotesPulseProvider(this._quotesProvider);
       this._configurationReadyPromise = this._requestConfiguration()
-        .then(function(configuration) {
+        .then(function (configuration) {
           if (configuration === null) {
             configuration = defaultConfiguration();
           }
           _this._setupWithConfiguration(configuration);
         });
     }
-    UDFCompatibleDatafeedBase.prototype.onReady = function(callback) {
+
+    UDFCompatibleDatafeedBase.prototype.onReady = function (callback) {
       let _this = this;
-      this._configurationReadyPromise.then(function() {
+      this._configurationReadyPromise.then(function () {
         callback(_this._configuration);
       });
     };
-    UDFCompatibleDatafeedBase.prototype.getQuotes = function(symbols, onDataCallback, onErrorCallback) {
+    UDFCompatibleDatafeedBase.prototype.getQuotes = function (symbols, onDataCallback, onErrorCallback) {
       this._quotesProvider.getQuotes(symbols).then(onDataCallback).catch(onErrorCallback);
     };
-    UDFCompatibleDatafeedBase.prototype.subscribeQuotes = function(symbols, fastSymbols, onRealtimeCallback, listenerGuid) {
+    UDFCompatibleDatafeedBase.prototype.subscribeQuotes = function (symbols, fastSymbols, onRealtimeCallback, listenerGuid) {
       this._quotesPulseProvider.subscribeQuotes(symbols, fastSymbols, onRealtimeCallback, listenerGuid);
     };
-    UDFCompatibleDatafeedBase.prototype.unsubscribeQuotes = function(listenerGuid) {
+    UDFCompatibleDatafeedBase.prototype.unsubscribeQuotes = function (listenerGuid) {
       this._quotesPulseProvider.unsubscribeQuotes(listenerGuid);
     };
-    UDFCompatibleDatafeedBase.prototype.calculateHistoryDepth = function(resolution, resolutionBack, intervalBack) {
+    UDFCompatibleDatafeedBase.prototype.calculateHistoryDepth = function (resolution, resolutionBack, intervalBack) {
       return undefined;
     };
-    UDFCompatibleDatafeedBase.prototype.getMarks = function(symbolInfo, from, to, onDataCallback, resolution) {
+    UDFCompatibleDatafeedBase.prototype.getMarks = function (symbolInfo, from, to, onDataCallback, resolution) {
       if (!this._configuration.supports_marks) {
         return;
       }
@@ -556,7 +581,7 @@
         resolution: resolution
       };
       this._send('marks', requestParams)
-        .then(function(response) {
+        .then(function (response) {
           if (!Array.isArray(response)) {
             let result = [];
             for (let i = 0; i < response.id.length; ++i) {
@@ -574,12 +599,12 @@
           }
           onDataCallback(response);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           logMessage('UdfCompatibleDatafeed: Request marks failed: ' + getErrorMessage(error));
           onDataCallback([]);
         });
     };
-    UDFCompatibleDatafeedBase.prototype.getTimescaleMarks = function(symbolInfo, from, to, onDataCallback, resolution) {
+    UDFCompatibleDatafeedBase.prototype.getTimescaleMarks = function (symbolInfo, from, to, onDataCallback, resolution) {
       if (!this._configuration.supports_timescale_marks) {
         return;
       }
@@ -590,7 +615,7 @@
         resolution: resolution
       };
       this._send('timescale_marks', requestParams)
-        .then(function(response) {
+        .then(function (response) {
           if (!Array.isArray(response)) {
             let result = [];
             for (let i = 0; i < response.id.length; ++i) {
@@ -606,27 +631,27 @@
           }
           onDataCallback(response);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           logMessage('UdfCompatibleDatafeed: Request timescale marks failed: ' + getErrorMessage(error));
           onDataCallback([]);
         });
     };
-    UDFCompatibleDatafeedBase.prototype.getServerTime = function(callback) {
+    UDFCompatibleDatafeedBase.prototype.getServerTime = function (callback) {
       if (!this._configuration.supports_time) {
         return;
       }
       this._send('time')
-        .then(function(response) {
+        .then(function (response) {
           let time = parseInt(response);
           if (!isNaN(time)) {
             callback(time);
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           logMessage('UdfCompatibleDatafeed: Fail to load server time, error=' + getErrorMessage(error));
         });
     };
-    UDFCompatibleDatafeedBase.prototype.searchSymbols = function(userInput, exchange, symbolType, onResult) {
+    UDFCompatibleDatafeedBase.prototype.searchSymbols = function (userInput, exchange, symbolType, onResult) {
       if (this._configuration.supports_search) {
         // limit  SearchItemsLimit
         let params = {
@@ -636,7 +661,7 @@
           exchange: exchange
         };
         this._send('search', params)
-          .then(function(response) {
+          .then(function (response) {
             if (response.s !== undefined) {
               logMessage('UdfCompatibleDatafeed: search symbols error=' + response.errmsg);
               onResult([]);
@@ -644,7 +669,7 @@
             }
             onResult(response);
           })
-          .catch(function(reason) {
+          .catch(function (reason) {
             logMessage('UdfCompatibleDatafeed: Search symbols for ' + userInput + ' failed. Error=' + getErrorMessage(reason));
             onResult([]);
           });
@@ -658,7 +683,7 @@
           .catch(onResult.bind(null, []));
       }
     };
-    UDFCompatibleDatafeedBase.prototype.resolveSymbol = function(symbolName, onResolve, onError) {
+    UDFCompatibleDatafeedBase.prototype.resolveSymbol = function (symbolName, onResolve, onError) {
       logMessage('Resolve requested');
       let resolveRequestStartTime = Date.now();
 
@@ -666,6 +691,7 @@
         logMessage('Symbol resolved: ' + (Date.now() - resolveRequestStartTime) + 'ms');
         onResolve(symbolInfo);
       }
+
       let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal')) || {
         symbol: 'FMVP',
         toSymbol: 'BTC'
@@ -713,20 +739,20 @@
       //          this._symbolsStorage.resolveSymbol(symbolName).then(onResultReady).catch(onError);
       //      }
     };
-    UDFCompatibleDatafeedBase.prototype.getBars = function(symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
+    UDFCompatibleDatafeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
       this._historyProvider.getBars(symbolInfo, resolution, rangeStartDate, rangeEndDate)
-        .then(function(result) {
+        .then(function (result) {
           onResult(result.bars, result.meta);
         })
         .catch(onError);
     };
-    UDFCompatibleDatafeedBase.prototype.subscribeBars = function(symbolInfo, resolution, onTick, listenerGuid, onResetCacheNeededCallback) {
+    UDFCompatibleDatafeedBase.prototype.subscribeBars = function (symbolInfo, resolution, onTick, listenerGuid, onResetCacheNeededCallback) {
       this._dataPulseProvider.subscribeBars(symbolInfo, resolution, onTick, listenerGuid);
     };
-    UDFCompatibleDatafeedBase.prototype.unsubscribeBars = function(listenerGuid) {
+    UDFCompatibleDatafeedBase.prototype.unsubscribeBars = function (listenerGuid) {
       this._dataPulseProvider.unsubscribeBars(listenerGuid);
     };
-    UDFCompatibleDatafeedBase.prototype._requestConfiguration = function() {
+    UDFCompatibleDatafeedBase.prototype._requestConfiguration = function () {
       //      return this._send('config')
       //          .catch(function (reason) {
       //          logMessage('UdfCompatibleDatafeed: Cannot get datafeed configuration - use default, error=' + getErrorMessage(reason));
@@ -735,10 +761,10 @@
 
       return Promise.resolve(defaultConfiguration());
     };
-    UDFCompatibleDatafeedBase.prototype._send = function(urlPath, params) {
+    UDFCompatibleDatafeedBase.prototype._send = function (urlPath, params) {
       return this._requester.sendRequest(this._datafeedURL, urlPath, params);
     };
-    UDFCompatibleDatafeedBase.prototype._setupWithConfiguration = function(configurationData) {
+    UDFCompatibleDatafeedBase.prototype._setupWithConfiguration = function (configurationData) {
       this._configuration = configurationData;
       if (configurationData.exchanges === undefined) {
         configurationData.exchanges = [];
@@ -764,23 +790,24 @@
     };
   }
 
-  let QuotesProvider = /** @class */ (function() {
+  let QuotesProvider = /** @class */ (function () {
     function QuotesProvider(datafeedUrl, requester) {
       this._datafeedUrl = datafeedUrl;
       this._requester = requester;
     }
-    QuotesProvider.prototype.getQuotes = function(symbols) {
+
+    QuotesProvider.prototype.getQuotes = function (symbols) {
       let _this = this;
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         _this._requester.sendRequest(_this._datafeedUrl, 'quotes', {
           symbols: symbols
-        }).then(function(response) {
+        }).then(function (response) {
           if (response.s === 'ok') {
             resolve(response.d);
           } else {
             reject(response.errmsg);
           }
-        }).catch(function(error) {
+        }).catch(function (error) {
           let errorMessage = getErrorMessage(error);
           logMessage('QuotesProvider: getQuotes failed, error=' + errorMessage);
           reject('network error: ' + errorMessage);
@@ -790,29 +817,30 @@
     return QuotesProvider;
   }());
 
-  let Requester = /** @class */ (function() {
+  let Requester = /** @class */ (function () {
     function Requester(headers) {
       if (headers) {
         this._headers = headers;
       }
     }
-    Requester.prototype.sendRequest = function(datafeedUrl, urlPath, params) {
+
+    Requester.prototype.sendRequest = function (datafeedUrl, urlPath, params) {
       if (params !== undefined) {
         let paramKeys = Object.keys(params);
         if (paramKeys.length !== 0) {
           urlPath += '?';
         }
-        urlPath += paramKeys.map(function(key) {
+        urlPath += paramKeys.map(function (key) {
           return encodeURIComponent(key) + '=' + encodeURIComponent(params[key].toString());
         }).join('&');
       }
       logMessage('New request: ' + urlPath);
       // Send user cookies if the URL is on the same origin as the calling script.
-      let options = { credentials: 'same-origin' };
+      let options = {credentials: 'same-origin'};
       if (this._headers !== undefined) {
         options.headers = this._headers;
       }
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         return [];
       });
       // return fetch(datafeedUrl + '/' + urlPath, options)
@@ -822,8 +850,9 @@
     return Requester;
   }());
   /** @class */
-  let UDFCompatibleDatafeed = (function(_super) {
+  let UDFCompatibleDatafeed = (function (_super) {
     __extends(UDFCompatibleDatafeed, _super);
+
     function UDFCompatibleDatafeed(datafeedURL, updateFrequency) {
       if (updateFrequency === void 0) {
         updateFrequency = 10 * 1000;
@@ -834,8 +863,9 @@
       _this1 = _super.call(this, datafeedURL, quotesProvider, requester, updateFrequency) || this;
       return _this1;
     }
+
     return UDFCompatibleDatafeed;
   }(UDFCompatibleDatafeedBase));
   exports.UDFCompatibleDatafeed = UDFCompatibleDatafeed;
-  Object.defineProperty(exports, '__esModule', { value: true });
+  Object.defineProperty(exports, '__esModule', {value: true});
 })));

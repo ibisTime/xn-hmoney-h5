@@ -47,6 +47,7 @@ export default {
     zwsj: 'No Data',
     qxzf: 'Cancel',
     bjfk: 'Mark payment',
+    type: 'Type'
   },
   // page页
   page: {
@@ -256,6 +257,12 @@ export default {
       cjjg: 'Price',
       cjl: 'Volume',
       more: 'More'
+    },
+    putUp: {
+      buy20: 'Buy 20',
+      sell20: 'Sell 20',
+      sl: 'Quantity',
+      jg: 'Price',
     }
   },
   // 历史委托
@@ -263,11 +270,12 @@ export default {
     subject: {
       mr: 'Buy',
       mc: 'Sell',
-      sj: 'Market',
-      ze: 'Total',
-      sjcj: 'Actual',
+      sj: 'Market price',
+      ze: 'Amount',
+      sjcj: 'Avg price',
       zwdd: 'No orders ',
       lswt: 'Order History',
+      ycj: 'Executed'
     }
   },
   // 钱包
@@ -622,7 +630,7 @@ export default {
       cxhq: 'Reacquire',
       xmm: 'New password 6-16 digits',
       jmm: 'Please enter the old password',
-      ywsz: 'English letters and numbers combination, 6-16 digitals',
+      ywsz: 'Alphanumeric combination 6-16 bits',
       qrmm: 'confirm password',
       qd: 'Submit',
       xgdlmm: 'Modify the login password',
@@ -637,7 +645,7 @@ export default {
     subject: {
       hyhl: 'Welcome back',
       srzh: 'Please enter the account number',
-      srldsl: 'Please enter your password (6-16 digits in English letters and numbers combination)',
+      srldsl: 'Please enter your password (alphanumeric combination 6-16 bits)',
       dl: 'Login',
       ljzc: 'Sign up now',
       wjmm: 'Forget password?'
@@ -655,7 +663,7 @@ export default {
       sryzm: 'Please enter the verification code',
       hqyzm: 'Get code',
       cxfs: 'Reacquire',
-      ldslw: 'English letters and numbers combination, 6-16 digitals',
+      ldslw: 'Alphanumeric combination 6-16 bits',
       qrmm: 'Please confirm the password.',
       wyjs: 'I have read and accepted',
       xytk: '《FUNMVP Product Terms of Service》',

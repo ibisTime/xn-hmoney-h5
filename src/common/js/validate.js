@@ -67,7 +67,7 @@ Validator.extend('emailPhone', {
 
 // 登录密码校验
 Validator.extend('password', {
-  getMessage: field => getTranslateText('密码格式不正确'),
+  getMessage: field => getTranslateText('字母数字组合6-16位'),
   validate: value => {
     var isIDCard1 = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/;
     return isIDCard1.test(value) && 5 < value.length && value.length < 16;

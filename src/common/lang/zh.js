@@ -46,7 +46,8 @@ export default {
     jytx: '交易提醒',
     zwsj: '暂无数据',
     qxzf: '取消支付',
-    bjfk: '标记付款'
+    bjfk: '标记付款',
+    type: '类型'
   },
   // page页
   page: {
@@ -258,6 +259,12 @@ export default {
       cjl: '成交量',
       more: '更多'
     },
+    putUp: {
+      buy20: '买盘20档',
+      sell20: '卖盘20档',
+      sl: '数量',
+      jg: '价格',
+    }
   },
   // 历史委托
   historyEntrust: {
@@ -265,10 +272,11 @@ export default {
       mr: '买入',
       mc: '卖出',
       sj: '市价',
-      ze: '总额',
-      sjcj: '实际成交',
+      ze: '委托量',
+      sjcj: '成交均价',
       zwdd: '暂无订单',
       lswt: '历史委托订单',
+      ycj: '已成交'
     }
   },
   // 钱包

@@ -20,7 +20,7 @@
 <script type="text/ecmascript-6">
   //@touchmove.prevent
   import Toast from 'base/toast/toast';
-  import {isLogin, getUrlParam, isUnDefined} from './common/js/util';
+  import {isLogin, getUrlParam, isUnDefined} from 'common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
   import {getBbListData} from 'api/otc';
 
