@@ -224,6 +224,7 @@ export default {
       xj: '限价',
       sj: '市价',
       pk: '盘口',
+      sl: '数量',
       sczjjg: '以市场上最优价格',
       wtjg: '委托价格',
       zh: '折合',

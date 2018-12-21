@@ -21,7 +21,7 @@
       <button @click="bindPhone">{{$t('securityGoogle.subject.qd')}}</button>
     </div>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
@@ -206,7 +206,7 @@ export default {
         background: #ccc;
         font-size: .22rem;
         text-align: center;
-        color: #fff;       
+        color: #fff;
       }
       .icon {
           width: .34rem;
@@ -215,7 +215,7 @@ export default {
           margin-top: .29rem;
           margin-right: -.2rem;
       }
-    } 
+    }
   }
 
   .foot {

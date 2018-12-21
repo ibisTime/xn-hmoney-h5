@@ -3,8 +3,8 @@
     <header>
         <p>
           <span @click="toxrFn('1')" :class="{'select': type == '1'}">{{$t('myGuest.subject.wxrd')}}</span>
-          <span @click="toxrFn('0')" :class="{'select': type == '0'}">{{$t('myGuest.subject.xrwd')}}</span>
-          <span @click="toxrFn('2')" :class="{'select': type == '2'}">{{$t('myGuest.subject.wpbd')}}</span>
+          <span @click="toxrFn('2')" :class="{'select': type == '2'}">{{$t('myGuest.subject.xrwd')}}</span>
+          <span @click="toxrFn('0')" :class="{'select': type == '0'}">{{$t('myGuest.subject.wpbd')}}</span>
         </p>
     </header>
     <div class='main' >
@@ -18,19 +18,19 @@
             >
                 <div class='list' v-for='(item,index) in list' :key="index">
                     <div class='pic'>
-                        <p :style="getUserPic(item.toUserInfo.photo)" :class="{'hidden': !(item.toUserInfo.photo)}" alt=""></p>
+                        <p :style="getUserPic(item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo)" :class="{'hidden': !(item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo)}" alt=""></p>
                         <!-- <img :class="{'hidden': item.toUserInfo.photo}" src="./txiang.png"/> -->
-                        <HeadPic :content="item.toUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.toUserInfo.photo}"/>
+                        <HeadPic :content="item.toUserInfo ? item.toUserInfo.nickname.substring(0, 1) : item.fromUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo}"/>
                     </div>
                     <div class='text'>
                         <div class='text1'>
-                            <p class='txt1'><span class='name'>{{item.toUserInfo.nickname}}</span></p>
+                            <p class='txt1'><span class='name'>{{item.toUserInfo ? item.toUserInfo.nickname : item.fromUserInfo.nickname }}</span></p>
                             <p class='txt2 gray'>{{item.createDatetime}}</p>
                         </div>
                         <div class='text2'>
-                            <p class='txt1'>{{$t('myGuest.subject.jycs')}}：{{item.toUserInfo.userStatistics.jiaoYiCount}}</p>
-                            <p class='txt2'>{{$t('myGuest.subject.xrrs')}}：{{item.toUserInfo.userStatistics.beiXinRenCount}}</p>
-                            <p class='txt2'>{{$t('myGuest.subject.hpl')}}：{{getPercentum(item.toUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo.userStatistics.beiPingJiaCount)}}</p>
+                            <p class='txt1'>{{$t('myGuest.subject.jycs')}}：{{item.toUserInfo ? item.toUserInfo.userStatistics.jiaoYiCount : item.fromUserInfo.userStatistics.jiaoYiCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.xrrs')}}：{{item.toUserInfo ? item.toUserInfo.userStatistics.beiXinRenCount : item.fromUserInfo.userStatistics.beiXinRenCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.hpl')}}：{{getPercentum(item.toUserInfo ? item.toUserInfo.userStatistics.beiHaoPingCount : item.fromUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo ? item.toUserInfo.userStatistics.beiPingJiaCount : item.fromUserInfo.userStatistics.beiPingJiaCount)}}</p>
                         </div>
                     </div>
                 </div>
@@ -46,8 +46,8 @@
   </div>
 </template>
 <script>
-import { myGuest, getPageTrust } from "../../api/person";
-import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "../../common/js/util";
+import { myGuest, getPageTrust } from "api/person";
+import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "common/js/util";
 import Scroll from 'base/scroll/scroll';
 import HeadPic from 'base/head-pic/headPic';
 import FullLoading from 'base/full-loading/full-loading';
@@ -63,7 +63,8 @@ export default {
       config: {
         start: 1,
         limit: 10,
-        type: '1'
+        type: '1',
+        userId: getUserId()
       },
       type: '1',
       isLoading: true
@@ -119,14 +120,18 @@ export default {
     },
     toxrFn(type){
       this.type = type;
-      if(this.config.toUser){
+      if (type === '2') {
+        this.config.type = '1';
+        this.config.toUser = getUserId();
+        delete this.config.userId;
+      } else {
+        this.config.type = type;
+        this.config.userId = getUserId();
         delete this.config.toUser;
-      }
-      switch(type){
-        case '0': this.config.type = '0';this.start = 1;this.list = [];this.getPageTrust();break;
-        case '1': this.config.type = '1';this.start = 1;this.list = [];this.getPageTrust();break;
-        case '2': this.config.toUser = getUserId();this.start = 1;this.list = [];this.getPageTrust();break;
-      }
+      };
+      this.start = 1;
+      this.list = [];
+      this.getPageTrust();
     }
   },
   components: {

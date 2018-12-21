@@ -211,9 +211,10 @@ export default {
             width: 100%;
             text-align: center;
             height: 0.96rem;
-            line-height: 0.96rem;
+            line-height: .4rem;
             color: #fff;
             font-size: 0.26rem;
+            padding: 0 0.7rem;
             span{
                 display: inline-block;
                 border-radius: 0.04rem;

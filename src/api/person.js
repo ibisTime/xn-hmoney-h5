@@ -118,7 +118,7 @@ export function bindingPhone(isSendSms, mobile, smsCaptcha, userId) {
     isSendSms,
     mobile,
     smsCaptcha,
-    userId  
+    userId
   })
 }
 
@@ -306,12 +306,7 @@ export function qxOrder(config) {
 
 // 查询信任
 export function getPageTrust(config, to) {
-  if (to != '1') {
-      config.userId = getUserId();
-  }
-  return fetch("805155", {
-      ...config
-  });
+  return fetch("805155", config);
 }
 
 //个人-评价

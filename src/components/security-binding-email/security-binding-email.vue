@@ -2,13 +2,13 @@
   <div class="phonenumber-wrapper" @click.stop>
     <div class="main">
       <p>
-        <input v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')">
+        <input class="item-input" v-model="email" type="text" name="email" v-validate="'required|email'" :placeholder="$t('bindEmail.subject.sryx')">
       <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
       </p>
-      <p class='text3'>
-        <input v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
+      <p class='text3 item-captcha-wrap'>
+        <input class="item-input" v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
         <i v-show="!show" class='icon' @click="captcha = ''"></i>
-        <span v-show="show" @click="get" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="show" @click="" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
         <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
       </p>
 
@@ -21,8 +21,8 @@
   </div>
 </template>
 <script>
-import {getUserId,CheckMail, setTitle} from '../../common/js/util';
-import {bindingEmail, getSmsCaptcha2} from '../../api/person';
+import {getUserId, CheckMail, setTitle} from 'common/js/util';
+import {bindingEmail, getSmsCaptcha2} from 'api/person';
 import FullLoading from 'base/full-loading/full-loading';
 
 export default {
@@ -129,6 +129,9 @@ export default {
     input[attr='placeholder'] {
       color: #ccc;
     }
+    .item-input{
+      width: 100%;
+    }
     .text1 {
       .txt2 {
         padding: 0 .24rem 0 .34rem;
@@ -173,6 +176,20 @@ export default {
           background-image: url('./sc.png');
           margin-top: .29rem;
           margin-right: -.2rem;
+      }
+    }
+    .item-captcha-wrap{
+      position: relative;
+      .item-input{
+        position: relative;
+        z-index: 8;
+      }
+      .text3 .txt2{
+        position: absolute;
+        right: 0;
+        line-height: 1rem;
+        top: 0;
+        z-index: 9;
       }
     }
     .error-tip{

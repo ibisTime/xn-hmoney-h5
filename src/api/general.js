@@ -114,7 +114,7 @@ export function getBannerList() {
 
 // 分页查询系统公告
 export function getPageSysNotices(start, limit) {
-  return fetch(804040, {
+  return fetch(805308, {
     start,
     limit,
     pushType: 41,
@@ -133,7 +133,7 @@ export function getTradeIconRule(key) {
 }
 // 系统公告
 export function notice(start) {
-  return fetch('805305', {
+  return fetch('805308', {
       start,
       limit: '10',
       status: '1'

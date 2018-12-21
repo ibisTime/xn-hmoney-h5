@@ -43,7 +43,7 @@
         <router-link to="my-order" class="item item-4" @click.native="toOrderFn">
             <i></i>
             <span class="txt">{{$t('mine.subject.wddd')}}</span>
-          <span class='icon'><samp v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp></span>
+          <span class='icon'><samp class="newMsg" v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp></span>
         </router-link>
       </div>
 
@@ -391,10 +391,11 @@ export default {
             background-image: url('./wddd.png');
           }
           .icon{
-            width: 1.6rem;
+            width: 2.4rem;
             color: $primary-color;
             text-align: right;
             padding-right: 0.3rem;
+            white-space: nowrap;
           }
         }
 

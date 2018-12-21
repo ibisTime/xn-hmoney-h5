@@ -4,20 +4,21 @@
       <p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p v-if="mobile">{{mobile}}</p>
       <p v-if="email != ''">{{email}}</p>
+      <p>
+        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
+        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+      </p>
       <p class='text3'>
         <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
+        <span v-show="errors.has('smsCaptcha')" class="error-tip smsCaptcha">{{errors.first('smsCaptcha')}}</span>
         <i v-show="!show" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
       </p>
-      <p>
-        <input type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
-        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
-      </p>
-      <p>
-        <input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">
-        <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
-      </p>
+      <!--<p>-->
+      <!--<input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">-->
+      <!--<span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>-->
+      <!--</p>-->
     </div>
     <div class="foot">
       <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
@@ -45,7 +46,7 @@ export default {
       email: '',
       smsCaptcha: '',
       newPayPwd: '',
-      surePwd: '',
+      // surePwd: '',
       istw: '',
       isLoading: false
     };
@@ -104,16 +105,17 @@ export default {
       }
     },
     changeTradPwd() {
-      if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
-        this.textMsg = this.$t('securityTradePassword.subject.txwz');
-        this.$refs.toast.show();
-        return;
-      }
-      if(this.newPayPwd !== this.surePwd){
-        this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
-        this.$refs.toast.show();
-        return;
-      }else{
+      // if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
+        if(this.newPayPwd == '' || this.smsCaptcha == ''){
+          this.textMsg = this.$t('securityTradePassword.subject.txwz');
+          this.$refs.toast.show();
+          return;
+        }
+      // if(this.newPayPwd !== this.surePwd){
+      //   this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
+      //   this.$refs.toast.show();
+      //   return;
+      // }else{
         if(!this.errors.any()){
           this.isLoading = true;
           if(this.istw == '1'){
@@ -140,7 +142,7 @@ export default {
             })
           }
         }
-      }
+      // }
     }
   },
   components: {
@@ -204,6 +206,9 @@ export default {
     }
     input[attr='placeholder'] {
       color: #ccc;
+    }
+    .item-input{
+      width: 100%;
     }
     .text1 {
       .txt2 {

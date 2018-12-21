@@ -7,8 +7,8 @@
         </p>
     </header> -->
     <div class="main">
-      <p><input type="text" :placeholder="$t('securityIdcard.subject.qsrxm')" v-model="config.realName"></p>
-      <p><input type="text" :placeholder="`${$t('securityIdcard.subject.qsr')}${rzText}${$t('securityIdcard.subject.h')}`" v-model="config.idNo"></p>
+      <p><input class="item-input" type="text" :placeholder="$t('securityIdcard.subject.qsrxm')" v-model="config.realName"></p>
+      <p><input  class="item-input" type="text" :placeholder="`${$t('securityIdcard.subject.qsr')}${rzText}${$t('securityIdcard.subject.h')}`" v-model="config.idNo"></p>
     </div>
     <div class="id-pic">
       <h5>{{$t('securityIdcard.subject.sc')}}{{rzText}}</h5>
@@ -95,15 +95,15 @@ export default {
   created() {
     this.rzType = this.$route.params.type;
     switch(this.rzType){
-      case 'sfz': 
+      case 'sfz':
         this.rzText = this.$t('securityIdcard.subject.sfz');
         this.config.idKind = '1';
         break;
-      case 'hz': 
+      case 'hz':
         this.rzText = this.$t('securityIdcard.subject.hz');
         this.config.idKind = '2';
         break;
-      case 'jz': 
+      case 'jz':
         this.rzText = this.$t('securityIdcard.subject.jz');
         this.config.idKind = '3';
         break;
@@ -161,7 +161,7 @@ export default {
             type: file.type,
             key: _url.split('/').pop() + '.' + file.name.split('.').pop()
           };
-          
+
           self.uploadPhoto(data, item.key).then(() => {
             item = {
               ...item,
@@ -254,6 +254,9 @@ export default {
     }
     input[attr='placeholder'] {
       color: #ccc;
+    }
+    .item-input{
+      width: 100%;
     }
   }
   .id-pic{

@@ -14,18 +14,21 @@
 
     <div v-show="show2" class='One'>
       <div class="top">
-        <p>
+        <div class="left">
           <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
           <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
           <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
-            <option value="1">{{$t('trading.bbDeal.xj')}}</option>
+            <option value="1" v-if="langType === 'en'">&nbsp;&nbsp;{{$t('trading.bbDeal.xj')}}</option>
+            <option value="1" v-else>{{$t('trading.bbDeal.xj')}}</option>
             <option value="0">{{$t('trading.bbDeal.sj')}}</option>
           </select>
           <i class='icon'></i>
+        </div>
+        <div class="right">
           <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
-          <span class='txt5'>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</span>
-          <span class='txt6'>{{$t('common.sl')}}</span>
-        </p>
+          <span class='txt5'>{{$t('common.jg')}}<br/>({{setBazDeal.toSymbol}})</span>
+          <span class='txt6'>{{$t('trading.bbDeal.sl')}}<br/>({{setBazDeal.symbol}})</span>
+        </div>
       </div>
       <div class="main">
         <!-- 买入 -->
@@ -117,8 +120,8 @@
           <div class='one'>
             <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
               <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
-              <span class='txt2'>{{sellItem ? sellItem.price : '--'}}</span>
-              <span class='txt3'>{{sellItem ? sellItem.count : '--'}}</span>
+              <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+              <span class='txt3'>{{sellItem ? formatAmount(sellItem.count, 4, setBazDeal.symbol) : '--'}}</span>
             </p>
           </div>
           <p class='middle'>
@@ -128,8 +131,8 @@
           <div class='one two'>
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
               <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-              <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, '', setBazDeal.toSymbol) : '--'}}</span>
-              <span class='txt3'>{{buyItem ? formatAmount(buyItem.count, '', setBazDeal.symbol) : '--'}}</span>
+              <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+              <span class='txt3'>{{buyItem ? formatAmount(buyItem.count, 4, setBazDeal.symbol) : '--'}}</span>
             </p>
           </div>
 
@@ -154,7 +157,7 @@
                   <p class='black'>{{myItem.type == 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
                 </div>
                 <div class='txt2'>
-                  <p>{{$t('common.sl')}}({{setBazDeal.symbol}})</p>
+                  <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
                   <p class='black'>{{myItem.totalCount}}</p>
                 </div>
                 <div class='txt3'>
@@ -186,7 +189,7 @@
       </div>
       <!-- k线图部分 -->
       <div class='main1'>
-        <TVChartContainer />
+        <TVChartContainer :locale="locale" />
       </div>
 
       <!-- 主要内容区 -->
@@ -228,7 +231,8 @@ import {
   setTitle,
   getUserId,
   formatMoneyMultiply,
-  formatDate
+  formatDate,
+  getLangType
 } from "common/js/util";
 import {wallet} from 'api/person';
 import {
@@ -243,6 +247,7 @@ import {
 export default {
   data() {
     return {
+      langType: getLangType(),
       referCurrency: 'CNY',
       textMsg: '',
       hasMore: true,
@@ -293,7 +298,8 @@ export default {
       handTime: '',
       gkdsList: {},           // 高、低、涨幅
       dayLineInfo: {},
-      selIndex: 0
+      selIndex: 0,
+      locale: getLangType()
     };
   },
   created() {
@@ -438,11 +444,11 @@ export default {
           bids.forEach((item, index) => {
             this.bbBids[index] = JSON.parse(JSON.stringify(item));
           });
-          this.bbAsks.map(item => {
-            item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-            // item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
-            item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-          });
+          // this.bbAsks.map(item => {
+          //   item.price = formatAmount(`${item.price}`, 7, this.setBazDeal.toSymbol);
+          //   // item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
+          //   item.count = formatAmount(`${item.count}`, 4, this.setBazDeal.symbol);
+          // });
           if(this.selIndex == 0){
             this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
           }
@@ -514,7 +520,7 @@ export default {
       this.xjPrice = '';
       this.wetNumber = '';
       if(this.downConfig.type == '1'){
-        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, '', this.setBazDeal.toSymbol) : '';
+        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 7, this.setBazDeal.toSymbol) : '';
       }
     },
     //选择市价或是限价
@@ -655,12 +661,12 @@ export default {
     },
     selectAsksPrice(index){  // 卖盘选中
       if(this.show1){
-        this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, '', this.setBazDeal.toSymbol) : '';
+        this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, 7, this.setBazDeal.toSymbol) : '';
       }
     },
     selectBidsPrice(index){  // 买盘选中
       if(!this.show1){
-        this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, '', this.setBazDeal.toSymbol) : '';
+        this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, 7, this.setBazDeal.toSymbol) : '';
       }
     },
     formatAmount(money, len, coin){
@@ -685,7 +691,7 @@ export default {
       this.xjPrice = '';
       this.wetNumber = '';
       if(this.downConfig.type == '1'){
-        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, '', this.setBazDeal.toSymbol) : '';
+        this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 7, this.setBazDeal.toSymbol) : '';
       }
     },
     toOtcFn(){
@@ -818,6 +824,13 @@ export default {
       border-bottom: .01rem solid #eee;
       font-size: .3rem;
       margin-bottom: .2rem;
+
+      .left{
+        float: left;
+      }
+      .right{
+        float: right;
+      }
       .buy {
         color: #0ec55b;
         padding-bottom: .3rem;
@@ -830,18 +843,18 @@ export default {
 
       .txt1 {
         color: #0ec55b;
-        margin-right: .5rem;
+        margin-right: .2rem;
+        margin-left: 0.2rem;
       }
 
       .txt2 {
         color: #d53d3d;
-        margin-right: 0.2rem;
+        margin-right: 0.4rem;
       }
 
       .txt3 {
         font-size: .26rem;
         color: #999;
-        margin-right: .1rem;
       }
 
       .icon {
@@ -852,13 +865,24 @@ export default {
       .txt4, .txt5, .txt6 {
         font-size: .2rem;
         color: #c2c2c2;
+        display: inline-block;
+        line-height: 1.2;
+        float: left;
       }
 
-      .txt4 {
-        margin-right: .4rem;
+      .txt5, .txt6 {
+        width: 1.4rem;
+        text-align: center;
+        margin-top: 0.2rem;
+        margin-right: 0.3rem;
       }
-      .txt6 {
-        float: right;
+      .txt6{
+        margin-right: 0.1rem;
+        margin-left: 0.1rem;
+      }
+      .txt4{
+        width: 0.6rem;
+        margin-top: 0.32rem;
       }
       p{
         padding-left: 0.3rem;
@@ -936,7 +960,7 @@ export default {
         width: 100%;
         .one {
           .text1 {
-            font-size: .2rem;
+            font-size: .18rem;
             color: #484848;
             line-height: .55rem;
             span{

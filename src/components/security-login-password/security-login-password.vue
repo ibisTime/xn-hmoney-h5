@@ -12,15 +12,15 @@
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
+        <input class="item-input"  type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p v-show="!isEmail">
-        <input type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')">
+        <input class="item-input"  type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')">
         <span v-show="errors.has('password2')" class="error-tip password2">{{errors.first('password2')}}</span>
       </p>
       <p>
-        <input type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
+        <input class="item-input"  type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
         <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
       </p>
     </div>
@@ -274,6 +274,10 @@ export default {
           margin-top: .29rem;
           margin-right: -.2rem;
       }
+    }
+
+    .item-input{
+      width: 100%;
     }
   }
 

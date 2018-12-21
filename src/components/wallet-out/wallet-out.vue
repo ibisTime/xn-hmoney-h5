@@ -34,21 +34,26 @@
       <p class='kgfee'>
         {{$t('walletOut.subject.kgf')}}：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
       </p>
-      <p class='text2'>
-        {{$t('walletOut.subject.kgfzz')}}
-        <br>
-        {{$t('walletOut.subject.zzssmf')}}
-      </p>
+      <div class='text2'>
+        <ul v-if="langType === 'zh'">
+          <li>FMVP 地址只能充值 {{currency}} 资产，任何充入 {{currency}} 地址的非 {{currency}} 资产将不可找回。</li>
+          <li>在平台内相互转账是实时到账且免费的。</li>
+        </ul>
+        <ul else>
+          <li>{{currency}} address can only recharge {{currency}} assets, any non - {{currency}} assets will not be recovered.</li>
+          <li>Mutual transfers within the platform are real-time and free of charge.</li>
+        </ul>
+      </div>
     </div>
     <button @click="walletOut">{{$t('walletOut.subject.qrzz')}}</button>
     <Toast :text="textMsg" ref="toast" />
-    <FullLoading ref="fullLoading" v-show="isLoading"/> 
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
 import {walletOut} from 'api/person';
 import {getSysConfig} from 'api/general';
-import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply } from 'common/js/util';
+import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply, getLangType } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
@@ -65,6 +70,7 @@ export default {
       paw: '',
       bbNumber: '',
       zAmount: '',
+      langType: getLangType(),
       config: {
         accountNumber: '',
         amount: '',
@@ -197,6 +203,7 @@ export default {
           text-align: left;
         }
         .dis {
+          width: 3.4rem;
           font-size: .3rem;
           color: #d53d3d;
           line-height: 1rem;
@@ -213,7 +220,7 @@ export default {
         }
 
         input {
-          width: 4rem;
+          width: 5rem;
           height: .42rem;
           margin-top: .3rem;
           font-size: .28rem;
@@ -283,11 +290,13 @@ export default {
       }
 
       .text2 {
-        display: flex;
-        justify-content: space-between;
         font-size: .24rem;
         line-height: .33rem;
         color: #aaa;
+        text-align: left;
+        ul li{
+          list-style: disc inside;
+        }
         .txt {
           font-size: .32rem;
           color: #333;

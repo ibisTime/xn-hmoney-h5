@@ -69,9 +69,10 @@
           <span class='ico' @click.stop="showMsg('qx')"></span>
         </p> -->
     </div>
-    <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage">
-    </textarea>
-    <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
+    <div class="textarea-wrap">
+      <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage"></textarea>
+      <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
+    </div>
     <div class='select' @click="show = !show">
         <p class='text'>
             <span>{{ $t('buyPublish.subject.gjsz') }}</span>
@@ -79,13 +80,17 @@
         </p>
     </div>
     <div v-show='show' class='select-box'>
-      <div class='select-time'>
-          <p class='text1'>
-            <span class='txt1'>{{ $t('buyPublish.subject.kfsj') }}</span>
-            <span class='txt2'><i :class="[select ? 'icon icon1' : 'icon']" @click='isSelectFn("0")'></i>{{ $t('buyPublish.subject.rhsh') }}</span>
-            <span class='txt3'><i :class="[!select ? 'icon icon1' : 'icon']" @click='isSelectFn("1")'></i>{{ $t('buyPublish.subject.zdy') }}</span>
-            <i class='icon ico2' @click="showMsg('time')"></i>
-          </p>
+      <div class='select-time-wrap'>
+          <div class='text1'>
+            <div class="select-time-title">
+              <span class='txt1'>{{ $t('buyPublish.subject.kfsj') }}</span>
+              <i class='icon ico2' @click="showMsg('time')"></i>
+            </div>
+            <div class="select-time-choose">
+              <span class='txt2'><i :class="[select ? 'icon icon1' : 'icon']" @click='isSelectFn("0")'></i>{{ $t('buyPublish.subject.rhsh') }}</span>
+              <span class='txt3'><i :class="[!select ? 'icon icon1' : 'icon']" @click='isSelectFn("1")'></i>{{ $t('buyPublish.subject.zdy') }}</span>
+            </div>
+          </div>
           <div class="select-time" v-show="!select">
             <p class='text2' v-for="(dayItem, index) in dayList" :key="index">
               <span class='txt1'>{{dayItem.week}}</span>
@@ -734,15 +739,16 @@ export default {
   .select-box {
     margin-bottom: 0.54rem;
 
-    .select-time {
+    .select-time-wrap {
       width: 100%;
       padding: 0 .3rem;
       background: #fff;
+
       .text1 {
         font-size: .26rem;
         padding: .32rem 0 .4rem;
         color: #666;
-
+        overflow: hidden;
         .icon {
           width: .3rem;
           height: .3rem;
@@ -757,15 +763,15 @@ export default {
           background-image: url('./xz.png');
 
         }
-
-
+        .select-time-choose{
+          text-align: right;
+        }
         .txt2 {
           color: #333;
-          margin-left: 1.8rem;
-          margin-right: .6rem;
         }
         .txt3 {
           color: #333;
+          margin-left: 0.3rem;
         }
 
         .ico2 {
@@ -774,14 +780,21 @@ export default {
           margin-left: .2rem;
         }
       }
-
+      .select-time-title{
+         float: left;
+      }
+      .select-time-con{
+        float: right;
+      }
       .text2 {
         font-size: .24rem;
         color: #333;
         padding-bottom: .22rem;
         margin-bottom: .18rem;
         .txt1 {
-          margin-right: 1.08rem;
+          display: inline-block;
+          width: 1.2rem;
+          margin-right: 0.6rem;
         }
         .txt2 {
           margin: 0 .6rem;
@@ -872,6 +885,14 @@ export default {
     }
     .btn-w{
       width: 6.9rem;
+    }
+  }
+  .textarea-wrap{
+    position: relative;
+    .error-tip{
+      top: 0.24rem;
+      text-align: right;
+      white-space: nowrap;
     }
   }
 }

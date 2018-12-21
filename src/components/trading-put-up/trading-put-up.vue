@@ -7,8 +7,8 @@
        </p>
         <div class='title2'>
           <p class='tit1'>
-            <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
             <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
+            <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
           </p>
           <p class='tit2'>
             <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
@@ -18,8 +18,8 @@
        <div class='content'>
         <div class='left'>
           <p v-for="(item, index) in bbAsks" :key="index">
-            <span class='white'>{{item ? item.count : '--'}}</span>
             <span class='red'>{{item ? item.price : '--'}}</span>
+            <span class='white'>{{item ? item.count : '--'}}</span>
           </p>
         </div>
         <div class='right'>

@@ -25,12 +25,7 @@
 
 <script>
   import {TradingView} from 'common/js/charting_library.min.js';
-
-  function getLanguageFromURL() {
-    const regex = new RegExp('[\\?&]lang=([^&#]*)');
-    const results = regex.exec(window.location.search);
-    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }
+  import {getLangType} from 'common/js/util.js';
 
   export default {
     name: 'TVChartContainer',
@@ -73,6 +68,10 @@
       },
       studiesOverrides: {
         type: Object,
+      },
+      locale: {
+        default: getLangType(),
+        type: String,
       }
     },
     data() {
@@ -157,7 +156,7 @@
         interval: this.interval,
         container_id: this.containerId,
         library_path: this.libraryPath,
-        locale: getLanguageFromURL() || 'zh',
+        locale: this.locale,
         user_id: this.userId,
         fullscreen: this.fullscreen,
         autosize: this.autosize,

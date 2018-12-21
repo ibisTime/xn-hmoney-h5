@@ -39,11 +39,11 @@ export default {
     mc: 'Sell',
     jy: 'Trade',
     hp: 'Praises',
-    xr: 'Trust',
+    xr: 'Trusted',
     cp: 'Complaints',
     buyFMVP: 'Buy FMVP',
     qxdl: 'Please Login',
-    jytx: 'Transaction reminding',
+    jytx: 'Trading reminder',
     zwsj: 'No Data',
     qxzf: 'Cancel',
     bjfk: 'Mark payment',
@@ -56,14 +56,14 @@ export default {
     },
     cate: {
       game: 'Game',
-      xss: 'Game trainer',
+      xss: 'Game',
       exchange: 'Used-car exchange',
       otc: 'Fiat',
       splendid: 'Wonderful view full of passion',
       bbDeal: 'Exchange',
       realTime: 'Global real-time market',
       xtgg: 'System Notice',
-      sstsjcnr: 'Push exciting news in real time',
+      sstsjcnr: 'Push exciting news in time',
       ptjs: 'FUNMVP',
       ljwm: 'Know more about us'
     }
@@ -101,7 +101,7 @@ export default {
       bbjy: 'Exchange'
     },
     navtxt: {
-      xz: 'Please choose',
+      xz: 'Choose',
       zfb: 'Alipay',
       wx: 'Wechat',
       yhk: 'Bankcard',
@@ -111,7 +111,7 @@ export default {
       wsm: 'UnAuth',
       jy: 'Trades',
       hp: 'Praises',
-      xr: 'Trust',
+      xr: 'Trusted',
       xe: 'Limit',
       bj: 'Edit',
       cs: 'Sell',
@@ -152,7 +152,7 @@ export default {
       kfsj: 'Schedule',
       rhsh: 'Anytime',
       zdy: 'User-defined',
-      jfs: 'Fans only',
+      jfs: 'Only trusted traders',
       zjfb: 'Release directly',
       bccg: 'Save drafts',
       zgcjjg: 'The highest advertised price',
@@ -174,16 +174,16 @@ export default {
     userMsg: {
       xe: 'Limit',
       jycs: 'Trades',
-      xrcs: 'Trust',
+      xrcs: 'Trusted',
       xrl: 'Praises',
-      lsjy: 'Transaction history'
+      lsjy: 'Trades history'
     },
     subject: {
       ggly: 'Advertising message',
       nx: 'How much do you want to ',
       ds: '？',
       kyye: 'Available balances',
-      syjyl: 'Advertising remaining tradable volume ',
+      syjyl: 'advertisement left to be traded ',
       srsz: 'Please enter the number',
       srsi: 'Please enter the number',
       xldf: 'Contact',
@@ -203,10 +203,10 @@ export default {
   homepage: {
     subject: {
       jycs: 'Trades',
-      xrcs: 'Trust',
+      xrcs: 'Trusted',
       xrl: 'Praises',
-      lsjy: 'Transaction history',
-      xr: 'Trust',
+      lsjy: 'Trades history',
+      xr: 'Trusted',
       hmd: 'Blacklist',
       grzy: 'Homepage',
       yxr: 'Trusted',
@@ -223,11 +223,11 @@ export default {
       mc: 'Sell ',
       xj: 'Limit',
       sj: 'Market',
-      pk: 'Trend',
+      pk: '',
       sl: 'Amount',
       sczjjg: 'Optimal market price',
       wtjg: 'Price',
-      wtsl: 'Quantity',
+      wtsl: 'Amount',
       jye: 'Total',
       ky: 'Available ',
       km: 'Available to buy ',
@@ -237,8 +237,8 @@ export default {
       m:'',
       dqwt: 'Open Orders',
       ls: 'History',
-      cx: 'Undo',
-      sjcj: 'Actual price',
+      cx: 'Cancel',
+      sjcj: 'Executed',
       zwdd: 'No orders'
     },
     bbDepth: {
@@ -261,7 +261,7 @@ export default {
     putUp: {
       buy20: 'Buy 20',
       sell20: 'Sell 20',
-      sl: 'Quantity',
+      sl: 'Amount',
       jg: 'Price',
     }
   },
@@ -291,7 +291,7 @@ export default {
       zd: 'Bill',
       cz: 'Buy',
       tx: 'Sell',
-      ddjl: 'Orders records',
+      ddjl: 'Records',
       wdzc: 'My balances',
       xyzsf: 'Please authenticate first',
       szjymm: 'Please set the trading password first',
@@ -320,17 +320,17 @@ export default {
       kyye: 'Balances',
       jl: 'Records',
       jsdz: 'Address',
-      qsrzzdz: 'Please enter transfer address',
+      qsrzzdz: 'Please enter the withdrawal address',
       zzsl: 'Amount',
-      qsrsl: 'Please enter transfer amount',
+      qsrsl: 'Please enter the withdrawal amount',
       zjmm: 'Password',
       qsrzjmm: 'Trading password',
-      txsm: 'Instructions',
-      qsrsm: 'Please enter the withdrawal instructions',
-      kgf: 'Miner fee',
+      txsm: 'Remark',
+      qsrsm: 'Please enter the notes',
+      kgf: 'Charge rates',
       kgfzz: 'The miner’s fee will be deducted from the available balance and the balance will be deducted from the transfer amount.',
       zzssmf: 'Mutual transfers within the platform are real-time and free of charge.',
-      qrzz: 'Transferred-in',
+      qrzz: 'Confirm',
     }
   },
   // 转账记录
@@ -367,10 +367,10 @@ export default {
       csb: 'Sell FMVP',
       zjbz: 'Own currency',
       dj: 'Unit price',
-      gmje: 'Enter the purchase amount',
-      gmsl: 'Enter the purchase quantity',
-      csje: 'Enter the selling amount',
-      cssl: 'Enter the quantity for sale',
+      gmje: 'Purchase amount',
+      gmsl: 'Quantity',
+      csje: 'Selling amount',
+      cssl: 'Quantity',
       sxf: 'Charges',
       ky: ' ',
       zffs: 'Payment mehod',
@@ -425,7 +425,7 @@ export default {
     subject: {
       jy: 'Trades',
       hpl: 'Praises',
-      xr: 'Trust',
+      xr: 'Trusted',
       wygm: 'Buy',
       wycs: 'Sell',
       wdgg: 'My advertisement',
@@ -437,7 +437,7 @@ export default {
       grzx: 'User',
       ghcg: 'Success',
       tpsc: 'Image upload error',
-      nyxxx: 'You have new news'
+      nyxxx: 'New message'
     }
   },
   // 我的广告
@@ -519,14 +519,14 @@ export default {
       yqhy: 'Invitiation',
       fuzzs: 'Copy your exclusive invitation link',
       fz: 'Copy',
-      bzbd: 'Please press long to save pictures to local'
+      bzbd: 'Please long press to save pictures and scan QR code to invite'
     }
   },
   // 安全中心
   securityCenter: {
     subject: {
       jymm: 'Trading password',
-      sfrz: 'ID Authentication',
+      sfrz: 'ID Verification',
       ggrz: 'Google authentication',
       ykq: 'Turned on',
       bdyx: 'Bind mailbox',
@@ -542,14 +542,14 @@ export default {
   securityTradePassword: {
     subject: {
       zg: 'China',
-      sryzm: 'Enter verification code',
+      sryzm: 'Please enter the code',
       hqyzm: 'Get code',
       cxhq: 'Reacquire',
       mmjw: 'Password 6-16 digits',
       qrmm: 'confirm password',
       qd: 'Submit',
       xgjymm: 'Modify the trading password',
-      szjymm: 'Set the trading password',
+      szjymm: 'Please enter trading password',
       txwz: 'Please complete',
       mmbyz: 'Password is inconsistent, please re-enter',
       czcg: 'Reset password successfully',
@@ -559,11 +559,11 @@ export default {
   // 身份认证
   securityIdentity: {
     subject: {
-      sfzrz: 'ID card certification',
-      hzrz: 'Passport certification',
+      sfzrz: 'ID card',
+      hzrz: 'Passport',
       jzrz: 'Driving license',
       wrz: 'uncertified',
-      sfrz: 'ID Authentication'
+      sfrz: 'ID Verification'
     }
   },
   // 进行身份认证
@@ -572,14 +572,14 @@ export default {
       qsrxm: 'Please enter your name',
       qsr: 'please enter ',
       h: '',
-      sc: 'Upload',
+      sc: 'Upload ',
       zm: 'positive',
       fm: 'Negative',
       qd: 'Submit',
       fqcg: 'Authenticated successfully',
-      sfz: 'ID card',
-      hz: 'passport',
-      jz: 'Driving license',
+      sfz: 'ID card ',
+      hz: 'passport ',
+      jz: 'Driving license ',
       rz: 'Certification',
       tpcc: 'Image upload error'
     }
@@ -602,7 +602,7 @@ export default {
   bindEmail: {
     subject: {
       sryx: 'Please enter email address',
-      sryz: 'Please enter the verification code',
+      sryz: 'Please enter the code',
       hqyz: 'Get code',
       cxhq: 'Reacquire',
       qd: 'Submit',
@@ -613,7 +613,7 @@ export default {
   securityPhone: {
     subject: {
       sjh: 'Please enter your cellphone number',
-      yzm: 'Please enter the verification code',
+      yzm: 'Please enter the code',
       hqyz: 'Get code',
       cxhq: 'Reacquire',
       qd: 'Submit',
@@ -629,8 +629,8 @@ export default {
       hqyzm: 'Get code',
       cxhq: 'Reacquire',
       xmm: 'New password 6-16 digits',
-      jmm: 'Please enter the old password',
-      ywsz: 'Alphanumeric combination 6-16 bits',
+      jmm: 'Please enter the original password',
+      ywsz: 'Please enter a 6-16 bit password',
       qrmm: 'confirm password',
       qd: 'Submit',
       xgdlmm: 'Modify the login password',
@@ -645,7 +645,7 @@ export default {
     subject: {
       hyhl: 'Welcome back',
       srzh: 'Please enter the account number',
-      srldsl: 'Please enter your password (alphanumeric combination 6-16 bits)',
+      srldsl: 'Please enter a 6-16 bit login password',
       dl: 'Login',
       ljzc: 'Sign up now',
       wjmm: 'Forget password?'
@@ -657,13 +657,13 @@ export default {
       zc: 'Register',
       sjzc: 'Cellphone',
       yxzc: 'Email',
-      srnc: 'Please enter username',
-      srsjh: 'Please enter cellphone',
-      sryxh: 'Please enter email account',
-      sryzm: 'Please enter the verification code',
+      srnc: 'Please enter a username',
+      srsjh: 'Please enter your cellphone number',
+      sryxh: 'Please enter email address',
+      sryzm: 'Please enter the code',
       hqyzm: 'Get code',
       cxfs: 'Reacquire',
-      ldslw: 'Alphanumeric combination 6-16 bits',
+      ldslw: 'Please enter a 6-16 bit password',
       qrmm: 'Please confirm the password.',
       wyjs: 'I have read and accepted',
       xytk: '《FUNMVP Product Terms of Service》',
@@ -682,7 +682,7 @@ export default {
       yhxy: 'User Agreement',
       ystk: 'Privacy Policy',
       flsm: 'Legal Statement',
-      fvsm: 'Fee rate',
+      fvsm: 'Fee Rate',
       lxwm: 'Contact us',
       gg: 'System Notice',
       bzzx: 'Help',
