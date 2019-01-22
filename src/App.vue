@@ -20,7 +20,7 @@
 <script type="text/ecmascript-6">
   //@touchmove.prevent
   import Toast from 'base/toast/toast';
-  import {isLogin, getUrlParam, isUnDefined} from 'common/js/util';
+  import {isLogin, getUrlParam, setUser} from 'common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
   import {getBbListData} from 'api/otc';
 
@@ -47,9 +47,14 @@
     },
     created() {
       this.$router.beforeEach((to, from, next) => {
+        let userId = getUrlParam('userId') || '';
+        let token = getUrlParam('token') || '';
         if (isLogin()) {
           next();
-        } else {
+        } else if (userId && token) {
+          setUser({userId, token});
+          next();
+        }  else {
           if (to.path == '/' ||
             to.path == '/page' ||
             to.path == '/shop-usedCar' ||
@@ -84,6 +89,11 @@
             sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
           }, () => {
           });
+        }
+        let userId = getUrlParam('userId') || '';
+        let token = getUrlParam('token') || '';
+        if (userId && token) {
+          setUser({userId, token});
         }
         if (isLogin()) {
           this.tencentLogin();
