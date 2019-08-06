@@ -4,11 +4,7 @@
       <i></i>
       <p>{{ $t('footer.navbar.page') }}</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-1" to="/shop">
-      <i></i>
-      <p>{{ $t('footer.navbar.shop') }}</p>
-    </router-link>
-    <router-link tag="div" class="foot-item item-2" to="/otc" @click.native="toOtcFn">
+    <router-link tag="div" class="foot-item item-2" to="/trading">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
     </router-link>
@@ -39,10 +35,10 @@
       getUnreadMsgNum() {
         return this.unreadMsgNum > 0;
       },
-      toOtcFn(){
-        sessionStorage.removeItem('coin');
-        sessionStorage.setItem('tradeType', '1');
-      }
+      // toOtcFn(){
+      //   sessionStorage.removeItem('coin');
+      //   sessionStorage.setItem('tradeType', '1');
+      // }
     },
     components: {}
   };

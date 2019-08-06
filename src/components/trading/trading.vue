@@ -189,7 +189,7 @@
       </div>
       <!-- k线图部分 -->
       <div class='main1'>
-        <TVChartContainer :locale="locale" />
+        <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
       </div>
 
       <!-- 主要内容区 -->
@@ -357,9 +357,7 @@ export default {
     });
   },
   mounted() {
-    let touchDemo = document.getElementById('touchDemo');
-    touchDemo.style.right = '0.5rem';
-    touchDemo.style.bottom = '2rem';
+
   },
   methods: {
     getMidPrice(){
@@ -632,14 +630,16 @@ export default {
       }
     },
     qrLength(){
-      let numLeft = this.xjPrice.split('.')[0];
-      let numRight = this.xjPrice.split('.')[1];
-      if(numRight){
-        if(numRight.length > 8){
-          this.textMsg = this.$t('trading.bbDepth.xsbdy');
-          this.$refs.toast.show();
-          numRight = numRight.substring(0, 8);
-          this.xjPrice = numLeft + '.' + numRight;
+      if(this.xjPrice) {
+        let numLeft = this.xjPrice.toString().split('.')[0];
+        let numRight = this.xjPrice.toString().split('.')[1];
+        if(numRight){
+          if(numRight.length > 8){
+            this.textMsg = this.$t('trading.bbDepth.xsbdy');
+            this.$refs.toast.show();
+            numRight = numRight.substring(0, 8);
+            this.xjPrice = numLeft + '.' + numRight;
+          }
         }
       }
     },

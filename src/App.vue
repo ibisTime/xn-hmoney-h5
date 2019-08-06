@@ -2,18 +2,18 @@
   <div id="app">
     <router-view></router-view>
     <Toast :text="textMsg" ref="toast"/>
-    <div
-      class="tobuy"
-      id="touchDemo"
-      @click="toBuy"
-      ref="touchDemo"
-      @touchstart.stop="fbTouchStartFn"
-      @touchmove.stop="fbTouchMoveFn"
-      @touchend.stop="fbTouchEndFn"
-      v-show="showFlag"
-    >
-      <div >{{$t('common.buyFMVP')}}</div>
-    </div>
+    <!--<div-->
+      <!--class="tobuy"-->
+      <!--id="touchDemo"-->
+      <!--@click="toBuy"-->
+      <!--ref="touchDemo"-->
+      <!--@touchstart.stop="fbTouchStartFn"-->
+      <!--@touchmove.stop="fbTouchMoveFn"-->
+      <!--@touchend.stop="fbTouchEndFn"-->
+      <!--v-show="showFlag"-->
+    <!--&gt;-->
+      <!--<div >{{$t('common.buyFMVP')}}</div>-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -116,30 +116,17 @@
             }, 1500);
           }
         }
-        if (this.$refs.touchDemo && (to.path === '/buy-publish' || to.path === '/login' ||
-          to.path === '/registered' || to.path === '/messageCart' || to.path === '/wallet-orderDetails' ||
-          to.path === '/order-details')) {
-          self.$refs.touchDemo.style.display = 'none';
-        } else {
-          self.$refs.touchDemo.style.display = 'block';
-        }
       });
     },
     mounted() {
-      if (this.$refs.touchDemo) {
-        this.$refs.touchDemo.style.right = '0.5rem';
-        this.$refs.touchDemo.style.bottom = '1rem';
-        this.$refs.touchDemo.style.left = '';
-        this.$refs.touchDemo.style.top = '';
-        this.$refs.touchDemo.style.display = 'none';
-      }
+
     },
     components: {
       Toast
     },
     methods: {
       // 实现 发布 拖动
-      fbTouchStartFn(){
+      /*fbTouchStartFn(){
         this.touchDemo = this.$refs.touchDemo;
         this.flags = true;
         let touch = '';
@@ -193,7 +180,7 @@
       },
       toBuy(){
         this.$router.push('wallet-top-up?type=buy');
-      }
+      }*/
     }
   };
 </script>

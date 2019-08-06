@@ -34,6 +34,10 @@
         default: 'FMVP',
         type: String,
       },
+      toSymbol: {
+        default: 'BTC',
+        type: String,
+      },
       interval: {
         default: '1',
         type: String,
@@ -148,136 +152,144 @@
       }
     },
     mounted() {
-      let _this = this;
-      const widgetOptions = {
-        symbol: this.symbol,
-        // BEWARE: no trailing slash is expected in feed URL
-        datafeed: new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
-        interval: this.interval,
-        container_id: this.containerId,
-        library_path: this.libraryPath,
-        locale: this.locale,
-        user_id: this.userId,
-        fullscreen: this.fullscreen,
-        autosize: this.autosize,
-        studies_overrides: this.studiesOverrides,
-        preset: this.preset,
-        disabled_features: ['show_chart_property_page', 'compare_symbol', 'display_market_status', 'go_to_date', 'header_chart_type', 'header_compare', 'header_interval_dialog_button', 'header_resolutions', 'header_screenshot', 'header_symbol_search', 'header_undo_redo', 'legend_context_menu', 'show_hide_button_in_legend', 'show_interval_dialog_on_key_press', 'snapshot_trading_drawings', 'symbol_info', 'timeframes_toolbar', 'use_localstorage_for_settings', 'volume_force_overlay'],
-        enabled_features: ['dont_show_boolean_study_arguments', 'hide_last_na_study_output', 'move_logo_to_main_pane', 'same_data_requery', 'side_toolbar_in_fullscreen_mode', 'disable_resolution_rebuild'],
-        overrides: {
-          'volumePaneSize': 'small',
-          'scalesProperties.lineColor': '#1f2943',
-          'scalesProperties.textColor': '#61688A',
-          'paneProperties.background': '#172432',
-          'paneProperties.vertGridProperties.color': '#1f2943',
-          'paneProperties.horzGridProperties.color': '#1f2943',
-          'paneProperties.crossHairProperties.color': '#9194A3',
-          'paneProperties.legendProperties.showLegend': false,
-          'paneProperties.legendProperties.showStudyArguments': true,
-          'paneProperties.legendProperties.showStudyTitles': true,
-          'paneProperties.legendProperties.showStudyValues': true,
-          'paneProperties.legendProperties.showSeriesTitle': true,
-          'paneProperties.legendProperties.showSeriesOHLC': true,
-          'mainSeriesProperties.candleStyle.upColor': '#03c087',
-          'mainSeriesProperties.candleStyle.downColor': '#ef5555',
-          'mainSeriesProperties.candleStyle.drawWick': true,
-          'mainSeriesProperties.candleStyle.drawBorder': true,
-          'mainSeriesProperties.candleStyle.borderColor': '#4e5b85',
-          'mainSeriesProperties.candleStyle.borderUpColor': '#03c087',
-          'mainSeriesProperties.candleStyle.borderDownColor': '#ef5555',
-          'mainSeriesProperties.candleStyle.wickUpColor': '#03c087',
-          'mainSeriesProperties.candleStyle.wickDownColor': '#ef5555',
-          'mainSeriesProperties.candleStyle.barColorsOnPrevClose': false,
-          'mainSeriesProperties.hollowCandleStyle.upColor': '#03c087',
-          'mainSeriesProperties.hollowCandleStyle.downColor': '#ef5555',
-          'mainSeriesProperties.hollowCandleStyle.drawWick': true,
-          'mainSeriesProperties.hollowCandleStyle.drawBorder': true,
-          'mainSeriesProperties.hollowCandleStyle.borderColor': '#4e5b85',
-          'mainSeriesProperties.hollowCandleStyle.borderUpColor': '#03c087',
-          'mainSeriesProperties.hollowCandleStyle.borderDownColor': '#ef5555',
-          'mainSeriesProperties.haStyle.upColor': '#03c087',
-          'mainSeriesProperties.haStyle.downColor': '#ef5555',
-          'mainSeriesProperties.haStyle.drawWick': true,
-          'mainSeriesProperties.haStyle.drawBorder': true,
-          'mainSeriesProperties.haStyle.borderColor': '#4e5b85',
-          'mainSeriesProperties.haStyle.borderUpColor': '#03c087',
-          'mainSeriesProperties.haStyle.borderDownColor': '#ef5555',
-          'mainSeriesProperties.haStyle.wickColor': '#4e5b85',
-          'mainSeriesProperties.haStyle.barColorsOnPrevClose': false,
-          'mainSeriesProperties.barStyle.upColor': '#03c087',
-          'mainSeriesProperties.barStyle.downColor': '#ef5555',
-          'mainSeriesProperties.barStyle.barColorsOnPrevClose': false,
-          'mainSeriesProperties.barStyle.dontDrawOpen': false,
-          'mainSeriesProperties.lineStyle.color': '#4e5b85',
-          'mainSeriesProperties.lineStyle.linewidth': 1,
-          'mainSeriesProperties.lineStyle.priceSource': 'close',
-          'mainSeriesProperties.areaStyle.color1': 'rgba(122, 152, 247, .1)',
-          'mainSeriesProperties.areaStyle.color2': 'rgba(122, 152, 247, .02)',
-          'mainSeriesProperties.areaStyle.linecolor': '#4e5b85',
-          'mainSeriesProperties.areaStyle.linewidth': 1,
-          'mainSeriesProperties.areaStyle.priceSource': 'close',
-          'mainSeriesProperties.style': 1
-        },
-        toolbar_bg: 'transparent'
-      };
-
-      const tvWidget = window.tvWidget = new TradingView.widget(widgetOptions);
-
-      tvWidget.onChartReady(() => {
-        let chart = tvWidget.chart();
-        let activeChart = tvWidget.activeChart();
-        activeChart.setTimezone('Asia/Shanghai');
-        let MAColor = ["#965fc4", "#84aad5", "#55b263", "#b7248a"];
-        let MAInputs = [5, 10, 30, 60];
-        MAInputs.forEach(function (t, n) {
-          chart.createStudy("Moving Average", !1, !1, [t], function (t) {
-          }, {
-            "plot.color.0": MAColor[n],
-            precision: 8
-          })
-        });
-
-        chart.onIntervalChanged().subscribe(null, function (interval, obj) {
-          tvWidget.changingInterval = false;
-        });
-
-        $('#chartBtn').on('click', '.chart-button', function (e) {
-          // 更多
-          if ($(this).hasClass('more')) {
-              _this.showMore = true;
-              _this.showMoreBtn = true;
-          }
-          // 时分
-          if ($(this).hasClass('btn')) {
-            if ($(this).hasClass('more-btn') && !$(this).hasClass('selected')) {
-              _this.showMore = false;
-            } else if ($(this).hasClass('selected')) {
-              _this.showMoreBtn = false;
-              return;
-            } else if (!$(this).hasClass('more-btn')) {
-              _this.showMoreBtn = false;
-            }
-            _this.chartType = $(this).attr('data-charttype');
-
-            if ($(this).find('p').hasClass('datetime')) {
-              _this.resolution = chart.resolution()
-            } else {
-              _this.resolution = $(this).attr('data-key');
-            }
-
-            if (chart.resolution() !== _this.resolution) {
-              $("#tv_chart_container").attr("firstLoad", "0");
-              $("#tv_chart_container").attr("startDatetime", '');
-              chart.setResolution(_this.resolution);
-            }
-            if (chart.chartType() !== _this.chartType) {
-              chart.setChartType(Number(_this.chartType));
-            }
-          }
-        });
-      });
+      this.onChartReady();
     },
     methods: {
+      onChartReady() {
+        let _this = this;
+        const widgetOptions = {
+          symbol: this.symbol,
+          // BEWARE: no trailing slash is expected in feed URL
+          datafeed: new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
+          interval: this.interval,
+          container_id: this.containerId,
+          library_path: this.libraryPath,
+          locale: this.locale,
+          user_id: this.userId,
+          fullscreen: this.fullscreen,
+          autosize: this.autosize,
+          studies_overrides: this.studiesOverrides,
+          preset: this.preset,
+          disabled_features: ['show_chart_property_page', 'compare_symbol', 'display_market_status', 'go_to_date', 'header_chart_type', 'header_compare', 'header_interval_dialog_button', 'header_resolutions', 'header_screenshot', 'header_symbol_search', 'header_undo_redo', 'legend_context_menu', 'show_hide_button_in_legend', 'show_interval_dialog_on_key_press', 'snapshot_trading_drawings', 'symbol_info', 'timeframes_toolbar', 'use_localstorage_for_settings', 'volume_force_overlay'],
+          enabled_features: ['dont_show_boolean_study_arguments', 'hide_last_na_study_output', 'move_logo_to_main_pane', 'same_data_requery', 'side_toolbar_in_fullscreen_mode', 'disable_resolution_rebuild'],
+          overrides: {
+            'volumePaneSize': 'small',
+            'scalesProperties.lineColor': '#1f2943',
+            'scalesProperties.textColor': '#61688A',
+            'paneProperties.background': '#172432',
+            'paneProperties.vertGridProperties.color': '#1f2943',
+            'paneProperties.horzGridProperties.color': '#1f2943',
+            'paneProperties.crossHairProperties.color': '#9194A3',
+            'paneProperties.legendProperties.showLegend': false,
+            'paneProperties.legendProperties.showStudyArguments': true,
+            'paneProperties.legendProperties.showStudyTitles': true,
+            'paneProperties.legendProperties.showStudyValues': true,
+            'paneProperties.legendProperties.showSeriesTitle': true,
+            'paneProperties.legendProperties.showSeriesOHLC': true,
+            'mainSeriesProperties.candleStyle.upColor': '#03c087',
+            'mainSeriesProperties.candleStyle.downColor': '#ef5555',
+            'mainSeriesProperties.candleStyle.drawWick': true,
+            'mainSeriesProperties.candleStyle.drawBorder': true,
+            'mainSeriesProperties.candleStyle.borderColor': '#4e5b85',
+            'mainSeriesProperties.candleStyle.borderUpColor': '#03c087',
+            'mainSeriesProperties.candleStyle.borderDownColor': '#ef5555',
+            'mainSeriesProperties.candleStyle.wickUpColor': '#03c087',
+            'mainSeriesProperties.candleStyle.wickDownColor': '#ef5555',
+            'mainSeriesProperties.candleStyle.barColorsOnPrevClose': false,
+            'mainSeriesProperties.hollowCandleStyle.upColor': '#03c087',
+            'mainSeriesProperties.hollowCandleStyle.downColor': '#ef5555',
+            'mainSeriesProperties.hollowCandleStyle.drawWick': true,
+            'mainSeriesProperties.hollowCandleStyle.drawBorder': true,
+            'mainSeriesProperties.hollowCandleStyle.borderColor': '#4e5b85',
+            'mainSeriesProperties.hollowCandleStyle.borderUpColor': '#03c087',
+            'mainSeriesProperties.hollowCandleStyle.borderDownColor': '#ef5555',
+            'mainSeriesProperties.haStyle.upColor': '#03c087',
+            'mainSeriesProperties.haStyle.downColor': '#ef5555',
+            'mainSeriesProperties.haStyle.drawWick': true,
+            'mainSeriesProperties.haStyle.drawBorder': true,
+            'mainSeriesProperties.haStyle.borderColor': '#4e5b85',
+            'mainSeriesProperties.haStyle.borderUpColor': '#03c087',
+            'mainSeriesProperties.haStyle.borderDownColor': '#ef5555',
+            'mainSeriesProperties.haStyle.wickColor': '#4e5b85',
+            'mainSeriesProperties.haStyle.barColorsOnPrevClose': false,
+            'mainSeriesProperties.barStyle.upColor': '#03c087',
+            'mainSeriesProperties.barStyle.downColor': '#ef5555',
+            'mainSeriesProperties.barStyle.barColorsOnPrevClose': false,
+            'mainSeriesProperties.barStyle.dontDrawOpen': false,
+            'mainSeriesProperties.lineStyle.color': '#4e5b85',
+            'mainSeriesProperties.lineStyle.linewidth': 1,
+            'mainSeriesProperties.lineStyle.priceSource': 'close',
+            'mainSeriesProperties.areaStyle.color1': 'rgba(122, 152, 247, .1)',
+            'mainSeriesProperties.areaStyle.color2': 'rgba(122, 152, 247, .02)',
+            'mainSeriesProperties.areaStyle.linecolor': '#4e5b85',
+            'mainSeriesProperties.areaStyle.linewidth': 1,
+            'mainSeriesProperties.areaStyle.priceSource': 'close',
+            'mainSeriesProperties.style': 1
+          },
+          toolbar_bg: 'transparent'
+        };
+
+        const tvWidget = window.tvWidget = new TradingView.widget(widgetOptions);
+
+        tvWidget.onChartReady(() => {
+          let chart = tvWidget.chart();
+          let activeChart = tvWidget.activeChart();
+          activeChart.setTimezone('Asia/Shanghai');
+          let MAColor = ["#965fc4", "#84aad5", "#55b263", "#b7248a"];
+          let MAInputs = [5, 10, 30, 60];
+          MAInputs.forEach(function (t, n) {
+            chart.createStudy("Moving Average", !1, !1, [t], function (t) {
+            }, {
+              "plot.color.0": MAColor[n],
+              precision: 8
+            })
+          });
+
+          chart.onIntervalChanged().subscribe(null, function (interval, obj) {
+            tvWidget.changingInterval = false;
+          });
+
+          $('#chartBtn').on('click', '.chart-button', function (e) {
+            // 更多
+            if ($(this).hasClass('more')) {
+              _this.showMore = true;
+              _this.showMoreBtn = true;
+            }
+            // 时分
+            if ($(this).hasClass('btn')) {
+              if ($(this).hasClass('more-btn') && !$(this).hasClass('selected')) {
+                _this.showMore = false;
+              } else if ($(this).hasClass('selected')) {
+                _this.showMoreBtn = false;
+                return;
+              } else if (!$(this).hasClass('more-btn')) {
+                _this.showMoreBtn = false;
+              }
+              _this.chartType = $(this).attr('data-charttype');
+
+              if ($(this).find('p').hasClass('datetime')) {
+                _this.resolution = chart.resolution()
+              } else {
+                _this.resolution = $(this).attr('data-key');
+              }
+
+              if (chart.resolution() !== _this.resolution) {
+                $("#tv_chart_container").attr("firstLoad", "0");
+                $("#tv_chart_container").attr("startDatetime", '');
+                chart.setResolution(_this.resolution);
+              }
+              if (chart.chartType() !== _this.chartType) {
+                chart.setChartType(Number(_this.chartType));
+              }
+            }
+          });
+        });
+      }
+    },
+    watch: {
+      toSymbol() {
+        this.onChartReady();
+      }
     }
   }
 </script>
@@ -285,6 +297,7 @@
 <style lang='scss' scoped>
   .TVChartContainer {
     height: 6rem;
+    background-color: #4e5b85;
   }
   .chart-button-wrap{
     width: 100%;

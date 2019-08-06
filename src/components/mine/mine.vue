@@ -28,7 +28,7 @@
           <i></i>
             <span>{{$t('mine.subject.wygm')}}</span>
         </router-link>
-        <router-link to="otc" class="sell item-1" @click.native="toOtcFn">
+        <router-link to="otc" class="sell item-1">
           <i></i>
           <span>{{$t('mine.subject.wycs')}}</span>
         </router-link>

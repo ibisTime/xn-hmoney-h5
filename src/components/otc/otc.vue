@@ -85,19 +85,6 @@
       </div>
       <Footer></Footer>
     </div>
-    <div
-      v-if="userId"
-      class='release'
-      :class="lang === 'cn' ? '' : 'en'"
-      ref="touchDemo"
-      @click='relShow'
-      @touchstart.stop="fbTouchStartFn"
-      @touchmove.stop="fbTouchMoveFn"
-      @touchend.stop="fbTouchEndFn"
-    >
-      <span class="icon"></span>
-      <p class="txt">{{$t('otc.subject.fb')}}</p>
-    </div>
     <div v-show="Show" class='release2'>
       <div class='main'>
         <div class='buy' @click.stop='goBuyPublish'>
@@ -163,7 +150,6 @@
         moveY: '',
         xPum: '',
         yPum: '',
-        touchDemo: '',
         docuWidth: '',
         docuHeight: '',
         pullUpLoad: {
@@ -361,59 +347,6 @@
       // 个人主页
       toHomePage(userId, tradeCoin) {
         this.$router.push(`/homepage?userId=${userId}&currency=${tradeCoin}`);
-      },
-      // 实现 发布 拖动
-      fbTouchStartFn() {
-        this.touchDemo = this.$refs.touchDemo;
-        this.flags = true;
-        let touch = '';
-        if (event.touchs) {
-          touch = event.touchs[0];
-        } else {
-          touch = event.changedTouches[0];
-        }
-
-        this.docuWidth = document.body.clientWidth - 50;
-        this.docuHeight = document.body.clientHeight - 150;
-        this.position.x = touch.clientX;
-        this.position.y = touch.clientY;
-        this.demoX = this.touchDemo.offsetLeft;
-        this.demoY = this.touchDemo.offsetTop;
-      },
-      fbTouchMoveFn() {
-        event.preventDefault();
-        if (this.flags) {
-          var touch;
-          if (event.touches) {
-            touch = event.touches[0];
-          } else {
-            touch = event.changedTouches[0];
-          }
-          this.moveX = touch.clientX - this.position.x;
-          this.moveY = touch.clientY - this.position.y;
-          this.xPum = this.demoX + this.moveX;
-          this.yPum = this.demoY + this.moveY;
-
-          // 判断边界
-          if (this.xPum > this.docuWidth) {
-            this.xPum = this.docuWidth;
-          }
-          if (this.xPum < 0) {
-            this.xPum = 0;
-          }
-          if (this.yPum > this.docuHeight) {
-            this.yPum = this.docuHeight;
-          }
-          if (this.yPum < 0) {
-            this.yPum = 0;
-          }
-
-          this.touchDemo.style.left = this.xPum / 50 + 'rem';
-          this.touchDemo.style.top = this.yPum / 50 + 'rem';
-        }
-      },
-      fbTouchEndFn() {
-        this.flags = false;
       },
       toUrl(url) {
         window.open(url);
