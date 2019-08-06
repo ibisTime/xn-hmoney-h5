@@ -24,9 +24,9 @@
 </template>
 
 <script>
+  // import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
-
   export default {
     name: 'TVChartContainer',
     props: {
@@ -153,6 +153,7 @@
     },
     mounted() {
       this.onChartReady();
+      // const socket = io('localhost:3666');
     },
     methods: {
       onChartReady() {
@@ -244,7 +245,7 @@
               precision: 8
             })
           });
-
+          console.log(tvWidget.mainSeriesPriceFormatter());
           chart.onIntervalChanged().subscribe(null, function (interval, obj) {
             tvWidget.changingInterval = false;
           });

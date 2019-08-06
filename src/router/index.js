@@ -21,12 +21,6 @@ const TradingClinchadeal = () => import('components/trading-clinchadeal/trading-
 const tradingDepthMap = () => import('components/trading-depth-map/trading-depth-map');
 // 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
-// 场外交易
-const Otc = () => import('components/otc/otc');
-// 场外交易 -- 购买
-const OtcBuy = () => import('components/otc-buy/otc-buy');
-// 联系对方
-const otcContactOther = () => import('components/otc-contact-other/otc-contact-other');
 // 购买发布
 const BuyPublish = () => import('components/buy-publish/buy-publish');
 // 出售发布
@@ -37,8 +31,6 @@ const Wallet = () => import('components/wallet/wallet');
 const WalletInto = () => import('components/wallet-into/wallet-into');
 // 钱包 -- 转出
 const WalletOut = () => import('components/wallet-out/wallet-out');
-// 钱包 -- 充值
-const WalletTopUp = () => import('components/wallet-top-up/wallet-top-up');
 // 钱包 -- 账单
 const WalletBill = () => import('components/wallet-bill/wallet-bill');
 // 账单 -- 详情
@@ -158,28 +150,12 @@ export default new Router({
       component: BillDetails
     },
     {
-      path: '/wallet-top-up',
-      component: WalletTopUp
-    },
-    {
       path: '/wallect-orderRecord',
       component: wallectOrderRecord
     },
     {
       path: '/wallet-orderDetails',
       component: walletOrderDetails
-    },
-    {
-      path: '/otc',
-      component: Otc
-    },
-    {
-      path: '/otc-buy',
-      component: OtcBuy
-    },
-    {
-      path: '/otc-contactOther',
-      component: otcContactOther
     },
     {
       path: '/buy-publish',

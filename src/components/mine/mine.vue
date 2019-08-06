@@ -23,17 +23,6 @@
       </div>
     </div>
     <div class="mine-main">
-      <div class="trading item-top ">
-        <router-link to="wallet-top-up?type=buy" class="buy item-0">
-          <i></i>
-            <span>{{$t('mine.subject.wygm')}}</span>
-        </router-link>
-        <router-link to="otc" class="sell item-1">
-          <i></i>
-          <span>{{$t('mine.subject.wycs')}}</span>
-        </router-link>
-      </div>
-
       <div class="card">
         <router-link to="my-advertising" class="item item-3">
           <i></i>
@@ -313,7 +302,7 @@ export default {
 
   .mine-main {
     width: 92%;
-    margin: -0.86rem auto 0;
+    margin: 0.06rem auto 0;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -428,55 +417,6 @@ export default {
 
     a {
       color: #333;
-    }
-
-    .trading {
-      height: 1.4rem;
-      background: #fdfeff;
-      box-shadow: 0 0 0.36rem 0.04rem rgba(200,193,193,0.30);
-      border-radius: 0.16rem;
-      letter-spacing: 0.0018rem;
-      text-align: center;
-      margin-bottom: 0.2rem;
-      overflow: hidden;
-      a {
-        font: 0.3rem/1.4rem PingFangSC-Regular;
-        color: #333;
-        display: inline-block;
-        width: 49%;
-        height: 100%;
-        overflow: hidden;
-        float: left;
-      }
-      i {
-        display: inline-block;
-        width: 0.48rem;
-        height: 0.48rem;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 100% 100%;
-        vertical-align: middle;
-        margin-right: 0.23rem;
-      }
-
-      .item-0 {
-        position: relative;
-        i {
-          background-image: url('./wbuy.png');
-        }
-        &:after{
-          content: '|';
-          position: absolute;
-          right: 0;
-          color: #ccc;
-        }
-      }
-
-      .item-1 {
-        i {
-          background-image: url('./wsell.png');
-        }
-      }
     }
   }
 }

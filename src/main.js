@@ -10,6 +10,8 @@ import VueI18n from 'vue-i18n';
 import LangStorage from './common/js/cookie';
 import echarts from 'echarts';
 import clipboard from 'clipboard';
+import zh from './common/lang/zh';
+import en from './common/lang/en';
 
 import 'common/scss/index.scss';
 import 'swiper/dist/css/swiper.css';
@@ -23,9 +25,6 @@ Vue.use(VueLazyLoad, {
   loading: require('common/image/default.png')
 });
 Vue.use(VueI18n);
-
-import zh from './common/lang/zh';
-import en from './common/lang/en';
 
 const i18n = new VueI18n({
   locale: LangStorage.getLang('zh'),
