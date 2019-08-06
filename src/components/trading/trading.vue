@@ -1,7 +1,6 @@
 <template>
   <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
     <div class='header' :class="{'col-header': !show2}">
-      <span v-show="show2"><i class='icon' @click="showTwo"></i></span>
       <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
       <p>
         <select name="" class="cg-bb" v-model="symNumber" @change="changeSymBaz">
@@ -9,7 +8,7 @@
         </select>
         <i class='icon' :class="{'icon-bai': !show2}"></i>
       </p>
-      <router-link to='otc' @click.native="toOtcFn">{{$t('trading.bbDeal.cwjy')}}</router-link>
+      <div style="float: right;"><span v-show="show2"><i class='icon' @click="showTwo"></i></span></div>
     </div>
 
     <div v-show="show2" class='One'>
@@ -757,8 +756,6 @@ export default {
   .header {
     width: 100%;
     padding: 0 .3rem;
-    display: flex;
-    justify-content: space-between;
     height: .98rem;
     font: bold .32rem/.98rem PingFangSC-Medium;
     font-size: .32rem;
@@ -774,6 +771,7 @@ export default {
     p {
       position: absolute;
       left: 50%;
+      top: 0;
       transform: translateX(-50%);
       .icon {
         width: .24rem;

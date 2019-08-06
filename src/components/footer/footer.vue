@@ -4,6 +4,10 @@
       <i></i>
       <p>{{ $t('footer.navbar.page') }}</p>
     </router-link>
+    <router-link tag="div" class="foot-item item-0" to="/market">
+      <i></i>
+      <p>行情</p>
+    </router-link>
     <router-link tag="div" class="foot-item item-2" to="/trading">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
