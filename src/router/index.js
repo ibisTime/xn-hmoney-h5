@@ -94,6 +94,9 @@ const Message = () => import('components/message/message');
 // 聊天
 const MessageChat = () => import('components/message-chat/message-chat');
 
+// 行情
+const Market = () => import('components/market/market');
+
 export default new Router({
   routes: [
     {
@@ -277,6 +280,10 @@ export default new Router({
     {
       path: '/messageCart',
       component: MessageChat
+    },
+    {
+      path: '/market',
+      component: Market
     }
   ],
   mode: 'history',

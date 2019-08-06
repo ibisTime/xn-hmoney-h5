@@ -39,11 +39,6 @@
           <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}</router-link>
         </div>
       </div>
-      <div class='operate' v-if="infoItem.currency === 'FMVP'">
-        <router-link to='wallet-top-up?type=buy' class='txt1'>{{$t('wallet.subject.cz')}}</router-link>
-        <router-link to='otc' @click.native="toOtcFn" class='txt2'>{{$t('wallet.subject.tx')}}</router-link>
-        <router-link to='wallect-orderRecord' class='txt2'>{{$t('wallet.subject.ddjl')}}</router-link>
-      </div>
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast"/>
