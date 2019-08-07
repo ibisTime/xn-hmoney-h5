@@ -20,6 +20,7 @@
       </div>
     </div>
     <div class='TVChartContainer' :id='containerId'></div>
+    <Loading v-show="isLoadingTVChart" />
   </div>
 </template>
 
@@ -27,6 +28,7 @@
   // import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
+  import Loading from 'base/loading/loading';
   export default {
     name: 'TVChartContainer',
     props: {
@@ -39,7 +41,7 @@
         type: String,
       },
       interval: {
-        default: '1',
+        default: '15',
         type: String,
       },
       containerId: {
@@ -80,6 +82,7 @@
     },
     data() {
       return {
+        isLoadingTVChart: false,
         showMore: false, // 更多面板
         showMoreBtn: false, // 更多按钮
         resolution: '15', // 当前选中分时
@@ -153,11 +156,12 @@
     },
     mounted() {
       this.onChartReady();
-      // const socket = io('localhost:3666');
+      // window.SOCKET = io('localhost:3666');
     },
     methods: {
       onChartReady() {
         let _this = this;
+        this.isLoadingTVChart = true;
         const widgetOptions = {
           symbol: this.symbol,
           // BEWARE: no trailing slash is expected in feed URL
@@ -233,8 +237,19 @@
         const tvWidget = window.tvWidget = new TradingView.widget(widgetOptions);
 
         tvWidget.onChartReady(() => {
+          tvWidget.onGrayedObjectClicked(function(v) {
+            console.log('onMarkClick', v);
+          });
+          this.isLoadingTVChart = false;
+          const iframe = document.getElementById(_this.containerId).childNodes[0];
+          if(iframe) {
+            iframe.style.display = 'block';
+          }
           let chart = tvWidget.chart();
           let activeChart = tvWidget.activeChart();
+          // chart.crossHairMoved((v) => {
+          //   console.log(v);
+          // });
           activeChart.setTimezone('Asia/Shanghai');
           let MAColor = ["#965fc4", "#84aad5", "#55b263", "#b7248a"];
           let MAInputs = [5, 10, 30, 60];
@@ -245,7 +260,6 @@
               precision: 8
             })
           });
-          console.log(tvWidget.mainSeriesPriceFormatter());
           chart.onIntervalChanged().subscribe(null, function (interval, obj) {
             tvWidget.changingInterval = false;
           });
@@ -291,6 +305,9 @@
       toSymbol() {
         this.onChartReady();
       }
+    },
+    components: {
+      Loading
     }
   }
 </script>
@@ -298,7 +315,7 @@
 <style lang='scss' scoped>
   .TVChartContainer {
     height: 6rem;
-    background-color: #4e5b85;
+    background-color: #172b3f;
   }
   .chart-button-wrap{
     width: 100%;

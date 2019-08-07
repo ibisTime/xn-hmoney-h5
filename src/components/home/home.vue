@@ -2,7 +2,7 @@
   <div class="home-wrapper">
     <div class="home-header">
       <p class="title">{{ $t('page.navbar.title') }}</p>
-      <span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>
+      <!--<span class="lang-change" @click='changeLocale'>{{ $t('language.name') }}</span>-->
     </div>
     <div class="banner-wrap">
       <div class="slider-wrapper">

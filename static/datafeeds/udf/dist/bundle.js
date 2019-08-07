@@ -95,7 +95,7 @@
       this._requester = requester;
     }
 
-    HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate) {
+    HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onLoadedCallback) {
       let period = '';
       let foramtList = {
         '1': '1min',
@@ -108,6 +108,7 @@
         '1W': '1week',
         '1M': '1mon'
       };
+      // console.log(window.SOCKET);
       period = foramtList[resolution];
       let requestParams = {
         symbol: 'FMVP',
