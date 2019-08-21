@@ -233,13 +233,9 @@
           },
           toolbar_bg: 'transparent'
         };
-
         const tvWidget = window.tvWidget = new TradingView.widget(widgetOptions);
 
         tvWidget.onChartReady(() => {
-          tvWidget.onGrayedObjectClicked(function(v) {
-            console.log('onMarkClick', v);
-          });
           this.isLoadingTVChart = false;
           const iframe = document.getElementById(_this.containerId).childNodes[0];
           if(iframe) {

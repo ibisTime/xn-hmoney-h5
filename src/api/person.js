@@ -89,10 +89,8 @@ export function getSmsCaptcha2(bizType, email) {
 }
 
 // 列表查询用户账户
-export function wallet() {
-  return fetch(802301, {
-    userId: getUserId()
-  });
+export function wallet(currency = '') {
+  return fetch(802301, {currency});
 }
 
 // 个人总资产转换

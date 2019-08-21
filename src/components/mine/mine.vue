@@ -18,7 +18,6 @@
         </div>
         <div class="h-text">
           <p class="name">{{data.nickname}}</p>
-          <p class="intro">{{$t('mine.subject.jy')}} {{data.userStatistics.jiaoYiCount}} | {{$t('mine.subject.hpl')}} {{getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} | {{$t('mine.subject.xr')}} {{data.userStatistics.beiXinRenCount}}</p>
         </div>
       </div>
     </div>

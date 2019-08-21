@@ -62,9 +62,9 @@ export default {
         this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
         this.container = document.getElementById('qrcode');
         const qr = new QRCode(this.container, {
-        typeNumber: -1,
-        correctLevel: 2,
-        foreground: '#000000'
+          typeNumber: -1,
+          correctLevel: 2,
+          foreground: '#000000'
         });
         qr.make(this.wxUrl);
         this.saveImgFn();

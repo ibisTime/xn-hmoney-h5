@@ -3,13 +3,12 @@
     <div class="category-group" :style="_getGroupBgColor()" ref="categoryGroup">
       <div
         v-for="(item,index) in categorys"
-        :key="index"
+        :key="item.key"
         ref="cate"
         @click="_selectItem(index)"
         class="category-item"
-        :class="{active: index===currentIndex}"
         :style="_getItemColor(index)">
-        {{item.value}}
+        <p class="category-p" :class="{active: index === currentIndex}">{{item.value}}</p>
       </div>
     </div>
   </div>
@@ -142,9 +141,12 @@
         text-align: center;
         font-size: $font-size-medium;
         padding: 0 0.3rem;
-
+      }
+      .category-p{
+        padding-bottom: 0.1rem;
         &.active {
-          color: $primary-color;
+          color: #D53D3D;
+          border-bottom: 2px solid #D53D3D;
         }
       }
     }

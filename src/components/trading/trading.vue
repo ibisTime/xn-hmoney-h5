@@ -10,7 +10,7 @@
         </select>
         <i class='icon' :class="{'icon-bai': !show2}"></i>
       </p>
-      <div style="float: right;"><span v-show="show2"><i class='icon' @click="showTwo"></i></span></div>
+      <div style="float: right;"><span v-show="show2" style="margin-right: -0.3rem;"><i class='icon' @click="showTwo"></i></span></div>
     </div>
 
     <div v-show="show2" class='One'>
@@ -39,9 +39,9 @@
           <p class='he9'>
             <input
               type="number"
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mr') : $t('trading.bbDeal.wtjg')"
+              :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
               v-model="xjPrice"
-              :disabled="downConfig.type == '0'"
+              :disabled="downConfig.type === '0'"
               @keyup="qrLength"
             >
             <span class='black'>{{setBazDeal.toSymbol}}</span>
@@ -81,9 +81,9 @@
           <p class='he9'>
             <input
               type="number"
-              :placeholder="downConfig.type == '0' ? $t('trading.bbDeal.sczjjg') + $t('trading.bbDeal.mc') : $t('trading.bbDeal.wtjg')"
+              :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
               v-model="xjPrice"
-              :disabled="downConfig.type == '0'"
+              :disabled="downConfig.type === '0'"
               @keyup="qrLength"
             >
             <span class='black'>{{setBazDeal.toSymbol}}</span>
@@ -124,7 +124,7 @@
             <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
               <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
               <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
-              <span class='txt3'>{{sellItem ? formatAmount(sellItem.count, 4, setBazDeal.symbol) : '--'}}</span>
+              <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
             </p>
           </div>
           <p class='middle'>
@@ -135,7 +135,7 @@
             <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
               <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
               <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
-              <span class='txt3'>{{buyItem ? formatAmount(buyItem.count, 4, setBazDeal.symbol) : '--'}}</span>
+              <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
             </p>
           </div>
 
@@ -315,6 +315,9 @@
     created() {
       setTitle(this.$t('trading.bbDeal.bbjy'));
       getBazaarData().then(data => {  // 查询交易对
+        if(!data.list) {
+          return false;
+        }
         this.syMid = data.list[0].currencyPrice;
         let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal'));
         this.setBazDeal = setBazDeal || {
@@ -518,7 +521,7 @@
         this.show1 = true;
         this.xjPrice = '';
         this.wetNumber = '';
-        if (this.downConfig.type == '1') {
+        if (this.downConfig.type === '1') {
           this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
         }
       },
@@ -527,7 +530,7 @@
         this.show1 = false;
         this.xjPrice = '';
         this.wetNumber = '';
-        if (this.downConfig.type == '1') {
+        if (this.downConfig.type === '1') {
           this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 7, this.setBazDeal.toSymbol) : '';
         }
       },
@@ -611,6 +614,8 @@
               this.xjPrice = '';
               this.wetNumber = '';
             }, () => {
+              this.isLoading = false;
+            }).catch(() => {
               this.isLoading = false;
             });
           } else if (this.wetNumber == '') {
@@ -707,6 +712,19 @@
       toOtcFn() {
         sessionStorage.removeItem('coin');
         sessionStorage.setItem('tradeType', '1');
+      },
+      filterPrice(price) {
+        const len = price.length;
+        if(len < 5) {
+          return price;
+        }else if(len === 5 ) {
+          return price.substr(0, 5);
+        }else {
+          const str = (parseFloat(price) / 1000).toString();
+          const strLeft = str.split('.')[0];
+          const strRight = str.split('.')[1] ? '.' + str.split('.')[1].substr(0, 2) : '';
+          return strLeft + strRight + 'k';
+        }
       }
     },
     components: {
@@ -730,7 +748,7 @@
     },
     destroyed() {
       clearInterval(this.handTime);
-    },
+    }
   };
 </script>
 
@@ -775,6 +793,7 @@
       border-bottom: .01rem solid #eee;
       span {
         padding: 0 0.3rem;
+        margin-left: -0.3rem;
       }
       a {
         font-size: .32rem;
@@ -835,10 +854,11 @@
         display: flex;
         .left {
           display: flex;
-          flex: 1;
+          width: 50%;
           justify-content: space-between;
           align-items: center;
-          margin-right: 0.1rem;
+          margin-right: 0.2rem;
+          margin-left: 0.2rem;
         }
         .right {
           display: flex;
@@ -883,19 +903,13 @@
         }
 
         .txt5, .txt6 {
-          width: 1.4rem;
           text-align: center;
-          margin-right: 0.3rem;
-        }
-        .txt6 {
-          margin-right: 0.1rem;
-          margin-left: 0.1rem;
         }
         .txt4 {
           width: 0.6rem;
         }
         p {
-          padding-left: 0.3rem;
+          padding-left: 0.8rem;
         }
       }
 
@@ -906,8 +920,8 @@
         border-bottom: .2rem solid #f7f7f7;
         .left {
           margin-right: .2rem;
+          width: 50%;
           .he9 {
-            width: 2.9rem;
             height: .9rem;
             padding: 0 0.2rem;
             border: .01rem solid #eee;
@@ -967,23 +981,21 @@
           }
         }
         .right {
-          width: 100%;
+          flex: 1;
           .one {
             .text1 {
               font-size: .18rem;
               color: #484848;
               line-height: .55rem;
+              display: flex;
+              justify-content: space-between;
               span {
                 text-align: center;
-                width: 40%;
                 display: inline-block;
               }
               .txt1 {
                 display: inline-block;
                 width: .6rem;
-              }
-              .txt3 {
-                float: right;
               }
             }
           }
