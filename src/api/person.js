@@ -72,22 +72,16 @@ export function reisteredEamil(config) {
   return fetch(805043, config);
 }
 
+
 // 获取手机验证码
-export function getSmsCaptcha1(bizType, mobile) {
-  return fetch(630090, {
-    bizType,
-    mobile
-  });
+export function getSmsCaptchaPhone(params) {
+  return fetch(630090, params);
 }
 
 // 获取邮箱验证码
-export function getSmsCaptcha2(bizType, email) {
-  return fetch(630093, {
-    bizType,
-    email
-  });
+export function getSmsCaptchaEmail(params) {
+  return fetch(630093, params);
 }
-
 // 列表查询用户账户
 export function wallet(currency = '') {
   return fetch(802301, {currency});

@@ -170,7 +170,7 @@ export function formatAmount(money, format, coin, isRe = false) {
     flag = true;
   }
   if (coin && isUnDefined(format)) {
-    format = 8;
+    format = 4;
   }else if (isUnDefined(format) || typeof format === 'object') {// 默认格式为2位小数
     format = 2;
   }

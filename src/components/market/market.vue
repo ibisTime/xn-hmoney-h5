@@ -12,146 +12,194 @@
         <div class="con_header">
           <p>币种名称</p>
           <p>
-            <span class="h_pic">价格(¥)</span>
-            <span>24H涨跌</span>
+            最新价
           </p>
-          <p>市值&市场占比</p>
+          <p>涨跌幅</p>
         </div>
-        <ul class="container">
-          <li class="mar_single">
+        <ul class="container" v-show="tradingData.length">
+          <li
+            class="mar_single"
+            v-for="item in tradingData"
+            :key="`t_${item.id}`"
+            @click="() => {
+              toTradingView({symbol: item.symbol, toSymbol: item.referCurrency})
+            }"
+          >
             <div class="sing_left">
-              <p class="li_head">BCH</p>
-              <p>比特币现金</p>
+              <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
+              <p>24H量 <span>{{item.volume}}</span></p>
             </div>
             <div class="sing_mid">
-              <p class="li_head">464,411.25</p>
-              <p class="up_p">0.76%</p>
+              <p class="li_head">{{item.lastPrice}}</p>
+              <p>￥123123</p>
             </div>
             <div class="sing_right">
-              <p class="li_head">64,411.25</p>
-              <p>0.76%</p>
-            </div>
-          </li>
-          <li class="mar_single">
-            <div class="sing_left">
-              <p class="li_head">BCH</p>
-              <p>比特币现金</p>
-            </div>
-            <div class="sing_mid">
-              <p class="li_head">464,411.25</p>
-              <p class="dw_p">0.76%</p>
-            </div>
-            <div class="sing_right">
-              <p class="li_head">64,411.25</p>
-              <p>0.76%</p>
+              <span
+                :class="item.percent24h >= 0 ? 'up_p' : 'dw_p'"
+              >
+                {{item.percent24h | percent24h}}
+              </span>
             </div>
           </li>
         </ul>
+        <NoData v-if="tradingData.length === 0"/>
       </div>
     </div>
-    <Footer />
+    <Footer/>
   </div>
 </template>
 
 <script>
   import categoryScroll from 'base/category-scroll/category-scroll';
   import Footer from 'components/footer/footer';
+  import NoData from 'base/no-data/index';
+  import {tradingOnApi, ownerTradingApi, queryPlateList} from 'api/tradingOn';
+
   export default {
     data() {
       return {
         orderTypeList: [
           {
-            key: 'c01',
+            key: 'm_btn0',
             value: '自选'
           }, {
-            key: 'c02',
+            key: 'm_btn1',
             value: '全部'
-          }, {
-            key: 'c03',
-            value: '主板'
-          }, {
-            key: 'c04',
-            value: '股权'
-          }, {
-            key: 'c05',
-            value: '农业'
           }
         ],
-        currentIndex: 0
+        tradingData: [{}],
+        currentIndex: 0,
+        params: {
+          start: 1,
+          limit: 10
+        }
       }
     },
     created() {
       this.$set(document, 'title', '行情');
-      document.getElementById('app').style.height = '100%';
+      queryPlateList().then(data => {
+        if (Array.isArray(data)) {
+          const list = data.map(item => ({
+            key: item.id,
+            value: item.name
+          }));
+          this.orderTypeList = [...this.orderTypeList, ...list];
+        }
+      });
+      this.ownerTrading();
     },
     methods: {
-      selectCategory(index) {
+      ownerTrading() {
+        ownerTradingApi().then(data => {
+          this.tradingData = data;
+        });
+      },
+      selectCategory(index, key) {
         this.currentIndex = index;
+        if(index === 0) {
+          this.ownerTrading();
+        }else if(index === 1) {
+          tradingOnApi().then(data => {
+            this.tradingData = data;
+          });
+        }else {
+          tradingOnApi({plateId: key}).then(data => {
+            this.tradingData = data;
+          });
+        }
+      },
+      toTradingView(obj) {
+        this.$router.push(`/trading?symbol=${obj.symbol}&toSymbol=${obj.toSymbol}`);
+      }
+    },
+    filters: {
+      percent24h(v) {
+        return (v * 100) + '%';
       }
     },
     components: {
       Footer,
-      categoryScroll
+      categoryScroll,
+      NoData
     }
   }
 </script>
 
 <style lang="scss" scoped>
-  .market{
+  .market {
     background-color: #fff;
     height: 100%;
   }
-  .header{
+
+  .header {
     height: 0.8rem;
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
     font-size: 0.32rem;
     color: #999999
   }
-  .con_header{
+
+  .con_header {
     background-color: #F0F0F0;
     color: #999;
     display: flex;
     padding: 0.14rem 0.3rem;
     font-size: 0.24rem;
     justify-content: space-between;
-    .h_pic{
+    .h_pic {
       margin-right: 0.3rem;
     }
   }
-  .container{
+
+  .container {
     padding: 0 0.3rem;
-    .mar_single{
+    .mar_single {
       padding: 0.3rem 0;
       display: flex;
       border-bottom: 1px solid #E6E6E6;
-      .sing_left{
+      align-items: center;
+      .sing_left {
         flex: 1;
       }
-      .sing_mid{
-        flex: 2;
+      .sing_mid {
+        flex: 1;
+        text-align: center;
+      }
+      .sing_right {
+        flex: 1;
         text-align: right;
-        .up_p{
-          color: #C93D3D;
+        height: 0.8rem;
+        span {
+          display: inline-block;
+          width: 1.6rem;
+          height: 0.7rem;
+          line-height: 0.7rem;
+          font-size: 0.32rem;
+          color: #fff;
+          vertical-align: super;
+          text-align: center;
         }
-        .dw_p{
-          color: #28BE67;
+        .up_p {
+          background-color: #28BE67;
+        }
+        .dw_p {
+          background-color: #C93D3D;
         }
       }
-      .sing_right{
-        flex: 2;
-        text-align: right;
-      }
-      .li_head{
+      .li_head {
         font-style: 'Helvetica Neue Medium';
         font-size: 0.32rem;
-        margin-bottom: 0.1rem;
+        margin-bottom: 0.15rem;
         color: #333;
         font-weight: 500;
+        span {
+          font-size: 0.26rem;
+          color: #666;
+        }
       }
-      p{
-        font-size: 0.24rem;
-        color: #999;
+      p {
+        font-size: 0.3rem;
+        color: #666;
       }
     }
   }

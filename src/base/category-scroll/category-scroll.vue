@@ -5,7 +5,7 @@
         v-for="(item,index) in categorys"
         :key="item.key"
         ref="cate"
-        @click="_selectItem(index)"
+        @click="_selectItem(index, item.key)"
         class="category-item"
         :style="_getItemColor(index)">
         <p class="category-p" :class="{active: index === currentIndex}">{{item.value}}</p>
@@ -56,9 +56,9 @@
       });
     },
     methods: {
-      _selectItem(index) {
+      _selectItem(index, key) {
         this.scroll.scrollToElement(this.$refs.cate[index], 200, true);
-        this.$emit('select', index);
+        this.$emit('select', index, key);
       },
       _getGroupBgColor() {
         if (this.bgColor) {

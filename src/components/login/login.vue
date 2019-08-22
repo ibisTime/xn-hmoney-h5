@@ -109,10 +109,11 @@ export default {
         border-bottom: 0.02rem solid #e3e3e3;
         font: 0.32rem/1.28rem PingFangSC-Medium;
         color: #999;
-        padding: 0.3rem 0.1rem;
+        padding: 0 0.1rem;
+        margin: 0.3rem 0;
         box-sizing: border-box;
-        height: 1.2rem;
-        line-height: 1.2rem;
+        height: 0.6rem;
+        line-height: 0.6rem;
       }
 
       input[type="submit"] {

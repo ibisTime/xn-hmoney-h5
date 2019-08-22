@@ -3,43 +3,43 @@
     <div class='content cont1'>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=about_us'>
             <p>
-            <span>{{$t('aboutprivacy.subject.ptjs')}}</span>
+            <span>平台介绍</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=service'>
             <p>
-            <span>{{$t('aboutprivacy.subject.lxwm')}}</span>
+            <span>联系我们</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='system-notice'>
             <p>
-            <span>{{$t('aboutprivacy.subject.gg')}}</span>
+            <span>公告</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=reg_protocol'>
             <p>
-            <span>{{$t('aboutprivacy.subject.yhxy')}}</span>
+            <span>用户协议</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=privacy'>
             <p>
-            <span>{{$t('aboutprivacy.subject.ystk')}}</span>
+            <span>隐私条款</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=raw_note'>
             <p>
-            <span>{{$t('aboutprivacy.subject.flsm')}}</span>
+            <span>法律声明</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=fee_note'>
             <p>
-            <span>{{$t('aboutprivacy.subject.fvsm')}}</span>
+            <span>法律声明</span>
             <i class='icon'></i>
             </p>
         </router-link>
@@ -47,7 +47,7 @@
     <div class='content'>
         <a class='tag mb20' href="https://funmvp.zendesk.com/hc/zh-cn/">
             <p>
-            <span>{{$t('aboutprivacy.subject.bzzx')}}</span>
+            <span>帮助中心</span>
             <i class='icon'></i>
             </p>
         </a>

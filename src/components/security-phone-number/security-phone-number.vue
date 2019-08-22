@@ -23,7 +23,7 @@
 </template>
 <script>
 import {getUserId} from '../../common/js/util';
-import {bindingPhone, getSmsCaptcha1} from '../../api/person';
+import {bindingPhone, getSmsCaptchaPhone} from '../../api/person';
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
 
@@ -48,7 +48,7 @@ export default {
       }
       this.show = false;
       this.isLoading = true;
-      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+      getSmsCaptchaPhone(this.bizType, this.mobile).then(data => {
         this.isLoading = false;
         let phTime = setInterval(() => {
           this.time --;
@@ -174,7 +174,7 @@ export default {
         background: #ccc;
         font-size: .22rem;
         text-align: center;
-        color: #fff;       
+        color: #fff;
       }
       .icon {
           width: .34rem;
@@ -183,7 +183,7 @@ export default {
           margin-top: .29rem;
           margin-right: -.2rem;
       }
-    } 
+    }
   }
 
   .foot {

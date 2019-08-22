@@ -57,8 +57,8 @@
 import {
   reistered,
   reisteredEamil,
-  getSmsCaptcha1,
-  getSmsCaptcha2
+  getSmsCaptchaPhone,
+  getSmsCaptchaEmail
 } from "api/person";
 import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
 import { getSysConfig } from 'api/general';
@@ -127,7 +127,7 @@ export default {
         }
         this.isLoading = true;
         this.fscg = true;
-        getSmsCaptcha1(this.bizType1, this.phone).then(data => {
+        getSmsCaptchaPhone(this.bizType1, this.phone).then(data => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time1 --;
@@ -149,7 +149,7 @@ export default {
         }
         this.isLoading = true;
         this.fscg1 = true;
-        getSmsCaptcha2(this.bizType2, this.email).then(data => {
+        getSmsCaptchaEmail(this.bizType2, this.email).then(data => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time2 --;

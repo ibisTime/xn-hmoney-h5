@@ -1,44 +1,49 @@
 <template>
-  <div class="wallet-wrapper" @click.stop>
-    <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
-      <div class='txt2' style='margin-top:.3rem;'>
-        <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
-      </div>
-      <div class='txt3'>
-      </div>
-    </div>
-    <!-- <div class='dollar'>
-      <i class='icon ico1'></i>
-      <span>$1 ≈ ¥6.6079</span>
-      <i class='icon ico2'></i>
-      <i class='icon ico3'></i>
-    </div> -->
-    <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
-      <i class="icon"
-         :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
-      <div class='my'>
-        <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
-        <p class='txt2'>{{infoItem.amount}}</p>
-        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
-          :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
-        </p>
-      </div>
-      <div class='datil'>
-        <div class='box'><i class='icon icod'></i>
-          <router-link
-            :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">
-            {{$t('wallet.subject.zr')}}
-          </router-link>
+  <div class="wallet-wrapper">
+    <div class="wrapper">
+      <Scroll :pullUpLoad="null">
+        <div style="padding-bottom: 0.8rem; padding-top: 0.3rem;">
+          <div class='banner'>
+            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
+            <div class='txt2' style='margin-top:.3rem;'>
+              <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
+            </div>
+            <div class='txt3'>
+            </div>
+          </div>
+          <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
+            <i class="icon"
+               :class="[{'ico1': infoItem.currency == 'TWT'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
+            <div class='my'>
+              <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
+              <p class='txt2'>{{infoItem.amount}}</p>
+              <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
+                :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
+              </p>
+            </div>
+            <div class='datil'>
+              <div class='box'><i class='icon icod'></i>
+                <router-link
+                  :to="`wallet-into?adress=${infoItem.address}&currency=${infoItem.currency}&accountNumber=${infoItem.accountNumber}`">
+                  {{$t('wallet.subject.zr')}}
+                </router-link>
+              </div>
+              |
+              <div
+                class='box'
+                @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"
+              ><i
+                class='icon icoz'></i><span>提币</span></div>
+              |
+              <div class='box'><i class='icon icoc'></i>
+                <router-link
+                  :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}
+                </router-link>
+              </div>
+            </div>
+          </div>
         </div>
-        |
-        <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i
-          class='icon icoz'></i><span>{{$t('wallet.subject.zc')}}</span></div>
-        |
-        <div class='box'><i class='icon icoc'></i>
-          <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}</router-link>
-        </div>
-      </div>
+      </Scroll>
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -47,6 +52,7 @@
 </template>
 <script>
   import Footer from 'components/footer/footer';
+  import Scroll from 'base/scroll/scroll';
   import {userAllMoneyX, wallet, getUser} from 'api/person';
   import Toast from 'base/toast/toast';
   import FullLoading from 'base/full-loading/full-loading';
@@ -74,21 +80,21 @@
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
       this.wallet();
-      userAllMoneyX(this.currency).then(v => {
-        v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
-        this.cdInfo = v;
-      })
+      // userAllMoneyX(this.currency).then(v => {
+      //   v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
+      //   this.cdInfo = v;
+      // })
     },
     methods: {
       // 列表查询用户账户
       wallet() {
         wallet().then(v => {
-          v.map(item => {
-            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency);
-            item.amount = formatAmount(item.amount, '', item.currency);
-            item.frozenAmount = formatAmount(item.frozenAmount, '', item.currency);
-          })
-          this.info = v;
+          this.info = v.accountList.map(item => ({
+            ...item,
+            syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency),
+            amount: formatAmount(item.amount, '', item.currency),
+            frozenAmount: formatAmount(item.frozenAmount, '', item.currency)
+        }));
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
@@ -98,7 +104,7 @@
       zcMoneyFn(currency, amount, accountNumber) {
         getUser().then(data => {
           if (data.tradepwdFlag) {
-            this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
+            this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}&loginName=${data.loginName}`);
           } else if (!data.tradepwdFlag) {
             this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
@@ -122,7 +128,8 @@
     components: {
       Footer,
       Toast,
-      FullLoading
+      FullLoading,
+      Scroll
     }
   };
 </script>
@@ -135,10 +142,16 @@
     font-family: PingFangSC-Medium;
     color: #333;
     width: 100%;
-    padding: 0.3rem .3rem .96rem .3rem;
     background: #fff;
-    overflow: auto;
-
+    .wrapper{
+      position: absolute;
+      z-index: 10;
+      top: 0rem;
+      bottom: 0rem;
+      left: 0.3rem;
+      right: 0.3rem;
+      overflow: auto;
+    }
     .icon {
       display: inline-block;
       background-repeat: no-repeat;

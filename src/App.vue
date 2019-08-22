@@ -22,7 +22,7 @@
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam, setUser} from 'common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
-  import {getBbListData} from 'api/otc';
+  import {getBbListData} from 'api/tradingOn';
 
   export default {
     mixins: [messageMixin],
@@ -104,7 +104,7 @@
             to.path === '/system-notice' ||
             to.path === '/about-platformIntroduced?ckey=about_us' ||
             to.path === '/trading' ||
-            to.path === '/otc' ||
+            to.path === '/market' ||
             to.path === '/login' ||
             to.path === '/registered' ||
             to.path === '/security-loginPassword') {
@@ -190,6 +190,7 @@
     /*background-color: #fff;*/
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
     width: 100%;
+    height: 100%;
   }
   .all-content{
     width: 100%;

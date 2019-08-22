@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import {getUser, changeTradPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {getUser, changeTradPwd, getSmsCaptchaPhone, getSmsCaptchaEmail} from '../../api/person';
 import { setTradePwd } from 'api/user';
 import {getUserId, setTitle, getUrlParam} from '../../common/js/util';
 import { resetPwd } from 'api/user';
@@ -74,7 +74,7 @@ export default {
       this.show = false;
       this.isLoading = true;
       if(this.mobile){
-        getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+        getSmsCaptchaPhone(this.bizType, this.mobile).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -89,7 +89,7 @@ export default {
         });
       }
       if(this.email){
-        getSmsCaptcha2(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail(this.bizType, this.email).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;

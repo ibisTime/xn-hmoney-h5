@@ -1,20 +1,20 @@
 <template>
   <div class="security-wrapper" @click.stop>
     <div class='content cont1'>
-        <router-link class='tag' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
+        <router-link class='tag mb20' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
             <p>
             <span>{{$t('securityCenter.subject.jymm')}}</span>
             <i class='icon'></i>
             </p>
         </router-link>
-    </div>
-    <div class='content cont1'>
-        <router-link class='tag mb20' to='security-identity'>
-            <p>
+        <router-link class='tag' to='security-identity'>
+          <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
-            </p>
+          </p>
         </router-link>
+    </div>
+    <div class='content cont1'>
         <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
             <p>
             <span>{{$t('securityCenter.subject.ggrz')}}</span>
@@ -80,7 +80,8 @@ export default {
     };
   },
   created() {
-    setTitle(this.$t('securityCenter.subject.aqzx'));
+    setTitle('账户与安全');
+    document.getElementById('app').style.height = '100%';
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
@@ -116,6 +117,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
+  height: 100%;
   background: #fff;
 
   .icon {

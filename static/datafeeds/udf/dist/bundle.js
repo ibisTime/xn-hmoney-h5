@@ -110,9 +110,16 @@
       };
       // console.log(window.SOCKET);
       period = foramtList[resolution];
+      let setBazDeal = sessionStorage.getItem('setBazDeal') || {
+        symbol: 'TWT',
+        toSymbol: 'BTC'
+      };
+      if(setBazDeal) {
+        setBazDeal = JSON.parse(setBazDeal);
+      }
       let requestParams = {
-        symbol: 'FMVP',
-        toSymbol: symbolInfo.toSymbol || 'BTC',
+        symbol: setBazDeal.symbol,
+        toSymbol: setBazDeal.toSymbol,
         period: period,
         resolution: resolution,
         startDatetime: formatDate(new Date(rangeStartDate * 1000), 'yyyy-MM-dd hh:mm'),
@@ -694,11 +701,11 @@
       }
 
       let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal')) || {
-        symbol: 'FMVP',
+        symbol: 'TWT',
         toSymbol: 'BTC'
       };
       let symbolInfo = {
-        'name': 'FMVP',
+        'name': setBazDeal.symbol,
         'timezone': 'Asia/Shanghai',
         'minmov': 1,
         'pointvalue': 1,

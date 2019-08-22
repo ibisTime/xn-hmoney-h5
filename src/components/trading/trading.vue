@@ -1,223 +1,227 @@
 <template>
   <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
-    <div class='header' :class="{'col-header': !show2}">
-      <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
-      <p>
-        <select name="" class="cg-bb" v-model="symNumber" @change="changeSymBaz">
-          <option :value="index" v-for="(symItem, index) in symBazList" :key="index">
-            {{symItem.symbol}}/{{symItem.toSymbol}}
-          </option>
-        </select>
-        <i class='icon' :class="{'icon-bai': !show2}"></i>
-      </p>
-      <div style="float: right;"><span v-show="show2" style="margin-right: -0.3rem;"><i class='icon' @click="showTwo"></i></span></div>
-    </div>
-
-    <div v-show="show2" class='One'>
-      <div class="top">
-        <div class="left">
-          <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
-          <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
+    <div class="wrapper">
+      <Scroll :pullUpLoad="null">
+        <div class='header' :class="{'col-header': !show2}">
+          <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
           <p>
-            <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
-              <option value="1" v-if="langType === 'en'">&nbsp;&nbsp;{{$t('trading.bbDeal.xj')}}</option>
-              <option value="1" v-else>{{$t('trading.bbDeal.xj')}}</option>
-              <option value="0">{{$t('trading.bbDeal.sj')}}</option>
+            <select name="" class="cg-bb" v-model="symId" @change="changeSymBaz">
+              <option :value="symItem.id" v-for="(symItem, index) in symBazList" :key="index">
+                {{symItem.symbol}}/{{symItem.toSymbol}}
+              </option>
             </select>
-            <i class='icon'></i>
+            <i class='icon' :class="{'icon-bai': !show2}"></i>
           </p>
-        </div>
-        <div class="right">
-          <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
-          <span class='txt5'>{{$t('common.jg')}}<br/>({{setBazDeal.toSymbol}})</span>
-          <span class='txt6'>{{$t('trading.bbDeal.sl')}}<br/>({{setBazDeal.symbol}})</span>
-        </div>
-      </div>
-      <div class="main">
-        <!-- 买入 -->
-        <div v-show="show1" class="left">
-          <p class='he9'>
-            <input
-              type="number"
-              :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
-              v-model="xjPrice"
-              :disabled="downConfig.type === '0'"
-              @keyup="qrLength"
-            >
-            <span class='black'>{{setBazDeal.toSymbol}}</span>
-          </p>
-          <p class='text2' v-show="downConfig.type == '0'"></p>
-          <p class='text2' v-show="downConfig.type == '1'">
-            <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
-          </p>
-          <p class='he9 mb20'>
-            <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
-            <span class='black'>{{downConfig.type == '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
-          </p>
-          <p class='he9 no-bor' v-show="downConfig.type == '1'">
-            <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
-            <span class='black'>{{setBazDeal.toSymbol}}</span>
-          </p>
-          <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
-          <p class='he9 green'>
-            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-            <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
-          </p>
-          <p class='he9 btn green' v-show="downConfig.type == '1'">
-            <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
-            <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
-          </p>
-          <p class='he9 btn'>
-            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-            <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
-          </p>
-          <p class='he9 btn'>
-            <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-            <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
-          </p>
-        </div>
-        <!-- 卖出 -->
-        <div v-show="!show1" class="left">
-          <p class='he9'>
-            <input
-              type="number"
-              :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
-              v-model="xjPrice"
-              :disabled="downConfig.type === '0'"
-              @keyup="qrLength"
-            >
-            <span class='black'>{{setBazDeal.toSymbol}}</span>
-          </p>
-          <p class='text2' v-show="downConfig.type == '0'"></p>
-          <p class='text2' v-show="downConfig.type == '1'">
-            <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
-          </p>
-          <p class='he9 mb20'>
-            <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
-            <span class='black'>{{setBazDeal.symbol}}</span>
-          </p>
-          <p class='he9 no-bor' v-show="downConfig.type == '1'">
-            <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 100000000) / 100000000).toFixed(8)}}</span>
-            <span class='black'>{{setBazDeal.toSymbol}}</span>
-          </p>
-          <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
-          <p class='he9 red'>
-            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-            <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
-          </p>
-          <p class='he9 btn red' v-show="downConfig.type == '1'">
-            <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
-            <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 100000000) / 100000000).toFixed(8) : '0'}}</span>
-          </p>
-          <p class='he9 btn'>
-            <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-            <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
-          </p>
-          <p class='he9 btn'>
-            <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-            <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
-          </p>
+          <div style="float: right;"><span v-show="show2" style="margin-right: -0.3rem;"><i class='icon' @click="showTwo"></i></span></div>
         </div>
 
-        <div class="right">
-          <div class='one'>
-            <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
-              <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
-              <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
-              <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
-            </p>
-          </div>
-          <p class='middle'>
-            <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
-            <!-- <i class='icon'></i> -->
-          </p>
-          <div class='one two'>
-            <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
-              <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-              <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
-              <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
-            </p>
-          </div>
-
-        </div>
-      </div>
-      <div class='entrust' v-show="isLogin">
-        <div class='tabs'>
-          <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
-          <p @click='showHisto' class='history'><i class='icon'></i>
-            <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link>
-          </p>
-        </div>
-        <div v-show="!show3" class='current-history'>
-          <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
-            <p class='text1'>
-              <span :class='myItem.direction == 0 ? "green" : "red1"'>{{myItem.direction == 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
-              <span>{{myItem.createDatetime}}</span>
-              <span class='red' v-show="(myItem.type != 0 && (myItem.status === '0' || myItem.status === '1'))"
-                    @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
-            </p>
-            <div class='text2'>
-              <div class='txt1'>
-                <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
-                <p class='black'>{{myItem.type == 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
-              </div>
-              <div class='txt2'>
-                <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
-                <p class='black'>{{myItem.totalCount}}</p>
-              </div>
-              <div class='txt3'>
-                <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
-                <p class='black'>{{myItem.tradedCount}}</p>
-              </div>
+        <div v-show="show2" class='One'>
+          <div class="top">
+            <div class="left">
+              <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
+              <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
+              <p>
+                <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
+                  <option value="1" v-if="langType === 'en'">&nbsp;&nbsp;{{$t('trading.bbDeal.xj')}}</option>
+                  <option value="1" v-else>{{$t('trading.bbDeal.xj')}}</option>
+                  <option value="0">{{$t('trading.bbDeal.sj')}}</option>
+                </select>
+                <i class='icon'></i>
+              </p>
+            </div>
+            <div class="right">
+              <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
+              <span class='txt5'>{{$t('common.jg')}}<br/>({{setBazDeal.toSymbol}})</span>
+              <span class='txt6'>{{$t('trading.bbDeal.sl')}}<br/>({{setBazDeal.symbol}})</span>
             </div>
           </div>
-          <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
-            <img src="./zwdata.png"/>
-            <p>{{$t('trading.bbDeal.zwdd')}}</p>
+          <div class="main">
+            <!-- 买入 -->
+            <div v-show="show1" class="left">
+              <p class='he9'>
+                <input
+                  type="number"
+                  :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
+                  v-model="xjPrice"
+                  :disabled="downConfig.type === '0'"
+                  @keyup="qrLength"
+                >
+                <span class='black'>{{setBazDeal.toSymbol}}</span>
+              </p>
+              <p class='text2' v-show="downConfig.type === '0'"></p>
+              <p class='text2' v-show="downConfig.type === '1'">
+                <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+              </p>
+              <p class='he9 mb20'>
+                <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
+                <span class='black'>{{downConfig.type === '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
+              </p>
+              <p class='he9 no-bor' v-show="downConfig.type === '1'">
+                <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+                <span class='black'>{{setBazDeal.toSymbol}}</span>
+              </p>
+              <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
+              <p class='he9 green'>
+                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
+                <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+              </p>
+              <p class='he9 btn green' v-show="downConfig.type === '1'">
+                <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
+                <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+              </p>
+              <p class='he9 btn'>
+                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
+                <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+              </p>
+              <p class='he9 btn'>
+                <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
+                <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+              </p>
+            </div>
+            <!-- 卖出 -->
+            <div v-show="!show1" class="left">
+              <p class='he9'>
+                <input
+                  type="number"
+                  :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
+                  v-model="xjPrice"
+                  :disabled="downConfig.type === '0'"
+                  @keyup="qrLength"
+                >
+                <span class='black'>{{setBazDeal.toSymbol}}</span>
+              </p>
+              <p class='text2' v-show="downConfig.type === '0'"></p>
+              <p class='text2' v-show="downConfig.type === '1'">
+                <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+              </p>
+              <p class='he9 mb20'>
+                <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
+                <span class='black'>{{setBazDeal.symbol}}</span>
+              </p>
+              <p class='he9 no-bor' v-show="downConfig.type === '1'">
+                <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+                <span class='black'>{{setBazDeal.toSymbol}}</span>
+              </p>
+              <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
+              <p class='he9 red'>
+                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
+                <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+              </p>
+              <p class='he9 btn red' v-show="downConfig.type === '1'">
+                <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
+                <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+              </p>
+              <p class='he9 btn'>
+                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
+                <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+              </p>
+              <p class='he9 btn'>
+                <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
+                <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+              </p>
+            </div>
+
+            <div class="right">
+              <div class='one'>
+                <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
+                  <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
+                  <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+                  <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
+                </p>
+              </div>
+              <p class='middle'>
+                <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
+                <!-- <i class='icon'></i> -->
+              </p>
+              <div class='one two'>
+                <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
+                  <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
+                  <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+                  <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
+                </p>
+              </div>
+
+            </div>
+          </div>
+          <div class='entrust' v-show="isLogin">
+            <div class='tabs'>
+              <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
+              <p @click='showHisto' class='history'><i class='icon'></i>
+                <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link>
+              </p>
+            </div>
+            <div v-show="!show3" class='current-history'>
+              <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
+                <p class='text1'>
+                  <span :class='myItem.direction === 0 ? "green" : "red1"'>{{myItem.direction === 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                  <span>{{myItem.createDatetime}}</span>
+                  <span class='red' v-show="(myItem.type !== 0 && (myItem.status === '0' || myItem.status === '1'))"
+                        @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
+                </p>
+                <div class='text2'>
+                  <div class='txt1'>
+                    <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
+                    <p class='black'>{{myItem.type === 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
+                  </div>
+                  <div class='txt2'>
+                    <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
+                    <p class='black'>{{myItem.totalCount}}</p>
+                  </div>
+                  <div class='txt3'>
+                    <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
+                    <p class='black'>{{myItem.tradedCount}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
+                <img src="./zwdata.png"/>
+                <p>{{$t('trading.bbDeal.zwdd')}}</p>
+              </div>
+            </div>
+
           </div>
         </div>
+        <!-- K线图 -->
+        <div v-show="!show2" class='Two'>
+          <div class="top-mian">
+            <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span
+              class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
+            <div class='text2'>
+              <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
+              </p>
+              <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0'}}</span>
+              </p>
+            </div>
+            <div class='text3'>
+              <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume : '0'}}</span></p>
+              <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0'}}</span>
+              </p>
+            </div>
+          </div>
+          <!-- k线图部分 -->
+          <div class='main1'>
+            <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
+          </div>
 
-      </div>
-    </div>
-    <!-- K线图 -->
-    <div v-show="!show2" class='Two'>
-      <div class="top-mian">
-        <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span
-          class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
-        <div class='text2'>
-          <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.exchangeRate}} %</span>
-          </p>
-          <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{dayLineInfo ? dayLineInfo.high : '0'}}</span>
-          </p>
+          <!-- 主要内容区 -->
+          <div class='main2'>
+            <div class='tabs' @click="changeMain">
+              <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
+              <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
+              <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
+              <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
+            </div>
+            <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
+            <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
+            <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
+            <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
+            <div class='foot'>
+              <button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>
+              <button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>
+            </div>
+          </div>
         </div>
-        <div class='text3'>
-          <p><span class='gray'>24h </span><span>{{dayLineInfo ? dayLineInfo.volume : '0'}}</span></p>
-          <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{dayLineInfo ? dayLineInfo.low : '0'}}</span>
-          </p>
-        </div>
-      </div>
-      <!-- k线图部分 -->
-      <div class='main1'>
-        <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
-      </div>
-
-      <!-- 主要内容区 -->
-      <div class='main2'>
-        <div class='tabs' @click="changeMain">
-          <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
-          <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
-          <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
-          <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
-        </div>
-        <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
-        <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
-        <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
-        <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
-        <div class='foot'>
-          <button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}FMVP</button>
-          <button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}FMVP</button>
-        </div>
-      </div>
+      </Scroll>
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -227,7 +231,7 @@
 <script>
   import Footer from 'components/footer/footer';
   import Toast from 'base/toast/toast';
-  // import Scroll from 'base/scroll/scroll';
+  import Scroll from 'base/scroll/scroll';
   import FullLoading from 'base/full-loading/full-loading';
   import TradingSynopsis from 'components/trading-synopsis/trading-synopsis';
   import TradingPutUp from 'components/trading-put-up/trading-put-up';
@@ -241,7 +245,8 @@
     getUserId,
     formatMoneyMultiply,
     formatDate,
-    getLangType
+    getLangType,
+    getUrlParam
   } from "common/js/util";
   import {wallet} from 'api/person';
   import {
@@ -253,6 +258,7 @@
     getRealTimeData,
     repOrder
   } from 'api/bb';
+  import {selectedTradingApi} from 'api/tradingOn';
 
   export default {
     data() {
@@ -261,7 +267,7 @@
         referCurrency: 'CNY',
         textMsg: '',
         hasMore: true,
-        isLoading: true,
+        isLoading: false,
         isLogin: false,
         show1: true,
         show2: true,
@@ -270,9 +276,9 @@
         tShow: '1',
         xjPrice: '',      // 委托价格
         wetNumber: '',    // 限价-委托数量
-        toSyMid: '',      // toSymbol换算价
-        syMid: '',        // symbol换算价
-        symNumber: '0',
+        toSyMid: '',
+        syMid: '',
+        symId: 0,
         setBazDeal: {},    // 选中的交易对
         symBazList: [],    // 交易对
         bazDealList: [],
@@ -307,47 +313,45 @@
         symbolData: {},
         handTime: '',
         gkdsList: {},           // 高、低、涨幅
-        dayLineInfo: {},
         selIndex: 0,
         locale: getLangType()
       };
     },
     created() {
-      setTitle(this.$t('trading.bbDeal.bbjy'));
-      getBazaarData().then(data => {  // 查询交易对
-        if(!data.list) {
+      setTitle('币币交易');
+      this.isLoading = true;
+      const symbol = getUrlParam('symbol');
+      const toSymbol = getUrlParam('toSymbol');
+      let params = {};
+      if(symbol && toSymbol) {
+        params.symbol = symbol;
+        params.toSymbol = toSymbol;
+      }
+      getBazaarData(params).then(data => {  // 查询交易对
+        if(!Array.isArray(data)) {
           return false;
         }
-        this.syMid = data.list[0].currencyPrice;
         let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal'));
         this.setBazDeal = setBazDeal || {
-          symbol: data.list[0].symbol,
-          toSymbol: data.list[0].toSymbol
+          id: 0,
+          symbol: data[0].symbol,
+          toSymbol: data[0].toSymbol
         };
+        this.symId = this.setBazDeal.id;
         if (!setBazDeal) {
           sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
         }
-        if (this.setBazDeal.toSymbol == 'ETH') {
-          this.symNumber = '1';
-        }
-        data.list.forEach(item => {
+        this.getSelectedTrading({
+          symbol: this.setBazDeal.symbol,
+          referCurrency: this.setBazDeal.toSymbol
+        });
+        data.forEach((item, index) => {
           this.symBazList.push({
+            id: index,
             'symbol': item.symbol,
             'toSymbol': item.toSymbol
           });
         });
-        // 获取涨幅
-        let gkData = data.list.filter(item => {
-          return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
-        });
-        gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
-        this.gkdsList = gkData[0];
-        this.dayLineInfo = this.gkdsList.dayLineInfo;
-        if (this.dayLineInfo) {
-          this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
-          this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
-          // this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.symbol);
-        }
         this.handicapData();
         this.realTimeData();
         if (getUserId()) {
@@ -356,71 +360,75 @@
           this.history = true;
           this.myOrderTicket();
         }
-
+        clearInterval(this.handTime);
         this.handTime = setInterval(() => {
           if (this.isLogin) {
             this.getUserWalletData();
             this.myOrderTicket();
           }
-          this.getMidPrice();
+          this.getSelectedTrading({
+            symbol: this.setBazDeal.symbol,
+            referCurrency: this.setBazDeal.toSymbol
+          });
           this.handicapData();
           this.realTimeData();
         }, 5000);
 
       });
     },
-    mounted() {
-
-    },
     methods: {
-      getMidPrice() {
-        getBBExchange(this.referCurrency, this.setBazDeal.toSymbol).then(data => { // 查询币换算人民币价格
-          this.toSyMid = data.mid;
+      getSelectedTrading(params) {
+        selectedTradingApi(params).then(data => {
+          // 获取涨幅
+          this.toSyMid = data.lastPriceCny; // toSymbol换算价
+          data.percent24h = (data.percent24h * 100).toFixed(2);
+          this.gkdsList = {
+            ...data,
+            high: formatAmount(data.high, '', this.setBazDeal.symbol),
+            low: formatAmount(data.low, '', this.setBazDeal.symbol)
+          };
         });
       },
       getUserWalletData() {
         // 查询用户资产
         wallet().then(data => {
-          data.map(item => {
-            item.amount = formatAmount(`${item.amount}`, '', item.currency);
-            item.frozenAmount = formatAmount(`${item.frozenAmount}`, '', item.currency);
-          })
-          data.forEach(item => {
-            if (item.currency == this.setBazDeal.symbol) {
-              this.symWallet = item;
-            }
-            if (item.currency == this.setBazDeal.toSymbol) {
-              this.toSymWallet = item;
-            }
-          });
-          this.symWallet.kyAmount = this.symWallet.amount - this.symWallet.frozenAmount;
-          this.toSymWallet.kyAmount = this.toSymWallet.amount - this.toSymWallet.frozenAmount;
+          if(data.accountList) {
+            data.accountList.map(item => {
+              item.amount = formatAmount(`${item.amount}`, '', item.currency);
+              item.frozenAmount = formatAmount(`${item.frozenAmount}`, '', item.currency);
+            });
+            data.accountList.forEach(item => {
+              if (item.currency === this.setBazDeal.symbol) {
+                this.symWallet = item;
+              }
+              if (item.currency === this.setBazDeal.toSymbol) {
+                this.toSymWallet = item;
+              }
+            });
+            this.symWallet.kyAmount = this.symWallet.amount - this.symWallet.frozenAmount;
+            this.toSymWallet.kyAmount = this.toSymWallet.amount - this.toSymWallet.frozenAmount;
+          }
         });
       },
-      changeSymBaz() { // 选择交易对 this.symNumber : 0  X/BTC    1  X/ETH
+      changeSymBaz() { // 选择交易对 this.symId
         this.bbAsks = [];
         this.bbBids = [];
-        this.setBazDeal = {
-          symbol: this.symBazList[this.symNumber].symbol,
-          toSymbol: this.symBazList[this.symNumber].toSymbol
-        };
+        this.symBazList.forEach((item) => {
+          if(item.id === this.symId) {
+            this.setBazDeal = {
+              id: item.id,
+              symbol: item.symbol,
+              toSymbol: item.toSymbol
+            };
+          }
+        });
+        this.getSelectedTrading({
+          symbol: this.setBazDeal.symbol,
+          referCurrency: this.setBazDeal.toSymbol
+        });
         sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
         this.handicapData();
         this.realTimeData();
-        getBazaarData().then(data => {
-          // 获取涨幅
-          let gkData = data.list.filter(item => {
-            return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
-          });
-          gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
-          this.gkdsList = gkData[0];
-          this.dayLineInfo = this.gkdsList.dayLineInfo;
-          // if(this.dayLineInfo){
-          //   this.dayLineInfo.high = formatAmount(this.dayLineInfo.high, '', this.setBazDeal.symbol);
-          //   this.dayLineInfo.low = formatAmount(this.dayLineInfo.low, '', this.setBazDeal.symbol);
-          //   // this.dayLineInfo.volume = formatAmount(this.dayLineInfo.volume, '', this.setBazDeal.toSymbol);
-          // }
-        });
         if (this.isLogin) {
           this.getUserWalletData();
           this.hasMore = true;
@@ -434,7 +442,10 @@
             this.getUserWalletData();
             this.myOrderTicket();
           }
-          this.getMidPrice();
+          this.getSelectedTrading({
+            symbol: this.setBazDeal.symbol,
+            referCurrency: this.setBazDeal.toSymbol
+          });
           this.handicapData();
           this.realTimeData();
         }, 5000);
@@ -455,11 +466,6 @@
             bids.forEach((item, index) => {
               this.bbBids[index] = JSON.parse(JSON.stringify(item));
             });
-            // this.bbAsks.map(item => {
-            //   item.price = formatAmount(`${item.price}`, 7, this.setBazDeal.toSymbol);
-            //   // item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
-            //   item.count = formatAmount(`${item.count}`, 4, this.setBazDeal.symbol);
-            // });
             if (this.selIndex == 0) {
               this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
             }
@@ -472,7 +478,6 @@
         });
       },
       myOrderTicket() {
-        // this.isLoading = true;
         this.myOrderConfig.start = this.start;
         this.myOrderConfig = {
           ...this.myOrderConfig,
@@ -480,16 +485,16 @@
         };
         getMyorderTicket(this.myOrderConfig).then(data => {
           data.list.map(item => {
-            let showTotalCount = item.direction == 0 && item.type == 0;
+            let showTotalCount = item.direction === 0 && item.type === 0;
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
-            item.price = item.type == 0 ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
+            item.price = item.type === 0 ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
             item.totalCount = showTotalCount ? '-' : (formatAmount(`${item.totalCount}`, '', item.symbol));
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol)
           });
           this.myOrderData = data.list;
-          // this.isLoading = false;
+          this.isLoading = false;
         }, () => {
-          // this.isLoading = false;
+          this.isLoading = false;
         });
       },
       realTimeData() {
@@ -497,24 +502,7 @@
         this.realTimeConfig = {
           ...this.realTimeConfig,
           ...this.setBazDeal
-        }
-        getBazaarData().then(data => {
-          // 获取涨幅
-          let gkData = data.list.filter(item => {
-            return item.symbol == this.setBazDeal.symbol && item.toSymbol == this.setBazDeal.toSymbol;
-          });
-          gkData[0].exchangeRate = (gkData[0].exchangeRate * 100).toFixed(2);
-          this.gkdsList = gkData[0];
-          this.dayLineInfo = this.gkdsList.dayLineInfo;
-          this.bb_zxj = this.gkdsList.price;
-        });
-        // getRealTimeData(this.realTimeConfig).then(data => {
-        //   if(data.list.length > 0){
-        //     this.bb_zxj = formatAmount(`${data.list[0].tradedPrice}`, '', data.list[0].toSymbol);
-        //   }else{
-        //     this.bb_zxj = 0;
-        //   }
-        // });
+        };
       },
       buy() {
         this.downConfig.direction = '0';
@@ -536,7 +524,7 @@
       },
       //选择市价或是限价
       bbDealType() {
-        if (this.downConfig.type == '0') {
+        if (this.downConfig.type === '0') {
           this.xjPrice = '';
         }
       },
@@ -561,7 +549,7 @@
           return;
         }
         this.isLoading = true;
-        if (this.downConfig.type == '1') {
+        if (this.downConfig.type === '1') {
           this.downConfig.price = formatMoneyMultiply(`${this.xjPrice}`, '', this.setBazDeal.toSymbol);
           if (this.xjPrice && this.xjPrice > 0 && this.wetNumber && this.wetNumber > 0) {
             this.downConfig = {
@@ -569,7 +557,7 @@
               ...this.setBazDeal
             };
             this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
-            downBBOrder(this.downConfig).then(data => {
+            downBBOrder(this.downConfig).then(() => {
               this.isLoading = false;
               this.textMsg = this.$t('common.xdcg');
               this.$refs.toast.show();
@@ -582,11 +570,11 @@
             }, () => {
               this.isLoading = false;
             });
-          } else if (this.xjPrice == '') {
+          } else if (this.xjPrice === '') {
             this.textMsg = this.$t('common.jg') + this.$t('trading.bbDepth.bkbwl');
             this.$refs.toast.show();
             this.isLoading = false;
-          } else if (this.wetNumber == '') {
+          } else if (this.wetNumber === '') {
             this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
             this.$refs.toast.show();
             this.isLoading = false;
@@ -598,7 +586,7 @@
               ...this.downConfig,
               ...this.setBazDeal
             };
-            if (this.downConfig.direction == '0') {
+            if (this.downConfig.direction === '0') {
               if (this.show1) {
                 this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.toSymbol);
               } else {
@@ -607,7 +595,7 @@
             } else {
               this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
             }
-            downBBOrder(this.downConfig).then(data => {
+            downBBOrder(this.downConfig).then(() => {
               this.isLoading = false;
               this.textMsg = this.$t('common.xdcg');
               this.$refs.toast.show();
@@ -618,7 +606,7 @@
             }).catch(() => {
               this.isLoading = false;
             });
-          } else if (this.wetNumber == '') {
+          } else if (this.wetNumber === '') {
             this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
             this.$refs.toast.show();
             this.isLoading = false;
@@ -730,7 +718,7 @@
     components: {
       Footer,
       Toast,
-      // Scroll,
+      Scroll,
       FullLoading,
       TradingSynopsis,
       TradingPutUp,
@@ -740,7 +728,7 @@
     },
     watch: {  // 监听深度图
       setBazDeal: {
-        handler(val, oldVal) {
+        handler(val) {
           this.bazDeal = val;
         },
         deep: true
@@ -759,10 +747,19 @@
   .trading-wrapper {
     width: 100%;
     padding-bottom: 0.3rem;
-    background: #fff;
     font-size: .28rem;
     color: #999;
     overflow: auto;
+    .wrapper{
+      position: absolute;
+      z-index: 10;
+      top: 0rem;
+      bottom: 0rem;
+      left: 0;
+      right: 0;
+      background: #fff;
+      overflow: auto;
+    }
     .red {
       color: #d53d3d;
     }
@@ -833,6 +830,7 @@
 
     .col-header {
       color: #fff;
+      background-color: #1c2b3f;
       a {
         color: #fff;
       }

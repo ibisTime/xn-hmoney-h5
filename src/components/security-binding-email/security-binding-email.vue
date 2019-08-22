@@ -22,7 +22,7 @@
 </template>
 <script>
 import {getUserId, CheckMail, setTitle} from 'common/js/util';
-import {bindingEmail, getSmsCaptcha2} from 'api/person';
+import {bindingEmail, getSmsCaptchaEmail} from 'api/person';
 import FullLoading from 'base/full-loading/full-loading';
 
 export default {
@@ -44,7 +44,7 @@ export default {
       this.show = false;
       if(CheckMail(this.email) === true) {
         this.isLoading = true;
-        getSmsCaptcha2(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail(this.bizType, this.email).then(data => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time --;

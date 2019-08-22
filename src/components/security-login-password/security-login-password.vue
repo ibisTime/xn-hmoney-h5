@@ -33,7 +33,7 @@
   </div>
 </template>
 <script>
-import {getUser, changeLoginPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {getUser, changeLoginPwd, getSmsCaptchaPhone, getSmsCaptchaEmail} from '../../api/person';
 import {getUserId, setTitle, clearUser} from '../../common/js/util';
 import { resetPwd } from 'api/user';
 import Toast from 'base/toast/toast';
@@ -91,7 +91,7 @@ export default {
       this.isLoading = true;
       if((this.config.mobile).match(/@/)){
         email = this.config.mobile;
-        getSmsCaptcha2(this.bizType, email).then(data => {
+        getSmsCaptchaEmail(this.bizType, email).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -106,7 +106,7 @@ export default {
         });
       }else{
         mobile = this.config.mobile;
-        getSmsCaptcha1(this.bizType, mobile).then(data => {
+        getSmsCaptchaPhone(this.bizType, mobile).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;

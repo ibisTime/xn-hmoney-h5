@@ -1,11 +1,8 @@
 import fetch from 'common/js/fetch';
 
 // 市场（交易对）
-export function getBazaarData() {
-    return fetch("650100", {
-        start: '1',
-        limit: '10'
-    }, true);
+export function getBazaarData(params = {}) {
+    return fetch("650042", params);
 }
 
 // 获取币种汇率、行情
