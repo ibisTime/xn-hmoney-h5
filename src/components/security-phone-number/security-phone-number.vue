@@ -48,7 +48,10 @@ export default {
       }
       this.show = false;
       this.isLoading = true;
-      getSmsCaptchaPhone(this.bizType, this.mobile).then(data => {
+      getSmsCaptchaPhone({
+        bizType: this.bizType,
+        mobile: this.mobile
+      }).then(data => {
         this.isLoading = false;
         let phTime = setInterval(() => {
           this.time --;

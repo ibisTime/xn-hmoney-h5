@@ -1,10 +1,12 @@
 <template>
   <div class="bill-wrapper" @click.stop>
     <div class='list-wrap'>
-      <p class="wallet-p"></p>
-      <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
-        <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
+      <div class="selected_wallet">
+        <p class="wallet-p"></p>
+        <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
+          <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
         </select>
+      </div>
       <Scroll
         ref="scroll"
         :data="list"
@@ -327,25 +329,30 @@ export default {
     position: relative;
     height: 13rem;
     overflow: scroll;
-    .wallet-p{
+    .selected_wallet{
       position: absolute;
-      right: 15%;
+      right: 5%;
       top: 0.6rem;
       z-index: 5;
+      &:hover .wallet-p{
+        opacity: 0.9;
+      }
+    }
+    .wallet-p{
       height: 1rem;
       width: 1rem;
-      opacity: 0.7;
+      opacity: 0.3;
       background-image: url('./sxuan.png');
       background-size: 100%;
     }
     #wallet-set{
       position: absolute;
       opacity: 0;
-      right: 15%;
-      top: 0.6rem;
+      right: 0.1rem;
+      top: 0.1rem;
+      left: 0.1rem;
+      bottom: 0.1rem;
       z-index: 9;
-      height: 1rem;
-      width: 1rem;
     }
   }
 

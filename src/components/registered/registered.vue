@@ -127,7 +127,10 @@ export default {
         }
         this.isLoading = true;
         this.fscg = true;
-        getSmsCaptchaPhone(this.bizType1, this.phone).then(data => {
+        getSmsCaptchaPhone({
+          bizType: this.bizType1,
+          mobile: this.phone
+        }).then(() => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time1 --;
@@ -149,7 +152,10 @@ export default {
         }
         this.isLoading = true;
         this.fscg1 = true;
-        getSmsCaptchaEmail(this.bizType2, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType2,
+          email: this.email
+        }).then(() => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time2 --;

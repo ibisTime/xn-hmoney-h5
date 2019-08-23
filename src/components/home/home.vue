@@ -9,54 +9,68 @@
             </div>
           </slider>
         </div>
-        <!-- <Swiper v-if="banners.length" :data="banners"></Swiper> -->
       </div>
       <div class="cates-wrapper">
         <router-link to="shop" tag="div" class="cate-item">
           <i class="cate-icon game-icon"></i>
-          <p>{{ $t('page.cate.xss') }}</p>
+          <p>申购</p>
         </router-link>
-        <router-link to="shop-usedCar" class="cate-item">
+        <router-link to="dig-coin" class="cate-item">
           <i class="cate-icon exchange-icon"></i>
-          <p>{{ $t('page.cate.exchange') }}</p>
+          <p>挖矿</p>
         </router-link>
         <router-link to='otc' tag="div" class="cate-item" @click.native="toOtcFn">
           <i class="cate-icon otc-icon"></i>
-          <p>{{ $t('page.cate.otc') }}</p>
+          <p>交割</p>
         </router-link>
       </div>
-      <div class="tab-wrapper">
-        <div class="tabCar fun">
-          <router-link to='shop'>
-            <div class="tab-text">
-              <p class="tit">{{ $t('page.cate.game') }}</p>
-              <p class="con">{{ $t('page.cate.splendid') }}</p>
-            </div>
-          </router-link>
-        </div>
-        <div class="tabCar bibi">
-          <router-link to='trading'>
-            <div class="tab-text">
-              <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
-              <p class="con">{{ $t('page.cate.realTime') }}</p>
-            </div>
-          </router-link>
-        </div>
-        <div class="tabCar notice">
-          <router-link to='system-notice'>
-            <div class="tab-text">
-              <p class="tit">{{ $t('page.cate.xtgg') }}</p>
-              <p class="con">{{ $t('page.cate.sstsjcnr') }}</p>
-            </div>
-          </router-link>
-        </div>
-        <div class="tabCar introduce">
-          <router-link to='about-platformIntroduced?ckey=about_us'>
-            <div class="tab-text">
-              <p class="tit">{{ $t('page.cate.ptjs') }}</p>
-              <p class="con">{{ $t('page.cate.ljwm') }}</p>
-            </div>
-          </router-link>
+      <div class="home_con">
+        <h5><span></span>应用</h5>
+        <div class="tab-wrapper">
+          <div class="tabCar fun">
+            <router-link to='shop' style="display: flex;">
+              <div class="tab_left">
+                <img src="" alt="">
+              </div>
+              <div class="tab-text">
+                <p class="tit">{{ $t('page.cate.game') }}</p>
+                <p class="con">{{ $t('page.cate.splendid') }}</p>
+              </div>
+            </router-link>
+          </div>
+          <div class="tabCar bibi">
+            <router-link to='trading' style="display: flex;">
+              <div class="tab_left">
+                <img src="" alt="">
+              </div>
+              <div class="tab-text">
+                <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
+                <p class="con">全球首创交易平台</p>
+              </div>
+            </router-link>
+          </div>
+          <div class="tabCar notice">
+            <router-link to='system-notice' style="display: flex;">
+              <div class="tab_left">
+                <img src="" alt="">
+              </div>
+              <div class="tab-text">
+                <p class="tit">系统公告</p>
+                <p class="con">实时推送精彩内容</p>
+              </div>
+            </router-link>
+          </div>
+          <div class="tabCar introduce">
+            <router-link to='about-platformIntroduced?ckey=about_us' style="display: flex;">
+              <div class="tab_left">
+                <img src="" alt="">
+              </div>
+              <div class="tab-text">
+                <p class="tit">平台介绍</p>
+                <p class="con">让你更加了解我们</p>
+              </div>
+            </router-link>
+          </div>
         </div>
       </div>
     </Scroll>
@@ -206,52 +220,55 @@
       }
 
     }
-
+    .home_con{
+      padding: 0.3rem;
+      background-color: #fff;
+      h5{
+        color: #333333;
+        font-size: 0.32rem;
+        margin-bottom: 0.22rem;
+        span{
+          margin-right: 0.16rem;
+          display: inline-block;
+          width: 0.06rem;
+          height: 0.26rem;
+          background-color: #676FFF;
+        }
+      }
+    }
     .tab-wrapper {
-      width: 92%;
       margin: .4rem auto .5rem;
       padding-bottom: 1rem;
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-around;
+      justify-content: space-between;
 
       .tabCar {
         width: 46.8%;
-        height: 1.8rem;
         background-size: 100% 100%;
-
+        background-color: #FAFAFA;
+        padding: 0.3rem;
+        margin-bottom: 0.3rem;
+        .tab_left{
+          width: 0.6rem;
+          height: 0.6rem;
+          margin-right: 0.06rem;
+        }
         .tab-text {
-          margin: .3rem 0 0 .3rem;
-          color: #fff;
+          color: #999;
           .tit {
             font: .28rem/.4rem PingFangSC-Semibold;
-            margin-bottom: .1rem;
+            margin-bottom: .2rem;
+            color: #333;
           }
           .con {
             font: .22rem/.3rem PingFangSC-Medium;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
-
       }
-
-      .fun {
-        @include bg-image('fun');
-        margin: 0 .3rem .3rem 0;
-      }
-
-      .bibi {
-        @include bg-image('bibi');
-      }
-
-      .notice {
-        @include bg-image('notice');
-        margin: 0 .3rem .3rem 0;
-      }
-
-      .introduce {
-        @include bg-image('introduce');
-      }
-
     }
 
     .foot {

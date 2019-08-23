@@ -44,7 +44,10 @@ export default {
       this.show = false;
       if(CheckMail(this.email) === true) {
         this.isLoading = true;
-        getSmsCaptchaEmail(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email: this.email
+        }).then(() => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time --;

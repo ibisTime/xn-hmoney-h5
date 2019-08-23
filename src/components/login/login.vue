@@ -6,8 +6,22 @@
       <div class="card">
           <div class="main">
               <h3>{{$t('login.subject.hyhl')}}</h3>
-              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" :placeholder="$t('login.subject.srzh')">
-              <input type="password" v-model="password" name="password" v-validate="'required|password'" :placeholder="$t('login.subject.srldsl')">
+              <input
+                type="text"
+                v-model="username"
+                name="phone|email"
+                v-validate="'required|phone|email'"
+                :placeholder="$t('login.subject.srzh')"
+                @blur="blurIn"
+              >
+              <input
+                type="password"
+                v-model="password"
+                name="password"
+                v-validate="'required|password'"
+                :placeholder="$t('login.subject.srldsl')"
+                @blur="blurIn"
+              >
               <input type="submit" :value="$t('login.subject.dl')" @click='login'>
               <p>
                   <router-link class="reg" to="/registered">{{$t('login.subject.ljzc')}}</router-link>
@@ -34,7 +48,11 @@ export default {
   created(){
     setTitle(this.$t('login.subject.dl'));
   },
-  computed: {},
+  computed: {
+    scrollHeight () {
+      return document.documentElement.scrollTop || document.body.scrollTop || 0
+    }
+  },
   methods: {
     login() {
       if(this.errors.any()){
@@ -47,6 +65,9 @@ export default {
           this.isLoading = false;
         });
       }
+    },
+    blurIn () {
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0))
     }
   },
   components: {

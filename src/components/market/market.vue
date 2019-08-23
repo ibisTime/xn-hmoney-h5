@@ -8,42 +8,44 @@
           @select="selectCategory"
         />
       </div>
-      <div class="con_box">
-        <div class="con_header">
-          <p>币种名称</p>
-          <p>
-            最新价
-          </p>
-          <p>涨跌幅</p>
-        </div>
-        <ul class="container" v-show="tradingData.length">
-          <li
-            class="mar_single"
-            v-for="item in tradingData"
-            :key="`t_${item.id}`"
-            @click="() => {
+      <div class="con_header">
+        <p>币种名称</p>
+        <p>
+          最新价
+        </p>
+        <p>涨跌幅</p>
+      </div>
+      <div class="container" v-show="tradingData.length">
+        <div class="wrapper">
+          <Scroll :pullUpLoad="null">
+            <div
+              class="mar_single"
+              v-for="item in tradingData"
+              :key="`t_${item.id}`"
+              @click="() => {
               toTradingView({symbol: item.symbol, toSymbol: item.referCurrency})
             }"
-          >
-            <div class="sing_left">
-              <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
-              <p>24H量 <span>{{item.volume}}</span></p>
-            </div>
-            <div class="sing_mid">
-              <p class="li_head">{{item.lastPrice}}</p>
-              <p>￥123123</p>
-            </div>
-            <div class="sing_right">
+            >
+              <div class="sing_left">
+                <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
+                <p>24H量 <span>{{item.volume}}</span></p>
+              </div>
+              <div class="sing_mid">
+                <p class="li_head">{{item.lastPrice}}</p>
+                <p>￥123123</p>
+              </div>
+              <div class="sing_right">
               <span
                 :class="item.percent24h >= 0 ? 'up_p' : 'dw_p'"
               >
                 {{item.percent24h | percent24h}}
               </span>
+              </div>
             </div>
-          </li>
-        </ul>
-        <NoData v-if="tradingData.length === 0"/>
+          </Scroll>
+        </div>
       </div>
+      <NoData v-if="tradingData.length === 0"/>
     </div>
     <Footer/>
   </div>
@@ -51,6 +53,7 @@
 
 <script>
   import categoryScroll from 'base/category-scroll/category-scroll';
+  import Scroll from 'base/scroll/scroll';
   import Footer from 'components/footer/footer';
   import NoData from 'base/no-data/index';
   import {tradingOnApi, ownerTradingApi, queryPlateList} from 'api/tradingOn';
@@ -120,7 +123,8 @@
     components: {
       Footer,
       categoryScroll,
-      NoData
+      NoData,
+      Scroll
     }
   }
 </script>
@@ -130,7 +134,11 @@
     background-color: #fff;
     height: 100%;
   }
-
+  .market_box{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
   .header {
     height: 0.8rem;
     padding-top: 0.2rem;
@@ -138,7 +146,6 @@
     font-size: 0.32rem;
     color: #999999
   }
-
   .con_header {
     background-color: #F0F0F0;
     color: #999;
@@ -152,7 +159,18 @@
   }
 
   .container {
-    padding: 0 0.3rem;
+    position: relative;
+    flex: 1;
+    .wrapper{
+      position: absolute;
+      z-index: 10;
+      top: 0rem;
+      bottom: 0rem;
+      left: 0;
+      right: 0;
+      overflow: auto;
+      padding: 0 0.3rem;
+    }
     .mar_single {
       padding: 0.3rem 0;
       display: flex;

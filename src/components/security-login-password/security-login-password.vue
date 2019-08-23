@@ -91,7 +91,10 @@ export default {
       this.isLoading = true;
       if((this.config.mobile).match(/@/)){
         email = this.config.mobile;
-        getSmsCaptchaEmail(this.bizType, email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -106,7 +109,10 @@ export default {
         });
       }else{
         mobile = this.config.mobile;
-        getSmsCaptchaPhone(this.bizType, mobile).then(data => {
+        getSmsCaptchaPhone({
+          bizType: this.bizType,
+          mobile
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;

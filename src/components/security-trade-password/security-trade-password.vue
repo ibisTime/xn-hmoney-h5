@@ -74,7 +74,10 @@ export default {
       this.show = false;
       this.isLoading = true;
       if(this.mobile){
-        getSmsCaptchaPhone(this.bizType, this.mobile).then(data => {
+        getSmsCaptchaPhone({
+            bizType: this.bizType,
+            mobile: this.mobile
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -89,7 +92,10 @@ export default {
         });
       }
       if(this.email){
-        getSmsCaptchaEmail(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email: this.email
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;

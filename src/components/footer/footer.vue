@@ -1,5 +1,5 @@
 <template>
-  <div class="foot-wrapper" @click.stop>
+  <div class="foot-wrapper" @click.stop :style="{'background-color': bgColor}">
     <router-link tag="div" class="foot-item item-0" to="/page">
       <i></i>
       <p>{{ $t('footer.navbar.page') }}</p>
@@ -28,7 +28,12 @@
   import {mapGetters} from 'vuex';
 
   export default {
-    props: {},
+    props: {
+      bgColor: {
+        type: String,
+        default: '#fff'
+      }
+    },
     computed: {
       ...mapGetters([
         'unreadMsgNum'
@@ -58,7 +63,6 @@
     display: flex;
     height: .96rem;
     width: 100%;
-    background: #fff;
     font: .22rem/.3rem PingFangSC-Regular;
     color: #B3B3B3;
     text-align: center;

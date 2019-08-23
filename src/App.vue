@@ -55,16 +55,16 @@
           setUser({userId, token});
           next();
         }  else {
-          if (to.path == '/' ||
-            to.path == '/page' ||
-            to.path == '/shop-usedCar' ||
-            to.path == '/system-notice' ||
-            to.path == '/about-platformIntroduced?ckey=about_us' ||
-            to.path == '/trading' ||
-            to.path == '/otc' ||
-            to.path == '/login' ||
-            to.path == '/registered' ||
-            to.path == '/security-loginPassword') {
+          if (to.path === '/' ||
+            to.path === '/page' ||
+            to.path === '/shop-usedCar' ||
+            to.path === '/system-notice' ||
+            to.path === '/about-platformIntroduced?ckey=about_us' ||
+            to.path === '/trading' ||
+            to.path === '/market' ||
+            to.path === '/login' ||
+            to.path === '/registered' ||
+            to.path === '/security-loginPassword') {
             next();
           } else {
             this.textMsg = this.$t('common.qxdl');

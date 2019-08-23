@@ -26,3 +26,8 @@ export function ownerTradingApi() {
 export function queryPlateList() {
   return fetch('802046');
 }
+
+// 收藏/取消收藏交易对
+export function isCollectionTrading(marketId) {
+  return fetch(650072, {marketId});
+}

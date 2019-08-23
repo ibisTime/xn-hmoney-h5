@@ -1,9 +1,15 @@
 <template>
   <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
-    <div class="wrapper">
+    <div class="wrapper" :style="{'background-color': show2 ? '#fff' : 'rgb(28, 43, 63)'}">
       <Scroll :pullUpLoad="null">
         <div class='header' :class="{'col-header': !show2}">
-          <span v-show="!show2" @click="show2 = true"><i class='icon ico1'></i></span>
+          <span
+            v-show="!show2"
+            @click="show2 = true"
+            style="padding: 0.2rem 0.4rem;margin-left: -0.4rem;"
+          >
+            <i class='icon ico1'></i>
+          </span>
           <p>
             <select name="" class="cg-bb" v-model="symId" @change="changeSymBaz">
               <option :value="symItem.id" v-for="(symItem, index) in symBazList" :key="index">
@@ -12,7 +18,14 @@
             </select>
             <i class='icon' :class="{'icon-bai': !show2}"></i>
           </p>
-          <div style="float: right;"><span v-show="show2" style="margin-right: -0.3rem;"><i class='icon' @click="showTwo"></i></span></div>
+          <div style="float: right;">
+            <span v-show="show2" style="margin-right: -0.3rem;padding: 0.2rem;" @click="showTwo">
+              <i class='icon'></i>
+            </span>
+            <span v-show="!show2" style="margin-right: -0.5rem;padding: 0.2rem 0.4rem;">
+              <i class='icon_xx' :class="isAttention ? 'xx_bs' : 'xx_hs'" @click="collectionTrading"></i>
+            </span>
+          </div>
         </div>
 
         <div v-show="show2" class='One'>
@@ -125,7 +138,7 @@
               <div class='one'>
                 <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
                   <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
-                  <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+                  <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
                   <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
                 </p>
               </div>
@@ -136,7 +149,7 @@
               <div class='one two'>
                 <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
                   <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-                  <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 7, setBazDeal.toSymbol) : '--'}}</span>
+                  <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
                   <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
                 </p>
               </div>
@@ -215,15 +228,15 @@
             <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
             <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
             <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
-            <div class='foot'>
-              <button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>
-              <button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>
-            </div>
+            <!--<div class='foot'>-->
+              <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
+              <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
+            <!--</div>-->
           </div>
         </div>
       </Scroll>
     </div>
-    <Footer></Footer>
+    <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'"></Footer>
     <Toast :text="textMsg" ref="toast"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
@@ -258,7 +271,7 @@
     getRealTimeData,
     repOrder
   } from 'api/bb';
-  import {selectedTradingApi} from 'api/tradingOn';
+  import {selectedTradingApi, isCollectionTrading} from 'api/tradingOn';
 
   export default {
     data() {
@@ -279,7 +292,10 @@
         toSyMid: '',
         syMid: '',
         symId: 0,
-        setBazDeal: {},    // 选中的交易对
+        setBazDeal: {
+          symbol: '',
+          toSymbol: ''
+        },    // 选中的交易对
         symBazList: [],    // 交易对
         bazDealList: [],
         symWallet: {},     // symbol资产
@@ -314,7 +330,9 @@
         handTime: '',
         gkdsList: {},           // 高、低、涨幅
         selIndex: 0,
-        locale: getLangType()
+        locale: getLangType(),
+        isAttention: true,
+        marketId: ''
       };
     },
     created() {
@@ -326,6 +344,7 @@
       if(symbol && toSymbol) {
         params.symbol = symbol;
         params.toSymbol = toSymbol;
+        this.show2 = false;
       }
       getBazaarData(params).then(data => {  // 查询交易对
         if(!Array.isArray(data)) {
@@ -380,12 +399,12 @@
       getSelectedTrading(params) {
         selectedTradingApi(params).then(data => {
           // 获取涨幅
+          this.isAttention = data.isAttention === '0';
+          this.marketId = data.id;
           this.toSyMid = data.lastPriceCny; // toSymbol换算价
           data.percent24h = (data.percent24h * 100).toFixed(2);
           this.gkdsList = {
-            ...data,
-            high: formatAmount(data.high, '', this.setBazDeal.symbol),
-            low: formatAmount(data.low, '', this.setBazDeal.symbol)
+            ...data
           };
         });
       },
@@ -458,16 +477,16 @@
           this.bbAsks.length = 7;
           this.bbBids.length = 7;
           let asks = data.asks.sort((a, b) => (b - a));
-          let bids = data.bids;
+          let bids = data.bids.sort((a, b) => (b - a));
           if (data.bids.length > 0 || data.asks.length > 0) {
             asks.forEach((item, index) => {
-              this.bbAsks[6 - index] = JSON.parse(JSON.stringify(item));
+              this.bbAsks[index] = JSON.parse(JSON.stringify(item));
             });
             bids.forEach((item, index) => {
               this.bbBids[index] = JSON.parse(JSON.stringify(item));
             });
-            if (this.selIndex == 0) {
-              this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+            if (this.selIndex === 0) {
+              this.xjPrice = this.bbAsks[6] ? formatAmount(this.bbAsks[6].price, '', this.setBazDeal.toSymbol) : '';
             }
             this.selIndex++;
           }
@@ -504,13 +523,26 @@
           ...this.setBazDeal
         };
       },
+      collectionTrading() {
+        this.isLoading = true;
+        isCollectionTrading(this.marketId).then(() => {
+          this.isLoading = false;
+          this.isAttention = !this.isAttention;
+          this.textMsg = '操作成功';
+          this.$refs.toast.show();
+        }, () => {
+          this.isLoading = false;
+        }).catch(() => {
+          this.isLoading = false;
+        });
+      },
       buy() {
         this.downConfig.direction = '0';
         this.show1 = true;
         this.xjPrice = '';
         this.wetNumber = '';
         if (this.downConfig.type === '1') {
-          this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+          this.xjPrice = this.bbAsks[6] ? formatAmount(this.bbAsks[6].price, '', this.setBazDeal.toSymbol) : '';
         }
       },
       sell() {
@@ -519,7 +551,7 @@
         this.xjPrice = '';
         this.wetNumber = '';
         if (this.downConfig.type === '1') {
-          this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 7, this.setBazDeal.toSymbol) : '';
+          this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 4, this.setBazDeal.toSymbol) : '';
         }
       },
       //选择市价或是限价
@@ -539,7 +571,7 @@
         this.show2 = false;
       },
       downClickFn() {
-        // 买入X
+        // 买入
         if (!this.isLogin) {
           this.textMsg = this.$t('common.qdlhcz');
           this.$refs.toast.show();
@@ -637,10 +669,10 @@
           let numLeft = this.xjPrice.toString().split('.')[0];
           let numRight = this.xjPrice.toString().split('.')[1];
           if (numRight) {
-            if (numRight.length > 8) {
+            if (numRight.length > 4) {
               this.textMsg = this.$t('trading.bbDepth.xsbdy');
               this.$refs.toast.show();
-              numRight = numRight.substring(0, 8);
+              numRight = numRight.substring(0, 4);
               this.xjPrice = numLeft + '.' + numRight;
             }
           }
@@ -664,12 +696,12 @@
       },
       selectAsksPrice(index) {  // 卖盘选中
         if (this.show1) {
-          this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, 7, this.setBazDeal.toSymbol) : '';
+          this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, 4, this.setBazDeal.toSymbol) : '';
         }
       },
       selectBidsPrice(index) {  // 买盘选中
         if (!this.show1) {
-          this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, 7, this.setBazDeal.toSymbol) : '';
+          this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, 4, this.setBazDeal.toSymbol) : '';
         }
       },
       formatAmount(money, len, coin) {
@@ -682,8 +714,8 @@
         this.show1 = true;
         this.xjPrice = '';
         this.wetNumber = '';
-        if (this.downConfig.type == '1') {
-          this.xjPrice = this.bbAsks[6] ? this.bbAsks[6].price : '';
+        if (this.downConfig.type === '1') {
+          this.xjPrice = this.bbAsks[6] ? formatAmount(this.bbAsks[6].price, '', this.setBazDeal.toSymbol) : '';
         }
       },
       // 去卖
@@ -693,8 +725,8 @@
         this.show1 = false;
         this.xjPrice = '';
         this.wetNumber = '';
-        if (this.downConfig.type == '1') {
-          this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 7, this.setBazDeal.toSymbol) : '';
+        if (this.downConfig.type === '1') {
+          this.xjPrice = this.bbBids[0] ? formatAmount(this.bbBids[0].price, 4, this.setBazDeal.toSymbol) : '';
         }
       },
       toOtcFn() {
@@ -757,7 +789,6 @@
       bottom: 0rem;
       left: 0;
       right: 0;
-      background: #fff;
       overflow: auto;
     }
     .red {
@@ -822,6 +853,18 @@
         height: .30rem;
         background-image: url('./fbai.png');
         margin-top: .25rem;
+      }
+      .icon_xx{
+        display: inline-block;
+        width: .3rem;
+        height: .3rem;
+        background-size: 100% 100%;
+      }
+      .xx_bs{
+        background-image: url('./xxbs.png');
+      }
+      .xx_hs{
+        background-image: url('./xxhs.png');
       }
       .cg-bb {
         padding: 0.2rem 0;
@@ -1164,6 +1207,7 @@
         background: #1c2b3f;
       }
       .main2 {
+        padding-bottom: 0.98rem;
         width: 100%;
         margin-bottom: 1.55rem;
         .tabs {

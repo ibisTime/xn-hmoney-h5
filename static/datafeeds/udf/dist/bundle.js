@@ -110,12 +110,14 @@
       };
       // console.log(window.SOCKET);
       period = foramtList[resolution];
-      let setBazDeal = sessionStorage.getItem('setBazDeal') || {
-        symbol: 'TWT',
-        toSymbol: 'BTC'
-      };
+      let setBazDeal = sessionStorage.getItem('setBazDeal');
       if(setBazDeal) {
         setBazDeal = JSON.parse(setBazDeal);
+      }else {
+        setBazDeal = {
+          symbol: 'TWT',
+          toSymbol: 'BTC'
+        };
       }
       let requestParams = {
         symbol: setBazDeal.symbol,

@@ -4,7 +4,7 @@
       <Scroll :pullUpLoad="null">
         <div style="padding-bottom: 0.8rem; padding-top: 0.3rem;">
           <div class='banner'>
-            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
+            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} TWT</p>
             <div class='txt2' style='margin-top:.3rem;'>
               <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
             </div>
@@ -284,6 +284,9 @@
           color: #333;
           margin-left: .1rem;
           padding-bottom: .24rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .txt3 {
           font-size: .22rem;
