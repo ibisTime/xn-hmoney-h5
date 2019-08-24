@@ -1,7 +1,7 @@
 <template>
   <div class="log-wrapper" @click.stop>
       <div class="bg">
-          <p>FUNMVP</p>
+          <p>大文通</p>
       </div>
       <div class="card">
           <div class="main">

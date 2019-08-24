@@ -19,7 +19,7 @@ export function selectedTradingApi(params) {
 
 // 自选交易对查询
 export function ownerTradingApi() {
-  return fetch('650073');
+  return fetch('650076');
 }
 
 // 查询板块
@@ -29,5 +29,5 @@ export function queryPlateList() {
 
 // 收藏/取消收藏交易对
 export function isCollectionTrading(marketId) {
-  return fetch(650072, {marketId});
+  return fetch(650075, {marketId});
 }

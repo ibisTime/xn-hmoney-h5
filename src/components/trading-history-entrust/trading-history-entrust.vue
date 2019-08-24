@@ -121,6 +121,7 @@ export default {
 
 .publish-wrapper {
     width: 100%;
+  height: 100%;
     background: #fff;
     font-size: .28rem;
     color: #999;
@@ -149,8 +150,11 @@ export default {
 
     .main {
         width: 100%;
-        height: 13rem;
-        overflow: scroll;
+        top: 0;
+        bototm: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
         background-color: #fff;
         padding: 0 .3rem;
         padding-bottom: 2rem;

@@ -117,6 +117,9 @@
     },
     filters: {
       percent24h(v) {
+        if(!v) {
+          return 0;
+        }
         return (v * 100) + '%';
       }
     },

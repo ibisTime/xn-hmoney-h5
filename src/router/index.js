@@ -78,7 +78,8 @@ const MineMessage = () => import('components/mine-message/index');
 const MineTeam = () => import('components/mine-team/index');
 
 // 挖矿
-const DigCoin = () => import('components/dig-coin/index');
+const DigCoin = () => import('components/digCoin-page/index');
+const DigOutMine = () => import('components/digCoin-page/outMine/index');
 
 export default new Router({
   routes: [
@@ -229,8 +230,12 @@ export default new Router({
       component: MineTeam
     },
     {
-      path: '/dig-coin',
+      path: '/digCoin-page',
       component: DigCoin
+    },
+    {
+      path: '/dig-out_mine',
+      component: DigOutMine
     }
   ],
   mode: 'history',

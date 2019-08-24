@@ -5,8 +5,9 @@
         <div style="padding-bottom: 0.8rem; padding-top: 0.3rem;">
           <div class='banner'>
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} TWT</p>
-            <div class='txt2' style='margin-top:.3rem;'>
-              <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
+            <div class='txt2' style='margin-top:.12rem;'>
+              <p class='t1'>{{cdInfo.totalAmountTWT}}</p>
+              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{cdInfo.totalAmountCNY}} {{currency}}</p>
             </div>
             <div class='txt3'>
             </div>
@@ -53,7 +54,7 @@
 <script>
   import Footer from 'components/footer/footer';
   import Scroll from 'base/scroll/scroll';
-  import {userAllMoneyX, wallet, getUser} from 'api/person';
+  import {wallet, getUser} from 'api/person';
   import Toast from 'base/toast/toast';
   import FullLoading from 'base/full-loading/full-loading';
   import {
@@ -80,15 +81,16 @@
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
       this.wallet();
-      // userAllMoneyX(this.currency).then(v => {
-      //   v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
-      //   this.cdInfo = v;
-      // })
     },
     methods: {
       // 列表查询用户账户
       wallet() {
         wallet().then(v => {
+          this.cdInfo = {
+            totalAmountCNY: v.totalAmountCNY,
+            totalAmountTWT: v.totalAmountTWT,
+            totalAmountUSD: v.totalAmountUSD
+          };
           this.info = v.accountList.map(item => ({
             ...item,
             syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency),

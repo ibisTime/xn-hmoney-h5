@@ -1,8 +1,7 @@
 <template>
   <div class="trading-wrapper" :class="{'back-wrapper': !show2}" @click.stop>
     <div class="wrapper" :style="{'background-color': show2 ? '#fff' : 'rgb(28, 43, 63)'}">
-      <Scroll :pullUpLoad="null">
-        <div class='header' :class="{'col-header': !show2}">
+      <div class='header' :class="{'col-header': !show2}">
           <span
             v-show="!show2"
             @click="show2 = true"
@@ -10,195 +9,202 @@
           >
             <i class='icon ico1'></i>
           </span>
-          <p>
-            <select name="" class="cg-bb" v-model="symId" @change="changeSymBaz">
-              <option :value="symItem.id" v-for="(symItem, index) in symBazList" :key="index">
-                {{symItem.symbol}}/{{symItem.toSymbol}}
-              </option>
-            </select>
-            <i class='icon' :class="{'icon-bai': !show2}"></i>
-          </p>
-          <div style="float: right;">
+        <p>
+          <select name="" class="cg-bb" v-model="symId" @change="changeSymBaz">
+            <option :value="symItem.id" v-for="(symItem, index) in symBazList" :key="index">
+              {{symItem.symbol}}/{{symItem.toSymbol}}
+            </option>
+          </select>
+          <i class='icon' :class="{'icon-bai': !show2}"></i>
+        </p>
+        <div style="float: right;">
             <span v-show="show2" style="margin-right: -0.3rem;padding: 0.2rem;" @click="showTwo">
               <i class='icon'></i>
             </span>
-            <span v-show="!show2" style="margin-right: -0.5rem;padding: 0.2rem 0.4rem;">
+          <span v-show="!show2" style="margin-right: -0.5rem;padding: 0.2rem 0.4rem;">
               <i class='icon_xx' :class="isAttention ? 'xx_bs' : 'xx_hs'" @click="collectionTrading"></i>
             </span>
+        </div>
+      </div>
+
+      <div v-show="show2" class='One'>
+        <div class="top">
+          <div class="left">
+            <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
+            <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
+            <p>
+              <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
+                <option value="1" v-if="langType === 'en'">&nbsp;&nbsp;{{$t('trading.bbDeal.xj')}}</option>
+                <option value="1" v-else>{{$t('trading.bbDeal.xj')}}</option>
+                <option value="0">{{$t('trading.bbDeal.sj')}}</option>
+              </select>
+              <i class='icon'></i>
+            </p>
+          </div>
+          <div class="right">
+            <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
+            <span class='txt5'>{{$t('common.jg')}}<br/>({{setBazDeal.toSymbol}})</span>
+            <span class='txt6'>{{$t('trading.bbDeal.sl')}}<br/>({{setBazDeal.symbol}})</span>
           </div>
         </div>
-
-        <div v-show="show2" class='One'>
-          <div class="top">
-            <div class="left">
-              <span @click="buy" :class="[show1? 'txt1 buy' : 'txt1']">{{$t('trading.bbDeal.mr')}}</span>
-              <span @click="sell" :class="[!show1? 'txt2 sell' : 'txt2']">{{$t('trading.bbDeal.mc')}}</span>
-              <p>
-                <select name="" id="" class='txt3' v-model="downConfig.type" @change="bbDealType">
-                  <option value="1" v-if="langType === 'en'">&nbsp;&nbsp;{{$t('trading.bbDeal.xj')}}</option>
-                  <option value="1" v-else>{{$t('trading.bbDeal.xj')}}</option>
-                  <option value="0">{{$t('trading.bbDeal.sj')}}</option>
-                </select>
-                <i class='icon'></i>
-              </p>
-            </div>
-            <div class="right">
-              <span class='txt4'>{{$t('trading.bbDeal.pk')}}</span>
-              <span class='txt5'>{{$t('common.jg')}}<br/>({{setBazDeal.toSymbol}})</span>
-              <span class='txt6'>{{$t('trading.bbDeal.sl')}}<br/>({{setBazDeal.symbol}})</span>
-            </div>
+        <div class="main">
+          <!-- 买入 -->
+          <div v-show="show1" class="left">
+            <p class='he9'>
+              <input
+                type="number"
+                :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
+                v-model="xjPrice"
+                :disabled="downConfig.type === '0'"
+                @keyup="qrLength"
+              >
+              <span class='black'>{{setBazDeal.toSymbol}}</span>
+            </p>
+            <p class='text2' v-show="downConfig.type === '0'"></p>
+            <p class='text2' v-show="downConfig.type === '1'">
+              <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+            </p>
+            <p class='he9 mb20'>
+              <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
+              <span class='black'>{{downConfig.type === '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
+            </p>
+            <p class='he9 no-bor' v-show="downConfig.type === '1'">
+              <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+              <span class='black'>{{setBazDeal.toSymbol}}</span>
+            </p>
+            <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
+            <p class='he9 green'>
+              <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
+              <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+            </p>
+            <p class='he9 btn green' v-show="downConfig.type === '1'">
+              <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
+              <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+            </p>
+            <p class='he9 btn'>
+              <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
+              <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+            </p>
+            <p class='he9 btn'>
+              <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
+              <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+            </p>
           </div>
-          <div class="main">
-            <!-- 买入 -->
-            <div v-show="show1" class="left">
-              <p class='he9'>
-                <input
-                  type="number"
-                  :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
-                  v-model="xjPrice"
-                  :disabled="downConfig.type === '0'"
-                  @keyup="qrLength"
-                >
-                <span class='black'>{{setBazDeal.toSymbol}}</span>
-              </p>
-              <p class='text2' v-show="downConfig.type === '0'"></p>
-              <p class='text2' v-show="downConfig.type === '1'">
-                <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
-              </p>
-              <p class='he9 mb20'>
-                <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
-                <span class='black'>{{downConfig.type === '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
-              </p>
-              <p class='he9 no-bor' v-show="downConfig.type === '1'">
-                <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
-                <span class='black'>{{setBazDeal.toSymbol}}</span>
-              </p>
-              <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
-              <p class='he9 green'>
-                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-                <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
-              </p>
-              <p class='he9 btn green' v-show="downConfig.type === '1'">
-                <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
-                <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
-              </p>
-              <p class='he9 btn'>
-                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-                <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
-              </p>
-              <p class='he9 btn'>
-                <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-                <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
-              </p>
-            </div>
-            <!-- 卖出 -->
-            <div v-show="!show1" class="left">
-              <p class='he9'>
-                <input
-                  type="number"
-                  :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
-                  v-model="xjPrice"
-                  :disabled="downConfig.type === '0'"
-                  @keyup="qrLength"
-                >
-                <span class='black'>{{setBazDeal.toSymbol}}</span>
-              </p>
-              <p class='text2' v-show="downConfig.type === '0'"></p>
-              <p class='text2' v-show="downConfig.type === '1'">
-                <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
-              </p>
-              <p class='he9 mb20'>
-                <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
-                <span class='black'>{{setBazDeal.symbol}}</span>
-              </p>
-              <p class='he9 no-bor' v-show="downConfig.type === '1'">
-                <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
-                <span class='black'>{{setBazDeal.toSymbol}}</span>
-              </p>
-              <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
-              <p class='he9 red'>
-                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-                <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
-              </p>
-              <p class='he9 btn red' v-show="downConfig.type === '1'">
-                <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
-                <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
-              </p>
-              <p class='he9 btn'>
-                <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-                <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
-              </p>
-              <p class='he9 btn'>
-                <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-                <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
-              </p>
-            </div>
-
-            <div class="right">
-              <div class='one'>
-                <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
-                  <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
-                  <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
-                  <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
-                </p>
-              </div>
-              <p class='middle'>
-                <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
-                <!-- <i class='icon'></i> -->
-              </p>
-              <div class='one two'>
-                <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
-                  <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
-                  <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
-                  <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
-                </p>
-              </div>
-
-            </div>
+          <!-- 卖出 -->
+          <div v-show="!show1" class="left">
+            <p class='he9'>
+              <input
+                type="number"
+                :placeholder="downConfig.type === '0' ? '以当前最优价格交易' : $t('trading.bbDeal.wtjg')"
+                v-model="xjPrice"
+                :disabled="downConfig.type === '0'"
+                @keyup="qrLength"
+              >
+              <span class='black'>{{setBazDeal.toSymbol}}</span>
+            </p>
+            <p class='text2' v-show="downConfig.type === '0'"></p>
+            <p class='text2' v-show="downConfig.type === '1'">
+              <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+            </p>
+            <p class='he9 mb20'>
+              <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
+              <span class='black'>{{setBazDeal.symbol}}</span>
+            </p>
+            <p class='he9 no-bor' v-show="downConfig.type === '1'">
+              <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+              <span class='black'>{{setBazDeal.toSymbol}}</span>
+            </p>
+            <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
+            <p class='he9 red'>
+              <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
+              <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+            </p>
+            <p class='he9 btn red' v-show="downConfig.type === '1'">
+              <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
+              <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+            </p>
+            <p class='he9 btn'>
+              <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
+              <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+            </p>
+            <p class='he9 btn'>
+              <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
+              <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+            </p>
           </div>
-          <div class='entrust' v-show="isLogin">
-            <div class='tabs'>
-              <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
-              <p @click='showHisto' class='history'><i class='icon'></i>
-                <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link>
+
+          <div class="right">
+            <div class='one'>
+              <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
+                <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
+                <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
+                <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
               </p>
             </div>
-            <div v-show="!show3" class='current-history'>
-              <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
-                <p class='text1'>
-                  <span :class='myItem.direction === 0 ? "green" : "red1"'>{{myItem.direction === 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
-                  <span>{{myItem.createDatetime}}</span>
-                  <span class='red' v-show="(myItem.type !== 0 && (myItem.status === '0' || myItem.status === '1'))"
-                        @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
-                </p>
-                <div class='text2'>
-                  <div class='txt1'>
-                    <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
-                    <p class='black'>{{myItem.type === 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
-                  </div>
-                  <div class='txt2'>
-                    <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
-                    <p class='black'>{{myItem.totalCount}}</p>
-                  </div>
-                  <div class='txt3'>
-                    <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
-                    <p class='black'>{{myItem.tradedCount}}</p>
+            <p class='middle'>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
+              <!-- <i class='icon'></i> -->
+            </p>
+            <div class='one two'>
+              <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
+                <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
+                <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
+                <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
+              </p>
+            </div>
+
+          </div>
+        </div>
+        <div class='entrust' v-show="isLogin">
+          <div class='tabs'>
+            <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
+            <p @click='showHisto' class='history'><i class='icon'></i>
+              <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link>
+            </p>
+          </div>
+          <div v-show="!show3" class='current-history' @touchmove.prevent>
+            <div class="history_wp">
+              <Scroll :pullUpLoad="null">
+                <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
+                  <p class='text1'>
+                    <span :class='myItem.direction === 0 ? "green" : "red1"'>{{myItem.direction === 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                    <span>{{myItem.createDatetime}}</span>
+                    <span class='red' v-show="(myItem.type !== 0 && (myItem.status === '0' || myItem.status === '1'))"
+                          @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
+                  </p>
+                  <div class='text2'>
+                    <div class='txt1'>
+                      <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
+                      <p class='black'>{{myItem.type === 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
+                    </div>
+                    <div class='txt2'>
+                      <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
+                      <p class='black'>{{myItem.totalCount}}</p>
+                    </div>
+                    <div class='txt3'>
+                      <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
+                      <p class='black'>{{myItem.tradedCount}}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
-                <img src="./zwdata.png"/>
-                <p>{{$t('trading.bbDeal.zwdd')}}</p>
-              </div>
+                <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
+                  <img src="./zwdata.png"/>
+                  <p>{{$t('trading.bbDeal.zwdd')}}</p>
+                </div>
+              </Scroll>
             </div>
-
           </div>
         </div>
-        <!-- K线图 -->
-        <div v-show="!show2" class='Two'>
+      </div>
+      <!-- K线图 -->
+      <div v-show="!show2" class='Two'>
+        <Scroll :pullUpLoad="null">
           <div class="top-mian">
-            <p class='text1'><span class='txt1'>{{setBazDeal.toSymbol}}</span><span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span><span
-              class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span></p>
+            <p class='text1'>
+              <span class='txt1'>{{setBazDeal.toSymbol}}</span>
+              <span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span>
+              <span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span>
+            </p>
             <div class='text2'>
               <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
               </p>
@@ -229,12 +235,12 @@
             <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
             <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
             <!--<div class='foot'>-->
-              <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
-              <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
+            <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
+            <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
             <!--</div>-->
           </div>
-        </div>
-      </Scroll>
+        </Scroll>
+      </div>
     </div>
     <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'"></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -245,6 +251,7 @@
   import Footer from 'components/footer/footer';
   import Toast from 'base/toast/toast';
   import Scroll from 'base/scroll/scroll';
+  import noResult from 'base/no-result/no-result';
   import FullLoading from 'base/full-loading/full-loading';
   import TradingSynopsis from 'components/trading-synopsis/trading-synopsis';
   import TradingPutUp from 'components/trading-put-up/trading-put-up';
@@ -279,7 +286,6 @@
         langType: getLangType(),
         referCurrency: 'CNY',
         textMsg: '',
-        hasMore: true,
         isLoading: false,
         isLogin: false,
         show1: true,
@@ -401,6 +407,7 @@
           // 获取涨幅
           this.isAttention = data.isAttention === '0';
           this.marketId = data.id;
+          this.bb_zxj = data.lastPrice;
           this.toSyMid = data.lastPriceCny; // toSymbol换算价
           data.percent24h = (data.percent24h * 100).toFixed(2);
           this.gkdsList = {
@@ -450,7 +457,6 @@
         this.realTimeData();
         if (this.isLogin) {
           this.getUserWalletData();
-          this.hasMore = true;
           this.start = 1;
           this.myOrderData = [];
           this.myOrderTicket();
@@ -480,7 +486,7 @@
           let bids = data.bids.sort((a, b) => (b - a));
           if (data.bids.length > 0 || data.asks.length > 0) {
             asks.forEach((item, index) => {
-              this.bbAsks[index] = JSON.parse(JSON.stringify(item));
+              this.bbAsks[6 - index] = JSON.parse(JSON.stringify(item));
             });
             bids.forEach((item, index) => {
               this.bbBids[index] = JSON.parse(JSON.stringify(item));
@@ -595,7 +601,6 @@
               this.$refs.toast.show();
               this.xjPrice = '';
               this.wetNumber = '';
-              this.hasMore = true;
               this.start = 1;
               this.myOrderData = [];
               this.myOrderTicket();
@@ -685,7 +690,6 @@
           this.$refs.toast.show();
           this.isLoading = false;
           setTimeout(() => {
-            this.hasMore = true;
             this.start = 1;
             this.myOrderData = [];
             this.myOrderTicket();
@@ -751,6 +755,7 @@
       Footer,
       Toast,
       Scroll,
+      noResult,
       FullLoading,
       TradingSynopsis,
       TradingPutUp,
@@ -778,18 +783,17 @@
 
   .trading-wrapper {
     width: 100%;
-    padding-bottom: 0.3rem;
     font-size: .28rem;
     color: #999;
     overflow: auto;
     .wrapper{
-      position: absolute;
-      z-index: 10;
-      top: 0rem;
-      bottom: 0rem;
-      left: 0;
-      right: 0;
-      overflow: auto;
+      /*position: absolute;*/
+      /*z-index: 10;*/
+      /*top: 0rem;*/
+      /*bottom: 0rem;*/
+      /*left: 0;*/
+      /*right: 0;*/
+      /*overflow: hidden;*/
     }
     .red {
       color: #d53d3d;
@@ -812,6 +816,7 @@
     }
 
     .header {
+      position: relative;
       width: 100%;
       padding: 0 .3rem;
       height: .98rem;
@@ -1080,12 +1085,15 @@
             color: #333;
           }
           .history {
+            padding-right: 0.3rem;
+            padding-left: 0.3rem;
+            margin-right: -0.3rem;
             .icon {
               width: .25rem;
-              height: .28rem;
+              height: .32rem;
               background-image: url('./ls.png');
               vertical-align: middle;
-              margin-right: .12rem;
+              margin-right: .08rem;
             }
           }
         }
@@ -1106,10 +1114,18 @@
         .current-history {
           width: 100%;
           height: 5rem;
-          overflow: scroll;
+          position: relative;
+          .history_wp{
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            overflow: hidden;
+          }
           .list {
             width: 100%;
-            padding: .4rem 0;
+            padding: .4rem 0 0.9rem 0;
             border-top: .01rem solid #e5e5e5;
             .text1 {
               padding-bottom: .4rem;
@@ -1148,9 +1164,15 @@
 
     // K线图页面
     .Two {
-      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0.98rem;
+      bottom: 0;
+      right: 0;
+      overflow: hidden;
       font-size: .32rem;
       color: #fff;
+      background: #1c2b3f;
       .top-mian {
         width: 100%;
         padding: 0 .3rem;
@@ -1204,7 +1226,6 @@
 
       .main1 {
         width: 100%;
-        background: #1c2b3f;
       }
       .main2 {
         padding-bottom: 0.98rem;

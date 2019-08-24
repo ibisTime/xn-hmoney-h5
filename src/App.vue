@@ -1,24 +1,13 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <Toast :text="textMsg" ref="toast"/>
-    <!--<div-->
-      <!--class="tobuy"-->
-      <!--id="touchDemo"-->
-      <!--@click="toBuy"-->
-      <!--ref="touchDemo"-->
-      <!--@touchstart.stop="fbTouchStartFn"-->
-      <!--@touchmove.stop="fbTouchMoveFn"-->
-      <!--@touchend.stop="fbTouchEndFn"-->
-      <!--v-show="showFlag"-->
-    <!--&gt;-->
-      <!--<div >{{$t('common.buyFMVP')}}</div>-->
-    <!--</div>-->
+    <Toast :text="textMsg" id="toast" ref="toast"/>
+    <FullLoading id="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  //@touchmove.prevent
+  import FullLoading from 'base/full-loading/full-loading';
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam, setUser} from 'common/js/util';
   import {messageMixin} from 'common/js/message-mixin';
@@ -31,22 +20,12 @@
       return {
         textMsg: '',
         coinData: {},
-        position: {x: '', y: ''},
-        flags: false,
-        demoX: '',
-        demoY: '',
-        moveX: '',
-        moveY: '',
-        xPum: '',
-        yPum: '',
-        touchDemo: '',
-        docuWidth: '',
-        docuHeight: '',
-        showFlag: true
+        isLoading: false
       }
     },
     created() {
       this.$router.beforeEach((to, from, next) => {
+        this.isLoading = true;
         let userId = getUrlParam('userId') || '';
         let token = getUrlParam('token') || '';
         if (isLogin()) {
@@ -67,7 +46,7 @@
             to.path === '/security-loginPassword') {
             next();
           } else {
-            this.textMsg = this.$t('common.qxdl');
+            this.textMsg = '请先登录';
             this.$refs.toast.show();
             setTimeout(() => {
               next('/login');
@@ -75,8 +54,8 @@
           }
         }
       });
-      let self = this;
-      this.$router.afterEach((to, from) => {
+      this.$router.afterEach(() => {
+        this.isLoading = false;
         if(!sessionStorage.getItem('coinData')){
           getBbListData().then(data => {
             for(let i = 0; i < data.length; i ++){
@@ -95,92 +74,11 @@
         if (userId && token) {
           setUser({userId, token});
         }
-        if (isLogin()) {
-          // this.tencentLogin();
-        } else {
-          if (to.path === '/' ||
-            to.path === '/page' ||
-            to.path === '/shop-usedCar' ||
-            to.path === '/system-notice' ||
-            to.path === '/about-platformIntroduced?ckey=about_us' ||
-            to.path === '/trading' ||
-            to.path === '/market' ||
-            to.path === '/login' ||
-            to.path === '/registered' ||
-            to.path === '/security-loginPassword') {
-          } else {
-            this.textMsg = this.$t('common.qxdl');
-            this.$refs.toast.show();
-            setTimeout(() => {
-              this.$router.push('/login');
-            }, 1500);
-          }
-        }
       });
     },
-    mounted() {
-
-    },
     components: {
-      Toast
-    },
-    methods: {
-      // 实现 发布 拖动
-      /*fbTouchStartFn(){
-        this.touchDemo = this.$refs.touchDemo;
-        this.flags = true;
-        let touch = '';
-        if(event.touchs){
-          touch = event.touchs[0];
-        }else{
-          touch = event.changedTouches[0];
-        }
-
-        this.docuWidth = document.body.clientWidth - 150;
-        this.docuHeight = document.body.clientHeight - 50;
-        this.position.x = touch.clientX;
-        this.position.y = touch.clientY;
-        this.demoX = this.touchDemo.offsetLeft;
-        this.demoY = this.touchDemo.offsetTop;
-      },
-      fbTouchMoveFn(){
-        event.preventDefault();
-        if(this.flags){
-          var touch ;
-          if(event.touches){
-              touch = event.touches[0];
-          }else {
-              touch = event.changedTouches[0];
-          }
-          this.moveX = touch.clientX - this.position.x;
-          this.moveY = touch.clientY - this.position.y;
-          this.xPum = this.demoX + this.moveX;
-          this.yPum = this.demoY + this.moveY;
-
-          // 判断边界
-          if(this.xPum > this.docuWidth){
-            this.xPum = this.docuWidth;
-          }
-          if(this.xPum < 0){
-            this.xPum = 0;
-          }
-          if(this.yPum > this.docuHeight){
-            this.yPum = this.docuHeight;
-          }
-          if(this.yPum < 0){
-            this.yPum = 0;
-          }
-
-          this.touchDemo.style.left = this.xPum / 50 + 'rem';
-          this.touchDemo.style.top = this.yPum / 50 + 'rem';
-        }
-      },
-      fbTouchEndFn(){
-        this.flags = false;
-      },
-      toBuy(){
-        this.$router.push('wallet-top-up?type=buy');
-      }*/
+      Toast,
+      FullLoading
     }
   };
 </script>
