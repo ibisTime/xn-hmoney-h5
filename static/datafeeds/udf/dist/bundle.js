@@ -96,7 +96,7 @@
     }
 
     HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onLoadedCallback) {
-      let period = '';
+      const resolutionOwner = sessionStorage.getItem('resolution');
       let foramtList = {
         '1': '1min',
         '5': '5min',
@@ -109,7 +109,7 @@
         '1M': '1mon'
       };
       // console.log(window.SOCKET);
-      period = foramtList[resolution];
+      const period = resolutionOwner ? foramtList[resolutionOwner] : foramtList[resolution];
       let setBazDeal = sessionStorage.getItem('setBazDeal');
       if(setBazDeal) {
         setBazDeal = JSON.parse(setBazDeal);
@@ -719,8 +719,8 @@
         'type': 'coin',
         'ticker': setBazDeal.symbol,
         'toSymbol': setBazDeal.toSymbol,
-        'pricescale': 100000000,
-        'volumescale': 100000000,
+        'pricescale': 10000,
+        'volumescale': 10000,
         'intraday-multipliers': []
       };
       onResultReady(symbolInfo);

@@ -332,7 +332,7 @@ export function editIntroduce (introduce) {
  * 用户认证
  */
 export function userAttestation (config) {
-  return fetch(805160, config);
+  return fetch(805200, config);
 }
 
 // 修改头像

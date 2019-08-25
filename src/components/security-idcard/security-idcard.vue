@@ -1,56 +1,86 @@
 <template>
   <div class="idcard-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        <span class='title'>身份证认证</span>
-        </p>
-    </header> -->
-    <div class="main">
-      <p><input class="item-input" type="text" :placeholder="$t('securityIdcard.subject.qsrxm')" v-model="config.realName"></p>
-      <p><input  class="item-input" type="text" :placeholder="`${$t('securityIdcard.subject.qsr')}${rzText}${$t('securityIdcard.subject.h')}`" v-model="config.idNo"></p>
-    </div>
-    <div class="id-pic">
-      <h5>{{$t('securityIdcard.subject.sc')}}{{rzText}}</h5>
-      <div class="pic-box">
-        <qiniu
-          ref="qiniu"
-          style="visibility: hidden;position: absolute;"
-          :token="token"
-          :uploadUrl="uploadUrl">
-        </qiniu>
-        <input
-          type="file"
-          :multiple="multiple"
-          ref="fileInput"
-          @change="fileChange($event, 'z')"
-          accept="image/*"
-        />
-        <p class="add-pic"><img src="./sctp.png" alt=""></p>
-        <p class="pic-tit">{{rzText}}{{$t('securityIdcard.subject.zm')}}</p>
-        <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_z"></div>
-      </div>
-      <div class="pic-box" style="margin-top: 0.3rem;">
-        <qiniu
-          ref="qiniu"
-          style="visibility: hidden;position: absolute;"
-          :token="token"
-          :uploadUrl="uploadUrl">
-        </qiniu>
-        <input
-          type="file"
-          :multiple="multiple"
-          ref="fileInput1"
-          @change="fileChange($event, 'f')"
-          accept="image/*"
-        />
-        <p class="add-pic"><img src="./sctp.png" alt=""></p>
-        <p class="pic-tit">{{rzText}}{{$t('securityIdcard.subject.fm')}}</p>
-        <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_f"></div>
-      </div>
-    </div>
-    <div class="foot">
-      <button @click="scIdCard">{{$t('securityIdcard.subject.qd')}}</button>
+    <div class="wrapper">
+      <Scroll :pullUpLoad="null">
+        <div class="main">
+          <p>
+            <input
+              class="item-input"
+              type="text"
+              :placeholder="$t('securityIdcard.subject.qsrxm')"
+              v-model="config.realName"
+            >
+          </p>
+          <p>
+            <input
+              class="item-input"
+              type="text"
+              placeholder="请输入身份证号"
+              v-model="config.idNo"
+            >
+          </p>
+        </div>
+        <div class="id-pic">
+          <h5>{{$t('securityIdcard.subject.sc')}}{{rzText}}</h5>
+          <div class="pic-box">
+            <qiniu
+              ref="qiniu"
+              style="visibility: hidden;position: absolute;"
+              :token="token"
+              :uploadUrl="uploadUrl">
+            </qiniu>
+            <input
+              type="file"
+              :multiple="multiple"
+              ref="fileInput"
+              @change="fileChange($event, 'z')"
+              accept="image/*"
+            />
+            <p class="add-pic"><img src="./sctp.png" alt=""></p>
+            <p class="pic-tit">身份证正面照</p>
+            <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_z"></div>
+          </div>
+          <div class="pic-box" style="margin-top: 0.3rem;">
+            <qiniu
+              ref="qiniu"
+              style="visibility: hidden;position: absolute;"
+              :token="token"
+              :uploadUrl="uploadUrl">
+            </qiniu>
+            <input
+              type="file"
+              :multiple="multiple"
+              ref="fileInput1"
+              @change="fileChange($event, 'f')"
+              accept="image/*"
+            />
+            <p class="add-pic"><img src="./sctp.png" alt=""></p>
+            <p class="pic-tit">身份证反面照</p>
+            <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_f"></div>
+          </div>
+          <div class="pic-box" style="margin-top: 0.3rem;">
+            <qiniu
+              ref="qiniu"
+              style="visibility: hidden;position: absolute;"
+              :token="token"
+              :uploadUrl="uploadUrl">
+            </qiniu>
+            <input
+              type="file"
+              :multiple="multiple"
+              ref="fileInput2"
+              @change="fileChange($event, 'l')"
+              accept="image/*"
+            />
+            <p class="add-pic"><img src="./sctp.png" alt=""></p>
+            <p class="pic-tit">手持身份证照片</p>
+            <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_l"></div>
+          </div>
+        </div>
+        <div class="foot">
+          <button @click="scIdCard">{{$t('securityIdcard.subject.qd')}}</button>
+        </div>
+      </Scroll>
     </div>
     <Toast ref="toast" :text="text"/>
 
@@ -63,6 +93,7 @@ import {formatImg, getImgData, getUserId, setTitle} from 'common/js/util';
 import { getQiniuToken } from 'api/general';
 import { userAttestation } from 'api/user';
 import Toast from 'base/toast/toast';
+import Scroll from 'base/scroll/scroll';
 export default {
   data() {
     return {
@@ -75,40 +106,16 @@ export default {
       uploadUrl: '',
       rzType: '',
       config: {
-        idFace: '',
-        idOppo: '',
-        applyUser: getUserId(),
-        country: 'cn',
-        idKind: '1',
-        idNo: '',
-        realName: ''
+        frontImage: '',
+        backImage: '',
+        faceImage: '',
+        realName: '',
+        idNo: ''
       }
     };
   },
-  beforeRouteEnter (to, from, next) {
-    if(from.path == '/security-identity'){
-      next();
-    }else{
-      next('/security-center');
-    }
-  },
   created() {
-    this.rzType = this.$route.params.type;
-    switch(this.rzType){
-      case 'sfz':
-        this.rzText = this.$t('securityIdcard.subject.sfz');
-        this.config.idKind = '1';
-        break;
-      case 'hz':
-        this.rzText = this.$t('securityIdcard.subject.hz');
-        this.config.idKind = '2';
-        break;
-      case 'jz':
-        this.rzText = this.$t('securityIdcard.subject.jz');
-        this.config.idKind = '3';
-        break;
-    };
-    setTitle(this.rzText + this.$t('securityIdcard.subject.rz'));
+    setTitle('身份证认证');
   },
   mounted() {
     this.uploadUrl = 'http://up.qiniup.com';
@@ -161,7 +168,6 @@ export default {
             type: file.type,
             key: _url.split('/').pop() + '.' + file.name.split('.').pop()
           };
-
           self.uploadPhoto(data, item.key).then(() => {
             item = {
               ...item,
@@ -171,33 +177,41 @@ export default {
               self.photos = [item];
             }
             self.updatePhotos(item);
-            if(zf_ty == 'z'){
-              self.config.idFace = self.$refs.zf_z.src = formatImg(self.photos[0].key);
+            if(zf_ty === 'z'){
+              self.$refs.zf_z.src = formatImg(self.photos[0].key);
+              self.config.frontImage = self.photos[0].key;
             }
-            if(zf_ty == 'f'){
-              self.config.idOppo = self.$refs.zf_f.src = formatImg(self.photos[0].key);
+            if(zf_ty === 'f'){
+              self.$refs.zf_f.src = formatImg(self.photos[0].key);
+              self.config.backImage = self.photos[0].key;
+            }
+            if(zf_ty === 'l'){
+              self.$refs.zf_l.src = formatImg(self.photos[0].key);
+              self.config.faceImage = self.photos[0].key;
             }
           }).catch(err => {
             self.onUploadError(err);
           });
           self.$refs.fileInput.value = null;
           self.$refs.fileInput1.value = null;
+          self.$refs.fileInput2.value = null;
         });
       };
       reader.readAsDataURL(file);
     },
     scIdCard(){
-      userAttestation(this.config).then(data => {
+      userAttestation(this.config).then(() => {
         this.$refs.toast.show();
         setTimeout(() => {
-          this.$router.push('/security-identity');
+          this.$router.push('/mine');
         }, 1500);
       })
     }
   },
   components: {
     Qiniu,
-    Toast
+    Toast,
+    Scroll
   }
 };
 </script>
@@ -217,25 +231,15 @@ export default {
     background-size: 100% 100%;
   }
 
-  header {
-    line-height: 0.88rem;
-    text-align: center;
-    font-size: 0.36rem;
-    font-weight: bold;
-    background: #fff;
-    width: 100%;
-    padding: 0 0.3rem;
-    padding-bottom: 0.4rem;
-
-    .icon {
-      width: 0.21rem;
-      height: 0.36rem;
-      background-image: url('./fh.png');
-      float: left;
-      margin-top: 0.31rem;
-    }
+  .wrapper{
+    position: absolute;
+    z-index: 10;
+    top: 0rem;
+    bottom: 0rem;
+    left: 0;
+    right: 0;
+    overflow: hidden;
   }
-
   .main {
     width: 100%;
     padding: 0 .3rem;
@@ -317,7 +321,7 @@ export default {
     width: 100%;
     text-align: center;
     margin-top: 1.2rem;
-    margin-bottom: 2.43rem;
+    padding-bottom: 0.98rem;
     button {
       width: 6.28rem;
       height: 1rem;

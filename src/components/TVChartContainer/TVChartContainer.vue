@@ -155,6 +155,10 @@
       }
     },
     mounted() {
+      const resolution = sessionStorage.getItem('resolution');
+      if(resolution) {
+        this.resolution = resolution;
+      }
       this.onChartReady();
       // window.SOCKET = io('localhost:3666');
     },
@@ -292,6 +296,7 @@
               if (chart.chartType() !== _this.chartType) {
                 chart.setChartType(Number(_this.chartType));
               }
+              sessionStorage.setItem('resolution', _this.resolution);
             }
           });
         });

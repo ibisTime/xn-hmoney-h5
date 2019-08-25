@@ -3,7 +3,7 @@
     <Scroll :pullUpLoad="null">
       <div class="mine-header">
         <div class="my">
-          <div class="pic" :style="getAvatar()">
+          <div class="pic" :style="{backgroundImage: picUrl}">
             <HeadPic :content="picName" :class="{'hidden': data.photo}"/>
             <qiniu
               ref="qiniu"
@@ -112,7 +112,8 @@
         token: '',
         uploadUrl: '',
         multiple: false,
-        picName: ''
+        picName: '',
+        picUrl: ''
       };
     },
     computed: {
@@ -126,6 +127,7 @@
         this.isLoading = false;
         this.data = data;
         this.picName = data.nickname ? data.nickname.substring(0, 1) : data.loginName.substring(0, 1);
+        this.getAvatar();
       }, () => {
         this.isLoading = false;
       });
@@ -146,9 +148,7 @@
       },
       getAvatar() {
         if (this.photos.length || this.data.photo) {
-          return {
-            backgroundImage: `url(${formatImg(this.photos.length ? this.photos[0].key : this.data.photo)})`
-          }
+          this.picUrl = `url(${formatImg(this.photos.length ? this.photos[0].key : this.data.photo)})`;
         }
       },
       /**
@@ -187,7 +187,7 @@
                 changePhoto(self.photos[0].key).then(() => {
                   self.textMsg = self.$t('mine.subject.ghcg');
                   self.$refs.toast.show();
-                })
+                });
               }
               self.updatePhotos(item);
             }).catch(err => {
@@ -209,6 +209,7 @@
             break;
           }
         }
+        this.getAvatar();
       },
       uploadPhoto(base64, key) {
         return this.$refs.qiniu.uploadByBase64(base64, key);

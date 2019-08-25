@@ -75,8 +75,6 @@
       const listX = [], listY = [];
       for(let i = 0; i < len; i ++) {
         listX.push(generateRandom(listX, 100));
-      }
-      for(let i = 0; i < len; i ++) {
         listY.push(generateRandom(listY, 100));
       }
       this.listX = listX;

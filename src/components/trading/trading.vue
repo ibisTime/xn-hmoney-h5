@@ -202,7 +202,7 @@
           <div class="top-mian">
             <p class='text1'>
               <span class='txt1'>{{setBazDeal.toSymbol}}</span>
-              <span class='red txt3'>&nbsp;&nbsp;{{ bb_zxj }}</span>
+              <span class='red txt3'>{{ bb_zxj }}</span>
               <span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span>
             </p>
             <div class='text2'>
@@ -212,7 +212,7 @@
               </p>
             </div>
             <div class='text3'>
-              <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume : '0'}}</span></p>
+              <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0' : '0'}}</span></p>
               <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0'}}</span>
               </p>
             </div>
@@ -575,6 +575,7 @@
       },
       showTwo() {
         this.show2 = false;
+        this.isLoading = true;
       },
       downClickFn() {
         // 买入
@@ -1205,7 +1206,6 @@
             font-weight: bold;
           }
           .txt4 {
-            margin-left: .3rem;
             font-weight: bold;
           }
         }

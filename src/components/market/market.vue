@@ -28,11 +28,11 @@
             >
               <div class="sing_left">
                 <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
-                <p>24H量 <span>{{item.volume}}</span></p>
+                <p class="s_l_p">24H量 <span>{{item.volume ? item.volume : '0'}}</span></p>
               </div>
               <div class="sing_mid">
                 <p class="li_head">{{item.lastPrice}}</p>
-                <p>￥123123</p>
+                <p>≈￥{{item.lastPriceCny ? item.lastPriceCny : '0'}}</p>
               </div>
               <div class="sing_right">
               <span
@@ -70,7 +70,7 @@
             value: '全部'
           }
         ],
-        tradingData: [{}],
+        tradingData: [],
         currentIndex: 0,
         params: {
           start: 1,
@@ -181,6 +181,12 @@
       align-items: center;
       .sing_left {
         flex: 1;
+        .s_l_p{
+          font-size: 0.26rem;
+          span{
+            font-size: 0.32rem;
+          }
+        }
       }
       .sing_mid {
         flex: 1;

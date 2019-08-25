@@ -7,7 +7,7 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag' to='security-identity'>
+        <router-link class='tag' to='security-idcard'>
           <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>

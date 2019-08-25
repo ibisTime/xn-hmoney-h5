@@ -79,7 +79,9 @@ const MineTeam = () => import('components/mine-team/index');
 
 // 挖矿
 const DigCoin = () => import('components/digCoin-page/index');
-const DigOutMine = () => import('components/digCoin-page/outMine/index');
+const DigOutMine = () => import('components/digCoin-page/outMine/outMine');
+const DigHistoryMine = () => import('components/digCoin-page/history-mine/index');
+const DigOutRecord = () => import('components/digCoin-page/outRecord/outRecord');
 
 export default new Router({
   routes: [
@@ -178,7 +180,7 @@ export default new Router({
       component: securityIdentity
     },
     {
-      path: '/security-idcard/:type',
+      path: '/security-idcard',
       component: securityIdcard
     },
     {
@@ -230,12 +232,20 @@ export default new Router({
       component: MineTeam
     },
     {
-      path: '/digCoin-page',
+      path: '/dig-coin',
       component: DigCoin
     },
     {
       path: '/dig-out_mine',
       component: DigOutMine
+    },
+    {
+      path: '/history-mine',
+      component: DigHistoryMine
+    },
+    {
+      path: '/out-record',
+      component: DigOutRecord
     }
   ],
   mode: 'history',
