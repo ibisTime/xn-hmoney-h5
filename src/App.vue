@@ -166,4 +166,9 @@
       font-size: 0.32rem;
     }
   }
+  .icon_right_to{
+    background-image: url('/static/right_to.png');
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+  }
 </style>

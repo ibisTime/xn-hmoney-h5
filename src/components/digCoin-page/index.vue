@@ -14,10 +14,10 @@
         </div>
       </div>
       <div class="wa_dig">
-        <div class="left">
+        <router-link class="left" to="calculate-record">
           <img class="img_sl" src="./image/wa_sl.png" alt="">
           <span>算力：0.0001</span>
-        </div>
+        </router-link>
       </div>
       <div class="wa_con">
         <div class="jbi_box">
@@ -30,10 +30,10 @@
             <p>0.001</p>
           </div>
         </div>
-        <div class="suanli_box">
+        <router-link class="suanli_box" to="get-calculate">
           <img src="./image/get_suanli.png" alt="">
           <p class="sli_p">获取算力</p>
-        </div>
+        </router-link>
       </div>
     </div>
     <div class="dig_con">

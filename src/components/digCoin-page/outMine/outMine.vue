@@ -45,29 +45,7 @@
         </div>
       </div>
     </div>
-    <div class="modal_tag" v-show="isShowPawModal" @click="isShowPawModal = false">
-      <div class="bounced" @click.stop :style="{top: isFocus ? '30%' : '50%'}">
-        <h5>请输入密码</h5>
-        <div class="iup_box">
-          <div>{{iupPawList[0] && '·'}}</div>
-          <div>{{iupPawList[1] && '·'}}</div>
-          <div>{{iupPawList[2] && '·'}}</div>
-          <div>{{iupPawList[3] && '·'}}</div>
-          <div>{{iupPawList[4] && '·'}}</div>
-          <div>{{iupPawList[5] && '·'}}</div>
-          <input type="password" @keyup.stop="inputPaw" @focus="isFocus = true" @blur="isFocus = false" ref="pawRef">
-        </div>
-        <div class="foo_btns">
-          <div class="left" @click="isShowPawModal = false">
-            取消
-          </div>
-          <div class="right" @click="determinePaw">
-            确定
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal_success" v-if="isSuccessModal" @click="isSuccessModal === false">
+    <div class="modal_success" v-if="isSuccessModal" @click="isSuccessModal = false">
       <div class="success_modal_box" @click.stop>
         <div class="suc_m_header">
           <img class="s_m_h_img" src="../image/success_icon.png" alt="">
@@ -79,20 +57,19 @@
         </p>
       </div>
     </div>
+    <PawModal :isShow="isShowPawModal" @getPawList="getPawList" @removePaw="removePaw"/>
   </div>
 </template>
 
 <script>
   import {setTitle} from 'common/js/util';
-
+  import PawModal from 'base/pwd-modal/index';
   export default {
     data() {
       return {
         isShowModal: false,
-        iupPawList: [],
-        isShowPawModal: false,
         isSuccessModal: false,
-        isFocus: false,
+        isShowPawModal: false,
         timer: 5
       }
     },
@@ -103,21 +80,16 @@
       toHistoryMine() {
         this.$router.push('/history-mine');
       },
-      inputPaw(ev) {
-        const v = ev.target.value;
-        if (v.length < 7) {
-          this.iupPawList = v.split('');
-        }
+      getPawList(list) {
+        this.isShowPawModal = false;
+        console.log(list);
       },
-      determinePaw() {
+      removePaw() {
         this.isShowPawModal = false;
       }
     },
-    watch: {
-      isShowPawModal() {
-        this.$refs.pawRef.value = '';
-        this.iupPawList = [];
-      }
+    components: {
+      PawModal
     }
   }
 </script>
@@ -271,78 +243,6 @@
           img {
             width: 0.4rem;
             height: 0.4rem;
-          }
-        }
-      }
-    }
-    .modal_tag {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.5);
-      .bounced {
-        position: absolute;
-        left: 0.5rem;
-        right: 0.5rem;
-        transform: translateY(-50%);
-        background-color: #fff;
-        border-radius: 0.2rem;
-        padding-top: 0.8rem;
-        h5 {
-          color: #333;
-          font-size: 0.48rem;
-          margin-bottom: 0.6rem;
-          text-align: center;
-        }
-        .iup_box {
-          height: 1.2rem;
-          line-height: 1.2rem;
-          background-color: #eee;
-          font-size: 0.4rem;
-          color: #333;
-          margin-bottom: 0.6rem;
-          margin-left: 0.3rem;
-          margin-right: 0.3rem;
-          position: relative;
-          border-radius: 0.08rem;
-          border-left: 1px solid #DEE0E5;
-          border-top: 1px solid #DEE0E5;
-          border-bottom: 1px solid #DEE0E5;
-          display: flex;
-          div {
-            border-right: 1px solid #DEE0E5;
-            text-align: center;
-            flex: 1;
-            height: 100%;
-            font-size: 1rem;
-          }
-          input {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 100%;
-            opacity: 0;
-          }
-        }
-        .foo_btns {
-          border-top: 1px solid #E5E5E5;
-          display: flex;
-          align-items: center;
-          font-size: 0.32rem;
-          height: 1.1rem;
-          line-height: 1.1rem;
-          .left {
-            text-align: center;
-            flex: 1;
-            border-right: 1px solid #E5E5E5;
-          }
-          .right {
-            flex: 1;
-            text-align: center;
           }
         }
       }

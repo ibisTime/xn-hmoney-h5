@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="cates-wrapper">
-        <router-link to="shop" tag="div" class="cate-item">
+        <router-link to="dig-purchase" tag="div" class="cate-item">
           <i class="cate-icon game-icon"></i>
           <p>申购</p>
         </router-link>
@@ -19,7 +19,7 @@
           <i class="cate-icon exchange-icon"></i>
           <p>挖矿</p>
         </router-link>
-        <router-link to='otc' tag="div" class="cate-item" @click.native="toOtcFn">
+        <router-link to='dig-delivery' tag="div" class="cate-item">
           <i class="cate-icon otc-icon"></i>
           <p>交割</p>
         </router-link>
@@ -28,9 +28,9 @@
         <h5><span></span>应用</h5>
         <div class="tab-wrapper">
           <div class="tabCar fun">
-            <router-link to='shop' style="display: flex;">
+            <router-link to='shop' style="display: flex; align-items: center;">
               <div class="tab_left">
-                <img src="" alt="">
+                <img src="./con_mk.png" alt="">
               </div>
               <div class="tab-text">
                 <p class="tit">{{ $t('page.cate.game') }}</p>
@@ -39,9 +39,9 @@
             </router-link>
           </div>
           <div class="tabCar bibi">
-            <router-link to='trading' style="display: flex;">
+            <router-link to='trading' style="display: flex; align-items: center;">
               <div class="tab_left">
-                <img src="" alt="">
+                <img src="./con_bbjy.png" alt="">
               </div>
               <div class="tab-text">
                 <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
@@ -50,9 +50,9 @@
             </router-link>
           </div>
           <div class="tabCar notice">
-            <router-link to='system-notice' style="display: flex;">
+            <router-link to='system-notice' style="display: flex; align-items: center;">
               <div class="tab_left">
-                <img src="" alt="">
+                <img src="./con_xtgg.png" alt="">
               </div>
               <div class="tab-text">
                 <p class="tit">系统公告</p>
@@ -61,9 +61,9 @@
             </router-link>
           </div>
           <div class="tabCar introduce">
-            <router-link to='about-platformIntroduced?ckey=about_us' style="display: flex;">
+            <router-link to='about-platformIntroduced?ckey=about_us' style="display: flex; align-items: center;">
               <div class="tab_left">
-                <img src="" alt="">
+                <img src="./con_ptjs.png" alt="">
               </div>
               <div class="tab-text">
                 <p class="tit">平台介绍</p>
@@ -134,10 +134,6 @@
         if (url !== '' && url) {
           window.open(url);
         };
-      },
-      toOtcFn(){
-        sessionStorage.removeItem('coin');
-        sessionStorage.setItem('tradeType', '1');
       }
     },
     components: {
@@ -198,15 +194,15 @@
           background-size: cover;
 
           &.game-icon {
-            @include bg-image('game');
+            background-image: url('./tab_sg.png');
           }
 
           &.exchange-icon {
-            @include bg-image('exchange');
+            background-image: url('./tab_wk.png');
           }
 
           &.otc-icon {
-            @include bg-image('otc');
+            background-image: url('./tab_jg.png');
           }
 
         }
@@ -252,7 +248,11 @@
         .tab_left{
           width: 0.6rem;
           height: 0.6rem;
-          margin-right: 0.06rem;
+          margin-right: 0.18rem;
+          img{
+            width: 0.6rem;
+            height: 0.6rem;
+          }
         }
         .tab-text {
           color: #999;

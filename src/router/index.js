@@ -82,6 +82,20 @@ const DigCoin = () => import('components/digCoin-page/index');
 const DigOutMine = () => import('components/digCoin-page/outMine/outMine');
 const DigHistoryMine = () => import('components/digCoin-page/history-mine/index');
 const DigOutRecord = () => import('components/digCoin-page/outRecord/outRecord');
+const DigGetCalculate = () => import('components/digCoin-page/get-calculate/get_calculate');
+const DigCalculateRecord = () => import('components/digCoin-page/calculate-record/calculate-record');
+const DigHisCalculate = () => import('components/digCoin-page/calculate-record/his-calculate/his-calculate');
+const DigCalculateDetail = () => import('components/digCoin-page/calculate-record/calculate-detail/calculate-detail');
+const DigPurchase = () => import('components/dig-purchase/index');
+const DigPurchaseDetail = () => import('components/dig-purchase/purchase-detail/purchase-detail');
+const DigPurchaseRecord = () => import('components/dig-purchase/purchase-record/purchase-record');
+const DigDelivery = () => import('components/dig-delivery/index');
+const DigDeliveryImage = () => import('components/dig-delivery/delivery-image/delivery-image');
+const DigDeliveryConfirm = () => import('components/dig-delivery/delivery-confirm/delivery-confirm');
+const DigDeliverySelectType = () => import('components/dig-delivery/delivery-select-type/delivery-select-type');
+const DigDeliveryDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail');
+const DigDeliveryRecord = () => import('components/dig-delivery/delivery-record/delivery-record');
+const DigDeliveryRecordDetail = () => import('components/dig-delivery/record-detail/record-detail');
 
 export default new Router({
   routes: [
@@ -246,6 +260,62 @@ export default new Router({
     {
       path: '/out-record',
       component: DigOutRecord
+    },
+    {
+      path: '/get-calculate',
+      component: DigGetCalculate
+    },
+    {
+      path: '/calculate-record',
+      component: DigCalculateRecord
+    },
+    {
+      path: '/his-calculate',
+      component: DigHisCalculate
+    },
+    {
+      path: '/calculate-detail',
+      component: DigCalculateDetail
+    },
+    {
+      path: '/dig-purchase',
+      component: DigPurchase
+    },
+    {
+      path: '/purchase-detail',
+      component: DigPurchaseDetail
+    },
+    {
+      path: '/purchase-record',
+      component: DigPurchaseRecord
+    },
+    {
+      path: '/dig-delivery',
+      component: DigDelivery
+    },
+    {
+      path: '/delivery-image',
+      component: DigDeliveryImage
+    },
+    {
+      path: '/delivery-confirm',
+      component: DigDeliveryConfirm
+    },
+    {
+      path: '/delivery-select-type',
+      component: DigDeliverySelectType
+    },
+    {
+      path: '/delivery-detail',
+      component: DigDeliveryDetail
+    },
+    {
+      path: '/delivery-record',
+      component: DigDeliveryRecord
+    },
+    {
+      path: '/record-detail',
+      component: DigDeliveryRecordDetail
     }
   ],
   mode: 'history',

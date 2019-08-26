@@ -4,7 +4,7 @@
       <i></i>
       <p>{{ $t('footer.navbar.page') }}</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-0" to="/market">
+    <router-link tag="div" class="foot-item item-1" to="/market">
       <i></i>
       <p>行情</p>
     </router-link>
@@ -117,11 +117,11 @@
 
       &.item-1 {
         i {
-          @include bg-image('shop');
+          background-image: url('hqing.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('shop2');
+            background-image: url('hqing_active.png');
           }
         }
       }
