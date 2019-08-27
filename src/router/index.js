@@ -49,12 +49,14 @@ const securityBindingEmail = () => import('components/security-binding-email/sec
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
+// 地址本
+const AddressBook = () => import('components/address-book/address-book');
+const AddressBookAdd = () => import('components/address-book/address-book-add');
+
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
 // 我要购买 -- 订单详情
 const walletOrderDetails = () => import('components/wallet-order-details/wallet-order-details');
-// 我的订单
-const MyOrder = () => import('components/my-order/my-order');
 // 订单详情
 const OrderDetails = () => import('components/order-details/order-details');
 // 我的 -- 邀请好友
@@ -170,10 +172,6 @@ export default new Router({
       component: Mine
     },
     {
-      path: '/my-order',
-      component: MyOrder
-    },
-    {
       path: '/my-inviteFriends',
       component: myInviteFriends
     },
@@ -224,6 +222,14 @@ export default new Router({
     {
       path: '/order-details',
       component: OrderDetails
+    },
+    {
+      path: '/address-book',
+      component: AddressBook
+    },
+    {
+      path: '/address-book-add',
+      component: AddressBookAdd
     },
     {
       path: '/login',

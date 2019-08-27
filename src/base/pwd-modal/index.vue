@@ -14,6 +14,7 @@
           @keyup.stop="inputPaw"
           @focus="isFocus = true"
           @blur="isFocus = false"
+          @click.stop
           ref="pawRef"
         >
       </div>

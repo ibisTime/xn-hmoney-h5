@@ -45,7 +45,7 @@
             <span class="txt">账户与安全</span>
             <span class='icon'></span>
           </router-link>
-          <router-link to="my-order" class="item item-4">
+          <router-link to="address-book" class="item item-4">
             <i></i>
             <span class="txt">地址本</span>
             <span class='icon'></span>
