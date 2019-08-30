@@ -4,15 +4,15 @@
             <div class='content' ref="copyImg" @click="isFz = true;">
                 <div class="pic icon"></div>
                 <div class="yq-box">
-                    <p class="yq_p1">{{nickName}}</p>
+                    <p class="yq_p1">王大催</p>
                     <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
                 </div>
                 <div class="rq-code">
                     <div id='qrcode'></div>
                 </div>
             </div>
-            <img src="" alt="" class="con-img" ref="conImg" @click="isFz = true;">
-            <div class="qr-txt">
+            <img src="" alt="" class="con-img" ref="conImg" @click="isFz = false;">
+            <div class="qr-txt" @click.stop="isFz = false;">
                 {{$t('myInviteFriends.subject.bzbd')}}
             </div>
             <div class='main-btn' @click.stop="isFz = false;">
@@ -150,7 +150,7 @@ export default {
         .content {
             width: 100%;
             height: 100%;
-            background-image: url('./yqbj.png');
+            background: #282A2E;
             position: relative;
             text-align: center;
             overflow: hidden;
@@ -169,12 +169,13 @@ export default {
                 margin: 0 auto;
                 height: 2.25rem;
                 background-image: url('./logo.png');
-                margin-top: 11%;
+                margin-top: 60%;
                 margin-bottom: 8%;
             }
             .yq-box{
                 color: #fff;
                 margin-bottom: 4%;
+                margin-top: 20%;
                 p{
                     margin-top: 4%;
                 }
@@ -231,19 +232,19 @@ export default {
         bottom: 0;
         z-index: 99;
         width: 100%;
-        height: 0.98rem;
-        line-height: 0.98rem;
+        height: 1.2rem;
+        line-height: 1.2rem;
         font-size: 0.3rem;
         color: #fff;
         text-align: center;
-        background-color: #141e68;
+        background-color: #2E3547;
         opacity: 0.8;
-        border-top: 2px solid #687cfd;
+        border-top: 1px solid #9AA8C4;
         .ic_bz{
             display: inline-block;
             width: 0.3rem;
             height: 0.3rem;
-            background-image: url('./bcbd.png');
+            background: #9AA8C4;
             margin-right: 0.14rem;
             vertical-align: middle;
         }

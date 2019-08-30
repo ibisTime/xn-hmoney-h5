@@ -5,23 +5,78 @@
       <span @click="toAddBook">添加</span>
     </div>
     <ul class="book_con">
-      <li class="single_li">
+      <Scroll
+        ref="scroll"
+        :data="list"
+        :hasMore="hasMore"
+        v-show="list.length > 0"
+        @pullingUp="getAddressBookPage"
+      >
+      <li class="single_li" v-for='(item,index) in list' :key='index'>
         <div class="li_head">
-          <span class="left">火币地址</span>
-          <span>2019-10-10 20:00:00</span>
+          <span class="left">{{item.label}}</span>
+          <span>{{item.createDatetime}}</span>
         </div>
-        <p>1cjiosuadfiosdaufi0xf750b288323dfpfdspof</p>
+        <p>{{item.address}}</p>
       </li>
+      </Scroll>
     </ul>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 
 <script>
+  import {getAddressBookPage} from 'api/mine';
+  import { setTitle, formatDate } from 'common/js/util';
+  import {getUserId} from 'common/js/util';
+  import Scroll from 'base/scroll/scroll';
+  import FullLoading from 'base/full-loading/full-loading';
   export default {
+    data() {
+      return {
+        isLoading: true,
+        hasMore: true,
+        list: [],
+        config: {
+          userId: getUserId(),
+          start: 1,
+          limit: 10
+        },
+        start: 1,
+        limit: 10
+      }
+    },
+    created() {
+      this.getAddressBookPage();
+    },
     methods: {
       toAddBook() {
         this.$router.push('address-book-add');
+      },
+      getAddressBookPage() {
+        this.config.start = this.start;
+        this.config.limit = this.limit;
+        getAddressBookPage(this.config).then(data => {
+          console.log(data);
+          data.list.map(item => {
+            item.label = item.label;
+            item.address = item.address;
+            item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+          })
+          if (data.totalPage <= this.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.start ++;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+        });
       }
+    },
+    components: {
+      Scroll,
+      FullLoading
     }
   }
 </script>

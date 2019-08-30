@@ -517,12 +517,12 @@ export default {
   // 邀请好友
   myInviteFriends: {
     subject: {
-      yqnjr: '邀请您加入FUNMVP',
+      yqnjr: '邀请您加入XXX',
       casb: '长按识别二维码',
       yqhy: '邀请好友',
-      fuzzs: '复制您的专属邀请链接',
+      fuzzs: '下载至本地',
       fz: '复制',
-      bzbd: '请长按保存图片至本地'
+      bzbd: '复制您的专属邀请链接'
     }
   },
   // 安全中心
