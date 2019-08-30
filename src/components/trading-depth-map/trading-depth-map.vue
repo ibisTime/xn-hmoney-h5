@@ -23,12 +23,7 @@
         }
       }
     },
-    mounted() {
-      //   setTimeout(() => {
-      //     this.setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal')) ;
-      //     this.getDepthFn();
-      //   }, 1000);
-    },
+    mounted() {},
     methods: {
       getDepthFn() {
         getDepthData(this.setBazDeal).then(data => {
