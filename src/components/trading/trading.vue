@@ -198,48 +198,46 @@
       </div>
       <!-- K线图 -->
       <div v-show="!show2" class='Two'>
-        <Scroll :pullUpLoad="null">
-          <div class="top-mian">
-            <p class='text1'>
-              <span class='txt1'>{{setBazDeal.toSymbol}}</span>
-              <span class='red txt3'>{{ bb_zxj }}</span>
-              <span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span>
+        <div class="top-mian">
+          <p class='text1'>
+            <span class='txt1'>{{setBazDeal.toSymbol}}</span>
+            <span class='red txt3'>{{ bb_zxj }}</span>
+            <span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span>
+          </p>
+          <div class='text2'>
+            <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
             </p>
-            <div class='text2'>
-              <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
-              </p>
-              <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0'}}</span>
-              </p>
-            </div>
-            <div class='text3'>
-              <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0' : '0'}}</span></p>
-              <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0'}}</span>
-              </p>
-            </div>
+            <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0'}}</span>
+            </p>
           </div>
-          <!-- k线图部分 -->
-          <div class='main1'>
-            <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
+          <div class='text3'>
+            <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0' : '0'}}</span></p>
+            <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0'}}</span>
+            </p>
           </div>
+        </div>
+        <!-- k线图部分 -->
+        <div class='main1'>
+          <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
+        </div>
 
-          <!-- 主要内容区 -->
-          <div class='main2'>
-            <div class='tabs' @click="changeMain">
-              <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
-              <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
-              <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
-              <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
-            </div>
-            <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
-            <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
-            <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
-            <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
-            <!--<div class='foot'>-->
-            <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
-            <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
-            <!--</div>-->
+        <!-- 主要内容区 -->
+        <div class='main2'>
+          <div class='tabs' @click="changeMain">
+            <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
+            <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
+            <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
+            <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
           </div>
-        </Scroll>
+          <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
+          <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
+          <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
+          <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
+          <!--<div class='foot'>-->
+          <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
+          <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
+          <!--</div>-->
+        </div>
       </div>
     </div>
     <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'"></Footer>
@@ -786,16 +784,6 @@
     width: 100%;
     font-size: .28rem;
     color: #999;
-    overflow: auto;
-    .wrapper{
-      /*position: absolute;*/
-      /*z-index: 10;*/
-      /*top: 0rem;*/
-      /*bottom: 0rem;*/
-      /*left: 0;*/
-      /*right: 0;*/
-      /*overflow: hidden;*/
-    }
     .red {
       color: #d53d3d;
     }
@@ -819,7 +807,7 @@
     .header {
       position: relative;
       width: 100%;
-      padding: 0 .3rem;
+      padding: 0 .3rem 0.2rem;
       height: .98rem;
       font: bold .32rem/.98rem PingFangSC-Medium;
       font-size: .32rem;
@@ -1165,12 +1153,6 @@
 
     // K线图页面
     .Two {
-      position: absolute;
-      left: 0;
-      top: 0.98rem;
-      bottom: 0;
-      right: 0;
-      overflow: hidden;
       font-size: .32rem;
       color: #fff;
       background: #1c2b3f;
@@ -1230,7 +1212,6 @@
       .main2 {
         padding-bottom: 0.98rem;
         width: 100%;
-        margin-bottom: 1.55rem;
         .tabs {
           width: 100%;
           padding: 0 .3rem;

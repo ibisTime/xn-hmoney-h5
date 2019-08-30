@@ -25,6 +25,7 @@
             v-for="(item, index) in jbiList"
             :style="{left: `${listX[index]}%`, top: `${listY[index]}%`}"
             :key="`jb_${index}`"
+            class="jbi_single"
           >
             <img src="./image/jinbi_x.png" alt="">
             <p>0.001</p>
@@ -154,10 +155,11 @@
           width: 85%;
           height: 68%;
           margin: 0 auto;
-          div{
+          .jbi_single{
             position: absolute;
             color: #ECE5FD;
             font-size: 0.22rem;
+            animation: jbiSingle 3s ease infinite;
             img{
               width: 0.6rem;
               height: 0.6rem;
@@ -222,6 +224,41 @@
           }
         }
       }
+    }
+  }
+  @keyframes jbiSingle{
+    0% {
+      margin-top: 0;
+    }
+    10% {
+      margin-top: -4px;
+    }
+    20% {
+      margin-top: -8px;
+    }
+    30% {
+      margin-top: -12px;
+    }
+    40% {
+      margin-top: -16px;
+    }
+    50% {
+      margin-top: -20px;
+    }
+    60% {
+      margin-top: -16px;
+    }
+    70% {
+      margin-top: -12px;
+    }
+    80% {
+      margin-top: -8px;
+    }
+    90% {
+      margin-top: -4px;
+    }
+    100% {
+      margin-top: 0;
     }
   }
 </style>
