@@ -53,22 +53,14 @@
         </div>
         <p class="line"></p>
         <div class="card">
-          <a class="item item-5" href="https://funmvp.zendesk.com/hc/zh-cn/">
+          <router-link to="mine-help" class="item item-4">
             <i></i>
             <span class='txt'>帮助中心</span>
             <span class='icon'></span>
-          </a>
+          </router-link>
           <router-link to="my-aboutUs" class="item item-7">
             <i></i>
             <span class='txt'>关于我们</span>
-            <span class='icon'></span>
-          </router-link>
-        </div>
-        <p class="line"></p>
-        <div class="card">
-          <router-link to="my-aboutUs" class="item item-8">
-            <i></i>
-            <span class="txt">设置</span>
             <span class='icon'></span>
           </router-link>
         </div>

@@ -63,6 +63,10 @@ const OrderDetails = () => import('components/order-details/order-details');
 const myInviteFriends = () => import('components/my-invite-friends/my-invite-friends');
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
+
+// 我的 -- 帮助中心
+const MineHelp = () => import('components/mine-help/mine-help');
+
 // 关于我们 -- 平台介绍
 const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 隐私条款
@@ -322,6 +326,10 @@ export default new Router({
     {
       path: '/record-detail',
       component: DigDeliveryRecordDetail
+    },
+    {
+      path: '/mine-help',
+      component: MineHelp
     }
   ],
   mode: 'history',

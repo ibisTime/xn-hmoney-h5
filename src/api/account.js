@@ -101,3 +101,8 @@ export function getSignIntegral(accountNumber, bizType) {
     bizType
   });
 }
+
+// 查询币种列表
+export function getCoinList() {
+  return fetch(802007);
+}
