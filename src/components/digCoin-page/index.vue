@@ -231,31 +231,31 @@
       margin-top: 0;
     }
     10% {
-      margin-top: -4px;
+      margin-top: -2px;
     }
     20% {
-      margin-top: -8px;
+      margin-top: -4px;
     }
     30% {
-      margin-top: -12px;
+      margin-top: -6px;
     }
     40% {
-      margin-top: -16px;
-    }
-    50% {
-      margin-top: -20px;
-    }
-    60% {
-      margin-top: -16px;
-    }
-    70% {
-      margin-top: -12px;
-    }
-    80% {
       margin-top: -8px;
     }
-    90% {
+    50% {
+      margin-top: -10px;
+    }
+    60% {
+      margin-top: -8px;
+    }
+    70% {
+      margin-top: -6px;
+    }
+    80% {
       margin-top: -4px;
+    }
+    90% {
+      margin-top: -2px;
     }
     100% {
       margin-top: 0;

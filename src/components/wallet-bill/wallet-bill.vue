@@ -144,7 +144,7 @@ export default {
         data.list.map(item => {
           item.transAmountString = formatAmount(item.transAmountString, '', item.currency);
           item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
-        })
+        });
         if (data.totalPage <= this.start) {
           this.hasMore = false;
         }

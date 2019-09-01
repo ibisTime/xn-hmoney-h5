@@ -10,30 +10,30 @@
       </div>
       <div class="h_right">
         <img src="" alt="">
-        <p>WIS</p>
+        <p>{{purDetail.symbol}}</p>
       </div>
     </div>
     <div class="pur_con">
       <ul class="con_ul">
         <li class="li_single">
           <div class="li_left">申购总量</div>
-          <div class="li_right">289360.00 个</div>
+          <div class="li_right">{{purDetail.totalAmount}} 个</div>
         </li>
         <li class="li_single">
           <div class="li_left">剩余总量</div>
-          <div class="li_right">289360.00 个</div>
+          <div class="li_right">{{purDetail.remainAmount}} 个</div>
         </li>
         <li class="li_single">
           <div class="li_left">申购期限</div>
-          <div class="li_right">2019-10-10至2019-12-10</div>
+          <div class="li_right">{{purDetail.startDatetime}} 至 {{purDetail.endDatetime}}</div>
         </li>
         <li class="li_single">
           <div class="li_left">申购单价</div>
-          <div class="li_right">1 TWT=10000 WIS</div>
+          <div class="li_right">1 {{purDetail.symbol}} = {{purDetail.price}} TWT</div>
         </li>
         <li class="li_single">
           <div class="li_left">申购上限</div>
-          <div class="li_right">100 TWT</div>
+          <div class="li_right">{{purDetail.buyQuantityMax}} {{purDetail.symbol}}</div>
         </li>
       </ul>
       <div class="pur_introduce">
@@ -52,16 +52,18 @@
           <img src="./del.png" alt="">
         </div>
         <ul class="modal_ul">
-          <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">WIS币</span></li>
-          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 TWT=1000 WIS</span></li>
+          <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">{{purDetail.symbol}}币</span></li>
+          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 {{purDetail.symbol}} = {{purDetail.price}} TWT</span></li>
           <li class="modal_li_single_num">
             <p>请输入申购数量</p>
-            <p class="modal_li_single_num_p"><input type="text" class="modal_li_single_num_iup"></p>
+            <p class="modal_li_single_num_p">
+              <input type="text" class="modal_li_single_num_iup" v-model="config.amount">
+            </p>
           </li>
         </ul>
         <p class="modal_p">
           <span>0 TWT</span>
-          <span>TWT余额：8960.0000</span>
+          <span>TWT余额：{{userAmount}}</span>
         </p>
         <div class="foo_btn" @click="comfirmPayment">
           确认付款
@@ -72,48 +74,114 @@
       <div class="success_modal_box" @click.stop>
         <div class="suc_m_header">
           <img class="s_m_h_img" src="./success_icon.png" alt="">
-          <p class="s_m_h_p">转账成功</p>
+          <p class="s_m_h_p">申购成功</p>
         </div>
-        <div class="con_btn"><span>查看转账记录</span></div>
+        <div class="con_btn" @click="toPurchaseRecord"><span>查看申购记录</span></div>
         <p class="tip">
           {{timer}}秒后自动跳转
         </p>
       </div>
     </div>
     <PawModal :isShow="isShowPawModal" @getPawList="getPawList" @removePaw="removePaw"/>
+    <Toast :text="textMsg" ref="toast"/>
+    <FullLoading :title="' '" v-show="isShowLoading"></FullLoading>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
+  import FullLoading from 'base/full-loading/full-loading';
+  import Toast from 'base/toast/toast';
+  import {wallet} from 'api/person';
+  import {buyPurchase} from 'api/homeDig';
+  import { setTitle, formatAmount } from "common/js/util";
   import PawModal from 'base/pwd-modal/index';
   export default {
     data() {
       return {
+        isShowLoading: false,
         isShowModal: false,
         isShowPawModal: false,
         isSuccessModal: false,
-        timer: 5
+        timer: 5,
+        interval: null,
+        purDetail: {},
+        config: {
+          amount: '',
+          purchaseProductCode: '',
+          tradePwd: ''
+        },
+        twtAmount: '',
+        textMsg: '',
+        userAmount: 0
       }
     },
     created() {
       setTitle('申购详情');
+      const purchaseDetail = sessionStorage.getItem('purchaseDetail');
+      if(purchaseDetail) {
+        this.purDetail = JSON.parse(purchaseDetail);
+        this.config.purchaseProductCode = this.purDetail.code;
+      }
+      wallet('TWT').then(data => {
+        this.userAmount = formatAmount((data.accountList[0].amount - data.accountList[0].frozenAmount), '', 'TWT');
+      });
     },
     methods: {
       comfirmPayment() {
+        if(!this.config.amount) {
+          this.textMsg = '请先填写申购数量';
+          this.$refs.toast.show();
+          return;
+        }
         this.isShowPawModal = true;
         this.isShowModal = false;
       },
       getPawList(list) {
-        this.isShowPawModal = false;
-        console.log(list);
+        const tradePwd = list.join('');
+        if(tradePwd.length < 6) {
+          this.textMsg = '请完整输入交易密码';
+          this.$refs.toast.show();
+          return;
+        }
+        this.config.tradePwd = list.join('');
+        this.isShowLoading = true;
+        buyPurchase(this.config).then(() => {
+          this.isShowLoading = false;
+          this.isShowPawModal = false;
+          this.isSuccessModal = true;
+          if(this.interval) {
+            clearInterval(this.interval);
+          }
+          this.interval = setInterval(() => {
+            this.timer --;
+            if(this.timer < 1) {
+              this.$router.push('purchase-record');
+              clearInterval(this.interval);
+            }
+          }, 1000);
+        }).catch(() => {
+          this.isShowLoading = false;
+        });
+
       },
       removePaw() {
+        this.isShowModal = true;
         this.isShowPawModal = false;
+        this.config.tradePwd = '';
+      },
+      toPurchaseRecord() {
+        this.$router.push('purchase-record');
       }
     },
     components: {
-      PawModal
+      PawModal,
+      Toast,
+      FullLoading
+    },
+    beforeDestroy() {
+      if(this.interval) {
+        clearInterval(this.interval);
+      }
     }
   }
 </script>
@@ -186,6 +254,7 @@
         .int_p{
           font-size: 0.28rem;
           color: #999;
+          line-height: 0.48rem;
         }
       }
     }
@@ -247,7 +316,7 @@
           font-size: 0.28rem;
           .modal_li_single_sp{
             color: #333333;
-            margin-right: 0.3rem;
+            margin-left: 0.3rem;
             font-size: 0.28rem;
           }
         }

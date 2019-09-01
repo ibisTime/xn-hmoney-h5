@@ -1,60 +1,111 @@
 <template>
   <div class="purchase">
     <div class="header">
-      <ul class="head_ul">
-        <li class="h_single_li h_single_li_active">全部</li>
-        <li class="h_single_li">申购中</li>
-        <li class="h_single_li">已结束</li>
+      <ul class="head_ul" @click="changeTabs">
+        <li class="h_single_li" :class="tabType === '0' ? 'h_single_li_active' : ''" data-key="0">全部</li>
+        <li class="h_single_li" :class="tabType === '1' ? 'h_single_li_active' : ''" data-key="1">申购中</li>
+        <li class="h_single_li" :class="tabType === '2' ? 'h_single_li_active' : ''" data-key="2">已结束</li>
         <router-link to="purchase-record" class="h_single_li">申购记录</router-link>
       </ul>
     </div>
     <div class="pur_con">
-      <ul class="con_ul">
-        <li class="c_single">
-          <router-link to="purchase-detail">
-            <div class="li_head">
-              <div class="li_head_left">
-                <i></i>
-                <span>WIS</span>
-              </div>
-              <div class="li_head_right">
-                申购中
-              </div>
-            </div>
-            <div class="li_con_box">
-              <div class="li_con_head">
-                <div class="li_con_head_left">
-                  <h5 class="li_con_head_left_h5">289360.00000000</h5>
-                  <p class="li_con_head_left_p">申购总量</p>
+      <div class="warrep">
+        <Scroll
+          ref="scroll"
+          :data="list"
+          :hasMore="hasMore"
+          v-show="list.length > 0"
+          @pullingUp="queryPurchase"
+        >
+          <ul class="con_ul">
+            <li class="c_single" v-for="(item, index) in list" :key="`pur_${index}`">
+              <router-link to="purchase-detail" @click.native="() => {toPurchaseDetail(item)}">
+                <div class="li_head">
+                  <div class="li_head_left">
+                    <i></i>
+                    <span>{{item.symbol}}</span>
+                  </div>
+                  <div class="li_head_right">
+                    {{item.status}}
+                  </div>
                 </div>
-                <div class="li_con_head_right">
-                  <p class="li_con_head_right_tit">
-                    剩余总量<span class="li_con_head_right_tit_sp">289360.00000000</span>
-                  </p>
-                  <p class="li_con_head_right_progress">
-                    <span></span>
-                  </p>
+                <div class="li_con_box">
+                  <div class="li_con_head">
+                    <div class="li_con_head_left">
+                      <h5 class="li_con_head_left_h5">{{item.totalAmount}}</h5>
+                      <p class="li_con_head_left_p">申购总量</p>
+                    </div>
+                    <div class="li_con_head_right">
+                      <p class="li_con_head_right_tit">
+                        剩余总量: <span class="li_con_head_right_tit_sp">{{item.remainAmount}}</span>
+                      </p>
+                      <p class="li_con_head_right_progress">
+                        <span :style="{
+                          width: `${item.totalAmount ? (item.remainAmount / item.totalAmount * 100) : 0}%`}"
+                        ></span>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="li_con_p">期限：{{item.startDatetime}} 至 {{item.endDatetime}}</p>
                 </div>
-              </div>
-              <p class="li_con_p">期限：2019-10-10至2020-10-10</p>
-            </div>
-          </router-link>
-        </li>
-      </ul>
+              </router-link>
+            </li>
+          </ul>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': list.length > 0}">
+          <img src="./wu.png" />
+          <p>暂无记录</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
+  import { setTitle, formatDate } from "common/js/util";
+  import Scroll from 'base/scroll/scroll';
+  import {queryPurchase} from 'api/homeDig';
   export default {
     data() {
       return {
-
+        tabType: '0',
+        hasMore: false,
+        params: {
+          start: 1,
+          limit: 10
+        },
+        list: []
       }
     },
     created() {
       setTitle('申购');
+      this.queryPurchase();
+    },
+    methods: {
+      queryPurchase() {
+        queryPurchase(this.params).then(data => {
+          data.list.forEach(item => {
+            item.startDatetime = formatDate(item.startDatetime, 'yyyy-MM-dd');
+            item.endDatetime = formatDate(item.endDatetime, 'yyyy-MM-dd');
+          });
+          if (data.totalPage <= this.params.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.params.start ++;
+        });
+      },
+      changeTabs(ev) {
+        const key = ev.target.getAttribute('data-key');
+        this.tabType = key;
+        this.queryPurchase();
+      },
+      toPurchaseDetail(item) {
+        sessionStorage.setItem('purchaseDetail', JSON.stringify(item));
+      }
+    },
+    components: {
+      Scroll
     }
   }
 </script>
@@ -86,10 +137,17 @@
       }
     }
     .pur_con{
-      padding: 0 0.3rem;
       position: relative;
+      flex: 1;
+      .warrep{
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+      }
       .con_ul{
-        padding: 0.22rem 0;
+        padding: 0.22rem 0.3rem;
         .c_single{
           background-color: #fff;
           border-radius: 0.1rem;
@@ -156,7 +214,7 @@
                   span{
                     display: inline-block;
                     height: 0.12rem;
-                    width: 20%;
+                    width: 0;
                     background-color: #D53D3D;
                   }
                 }

@@ -8,7 +8,7 @@
       <p class='text3 item-captcha-wrap'>
         <input class="item-input" v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
         <i v-show="!show" class='icon' @click="captcha = ''"></i>
-        <span v-show="show" @click="" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="show" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
         <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
       </p>
 

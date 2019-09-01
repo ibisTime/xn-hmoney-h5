@@ -15,10 +15,6 @@
         <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
       </p>
-      <!--<p>-->
-      <!--<input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">-->
-      <!--<span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>-->
-      <!--</p>-->
     </div>
     <div class="foot">
       <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
