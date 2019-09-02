@@ -1,39 +1,83 @@
 <template>
   <div class="purchase-record">
-    <ul class="pur_record_ul">
-      <li class="li_single">
-        <div class="single_head">
-          <div class="s_h_left">
-            <img class="s_h_left_img" src="" alt="">
-            <span class="s_h_left_sp">WIS</span>
-          </div>
-          <div class="s_h_right">
-            申购时间：2019-10-10
-          </div>
-        </div>
-        <div class="single_con">
-          <div class="s_c_left">
-            <h5 class="s_c_h5">289360.00000000 <span>WIS</span></h5>
-            <p>申购总量</p>
-          </div>
-          <div class="s_c_right">
-            <h5 class="s_c_h5">380.00000000 <span>TWT</span></h5>
-            <p>支付</p>
-          </div>
-        </div>
-      </li>
-    </ul>
+    <div class="warrep">
+      <Scroll
+          ref="scroll"
+          :data="list"
+          :hasMore="hasMore"
+          v-show="list.length > 0"
+          @pullingUp="myPurchaseRecord"
+        >
+          <ul class="pur_record_ul">
+            <li class="li_single" v-for="(item, index) in list" :key="`record_${index}`">
+              <div class="single_head">
+                <div class="s_h_left">
+                  <img class="s_h_left_img" :src="item.symbolIcon" alt="">
+                  <span class="s_h_left_sp">{{item.symbol}}</span>
+                </div>
+                <div class="s_h_right">
+                  申购时间：{{item.buyDatetime}}
+                </div>
+              </div>
+              <div class="single_con">
+                <div class="s_c_left">
+                  <h5 class="s_c_h5">{{item.amount}} <span>{{item.symbol}}</span></h5>
+                  <p>申购总量</p>
+                </div>
+                <div class="s_c_right">
+                  <h5 class="s_c_h5">{{item.payAmount}} <span>TWT</span></h5>
+                  <p>支付</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+      </Scroll>
+      <div class="no-data" :class="{'hidden': list.length > 0}">
+        <img src="./wu.png" />
+        <p>暂无记录</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
+  import { setTitle, formatDate, formatAmount } from "common/js/util";
+  import Scroll from 'base/scroll/scroll';
+  import {myPurchaseRecord} from 'api/homeDig';
   export default {
     data() {
-      return {}
+      return {
+        list: [],
+        params: {
+          start: 1,
+          limit: 10
+        },
+        hasMore: true
+      }
     },
     created() {
       setTitle('申购记录');
+      this.myPurchaseRecord();
+    },
+    methods: {
+      myPurchaseRecord() {
+        myPurchaseRecord(this.params).then(data => {
+          data.list.forEach(item => {
+            item.amount = formatAmount(item.amount, '', item.symbol);
+            item.payAmount = formatAmount(item.payAmount, '', item.toSymbol);
+            item.buyDatetime = formatDate(item.buyDatetime, 'yyyy-MM-dd hh:mm:ss');
+            item.symbolIcon = PIC_PREFIX + item.symbolIcon;
+          });
+          if (data.totalPage <= this.params.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.params.start ++;
+        });
+      }
+    },
+    components: {
+      Scroll
     }
   }
 </script>
@@ -43,6 +87,13 @@
     position: relative;
     height: 100%;
     background-color: #FAFAFA;
+    .warrep{
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+    }
     .pur_record_ul{
       padding: 0.5rem 0.3rem;
       .li_single{
@@ -63,6 +114,7 @@
             .s_h_left_img{
               width: 0.5rem;
               height: 0.5rem;
+              border-radius: 100%;
             }
             .s_h_left_sp{
               font-size: 0.28rem;

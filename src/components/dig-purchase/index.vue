@@ -19,14 +19,14 @@
         >
           <ul class="con_ul">
             <li class="c_single" v-for="(item, index) in list" :key="`pur_${index}`">
-              <router-link to="purchase-detail" @click.native="() => {toPurchaseDetail(item)}">
+              <router-link to="purchase-detail" @click.native="() => {toPurchaseDetail(item.code, item.status)}">
                 <div class="li_head">
                   <div class="li_head_left">
-                    <i></i>
+                    <i :style="{backgroundImage: `url('${item.symbolIcon}')`}"></i>
                     <span>{{item.symbol}}</span>
                   </div>
                   <div class="li_head_right">
-                    {{item.status}}
+                    {{item.statusName}}
                   </div>
                 </div>
                 <div class="li_con_box">
@@ -41,7 +41,7 @@
                       </p>
                       <p class="li_con_head_right_progress">
                         <span :style="{
-                          width: `${item.totalAmount ? (item.remainAmount / item.totalAmount * 100) : 0}%`}"
+                          width: `${item.totalAmount ? ((1 - item.remainAmount / item.totalAmount) * 100) : 0}%`}"
                         ></span>
                       </p>
                     </div>
@@ -58,54 +58,84 @@
         </div>
       </div>
     </div>
+    <FullLoading v-show="isLoading" :title="''"/>
   </div>
 </template>
 
 <script>
-  import { setTitle, formatDate } from "common/js/util";
+  import { setTitle, formatDate, formatAmount } from "common/js/util";
   import Scroll from 'base/scroll/scroll';
+  import FullLoading from 'base/full-loading/full-loading';
   import {queryPurchase} from 'api/homeDig';
+  import {getDictList} from 'api/general';
   export default {
     data() {
       return {
         tabType: '0',
-        hasMore: false,
+        hasMore: true,
+        isLoading: false,
         params: {
           start: 1,
-          limit: 10
+          limit: 10,
+          status: '0'
         },
-        list: []
+        list: [],
+        dictObj: {}
       }
     },
     created() {
       setTitle('申购');
-      this.queryPurchase();
+      getDictList('purchase_product_status').then(data => {
+        if(Array.isArray(data)) {
+          data.forEach(item => {
+            this.dictObj[item.dkey] = item.dvalue;
+          });
+        }
+        this.queryPurchase('0');
+      });
     },
     methods: {
-      queryPurchase() {
-        queryPurchase(this.params).then(data => {
+      queryPurchase(key) {
+        this.isLoading = true;
+        queryPurchase({
+          ...this.params,
+          status: key
+        }).then(data => {
           data.list.forEach(item => {
             item.startDatetime = formatDate(item.startDatetime, 'yyyy-MM-dd');
             item.endDatetime = formatDate(item.endDatetime, 'yyyy-MM-dd');
+            item.totalAmount = formatAmount(item.totalAmount, '', item.symbol);
+            item.remainAmount = formatAmount(item.remainAmount, '', item.symbol);
+            item.buyAmountMax = formatAmount(item.buyAmountMax, '', item.symbol);
+            item.symbolIcon = PIC_PREFIX + item.symbolIcon;
+            item.statusName = this.dictObj[item.status];
           });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
           }
           this.list = [...this.list, ...data.list];
           this.params.start ++;
+          this.isLoading = false;
+        }).catch(() => {
+          this.isLoading = false;
         });
       },
       changeTabs(ev) {
         const key = ev.target.getAttribute('data-key');
         this.tabType = key;
-        this.queryPurchase();
+        this.list = [];
+        if(key) {
+          this.queryPurchase(key);
+        }
       },
-      toPurchaseDetail(item) {
-        sessionStorage.setItem('purchaseDetail', JSON.stringify(item));
+      toPurchaseDetail(code, status) {
+        sessionStorage.setItem('purchaseCode', code);
+        sessionStorage.setItem('purchaseStatus', status);
       }
     },
     components: {
-      Scroll
+      Scroll,
+      FullLoading
     }
   }
 </script>
@@ -117,15 +147,14 @@
     display: flex;
     flex-direction: column;
     .header{
-      padding-top: 0.2rem;
       background-color: #FFFFFF;
       .head_ul{
-        padding-top: 0.24rem;
         text-align: center;
         font-size: 0.28rem;
         color: #999;
         display: flex;
         .h_single_li{
+          padding-top: 0.44rem;
           flex: 1;
           padding-bottom: 0.26rem;
           border-bottom: 2px solid transparent;
@@ -152,6 +181,7 @@
           background-color: #fff;
           border-radius: 0.1rem;
           padding: 0.22rem 0.3rem 0.46rem;
+          margin-bottom: 0.2rem;
           .li_head{
             display: flex;
             justify-content: space-between;
@@ -167,6 +197,8 @@
                 width: 0.5rem;
                 height: 0.5rem;
                 margin-right: 0.14rem;
+                background-size: 100% 100%;
+                border-radius: 100%;
               }
             }
             .li_head_right{

@@ -55,8 +55,8 @@ export function getUser() {
  * 获取用户详情
  * @param {string} userId
  */
-export function getUserById(userId) {
-  return fetch(805121, { userId });
+export function getUserById() {
+  return fetch(805121, { userId: getUserId() });
 }
 
 /**

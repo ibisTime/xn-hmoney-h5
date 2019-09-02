@@ -158,7 +158,6 @@ export default {
     getBizNote(item) {
       // 币币交易买入卖出
       if (item.bizType === 'bborder_frozen') {
-        console.log(getTranslateText(item.bizNote));
         return getTranslateText(item.bizNote);
         // 充值
       } else if (item.bizType === 'charge') {
@@ -173,6 +172,8 @@ export default {
         } else {
           return this.bizTypeValueList[item.bizType];
         }
+      } else if(item.bizType === 'aj_purchase_product_give') {
+        return item.bizNote;
       } else {
         return this.bizTypeValueList[item.bizType];
       }

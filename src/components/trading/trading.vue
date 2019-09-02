@@ -202,7 +202,7 @@
           <p class='text1'>
             <span class='txt1'>{{setBazDeal.toSymbol}}</span>
             <span class='red txt3'>{{ bb_zxj }}</span>
-            <span class='red txt4'>≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2)}} CNY</span>
+            <span class='red txt4'>≈ {{toSyMid}} CNY</span>
           </p>
           <div class='text2'>
             <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>

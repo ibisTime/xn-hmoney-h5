@@ -2,14 +2,14 @@
   <div class="purchase-detail">
     <div class="header">
       <div class="h_left">
-        <img src="" alt="">
+        <img :src="purDetail.symbolIcon" alt="">
         <p>TWT</p>
       </div>
       <div class="h_m">
-        <img src="" alt="">
+        <img src="./Fill 1@2x.png" alt="">
       </div>
       <div class="h_right">
-        <img src="" alt="">
+        <img :src="purDetail.toSymbolIcon" alt="">
         <p>{{purDetail.symbol}}</p>
       </div>
     </div>
@@ -33,17 +33,17 @@
         </li>
         <li class="li_single">
           <div class="li_left">申购上限</div>
-          <div class="li_right">{{purDetail.buyQuantityMax}} {{purDetail.symbol}}</div>
+          <div class="li_right">{{purDetail.buyAmountMax}} {{purDetail.symbol}}</div>
         </li>
       </ul>
       <div class="pur_introduce">
-        <h5 class="int_head">币种介绍(待替换)</h5>
+        <h5 class="int_head">币种介绍</h5>
         <p class="int_p">
-          无论是做内容营销还是产品市场,内容体系的完整性非常重要。而内容体系里面,文字性的内容,产品相关的内容,都是主力。
+          {{purDetail.symbolDescription}}
         </p>
       </div>
     </div>
-    <div class="pur_foo_btn" @click="isShowModal = true;">
+    <div class="pur_foo_btn" v-if="purchaseStatus === '1'" @click="showModalFn">
       <p>申购</p>
     </div>
     <div class="pur_modal" v-show="isShowModal" @click="isShowModal = false">
@@ -57,12 +57,12 @@
           <li class="modal_li_single_num">
             <p>请输入申购数量</p>
             <p class="modal_li_single_num_p">
-              <input type="text" class="modal_li_single_num_iup" v-model="config.amount">
+              <input type="text" class="modal_li_single_num_iup" v-model="config.amount" @keyup="isBuyMax">
             </p>
           </li>
         </ul>
         <p class="modal_p">
-          <span>0 TWT</span>
+          <span>{{purDetail.price * config.amount}} TWT</span>
           <span>TWT余额：{{userAmount}}</span>
         </p>
         <div class="foo_btn" @click="comfirmPayment">
@@ -92,8 +92,9 @@
   import FullLoading from 'base/full-loading/full-loading';
   import Toast from 'base/toast/toast';
   import {wallet} from 'api/person';
-  import {buyPurchase} from 'api/homeDig';
-  import { setTitle, formatAmount } from "common/js/util";
+  import {getUserById} from 'api/user';
+  import {buyPurchase, purchaseDetail} from 'api/homeDig';
+  import { setTitle, formatAmount, formatMoneyMultiply, formatDate } from "common/js/util";
   import PawModal from 'base/pwd-modal/index';
   export default {
     data() {
@@ -102,6 +103,7 @@
         isShowModal: false,
         isShowPawModal: false,
         isSuccessModal: false,
+        purchaseStatus: '',
         timer: 5,
         interval: null,
         purDetail: {},
@@ -117,10 +119,20 @@
     },
     created() {
       setTitle('申购详情');
-      const purchaseDetail = sessionStorage.getItem('purchaseDetail');
-      if(purchaseDetail) {
-        this.purDetail = JSON.parse(purchaseDetail);
-        this.config.purchaseProductCode = this.purDetail.code;
+      const purchaseCode = sessionStorage.getItem('purchaseCode');
+      this.purchaseStatus = sessionStorage.getItem('purchaseStatus');
+      if(purchaseCode) {
+        purchaseDetail(purchaseCode).then(data => {
+          data.startDatetime = formatDate(data.startDatetime, 'yyyy-MM-dd');
+          data.endDatetime = formatDate(data.endDatetime, 'yyyy-MM-dd');
+          data.totalAmount = formatAmount(data.totalAmount, '', data.symbol);
+          data.remainAmount = formatAmount(data.remainAmount, '', data.symbol);
+          data.buyAmountMax = formatAmount(data.buyAmountMax, '', data.symbol);
+          data.symbolIcon = PIC_PREFIX + data.symbolIcon;
+          data.toSymbolIcon = PIC_PREFIX + data.toSymbolIcon;
+          this.purDetail = data;
+        });
+        this.config.purchaseProductCode = purchaseCode;
       }
       wallet('TWT').then(data => {
         this.userAmount = formatAmount((data.accountList[0].amount - data.accountList[0].frozenAmount), '', 'TWT');
@@ -145,7 +157,11 @@
         }
         this.config.tradePwd = list.join('');
         this.isShowLoading = true;
-        buyPurchase(this.config).then(() => {
+        const amount = formatMoneyMultiply(this.config.amount, '', this.purDetail.symbol);
+        buyPurchase({
+          ...this.config,
+          amount
+        }).then(() => {
           this.isShowLoading = false;
           this.isShowPawModal = false;
           this.isSuccessModal = true;
@@ -162,7 +178,6 @@
         }).catch(() => {
           this.isShowLoading = false;
         });
-
       },
       removePaw() {
         this.isShowModal = true;
@@ -170,7 +185,26 @@
         this.config.tradePwd = '';
       },
       toPurchaseRecord() {
-        this.$router.push('purchase-record');
+        this.$router.replace('purchase-record');
+      },
+      isBuyMax() {
+        if(this.config.amount > this.purDetail.buyAmountMax) {
+          this.textMsg = `申购数量不得大于上限${this.purDetail.buyAmountMax}`;
+          this.$refs.toast.show();
+          this.config.amount = this.purDetail.buyAmountMax;
+          return;
+        }
+      },
+      showModalFn() {
+        getUserById().then(data => {
+          if(data.tradepwdFlag) {
+            this.isShowModal = true;
+          }else {
+            this.textMsg = '请先设置交易密码';
+            this.$refs.toast.show();
+            return;
+          }
+        });
       }
     },
     components: {
@@ -205,6 +239,7 @@
       .h_left{
         flex: 2;
         img{
+          border-radius: 100%;
           width: 0.78rem;
           height: 0.78rem;
           margin-bottom: 0.2rem;
@@ -212,6 +247,9 @@
       }
       .h_m{
         flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         img{
           width: 0.6rem;
           height: 0.32rem;
@@ -220,6 +258,7 @@
       .h_right{
         flex: 2;
         img{
+          border-radius: 100%;
           width: 0.78rem;
           height: 0.78rem;
           margin-bottom: 0.2rem;

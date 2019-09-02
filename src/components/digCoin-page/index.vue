@@ -153,13 +153,13 @@
         .jbi_box{
           position: relative;
           width: 85%;
-          height: 68%;
+          height: 60%;
           margin: 0 auto;
           .jbi_single{
             position: absolute;
             color: #ECE5FD;
             font-size: 0.22rem;
-            animation: jbiSingle 3s ease infinite;
+            animation: jbiSingle 2s ease infinite;
             img{
               width: 0.6rem;
               height: 0.6rem;
