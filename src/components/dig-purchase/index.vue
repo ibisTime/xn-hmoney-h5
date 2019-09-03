@@ -19,7 +19,7 @@
         >
           <ul class="con_ul">
             <li class="c_single" v-for="(item, index) in list" :key="`pur_${index}`">
-              <router-link to="purchase-detail" @click.native="() => {toPurchaseDetail(item.code, item.status)}">
+              <router-link to="purchase-detail" @click.native="() => {toPurchaseDetail(item.code, item.productStatus)}">
                 <div class="li_head">
                   <div class="li_head_left">
                     <i :style="{backgroundImage: `url('${item.symbolIcon}')`}"></i>

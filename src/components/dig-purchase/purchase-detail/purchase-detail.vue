@@ -24,16 +24,20 @@
           <div class="li_right">{{purDetail.remainAmount}} 个</div>
         </li>
         <li class="li_single">
-          <div class="li_left">申购期限</div>
-          <div class="li_right">{{purDetail.startDatetime}} 至 {{purDetail.endDatetime}}</div>
-        </li>
-        <li class="li_single">
           <div class="li_left">申购单价</div>
-          <div class="li_right">1 {{purDetail.symbol}} = {{purDetail.price}} TWT</div>
+          <div class="li_right">1 {{purDetail.toSymbol}} = {{purDetail.price}} {{purDetail.symbol}}</div>
         </li>
         <li class="li_single">
-          <div class="li_left">申购上限</div>
-          <div class="li_right">{{purDetail.buyAmountMax}} {{purDetail.symbol}}</div>
+          <div class="li_left">单人申购上限</div>
+          <div class="li_right">{{purDetail.personPayAmountMax}} {{purDetail.toSymbol}}</div>
+        </li>
+        <li class="li_single">
+          <div class="li_left">申购开始时间</div>
+          <div class="li_right">{{purDetail.startDatetime}}</div>
+        </li>
+        <li class="li_single">
+          <div class="li_left">申购结束时间</div>
+          <div class="li_right">{{purDetail.endDatetime}}</div>
         </li>
       </ul>
       <div class="pur_introduce">
@@ -43,7 +47,7 @@
         </p>
       </div>
     </div>
-    <div class="pur_foo_btn" v-if="purchaseStatus === '1'" @click="showModalFn">
+    <div class="pur_foo_btn" v-if="purchaseStatus === '0'" @click="showModalFn">
       <p>申购</p>
     </div>
     <div class="pur_modal" v-show="isShowModal" @click="isShowModal = false">
@@ -53,16 +57,22 @@
         </div>
         <ul class="modal_ul">
           <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">{{purDetail.symbol}}币</span></li>
-          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 {{purDetail.symbol}} = {{purDetail.price}} TWT</span></li>
+          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 TWT = {{purDetail.price}} {{purDetail.symbol}}</span></li>
           <li class="modal_li_single_num">
-            <p>请输入申购数量</p>
+            <p>请输入支付数量</p>
             <p class="modal_li_single_num_p">
-              <input type="text" class="modal_li_single_num_iup" v-model="config.amount" @keyup="isBuyMax">
+              <input
+                type="number"
+                class="modal_li_single_num_iup"
+                v-model="config.payAmount"
+                @keyup="isBuyMax"
+                @blur="blurIn"
+              >
             </p>
           </li>
         </ul>
         <p class="modal_p">
-          <span>{{purDetail.price * config.amount}} TWT</span>
+          <span>得到 {{purDetail.price * config.payAmount}} {{purDetail.symbol}}</span>
           <span>TWT余额：{{userAmount}}</span>
         </p>
         <div class="foo_btn" @click="comfirmPayment">
@@ -108,7 +118,7 @@
         interval: null,
         purDetail: {},
         config: {
-          amount: '',
+          payAmount: '',
           purchaseProductCode: '',
           tradePwd: ''
         },
@@ -123,11 +133,11 @@
       this.purchaseStatus = sessionStorage.getItem('purchaseStatus');
       if(purchaseCode) {
         purchaseDetail(purchaseCode).then(data => {
-          data.startDatetime = formatDate(data.startDatetime, 'yyyy-MM-dd');
-          data.endDatetime = formatDate(data.endDatetime, 'yyyy-MM-dd');
+          data.startDatetime = formatDate(data.startDatetime, 'yyyy-MM-dd hh:mm:ss');
+          data.endDatetime = formatDate(data.endDatetime, 'yyyy-MM-dd hh:mm:ss');
           data.totalAmount = formatAmount(data.totalAmount, '', data.symbol);
           data.remainAmount = formatAmount(data.remainAmount, '', data.symbol);
-          data.buyAmountMax = formatAmount(data.buyAmountMax, '', data.symbol);
+          data.personPayAmountMax = formatAmount(data.personPayAmountMax, '', data.toSymbol);
           data.symbolIcon = PIC_PREFIX + data.symbolIcon;
           data.toSymbolIcon = PIC_PREFIX + data.toSymbolIcon;
           this.purDetail = data;
@@ -140,15 +150,17 @@
     },
     methods: {
       comfirmPayment() {
-        if(!this.config.amount) {
+        if(!this.config.payAmount) {
           this.textMsg = '请先填写申购数量';
           this.$refs.toast.show();
           return;
         }
+        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
         this.isShowPawModal = true;
         this.isShowModal = false;
       },
       getPawList(list) {
+        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
         const tradePwd = list.join('');
         if(tradePwd.length < 6) {
           this.textMsg = '请完整输入交易密码';
@@ -157,10 +169,10 @@
         }
         this.config.tradePwd = list.join('');
         this.isShowLoading = true;
-        const amount = formatMoneyMultiply(this.config.amount, '', this.purDetail.symbol);
+        const payAmount = formatMoneyMultiply(this.config.payAmount, '', this.purDetail.toSymbol);
         buyPurchase({
           ...this.config,
-          amount
+          payAmount
         }).then(() => {
           this.isShowLoading = false;
           this.isShowPawModal = false;
@@ -188,10 +200,10 @@
         this.$router.replace('purchase-record');
       },
       isBuyMax() {
-        if(this.config.amount > this.purDetail.buyAmountMax) {
-          this.textMsg = `申购数量不得大于上限${this.purDetail.buyAmountMax}`;
+        if(+this.config.payAmount > +this.purDetail.personPayAmountMax) {
+          this.textMsg = `申购数量不得大于上限${this.purDetail.personPayAmountMax}`;
           this.$refs.toast.show();
-          this.config.amount = this.purDetail.buyAmountMax;
+          this.config.payAmount = this.purDetail.personPayAmountMax;
           return;
         }
       },
@@ -205,12 +217,20 @@
             return;
           }
         });
+      },
+      blurIn () {
+        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
       }
     },
     components: {
       PawModal,
       Toast,
       FullLoading
+    },
+    computed: {
+      scrollHeight () {
+        return document.documentElement.scrollTop || document.body.scrollTop || 0
+      }
     },
     beforeDestroy() {
       if(this.interval) {
@@ -266,7 +286,8 @@
       }
     }
     .pur_con{
-      padding-bottom: 1rem;
+      padding-bottom: 2rem;
+      background-color: #FAFAFA;
       .con_ul{
         .li_single{
           padding: 0.3rem 0;
@@ -275,7 +296,7 @@
           .li_left{
             font-size: 0.28rem;
             color: #999;
-            width: 20%;
+            width: 28%;
           }
           .li_right{
             font-size: 0.32rem;
@@ -298,7 +319,7 @@
       }
     }
     .pur_foo_btn{
-      position: absolute;
+      position: fixed;
       left: 0;
       right: 0;
       bottom: 0;

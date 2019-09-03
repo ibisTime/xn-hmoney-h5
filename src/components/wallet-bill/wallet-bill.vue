@@ -14,18 +14,17 @@
         v-show="list.length > 0"
         @pullingUp="walletBill"
       >
-        <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + bizTypeValueList[item.bizType]" class="bill-list" v-for='(item,index) in list' :key='index'>
+        <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizNote" class="bill-list" v-for='(item,index) in list' :key='index'>
           <div class="list">
             <div class='mark'>
               <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
             </div>
             <div class='item'>
               <p class='collect'>
-                <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
+                <span class='txt1'>{{item.bizNote}}</span>
                 <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
               </p>
               <p class='time'>{{item.createDatetime}}</p>
-              <p class='explain'>{{getBizNote(item)}}</p>
             </div>
           </div>
         </router-link>
@@ -115,11 +114,11 @@ export default {
   created() {
     setTitle(this.$t('walletBill.subject.zzjl'));
     this.config.accountNumber = getUrlParam('accountNumber');
-    getDictList('jour_biz_type_user').then(data => {
-      data.forEach((item) => {
-        this.bizTypeValueList[item.dkey] = item.dvalue;
-      });
-    })
+    // getDictList('jour_biz_type_user').then(data => {
+    //   data.forEach((item) => {
+    //     this.bizTypeValueList[item.dkey] = item.dvalue;
+    //   });
+    // })
     this.walletBill();
   },
   methods: {
@@ -157,26 +156,7 @@ export default {
     },
     getBizNote(item) {
       // 币币交易买入卖出
-      if (item.bizType === 'bborder_frozen') {
-        return getTranslateText(item.bizNote);
-        // 充值
-      } else if (item.bizType === 'charge') {
-        if(item.bizNote.indexOf('充币-来自地址') > -1) {
-          return item.bizNote.replace('充币-来自地址', getTranslateText('充币-来自地址'));
-        } else if(item.bizNote.indexOf('充币-来自交易') > -1) {
-          return item.bizNote.replace('充币-来自交易', getTranslateText('充币-来自交易'));
-        } else if(item.bizNote.indexOf('充币-交易id') > -1) {
-          return item.bizNote.replace('充币-交易id', getTranslateText('充币-交易id'));
-        } else if(item.bizNote.indexOf('充币-来自地址') > -1) {
-          return item.bizNote.replace('充币-外部地址', getTranslateText('充币-外部地址'));
-        } else {
-          return this.bizTypeValueList[item.bizType];
-        }
-      } else if(item.bizType === 'aj_purchase_product_give') {
-        return item.bizNote;
-      } else {
-        return this.bizTypeValueList[item.bizType];
-      }
+      return getTranslateText(item.bizNote);
     }
   },
   components: {
@@ -243,13 +223,13 @@ export default {
 
     .list {
       width: 100%;
-      height: 1.52rem;
+      min-height: 1rem;
       display: flex;
       border-bottom: .01rem solid #e5e5e5;
 
       .mark {
         border-radius: 50%;
-        margin-top: .26rem;
+        margin-top: .1rem;
 
         .icon {
           width: .6rem;

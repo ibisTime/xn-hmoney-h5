@@ -19,10 +19,10 @@
         >
       </div>
       <div class="foo_btns">
-        <div class="left" @click="removePaw">
+        <div class="left" @click.stop="removePaw">
           取消
         </div>
-        <div class="right" @click="determinePaw">
+        <div class="right" @click.stop="determinePaw">
           确定
         </div>
       </div>
@@ -118,6 +118,7 @@
         }
         input {
           position: absolute;
+          z-index: 9;
           left: 0;
           top: 0;
           bottom: 0;
