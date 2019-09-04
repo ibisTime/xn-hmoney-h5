@@ -71,6 +71,10 @@ const MineHelp = () => import('components/mine-help/mine-help');
 const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 隐私条款
 const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-privacy-policy');
+// 我的-收货地址
+const MineAddress = () => import('components/address/address-list');
+const MineAddressAddEdit = () => import('components/address/address-addedit');
+
 // 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
 
@@ -222,6 +226,14 @@ export default new Router({
     {
       path: '/about-privacyPolicy',
       component: aboutPrivacyPolicy
+    },
+    {
+      path: '/mine-address',
+      component: MineAddress
+    },
+    {
+      path: '/mine-address-addedit',
+      component: MineAddressAddEdit
     },
     {
       path: '/order-details',

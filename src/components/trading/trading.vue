@@ -273,7 +273,6 @@
     getHandicapData,
     downBBOrder,
     getMyorderTicket,
-    getRealTimeData,
     repOrder
   } from 'api/bb';
   import {selectedTradingApi, isCollectionTrading} from 'api/tradingOn';
@@ -376,7 +375,6 @@
           });
         });
         this.handicapData();
-        this.realTimeData();
         if (getUserId()) {
           this.getUserWalletData();
           this.isLogin = true;
@@ -394,7 +392,6 @@
             referCurrency: this.setBazDeal.toSymbol
           });
           this.handicapData();
-          this.realTimeData();
         }, 5000);
 
       });
@@ -452,7 +449,6 @@
         });
         sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
         this.handicapData();
-        this.realTimeData();
         if (this.isLogin) {
           this.getUserWalletData();
           this.start = 1;
@@ -470,7 +466,6 @@
             referCurrency: this.setBazDeal.toSymbol
           });
           this.handicapData();
-          this.realTimeData();
         }, 5000);
       },
       handicapData() {
@@ -519,13 +514,6 @@
         }, () => {
           this.isLoading = false;
         });
-      },
-      realTimeData() {
-        // 实时成交数据
-        this.realTimeConfig = {
-          ...this.realTimeConfig,
-          ...this.setBazDeal
-        };
       },
       collectionTrading() {
         this.isLoading = true;

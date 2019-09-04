@@ -10,7 +10,7 @@
       </div>
       <div class="h_right">
         <img src="" alt="">
-        <p>WIS</p>
+        <p>实物名称</p>
       </div>
     </div>
     <div class="pur_con">
@@ -66,43 +66,8 @@
       </div>
     </div>
     <div class="pur_foo_btn" @click="isShowModal = true;">
-      <p>申购</p>
+      <p>确认交割</p>
     </div>
-    <div class="pur_modal" v-show="isShowModal" @click="isShowModal = false">
-      <div class="modal_box" @click.stop>
-        <div class="del" @click="isShowModal = false">
-          <img src="./del.png" alt="">
-        </div>
-        <ul class="modal_ul">
-          <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">WIS币</span></li>
-          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 TWT=1000 WIS</span></li>
-          <li class="modal_li_single_num">
-            <p>请输入申购数量</p>
-            <p class="modal_li_single_num_p"><input type="text" class="modal_li_single_num_iup"></p>
-          </li>
-        </ul>
-        <p class="modal_p">
-          <span>0 TWT</span>
-          <span>TWT余额：8960.0000</span>
-        </p>
-        <div class="foo_btn" @click="comfirmPayment">
-          确认付款
-        </div>
-      </div>
-    </div>
-    <div class="modal_success" v-if="isSuccessModal" @click="isSuccessModal = false">
-      <div class="success_modal_box" @click.stop>
-        <div class="suc_m_header">
-          <img class="s_m_h_img" src="./success_icon.png" alt="">
-          <p class="s_m_h_p">转账成功</p>
-        </div>
-        <div class="con_btn"><span>查看转账记录</span></div>
-        <p class="tip">
-          {{timer}}秒后自动跳转
-        </p>
-      </div>
-    </div>
-    <PawModal :isShow="isShowPawModal" @getPawList="getPawList" @removePaw="removePaw"/>
   </div>
 </template>
 
@@ -115,11 +80,14 @@
         isShowModal: false,
         isShowPawModal: false,
         isSuccessModal: false,
-        timer: 5
+        timer: 5,
+        coinObj: {}
       }
     },
     created() {
       setTitle('交割详情');
+      const coinObj = this.$route.query.coinObj;
+      console.log(coinObj);
     },
     methods: {
       comfirmPayment() {

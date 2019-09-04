@@ -1,16 +1,16 @@
 <template>
   <div class="delivery-select-type">
     <div class="iup_box">
-      <select>
-        <option value="0">请选择方式</option>
-        <option value="1">自提</option>
-        <option value="2">邮寄</option>
+      <select v-model="pickWay" @change="changePickWay">
+        <option value="0" disabled>请选择方式</option>
+        <option value="1">邮寄</option>
+        <option value="2">自提</option>
       </select>
     </div>
-    <div class="iup_box">
+    <div class="iup_box" v-show="isSince">
       <input type="text" placeholder="自提密码">
     </div>
-    <div class="iup_box">
+    <div class="iup_box" v-show="isMail">
       <input type="text" placeholder="邮寄地址">
     </div>
     <div class="iup_box">
@@ -46,7 +46,10 @@
       return {
         isShowPawModal: false,
         isSuccessModal: false,
-        timer: 5
+        timer: 5,
+        pickWay: '0',
+        isMail: false,
+        isSince: false
       }
     },
     created() {
@@ -59,6 +62,18 @@
       },
       removePaw() {
         this.isShowPawModal = false;
+      },
+      changePickWay() {
+        if(this.pickWay === '1') {
+          this.isMail = true;
+        }else {
+          this.isMail = false;
+        }
+        if(this.pickWay === '2') {
+          this.isSince = true;
+        }else {
+          this.isSince = false;
+        }
       }
     },
     components: {

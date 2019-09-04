@@ -2,32 +2,32 @@
   <div class="free-delivery">
     <div class="deli_con">
       <div class="c_h_select">
-        <select>
-          <option value="0">请选择资产交通证</option>
-          <option value="1">haha</option>
+        <select v-model="symbol" @change="changeSymbol">
+          <option value="" disabled>请选择资产交通证</option>
+          <option
+            :value="item.symbol"
+            v-for="(item, index) in coinList" :key="`free_${index}`"
+          >{{item.symbol}}</option>
         </select>
       </div>
       <div class="c_h_con">
         <div class="c_h_con_h">
           <div class="c_h_con_h_left">
-            可交割余额：<span class="c_h_con_h_left_sp">12312</span>
+            可交割余额：<span class="c_h_con_h_left_sp">{{avaAmount}}</span>
           </div>
-          <div class="c_h_con_h_right">
+          <!-- <div class="c_h_con_h_right" @click="toDeliveryDetail">
             了解更多
-          </div>
+          </div> -->
         </div>
         <p class="c_h_con_c">
-          到期交割时间：2019-10-10 00:00:00
+          到期交割时间：{{symbol ? symbolObj[symbol].endDatetime : ''}}
         </p>
-        <p>支持用户提前自由交割</p>
       </div>
     </div>
     <p class="line" />
     <div class="deli_foo">
       <h5 class="deli_h5">商品选择</h5>
-      <router-link to="delivery-image" class="deli_iup_img">
-        <img src="./update.png" alt="">
-      </router-link>
+      <div class="deli_iup_img" @click="toDeliveryImg" :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></div>
       <div class="foo_box">
         <h5 class="foo_box_h5">
           交割流程：(待替换)
@@ -46,14 +46,112 @@
         确认交割
       </div>
     </div>
+    <Toast :text="toastMsg" ref="toast"/>
   </div>
 </template>
 
 <script>
+  import {wallet} from 'api/person';
+  import {formatDate, formatAmount} from 'common/js/util';
+  import {deliveryCoinList} from 'api/homeDig';
+  import Toast from 'base/toast/toast';
   export default {
+    data() {
+      return {
+        coinList: {
+          symbol: '',
+          unit: '',
+          icon: ''
+        },
+        symbol: '',
+        toastMsg: '',
+        symbolObj: {},
+        productMsg: {},
+        avaAmount: '',
+        deliveryConfig: {
+          symbol: '',
+          realRightCode: '',
+          quantity: '',
+          pickWay: '',
+          addressCode: ''
+        }
+      }
+    },
+    created() {
+      const productMsg = sessionStorage.getItem('productMsg');
+      const freeSymbol = sessionStorage.getItem('freeSymbol');
+      if(productMsg) {
+        this.productMsg = JSON.parse(productMsg);
+      }
+      deliveryCoinList().then(data => {
+        this.coinList = data.map(item => {
+          this.symbolObj[item.symbol] = {
+            icon: item.coinIcon,
+            endDatetime: formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss')
+          };
+          return {
+            symbol: item.symbol,
+            unit: item.unit,
+            icon: item.coinIcon
+          }
+        });
+        if(freeSymbol) {
+          this.symbol = freeSymbol;
+        }
+      });
+      if(freeSymbol) {}
+    },
     methods: {
       toDelivery() {
-        this.$router.push('delivery-confirm');
+        if(!this.symbol) {
+          this.toastMsg = '请先选择币种';
+          this.$refs.toast.show();
+          return;
+        }
+        if(!this.productMsg.productCode) {
+          this.toastMsg = '请先选择商品';
+          this.$refs.toast.show();
+          return;
+        }
+        this.deliveryConfig.symbol = this.symbol;
+        this.deliveryConfig.realRightCode = this.productMsg.productCode;
+        sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
+        this.$router.push(`delivery-confirm?avaAmount=${this.avaAmount}`);
+      },
+      toDeliveryDetail() {
+        if(!this.symbol) {
+          this.toastMsg = '请先选择币种';
+          this.$refs.toast.show();
+          return;
+        }
+        const selectedCoin = this.coinList.filter(item => item.symbol === this.symbol);
+        this.$router.push(`delivery-detail?coinObj=${JSON.stringify(selectedCoin[0])}`);
+      },
+      toDeliveryImg() {
+        if(!this.symbol) {
+          this.toastMsg = '请先选择币种';
+          this.$refs.toast.show();
+          return;
+        }
+        this.$router.push(`delivery-image?symbol=${this.symbol}`);
+      },
+      getWallet() {
+        wallet(this.symbol).then(data => {
+          this.avaAmount = formatAmount(data.accountList[0].amount - data.accountList[0].frozenAmount, '', this.symbol);
+        });
+      },
+      changeSymbol() {
+        sessionStorage.removeItem('productMsg');
+        this.productMsg = {};
+      }
+    },
+    components: {
+      Toast
+    },
+    watch: {
+      symbol(newVal) {
+        this.getWallet();
+        sessionStorage.setItem('freeSymbol', newVal);
       }
     }
   }
@@ -86,9 +184,6 @@
           color: #517FFF;
         }
       }
-      .c_h_con_c{
-        margin-bottom: 0.3rem;
-      }
     }
   }
   .line{
@@ -104,10 +199,10 @@
     }
     .deli_iup_img{
       margin-bottom: 0.3rem;
-      img{
-        width: 2rem;
-        height: 1.5rem;
-      }
+      width: 2rem;
+      height: 1.5rem;
+      background-size: 100% 100%;
+      background-image: url('./update.png');
     }
     .foo_box{
       border-top: 1px solid #EBEBEB;

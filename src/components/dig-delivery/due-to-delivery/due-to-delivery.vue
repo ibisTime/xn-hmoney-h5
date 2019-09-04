@@ -8,42 +8,91 @@
       </ul>
     </div>
     <div class="pur_con">
-      <ul class="con_ul">
-        <li class="c_single">
-          <router-link to="delivery-detail">
-            <div class="li_head">
-              <div class="li_head_left">
-                <i></i>
-                <span>实物名称</span>
-                <span class="head_left_sp">自提</span>
-              </div>
-              <div class="li_head_right">
-                交割中
-              </div>
-            </div>
-            <div class="li_con_box">
-              <div class="li_con_head">
-                <div class="li_con_head_left">
-                  <h5 class="li_con_head_left_h5">289360.00000000</h5>
-                  <p class="li_con_head_left_p">交割总量</p>
+      <div class="warrper">
+        <Scroll
+          ref="scroll"
+          :data="deliveryList"
+          :hasMore="hasMore"
+          v-show="deliveryList.length > 0"
+          @pullingUp="queryDeliveryData"
+        >
+          <ul class="con_ul">
+            <li class="c_single">
+              <router-link to="delivery-detail">
+                <div class="li_head">
+                  <div class="li_head_left">
+                    <i></i>
+                    <span>实物名称</span>
+                    <span class="head_left_sp">自提</span>
+                  </div>
+                  <div class="li_head_right">
+                    交割中
+                  </div>
                 </div>
-                <div class="li_con_head_right">
-                  <p class="li_con_head_right_tit">
-                    剩余总量<span class="li_con_head_right_tit_sp">289360.00000000</span>
-                  </p>
-                  <p class="li_con_head_right_progress">
-                    <span></span>
-                  </p>
+                <div class="li_con_box">
+                  <div class="li_con_head">
+                    <div class="li_con_head_left">
+                      <h5 class="li_con_head_left_h5">289360.00000000</h5>
+                      <p class="li_con_head_left_p">交割总量</p>
+                    </div>
+                    <div class="li_con_head_right">
+                      <p class="li_con_head_right_tit">
+                        剩余总量<span class="li_con_head_right_tit_sp">289360.00000000</span>
+                      </p>
+                      <p class="li_con_head_right_progress">
+                        <span></span>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="li_con_p">期限：2019-10-10至2020-10-10</p>
                 </div>
-              </div>
-              <p class="li_con_p">期限：2019-10-10至2020-10-10</p>
-            </div>
-          </router-link>
-        </li>
-      </ul>
+              </router-link>
+            </li>
+          </ul>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': deliveryList.length > 0}">
+          <img src="./wu.png" />
+          <p>暂无数据</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<script>
+import Scroll from 'base/scroll/scroll';
+import {queryDelivery} from 'api/homeDig';
+export default {
+  data() {
+    return {
+      deliveryList: [],
+      params: {
+        start: 1,
+        limit: 10
+      },
+      hasMore: true
+    }
+  },
+  created() {
+    this.queryDeliveryData();
+  },
+  methods: {
+    queryDeliveryData() {
+      queryDelivery(this.params).then(data => {
+        console.log(data);
+        if (data.totalPage <= this.params.start) {
+          this.hasMore = false;
+        }
+        this.deliveryList = [...this.deliveryList, ...data.list];
+        this.params.start ++;
+      });
+    }
+  },
+  components: {
+    Scroll
+  }
+}
+</script>
 
 <style lang="scss" scoped>
   .due-to-delivery{

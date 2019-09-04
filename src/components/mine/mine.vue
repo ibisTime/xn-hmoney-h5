@@ -53,12 +53,17 @@
         </div>
         <p class="line"></p>
         <div class="card">
-          <router-link to="mine-help" class="item item-4">
+          <router-link to="mine-address" class="item item-4">
+            <i></i>
+            <span class='txt'>收货地址</span>
+            <span class='icon'></span>
+          </router-link>
+          <router-link to="mine-help" class="item item-5">
             <i></i>
             <span class='txt'>帮助中心</span>
             <span class='icon'></span>
           </router-link>
-          <router-link to="my-aboutUs" class="item item-7">
+          <router-link to="my-aboutUs" class="item item-6">
             <i></i>
             <span class='txt'>关于我们</span>
             <span class='icon'></span>

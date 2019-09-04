@@ -20,3 +20,19 @@ export function myPurchaseRecord(params) {
 export function purchaseDetail(code) {
   return fetch(650205, {code});
 }
+
+// 交割
+// 分页查询到期交割信息
+export function queryDelivery(params) {
+  return fetch('650236', params);
+}
+
+// 分页查询已上架物权
+export function queryRealRight(params) {
+  return fetch('650246', params);
+}
+
+// 查询交割币种
+export function deliveryCoinList() {
+  return fetch('650239');
+}

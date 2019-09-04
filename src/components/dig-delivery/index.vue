@@ -2,8 +2,8 @@
   <div class="dig-delivery">
     <div class="header">
       <div class="h_m_box">
-        <span class="h_m_sp" :class="type === '0' ? 'h_m_sp_active' : ''" @click="type = '0'">自由交割</span>
-        <span class="h_m_sp" :class="type === '1' ? 'h_m_sp_active' : ''" @click="type = '1'">到期交割</span>
+        <span class="h_m_sp" :class="type === '0' ? 'h_m_sp_active' : ''" @click="freeDelivery">自由交割</span>
+        <span class="h_m_sp" :class="type === '1' ? 'h_m_sp_active' : ''" @click="dueDelivery">到期交割</span>
       </div>
       <router-link to="delivery-record" class="h_right">
         交割记录
@@ -26,6 +26,17 @@
     },
     created() {
       setTitle('自由交割');
+      this.type = sessionStorage.getItem('deliveryType') || '0';
+    },
+    methods: {
+      freeDelivery() {
+        this.type = '0';
+        sessionStorage.setItem('deliveryType', '0');
+      },
+      dueDelivery() {
+        this.type = '1';
+        sessionStorage.setItem('deliveryType', '1');
+      }
     },
     components: {
       FreeDelivery,

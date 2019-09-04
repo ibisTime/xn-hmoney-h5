@@ -19,7 +19,7 @@
           <i class="cate-icon exchange-icon"></i>
           <p>挖矿</p>
         </router-link>
-        <router-link to='dig-delivery' tag="div" class="cate-item">
+        <router-link to='dig-delivery' tag="div" class="cate-item" @click.native="resetSession">
           <i class="cate-icon otc-icon"></i>
           <p>交割</p>
         </router-link>
@@ -134,6 +134,10 @@
         if (url !== '' && url) {
           window.open(url);
         };
+      },
+      resetSession() {
+        sessionStorage.removeItem('freeSymbol');
+        sessionStorage.removeItem('productMsg');
       }
     },
     components: {

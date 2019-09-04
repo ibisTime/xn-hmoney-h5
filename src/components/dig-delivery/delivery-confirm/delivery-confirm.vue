@@ -1,45 +1,85 @@
 <template>
   <div class="delivery-comfirm">
     <div class="del_com_head">
-      <div class="left"></div>
+      <div class="left" :style="{backgroundImage: `url('${productMsg.productPic}')`}"></div>
       <div class="right">
-        <h5 class="right_h5">实物名称</h5>
-        <p class="right_p1">1000币/份</p>
-        <p class="right_p2">赎回币种：xxx币</p>
+        <h5 class="right_h5">{{productMsg.productName}}</h5>
+        <p class="right_p1">{{productMsg.price}}币/份</p>
+        <p class="right_p2">赎回币种：{{symbol}}币</p>
       </div>
     </div>
     <p class="line"/>
     <div class="del_com_container">
       <div class="select_box">
-        <select>
-          <option value="0">最多输入1000个交割份数</option>
-          <option value="1">haha</option>
-        </select>
+        <input
+          type="number"
+          v-model="quantity"
+          :placeholder="`最多输入${productMsg.remainQuantity}个交割份数`"
+          @keyup="upQuantity"
+        />
       </div>
       <div class="con_foo">
-        <p>数量：<span>1000</span></p>
-        <p>余额：<span>123123</span></p>
+        <p>数量：<span>{{productMsg.remainQuantity}}</span></p>
+        <p>余额：<span>{{avaAmount}}</span></p>
       </div>
       <div class="foo_btn" @click="toDeliverySelectType">
         确认交割
       </div>
     </div>
+    <Toast :text="toastMsg" ref="toast"/>
   </div>
 </template>
 
 <script>
   import { setTitle } from "common/js/util";
+  import Toast from 'base/toast/toast';
   export default {
     data() {
-      return {}
+      return {
+        productMsg: {},
+        symbol: '',
+        avaAmount: '',
+        deliveryConfig: {},
+        quantity: '',
+        toastMsg: ''
+      }
     },
     created() {
       setTitle('交割');
+      this.avaAmount = this.$route.query.avaAmount;
+      const productMsg = sessionStorage.getItem('productMsg');
+      const symbol = sessionStorage.getItem('freeSymbol');
+      const deliveryConfig = sessionStorage.getItem('deliveryConfig');
+      if(productMsg && symbol && deliveryConfig) {
+        this.productMsg = JSON.parse(productMsg);
+        this.symbol = symbol;
+        this.deliveryConfig = JSON.parse(deliveryConfig);
+      }else {
+        this.$router.push('dig-delivery');
+      }
     },
     methods: {
       toDeliverySelectType() {
+        if(!this.quantity) {
+          this.toastMsg = '请输入交割份数';
+          this.$refs.toast.show();
+          return;
+        }
+        this.deliveryConfig.quantity = this.quantity;
+        sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
         this.$router.push('delivery-select-type');
+      },
+      upQuantity() {
+        if(+this.quantity > +this.productMsg.remainQuantity) {
+          this.toastMsg = `请输入小于或等于${this.productMsg.remainQuantity}的数`;
+          this.$refs.toast.show();
+          this.quantity = this.productMsg.remainQuantity;
+          return;
+        }
       }
+    },
+    components: {
+      Toast
     }
   }
 </script>
@@ -52,7 +92,6 @@
       padding: 0.38rem 0.3rem 0.36rem;
       display: flex;
       .left{
-        background-color: red;
         border-radius: 0.06rem;
         width: 2.2rem;
         height: 1.66rem;
@@ -88,7 +127,7 @@
         font-size: 0.28rem;
         border-bottom: 1px solid #E3E3E3;
         margin-bottom: 0.3rem;
-        select{
+        input{
           width: 100%;
           color: #333;
         }
