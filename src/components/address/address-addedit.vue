@@ -5,14 +5,14 @@
         <div class="form-item border-bottom-1px">
           <div class="item-label">收货人</div>
           <div class="item-input-wrapper">
-            <input type="text" class="item-input" v-model="name" name="name" v-validate="'required'" placeholder="你的姓名">
+            <input type="text" class="item-input" v-model="name" name="name" v-validate="'required'" placeholder="请输入姓名">
             <span v-show="errors.has('name')" class="error-tip">{{errors.first('name')}}</span>
           </div>
         </div>
         <div class="form-item border-bottom-1px">
           <div class="item-label">电话</div>
           <div class="item-input-wrapper">
-            <input type="tel" class="item-input" v-model="mobile" name="mobile" v-validate="'required|mobile'" placeholder="你的联系方式">
+            <input type="tel" class="item-input" v-model="mobile" name="mobile" v-validate="'required|phone'" placeholder="请输入联系方式">
             <span v-show="errors.has('mobile')" class="error-tip">{{errors.first('mobile')}}</span>
           </div>
         </div>
@@ -20,18 +20,20 @@
           <div class="item-label">地址</div>
           <div class="item-input-wrapper">
             <template v-if="code && province || !code">
-              <city-picker class="item-input"
-                           :province="province"
-                           :city="city"
-                           :district="district"
-                           @change="cityChange">
+              <city-picker 
+                class="item-input"
+                :province="province"
+                :city="city"
+                :district="district"
+                @change="cityChange"
+              >
               </city-picker>
             </template>
             <span v-show="provErr" class="error-tip">{{provErr}}</span>
           </div>
         </div>
         <div class="form-item is-textarea border-bottom-1px">
-          <div class="item-label">门牌号</div>
+          <div class="item-label">详细地址</div>
           <div class="item-input-wrapper">
             <input v-model="address" v-validate="'required'" name="address" class="item-input" placeholder="请输入详细地址">
             <span v-show="errors.has('address')" class="error-tip">{{errors.first('address')}}</span>
@@ -41,14 +43,14 @@
         <div class="form-btn">
           <button :disabled="setting" @click="saveAddress">确定</button>
         </div>
-        <!--<full-loading v-show="showLoading"></full-loading>-->
+        <full-loading v-show="showLoading"></full-loading>
         <toast ref="toast" :text="toastText"></toast>
       </div>
     </div>
   </transition>
 </template>
 <script>
-  // import {addAddress, editAddress, getAddressList} from 'api/user';
+  import {addAddress, editAddress, getAddressList} from 'api/user';
   import CityPicker from 'base/city-picker/city-picker';
   import FullLoading from 'base/full-loading/full-loading';
   import Toast from 'base/toast/toast';
@@ -74,11 +76,11 @@
       };
     },
     created() {
-      this.code = sessionStorage.getItem('ressCode');
+      this.code = this.$route.query.ressCode;
       if (this.code) {
         this.headerTitle = '修改收货地址';
       }
-      // this._getAddressList();
+      this._getAddressList();
     },
     methods: {
       getAddress() {
@@ -93,7 +95,6 @@
       },
       _getAddressList() {
         getAddressList().then((data) => {
-          // this.setAddressList(data);
           if (this.code) {
             let index = data.findIndex((item) => {
               return item.code === this.code;
@@ -125,7 +126,6 @@
         this.province = prov;
         this.city = city;
         this.district = district;
-        // this._provinceValid();
       },
       saveAddress() {
         this.$validator.validateAll().then((result) => {
@@ -201,7 +201,7 @@
     height: 100%;
     background-color: #fff;;
     .form-wrapper {
-      padding: 0.88rem 0.3rem;
+      padding: 0.28rem 0.3rem;
       .form-item {
         .item.label {
           flex: 0 0 1.2rem;

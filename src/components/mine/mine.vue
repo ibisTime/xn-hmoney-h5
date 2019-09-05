@@ -45,19 +45,14 @@
             <span class="txt">账户与安全</span>
             <span class='icon'></span>
           </router-link>
-          <router-link to="address-book" class="item item-4">
+          <router-link to="mine-address" class="item item-4">
             <i></i>
-            <span class="txt">地址本</span>
+            <span class="txt">收货地址</span>
             <span class='icon'></span>
           </router-link>
         </div>
         <p class="line"></p>
         <div class="card">
-          <router-link to="mine-address" class="item item-4">
-            <i></i>
-            <span class='txt'>收货地址</span>
-            <span class='icon'></span>
-          </router-link>
           <router-link to="mine-help" class="item item-5">
             <i></i>
             <span class='txt'>帮助中心</span>
@@ -376,7 +371,7 @@
 
           &.item-4 {
             i {
-              background-image: url('./mine_dzb.png');
+              background-image: url('./Fill 1@2x.png');
             }
           }
 

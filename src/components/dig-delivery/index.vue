@@ -32,10 +32,18 @@
       freeDelivery() {
         this.type = '0';
         sessionStorage.setItem('deliveryType', '0');
+        sessionStorage.removeItem('productMsg');
+        sessionStorage.removeItem('freeSymbol');
+        sessionStorage.removeItem('deliveryConfig');
+        sessionStorage.removeItem('toBank');
       },
       dueDelivery() {
         this.type = '1';
         sessionStorage.setItem('deliveryType', '1');
+        sessionStorage.removeItem('productMsg');
+        sessionStorage.removeItem('freeSymbol');
+        sessionStorage.removeItem('deliveryConfig');
+        sessionStorage.removeItem('toBank');
       }
     },
     components: {
@@ -49,7 +57,7 @@
   .dig-delivery{
     height: 100%;
     background-color: #fff;
-    padding: 0.3rem 0;
+    padding: 0.3rem 0 0;
     display: flex;
     flex-direction: column;
     .header{

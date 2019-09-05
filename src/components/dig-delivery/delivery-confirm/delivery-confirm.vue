@@ -12,11 +12,14 @@
     <div class="del_com_container">
       <div class="select_box">
         <input
-          type="number"
+          type="text"
+          name="quantity"
           v-model="quantity"
           :placeholder="`最多输入${productMsg.remainQuantity}个交割份数`"
           @keyup="upQuantity"
+           v-validate="'required|intNumber'"
         />
+        <span v-show="errors.has('quantity')" class="error-tip">{{errors.first('quantity')}}</span>
       </div>
       <div class="con_foo">
         <p>数量：<span>{{productMsg.remainQuantity}}</span></p>
@@ -26,13 +29,29 @@
         确认交割
       </div>
     </div>
+    <div class="modal_success" v-if="isSuccessModal" @click="isSuccessModal = false">
+      <div class="success_modal_box" @click.stop>
+        <div class="suc_m_header">
+          <img class="s_m_h_img" src="./success_icon.png" alt="">
+          <p class="s_m_h_p">转账成功</p>
+        </div>
+        <div class="con_btn"><span>查看转账记录</span></div>
+        <p class="tip">
+          {{timer}}秒后自动跳转
+        </p>
+      </div>
+    </div>
+    <PawModal :isShow="isShowPawModal" @getPawList="getPawList" @removePaw="removePaw"/>
     <Toast :text="toastMsg" ref="toast"/>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
+  import {getUserById} from 'api/user';
+  import {submitDelivery} from 'api/homeDig';
+  import { setTitle, formatMoneyMultiply } from "common/js/util";
   import Toast from 'base/toast/toast';
+  import PawModal from 'base/pwd-modal/index';
   export default {
     data() {
       return {
@@ -41,12 +60,17 @@
         avaAmount: '',
         deliveryConfig: {},
         quantity: '',
-        toastMsg: ''
+        toastMsg: '',
+        isShowPawModal: false,
+        isSuccessModal: false,
+        pathType: '',
+        interval: null
       }
     },
     created() {
       setTitle('交割');
       this.avaAmount = this.$route.query.avaAmount;
+      this.pathType = this.$route.query.type;
       const productMsg = sessionStorage.getItem('productMsg');
       const symbol = sessionStorage.getItem('freeSymbol');
       const deliveryConfig = sessionStorage.getItem('deliveryConfig');
@@ -54,20 +78,36 @@
         this.productMsg = JSON.parse(productMsg);
         this.symbol = symbol;
         this.deliveryConfig = JSON.parse(deliveryConfig);
-      }else {
-        this.$router.push('dig-delivery');
       }
     },
     methods: {
       toDeliverySelectType() {
-        if(!this.quantity) {
-          this.toastMsg = '请输入交割份数';
-          this.$refs.toast.show();
-          return;
-        }
-        this.deliveryConfig.quantity = this.quantity;
-        sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
-        this.$router.push('delivery-select-type');
+        this.$validator.validateAll().then((result) => {
+          if(result) {
+            getUserById().then(data => {
+              if(data.tradepwdFlag) {
+                const totalPrice = quantity * +this.productMsg.price;
+                if(totalPrice > +this.avaAmount) {
+                  this.toastMsg = '余额不足，请充值';
+                  this.$refs.toast.show();
+                  return;
+                }
+                this.deliveryConfig.quantity = this.quantity;
+                if(this.pathType === 'dueTo') {
+                  this.isShowPawModal = true;
+                }else {
+                  sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
+                  this.$router.push('delivery-select-type');
+                }
+              }else {
+                this.textMsg = '请先设置交易密码';
+                this.$refs.toast.show();
+                return;
+              }
+            });
+          }
+          const quantity = +this.quantity;
+        });
       },
       upQuantity() {
         if(+this.quantity > +this.productMsg.remainQuantity) {
@@ -76,10 +116,43 @@
           this.quantity = this.productMsg.remainQuantity;
           return;
         }
+      },
+      getPawList(list) {
+        if(list.length < 6) {
+          this.textMsg = '请填写完整';
+          this.$refs.toast.show();
+          return;
+        }
+        this.deliveryConfig.tradePwd = list.join('');
+        submitDelivery(this.deliveryConfig).then(() => {
+          this.isShowPawModal = false;
+          this.isSuccessModal = true;
+          if(this.interval) {
+            clearInterval(this.interval);
+          }
+          this.interval = setInterval(() => {
+            this.timer --;
+            if(this.timer < 1) {
+              this.$router.push('purchase-record');
+              clearInterval(this.interval);
+            }
+          }, 1000);
+        }).catch(() => {
+          this.isShowPawModal = false;
+        });
+      },
+      removePaw() {
+        this.isShowPawModal = false;
       }
     },
     components: {
+      PawModal,
       Toast
+    },
+    beforeDestroy() {
+      if(this.interval) {
+        clearInterval(this.interval);
+      }
     }
   }
 </script>
@@ -127,6 +200,15 @@
         font-size: 0.28rem;
         border-bottom: 1px solid #E3E3E3;
         margin-bottom: 0.3rem;
+        position: relative;
+        .error-tip {
+          position: absolute;
+          right: 0.16rem;
+          top: 0.38rem;
+          white-space: nowrap;
+          font-size: 0.28rem;
+          color: #ff0000;
+        }
         input{
           width: 100%;
           color: #333;
@@ -150,6 +232,53 @@
         border-radius: 0.1rem;
         margin-top: 2rem;
         font-size: 0.36rem;
+      }
+    }
+    .modal_success{
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 10;
+      background-color: rgba(0, 0, 0, 0.5);
+      .success_modal_box{
+        position: absolute;
+        left: 0.5rem;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #fff;
+        border-radius: 0.1rem;
+        padding: 0.6rem 0;
+        text-align: center;
+      }
+      .suc_m_header{
+        margin-bottom: 0.36rem;
+        .s_m_h_img{
+          width: 1.2rem;
+          height: 1.2rem;
+          margin-bottom: 0.26rem;
+        }
+        .s_m_h_p{
+          color: #333;
+          font-size: 0.4rem;
+        }
+      }
+      .con_btn{
+        color: #999999;
+        margin-bottom: 0.64rem;
+        font-size: 0.66rem;
+        span{
+          font-size: 0.28rem;
+          padding: 0.14rem 0.32rem;
+          border: 1px solid #aaa;
+          border-radius: 0.06rem;
+        }
+      }
+      .tip{
+        color: #999;
+        font-size: 0.22rem;
       }
     }
   }

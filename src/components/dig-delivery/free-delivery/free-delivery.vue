@@ -20,7 +20,7 @@
           </div> -->
         </div>
         <p class="c_h_con_c">
-          到期交割时间：{{symbol ? symbolObj[symbol].endDatetime : ''}}
+          到期交割时间：{{symbolObj[symbol] ? symbolObj[symbol].endDatetime : ''}}
         </p>
       </div>
     </div>
@@ -99,7 +99,6 @@
           this.symbol = freeSymbol;
         }
       });
-      if(freeSymbol) {}
     },
     methods: {
       toDelivery() {

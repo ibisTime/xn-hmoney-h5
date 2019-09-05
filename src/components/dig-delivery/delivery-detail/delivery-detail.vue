@@ -2,59 +2,64 @@
   <div class="delivery-detail">
     <div class="header">
       <div class="h_left">
-        <img src="" alt="">
-        <p>TWT</p>
+        <p :style="{backgroundImage: `url('${deliveryMsg.symbolIcon}')`}"></p>
+        <div>{{deliveryMsg.symbol}}</div>
       </div>
       <div class="h_m">
-        <img src="" alt="">
+        <img src="./Fill 1@2x.png" alt="">
       </div>
       <div class="h_right">
-        <img src="" alt="">
-        <p>实物名称</p>
+        <p :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></p>
+        <div class="product_div">{{productMsg.productName ? productMsg.productName : 'xxx'}}</div>
       </div>
     </div>
     <div class="pur_con">
       <ul class="con_ul">
         <li class="li_single">
-          <div class="li_left">交割单位</div>
+          <div class="li_left">交割名称</div>
           <div class="li_right">
-            <select>
-              <option value="0">请选择</option>
-              <option value="1">adsa</option>
-              <option value="2">qwe</option>
-            </select>
+            {{deliveryMsg.mainUnit}}
           </div>
         </li>
         <li class="li_single">
           <div class="li_left">商品选择</div>
-          <div class="li_right">
-            <select>
-              <option value="0">请选择</option>
-              <option value="1">adsa</option>
-              <option value="2">qwe</option>
-            </select>
+          <div class="li_right" @click="toDeliveryImg">
+            {{productMsg.productName ? productMsg.productName : '请选择商品'}}
+            <i class="right_icon"></i>
           </div>
         </li>
-        <li class="li_single">
+        <li class="li_single" v-if="pickWayList.length">
           <div class="li_left">交割方式</div>
           <div class="li_right">
-            <select>
-              <option value="0">请选择</option>
-              <option value="1">adsa</option>
-              <option value="2">qwe</option>
+            <select v-model="deliveryConfig.pickWay" @change="selectedPickWay">
+              <option value="" disabled>请选择交割方式</option>
+              <option :value="item.key" v-for="(item, index) in pickWayList" :key="`pick_${index}`">{{item.value}}</option>
             </select>
           </div>
         </li>
-        <li class="li_single">
-          <div class="li_left">自提密码</div>
+        <li class="li_single" v-if="!pickWayList.length">
+          <div class="li_left">交割方式</div>
           <div class="li_right">
-            <input type="text" placeholder="请输入自提密码">
+            {{deliveryConfig.pickWay === '1' ? '邮寄' : '自提'}}
           </div>
         </li>
-        <li class="li_single">
+        <li class="li_single" v-if="deliveryConfig.pickWay === '1'">
           <div class="li_left">邮寄地址</div>
+          <div class="li_right" @click="toSelectedAddress">
+            {{deliveryConfig.addressCode ? `${addRessMsg.province}-${addRessMsg.city}-${addRessMsg.district}-${addRessMsg.detailAddress}` : '请选择邮寄地址'}}
+            <i class="right_icon"></i>
+          </div>
+        </li>
+        <li class="li_single" v-if="deliveryConfig.pickWay === '1'">
+          <div class="li_left">收货人</div>
           <div class="li_right">
-            <input type="text" placeholder="请输入邮寄地址">
+            {{addRessMsg.addressee}}
+          </div>
+        </li>
+        <li class="li_single" v-if="deliveryConfig.pickWay === '1'">
+          <div class="li_left">收货人电话</div>
+          <div class="li_right">
+            {{addRessMsg.mobile}}
           </div>
         </li>
       </ul>
@@ -65,45 +70,136 @@
         </p>
       </div>
     </div>
-    <div class="pur_foo_btn" @click="isShowModal = true;">
+    <div class="pur_foo_btn" @click="comfirmPayment" v-if="deliveryStatus === '1'">
       <p>确认交割</p>
     </div>
+    <Toast :text="toastMsg" ref="toast"/>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
-  import PawModal from 'base/pwd-modal/index';
+  import { setTitle, formatAmount } from "common/js/util";
+  import {deliveryDetail} from 'api/homeDig';
+  import {getAddressList} from 'api/user';
+  import {wallet} from 'api/person';
+  import Toast from 'base/toast/toast';
   export default {
     data() {
       return {
-        isShowModal: false,
-        isShowPawModal: false,
-        isSuccessModal: false,
         timer: 5,
-        coinObj: {}
+        deliveryMsg: {},
+        productMsg: {
+          productName: '',
+          productPic: ''
+        },
+        pickWayList: [],
+        deliveryConfig: {
+          coinDeliveryCode: '',
+          symbol: '',
+          realRightCode: '',
+          quantity: '',
+          pickWay: '',
+          addressCode: '',
+          tradePwd: ''
+        },
+        toastMsg: '',
+        addRessMsg: {
+          mobile: '',
+          addressee: ''
+        },
+        isMail: false,
+        code: '',
+        avaAmount: '',
+        deliveryStatus: ''
       }
     },
     created() {
       setTitle('交割详情');
-      const coinObj = this.$route.query.coinObj;
-      console.log(coinObj);
+      this.code = this.$route.query.code;
+      const dueToProductMsg = sessionStorage.getItem('dueToProductMsg');
+      this.isMail = sessionStorage.getItem('isMail');
+      let setRess = sessionStorage.getItem('setRess');
+      if(this.code) {
+        this.deliveryConfig.coinDeliveryCode = this.code;
+        deliveryDetail(this.code).then(data => {
+          data.symbolIcon = PIC_PREFIX + data.symbolIcon;
+          this.deliveryMsg = data;
+          this.deliveryConfig.symbol = data.symbol;
+          this.deliveryStatus = data.deliveryStatus;
+          if(data.pickWay === '3') {
+            this.pickWayList = [{
+              key: '1',
+              value: '邮寄'
+            }, {
+              key: '2',
+              value: '自提'
+            }]
+          }else {
+            this.deliveryConfig.pickWay = data.pickWay;
+          }
+          wallet(data.symbol).then(res => {
+            this.avaAmount = formatAmount(res.accountList[0].amount - res.accountList[0].frozenAmount, '', data.symbol);
+          });
+        });
+      }
+      if(dueToProductMsg) {
+        this.productMsg = JSON.parse(dueToProductMsg);
+        this.deliveryConfig.realRightCode = this.productMsg.productCode;
+      }
+      if(this.isMail && setRess) {
+        this.deliveryConfig.pickWay = '1';
+        setRess = JSON.parse(setRess);
+        this.addRessMsg = setRess;
+        this.deliveryConfig.addressCode = setRess.code;
+      }
+      sessionStorage.removeItem('storetype');
+      sessionStorage.removeItem('isokIndex');
     },
     methods: {
       comfirmPayment() {
-        this.isShowPawModal = true;
-        this.isShowModal = false;
+        if(!this.deliveryConfig.realRightCode) {
+          this.toastMsg = '请选择商品';
+          this.$refs.toast.show();
+          return;
+        }
+        if(!this.deliveryConfig.pickWay) {
+          this.toastMsg = '请选择交割方式';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.deliveryConfig.pickWay === '1' && !this.deliveryConfig.addressCode) {
+          this.toastMsg = '请选择邮寄地址';
+          this.$refs.toast.show();
+          return;
+        }
+        sessionStorage.setItem('freeSymbol', this.deliveryConfig.symbol);
+        sessionStorage.setItem('productMsg', JSON.stringify(this.productMsg));
+        sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
+        this.$router.push(`/delivery-confirm?avaAmount=${this.avaAmount}&type=dueTo`);
       },
-      getPawList(list) {
-        this.isShowPawModal = false;
-        console.log(list);
+      toDeliveryImg() {
+        this.$router.push(`delivery-image?symbol=${this.deliveryMsg.symbol}&type=dueTo`);
       },
-      removePaw() {
-        this.isShowPawModal = false;
+      selectedPickWay() {
+        if(this.deliveryConfig.pickWay === '1') {
+          this.getAddressList();
+        }
+      },
+      getAddressList() {
+        getAddressList('1').then(data => {
+          this.addRessMsg = data[0];
+          this.deliveryConfig.addressCode = data[0].code;
+        });
+      },
+      toSelectedAddress() {
+        sessionStorage.setItem('isMail', '1');
+        sessionStorage.setItem('storetype', '1');
+        sessionStorage.setItem('toBank', `delivery-detail?code=${this.code}`);
+        this.$router.push('/mine-address');
       }
     },
     components: {
-      PawModal
+      Toast
     }
   }
 </script>
@@ -124,13 +220,9 @@
       border-radius: 0.08rem;
       text-align: center;
       margin-bottom: 0.3rem;
+      align-items: center;
       .h_left{
         flex: 2;
-        img{
-          width: 0.78rem;
-          height: 0.78rem;
-          margin-bottom: 0.2rem;
-        }
       }
       .h_m{
         flex: 1;
@@ -141,11 +233,20 @@
       }
       .h_right{
         flex: 2;
-        img{
-          width: 0.78rem;
-          height: 0.78rem;
-          margin-bottom: 0.2rem;
+        .product_div{
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 2.8rem;
         }
+      }
+      p{
+        width: 0.78rem;
+        height: 0.78rem;
+        margin: 0 auto 0.2rem;
+        background-size: 100% 100%;
+        border-radius: 100%;
       }
     }
     .pur_con{
@@ -155,18 +256,31 @@
           padding: 0.3rem 0;
           display: flex;
           border-bottom: 1px solid #E6E6E6;
+          align-items: center;
           .li_left{
             font-size: 0.28rem;
             color: #999;
-            width: 20%;
+            width: 23%;
           }
           .li_right{
+            flex: 1;
             font-size: 0.26rem;
             color: #333333;
             select, input{
               width: 100%;
             }
+            .right_icon{
+              display: inline-block;
+              width: 0.2rem;
+              height: 0.2rem;
+              background-image: url('./more.png');
+              background-size: 100% 100%;
+              float: right;
+            }
           }
+        }
+        .li_sigin_pic {
+          align-items: flex-start;
         }
       }
       .pur_introduce{
@@ -179,6 +293,7 @@
         .int_p{
           font-size: 0.28rem;
           color: #999;
+          line-height: 0.4rem;
         }
       }
     }
@@ -271,53 +386,6 @@
         font-size: 0.28rem;
         text-align: center;
       }
-    }
-  }
-  .modal_success{
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.5);
-    .success_modal_box{
-      position: absolute;
-      left: 0.5rem;
-      right: 0.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: #fff;
-      border-radius: 0.1rem;
-      padding: 0.6rem 0;
-      text-align: center;
-    }
-    .suc_m_header{
-      margin-bottom: 0.36rem;
-      .s_m_h_img{
-        width: 1.2rem;
-        height: 1.2rem;
-        margin-bottom: 0.26rem;
-      }
-      .s_m_h_p{
-        color: #333;
-        font-size: 0.4rem;
-      }
-    }
-    .con_btn{
-      color: #999999;
-      margin-bottom: 0.64rem;
-      font-size: 0.66rem;
-      span{
-        font-size: 0.28rem;
-        padding: 0.14rem 0.32rem;
-        border: 1px solid #aaa;
-        border-radius: 0.06rem;
-      }
-    }
-    .tip{
-      color: #999;
-      font-size: 0.22rem;
     }
   }
 </style>

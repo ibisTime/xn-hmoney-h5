@@ -20,7 +20,7 @@
               :class="selectIndex === index ? 'select_sp' : ''"
             ></span>
             <div class="img_box" :style="{backgroundImage: `url('${item.pic}')`}"></div>
-            <p class="li_single_p">{{item.price}}币/份</p>
+            <p class="li_single_p">{{item.productName}}({{item.price}}币/份)</p>
           </li>
         </ul>
       </Scroll>
@@ -29,11 +29,13 @@
         <p>暂无记录</p>
       </div>
     </div>
+    <FullLoading :title="''" v-show="isFullLoading"/> 
   </div>
 </template>
 
 <script>
   import Scroll from 'base/scroll/scroll';
+  import FullLoading from 'base/full-loading/full-loading';
   import { setTitle, formatAmount } from "common/js/util";
   import {queryRealRight} from 'api/homeDig';
   export default {
@@ -46,19 +48,23 @@
         },
         deliveryImageList: [],
         hasMore: true,
-        selectIndex: -1
+        selectIndex: -1,
+        goType: '',
+        isFullLoading: true
       }
     },
     created() {
       setTitle('选择商品');
       this.params.symbol = this.$route.query.symbol || '';
+      this.goType = this.$route.query.type || '';
       this.queryRealRightData();
     },
     methods: {
       queryRealRightData() {
+        this.isFullLoading = true;
         queryRealRight(this.params).then(data => {
           data.list.forEach(item => {
-            item.price = formatAmount(item.price, '', item.symbol);
+            item.price = formatAmount(item.price, '2', item.symbol);
             item.pic = PIC_PREFIX + item.pic;
           });
           if (data.totalPage <= this.params.start) {
@@ -66,24 +72,36 @@
           }
           this.deliveryImageList = [...this.deliveryImageList, ...data.list];
           this.params.start ++;
+          this.isFullLoading = false;
         });
       },
       selectedProduct(msg, index) {
         this.selectIndex = index;
-        sessionStorage.setItem('productMsg', JSON.stringify({
-          productPic: msg.pic,
-          productCode: msg.code,
-          price: msg.price,
-          productName: msg.productName,
-          remainQuantity: msg.remainQuantity
-        }))
+        if(this.goType === 'dueTo') {
+          sessionStorage.setItem('dueToProductMsg', JSON.stringify({
+            productPic: msg.pic,
+            productCode: msg.code,
+            price: msg.price,
+            productName: msg.productName,
+            remainQuantity: msg.remainQuantity
+          }))
+        }else {
+          sessionStorage.setItem('productMsg', JSON.stringify({
+            productPic: msg.pic,
+            productCode: msg.code,
+            price: msg.price,
+            productName: msg.productName,
+            remainQuantity: msg.remainQuantity
+          }))
+        }
         setTimeout(() => {
           this.$router.back();
         }, 100);
       }
     },
     components: {
-      Scroll
+      Scroll,
+      FullLoading
     }
   }
 </script>
@@ -130,6 +148,13 @@
         }
         .li_single_p{
           text-align: center;
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
       }
     }

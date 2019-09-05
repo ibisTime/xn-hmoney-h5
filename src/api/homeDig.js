@@ -36,3 +36,23 @@ export function queryRealRight(params) {
 export function deliveryCoinList() {
   return fetch('650239');
 }
+
+// 交割信息详情查
+export function deliveryDetail(code) {
+  return fetch('650238', {code})
+}
+
+// 提交交割
+export function submitDelivery(params) {
+  return fetch('650250', params);
+}
+
+// 我的交割记录分页查
+export function ownerDeliveryRecord(params) {
+  return fetch('650254', params);
+}
+
+// 详情查询交割记录
+export function deliveryRecordDetail(code) {
+  return fetch('650253', {code})
+}

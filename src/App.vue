@@ -89,6 +89,13 @@
     -webkit-overflow-scrolling: auto; // 阻止元素滑动回弹
     width: 100%;
     height: 100%;
+    .slide-enter-active, .slide-leave-active {
+      transition: all 0.3s;
+    }
+
+    .slide-enter, .slide-leave-to {
+      transform: translate3d(-100%, 0, 50%);
+    }
   }
   .all-content{
     width: 100%;

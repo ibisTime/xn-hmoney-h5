@@ -49,9 +49,6 @@ const securityBindingEmail = () => import('components/security-binding-email/sec
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
-// 地址本
-const AddressBook = () => import('components/address-book/address-book');
-const AddressBookAdd = () => import('components/address-book/address-book-add');
 
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
@@ -106,6 +103,7 @@ const DigDeliverySelectType = () => import('components/dig-delivery/delivery-sel
 const DigDeliveryDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail');
 const DigDeliveryRecord = () => import('components/dig-delivery/delivery-record/delivery-record');
 const DigDeliveryRecordDetail = () => import('components/dig-delivery/record-detail/record-detail');
+const DeliveryRecordDetail = () => import('components/dig-delivery/delivery-record/delivery-record-detail');
 
 export default new Router({
   routes: [
@@ -240,14 +238,6 @@ export default new Router({
       component: OrderDetails
     },
     {
-      path: '/address-book',
-      component: AddressBook
-    },
-    {
-      path: '/address-book-add',
-      component: AddressBookAdd
-    },
-    {
       path: '/login',
       component: Login
     },
@@ -334,6 +324,10 @@ export default new Router({
     {
       path: '/delivery-record',
       component: DigDeliveryRecord
+    },
+    {
+      path: '/delivery-record-detail',
+      component: DeliveryRecordDetail
     },
     {
       path: '/record-detail',
