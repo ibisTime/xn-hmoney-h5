@@ -338,6 +338,7 @@
       align-items: center;
       justify-content: center;
       font-size: 0.32rem;
+      background-color: #fff;
       span{
         display: inline-block;
         margin-right: 0.08rem;

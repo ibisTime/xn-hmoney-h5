@@ -349,3 +349,13 @@ export function resetPwd(config) {
       ...config
   });
 }
+
+// 我的一代用户分页查询 详情含有二级用户列表
+export function userChildren(params) {
+  return fetch(805122, params);
+}
+
+// 我的团队人数分布
+export function userChildrenNum() {
+  return fetch(805124);
+}

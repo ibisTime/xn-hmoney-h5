@@ -9,8 +9,8 @@
         <img src="./Fill 1@2x.png" alt="">
       </div>
       <div class="h_right">
-        <p :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></p>
-        <div class="product_div">{{productMsg.productName ? productMsg.productName : 'xxx'}}</div>
+        <p :style="dueToProductMsg.productPic ? {backgroundImage: `url('${dueToProductMsg.productPic}')`} : ''"></p>
+        <div class="product_div">{{dueToProductMsg.productName ? dueToProductMsg.productName : 'xxx'}}</div>
       </div>
     </div>
     <div class="pur_con">
@@ -24,7 +24,7 @@
         <li class="li_single">
           <div class="li_left">商品选择</div>
           <div class="li_right" @click="toDeliveryImg">
-            {{productMsg.productName ? productMsg.productName : '请选择商品'}}
+            {{dueToProductMsg.productName ? dueToProductMsg.productName : '请选择商品'}}
             <i class="right_icon"></i>
           </div>
         </li>
@@ -88,7 +88,7 @@
       return {
         timer: 5,
         deliveryMsg: {},
-        productMsg: {
+        dueToProductMsg: {
           productName: '',
           productPic: ''
         },
@@ -143,8 +143,8 @@
         });
       }
       if(dueToProductMsg) {
-        this.productMsg = JSON.parse(dueToProductMsg);
-        this.deliveryConfig.realRightCode = this.productMsg.productCode;
+        this.dueToProductMsg = JSON.parse(dueToProductMsg);
+        this.deliveryConfig.realRightCode = this.dueToProductMsg.productCode;
       }
       if(this.isMail && setRess) {
         this.deliveryConfig.pickWay = '1';
@@ -172,8 +172,8 @@
           this.$refs.toast.show();
           return;
         }
-        sessionStorage.setItem('freeSymbol', this.deliveryConfig.symbol);
-        sessionStorage.setItem('productMsg', JSON.stringify(this.productMsg));
+        sessionStorage.setItem('dueToSymbol', this.deliveryConfig.symbol);
+        sessionStorage.setItem('dueToProductMsg', JSON.stringify(this.dueToProductMsg));
         sessionStorage.setItem('deliveryConfig', JSON.stringify(this.deliveryConfig));
         this.$router.push(`/delivery-confirm?avaAmount=${this.avaAmount}&type=dueTo`);
       },
@@ -250,7 +250,7 @@
       }
     }
     .pur_con{
-      padding-bottom: 1rem;
+      padding-bottom: 2rem;
       .con_ul{
         .li_single{
           padding: 0.3rem 0;
@@ -298,7 +298,7 @@
       }
     }
     .pur_foo_btn{
-      position: absolute;
+      position: fixed;
       left: 0;
       right: 0;
       bottom: 0;

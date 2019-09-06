@@ -79,7 +79,7 @@
     },
     created() {
       const productMsg = sessionStorage.getItem('productMsg');
-      const freeSymbol = sessionStorage.getItem('freeSymbol');
+      const freeSymbol = sessionStorage.getItem('freeSymbol') || '';
       if(productMsg) {
         this.productMsg = JSON.parse(productMsg);
       }
@@ -142,16 +142,12 @@
       changeSymbol() {
         sessionStorage.removeItem('productMsg');
         this.productMsg = {};
+        this.getWallet();
+        sessionStorage.setItem('freeSymbol', newVal);
       }
     },
     components: {
       Toast
-    },
-    watch: {
-      symbol(newVal) {
-        this.getWallet();
-        sessionStorage.setItem('freeSymbol', newVal);
-      }
     }
   }
 </script>

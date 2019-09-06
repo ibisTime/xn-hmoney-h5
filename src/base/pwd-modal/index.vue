@@ -12,8 +12,8 @@
         <input
           type="password"
           @keyup.stop="inputPaw"
-          @focus="isFocus = true"
-          @blur="isFocus = false"
+          @focus.stop="isFocus = true"
+          @blur="blurIn"
           @click.stop
           ref="pawRef"
         >
@@ -57,6 +57,10 @@
       },
       removePaw() {
         this.$emit('removePaw');
+      },
+      blurIn () {
+        this.isFocus = false;
+        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
       }
     },
     watch: {

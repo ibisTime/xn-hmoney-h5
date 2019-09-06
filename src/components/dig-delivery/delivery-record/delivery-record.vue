@@ -101,6 +101,7 @@ export default {
       const key = ev.target.getAttribute('data-key');
       this.params.status = key;
       this.recordList = [];
+      this.params.start = 1;
       this.getDeliveryRecord();
     }
   },

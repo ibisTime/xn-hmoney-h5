@@ -83,6 +83,12 @@ export default {
       tabKey: ''
     }
   },
+  props: {
+    dueType: {
+      type: String,
+      default: ''
+    }
+  },
   created() {
     getDictList('delivery_status').then(data => {
       if(Array.isArray(data)) {
@@ -98,8 +104,8 @@ export default {
       queryDelivery(this.params).then(data => {
         data.list.forEach(item => {
           item.deliveryStatus = this.deliveryStatus[item.deliveryStatus];
-          item.totalAmount = formatAmount(item.totalAmount, '', item.symbol);
-          item.remainAmount = formatAmount(item.remainAmount, '', item.symbol);
+          item.totalAmount = formatAmount(item.totalAmount, '2', item.symbol);
+          item.remainAmount = formatAmount(item.remainAmount, '2', item.symbol);
           item.startDatetime = formatDate(item.startDatetime, 'yyyy-MM-dd hh:mm:ss');
           item.endDatetime = formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss');
           item.symbolIcon = PIC_PREFIX + item.symbolIcon;
@@ -126,6 +132,15 @@ export default {
   },
   components: {
     Scroll
+  },
+  watch: {
+    dueType(newVal) {
+      if(newVal === '1') {
+        this.deliveryList = [];
+        this.params.start = 1;
+        this.queryDeliveryData();
+      }
+    }
   }
 }
 </script>
@@ -174,6 +189,7 @@ export default {
         background-color: #fff;
         border-radius: 0.1rem;
         padding: 0.22rem 0.3rem 0.46rem;
+        margin-bottom: 0.3rem;
         .li_head{
           display: flex;
           justify-content: space-between;
@@ -233,6 +249,7 @@ export default {
                 .li_con_head_right_tit_sp{
                   color: #555;
                   font-size: 0.3rem;
+                  margin-left: 0.1rem;
                 }
               }
               .li_con_head_right_progress{

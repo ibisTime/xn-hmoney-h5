@@ -2,21 +2,23 @@
   <div class="invite-friends-wrapper" @click.stop>
       <div class='friends icon'>
             <div class='content' ref="copyImg" @click="isFz = true;">
-                <div class="pic icon"></div>
-                <div class="yq-box">
-                    <p class="yq_p1">王大催</p>
-                    <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
-                </div>
-                <div class="rq-code">
-                    <div id='qrcode'></div>
+                <div class="con_box">
+                    <div class="pic icon"></div>
+                    <div class="yq-box">
+                        <p class="yq_p1">{{nickName}}</p>
+                        <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
+                    </div>
+                    <div class="rq-code">
+                        <div id='qrcode'></div>
+                    </div>
                 </div>
             </div>
             <img src="" alt="" class="con-img" ref="conImg" @click="isFz = false;">
             <div class="qr-txt" @click.stop="isFz = false;">
-                {{$t('myInviteFriends.subject.bzbd')}}
+                点击复制邀请好友链接
             </div>
-            <div class='main-btn' @click.stop="isFz = false;">
-                {{$t('myInviteFriends.subject.fuzzs')}}
+            <div class='main-btn' @click.stop="downPic">
+                请长按保存图片
             </div>
       </div>
       <div class="ress-box" v-show="!isFz" @click.stop>
@@ -48,7 +50,8 @@ export default {
         isFz: true,
         textMsg: '',
         container: '',
-        copyBtn: null
+        copyBtn: null,
+        picUrl: ''
     };
   },
   created() {
@@ -57,7 +60,7 @@ export default {
   },
   mounted() {
     getUser().then(data => {
-        this.nickName = data.nickname;
+        this.nickName = data.realName;
         this.isLoading = false;
         this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
         this.container = document.getElementById('qrcode');
@@ -67,7 +70,9 @@ export default {
           foreground: '#000000'
         });
         qr.make(this.wxUrl);
-        this.saveImgFn();
+        this.$nextTick(() => {
+            this.saveImgFn();
+        });
     }, () => {
         this.isLoading = false;
     });
@@ -75,18 +80,6 @@ export default {
   },
   methods: {
     CopyUrl() {
-        // let url = document.querySelector('#copyObj');
-        // url.select(); // 选择对象
-        // if(!document.execCommand('Copy')){
-        //     this.textMsg = this.$t('walletInto.subject.gbzc');
-        //     this.$refs.toast.show();
-        // }else{
-        //     this.textMsg = '复制成功';
-        //     this.$refs.toast.show();
-        //     setTimeout(() => {
-        //         this.isFz = true;
-        //     }, 1000);
-        // }
         let _this = this;
         let clipboard = _this.copyBtn;
         clipboard.on('success', function() {
@@ -103,12 +96,32 @@ export default {
     },
     saveImgFn(){
         html2canvas(this.$refs.copyImg).then((canvas) => {
-            // let down = document.getElementById('down');
-            var url = canvas.toDataURL('image/png');
-            this.$refs.conImg.setAttribute('src', url);
-            // down.setAttribute('href', url);
-            // down.click();
+            this.picUrl = canvas.toDataURL('image/png');
+            this.$refs.conImg.setAttribute('src', this.picUrl);
         });
+    },
+    downloadIamge(imgsrc, name) {//下载图片地址和图片名
+        var image = new Image();
+        // 解决跨域 Canvas 污染问题
+        image.setAttribute("crossOrigin", "anonymous");
+        image.onload = function() {
+            var canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            var context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, image.width, image.height);
+            var url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+        
+            var a = document.createElement("a"); // 生成一个a元素
+            var event = new MouseEvent("click"); // 创建一个单击事件
+            a.download = name || "photo"; // 设置图片名称
+            a.href = url; // 将生成的URL设置为a.href属性
+            a.dispatchEvent(event); // 触发a的单击事件
+        };
+        image.src = imgsrc;
+    },
+    downPic(){
+        this.downloadIamge(this.picUrl, '邀请好友');
     }
   },
   components: {
@@ -160,6 +173,11 @@ export default {
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            position: relative;
+            .con_box{
+                position: relative;
+                bottom: 3.6rem;
+            }
             .logo {
                 width: 1.1rem;
                 height: .48rem;
@@ -175,7 +193,7 @@ export default {
             .yq-box{
                 color: #fff;
                 margin-bottom: 4%;
-                margin-top: 20%;
+                margin-top: 10%;
                 p{
                     margin-top: 4%;
                 }

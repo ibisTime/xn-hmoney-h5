@@ -22,7 +22,7 @@
         <span v-show="errors.has('quantity')" class="error-tip">{{errors.first('quantity')}}</span>
       </div>
       <div class="con_foo">
-        <p>数量：<span>{{productMsg.remainQuantity}}</span></p>
+        <p>库存：<span>{{productMsg.remainQuantity}}</span></p>
         <p>余额：<span>{{avaAmount}}</span></p>
       </div>
       <div class="foo_btn" @click="toDeliverySelectType">
@@ -33,9 +33,9 @@
       <div class="success_modal_box" @click.stop>
         <div class="suc_m_header">
           <img class="s_m_h_img" src="./success_icon.png" alt="">
-          <p class="s_m_h_p">转账成功</p>
+          <p class="s_m_h_p">交割申请成功</p>
         </div>
-        <div class="con_btn"><span>查看转账记录</span></div>
+        <div class="con_btn" @click="toRecord"><span>查看交割记录</span></div>
         <p class="tip">
           {{timer}}秒后自动跳转
         </p>
@@ -64,15 +64,16 @@
         isShowPawModal: false,
         isSuccessModal: false,
         pathType: '',
-        interval: null
+        interval: null,
+        timer: 5
       }
     },
     created() {
       setTitle('交割');
       this.avaAmount = this.$route.query.avaAmount;
       this.pathType = this.$route.query.type;
-      const productMsg = sessionStorage.getItem('productMsg');
-      const symbol = sessionStorage.getItem('freeSymbol');
+      const productMsg = this.pathType === 'dueTo' ? sessionStorage.getItem('dueToProductMsg') : sessionStorage.getItem('productMsg');
+      const symbol = this.pathType === 'dueTo' ? sessionStorage.getItem('dueToSymbol') : sessionStorage.getItem('freeSymbol');
       const deliveryConfig = sessionStorage.getItem('deliveryConfig');
       if(productMsg && symbol && deliveryConfig) {
         this.productMsg = JSON.parse(productMsg);
@@ -133,7 +134,7 @@
           this.interval = setInterval(() => {
             this.timer --;
             if(this.timer < 1) {
-              this.$router.push('purchase-record');
+              this.$router.push('delivery-record');
               clearInterval(this.interval);
             }
           }, 1000);
@@ -143,6 +144,9 @@
       },
       removePaw() {
         this.isShowPawModal = false;
+      },
+      toRecord() {
+        this.$router.push('delivery-record');
       }
     },
     components: {

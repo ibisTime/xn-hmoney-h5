@@ -10,7 +10,7 @@
       </router-link>
     </div>
     <FreeDelivery v-show="type === '0'"/>
-    <DueToDelivery v-show="type === '1'"/>
+    <DueToDelivery v-show="type === '1'" :dueType="type"/>
   </div>
 </template>
 
@@ -31,24 +31,24 @@
     methods: {
       freeDelivery() {
         this.type = '0';
-        sessionStorage.setItem('deliveryType', '0');
-        sessionStorage.removeItem('productMsg');
-        sessionStorage.removeItem('freeSymbol');
-        sessionStorage.removeItem('deliveryConfig');
-        sessionStorage.removeItem('toBank');
       },
       dueDelivery() {
         this.type = '1';
-        sessionStorage.setItem('deliveryType', '1');
-        sessionStorage.removeItem('productMsg');
-        sessionStorage.removeItem('freeSymbol');
-        sessionStorage.removeItem('deliveryConfig');
-        sessionStorage.removeItem('toBank');
       }
     },
     components: {
       FreeDelivery,
       DueToDelivery
+    },
+    watch: {
+      type(newVal) {
+        sessionStorage.setItem('deliveryType', '1');
+        sessionStorage.removeItem('productMsg');
+        sessionStorage.removeItem('freeSymbol');
+        sessionStorage.removeItem('deliveryConfig');
+        sessionStorage.removeItem('toBank');
+        sessionStorage.removeItem('dueToProductMsg');
+      }
     }
   }
 </script>
@@ -57,12 +57,13 @@
   .dig-delivery{
     height: 100%;
     background-color: #fff;
-    padding: 0.3rem 0 0;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     .header{
       position: relative;
       margin-bottom: 0.24rem;
+      padding-top: 0.3rem;
       .h_m_box{
         display: flex;
         align-items: center;
