@@ -2,8 +2,8 @@
   <div class="his_mine">
     <div class="his_header">
       <p>出矿总量</p>
-      <h5>0.0000</h5>
-      <p>2019-10-09</p>
+      <h5>{{dayPoolAmount}}</h5>
+      <p>{{outDatetime}}</p>
     </div>
     <div class="con_canvas">
       <div class="left">
@@ -11,81 +11,140 @@
       </div>
       <div class="right">
         <div class="r_box">
-          <p class="r_p_tit"><i class="r1_i"></i> 投资收益</p>
-          <p class="r_p_con">60%</p>
+          <p class="r_p_tit"><i class="r1_i"></i> 自身收益</p>
+          <p class="r_p_con">{{selfProportion}}%</p>
         </div>
         <div>
           <p class="r_p_tit"><i class="r2_i"></i> 团队收益</p>
-          <p class="r_p_con">40%</p>
+          <p class="r_p_con">{{teamProportion}}%</p>
         </div>
       </div>
     </div>
-    <ul class="his_list">
-      <h5 class="his_tit">领取记录</h5>
-      <li class="li_single">
-        <div class="li_left">
-          <p class="left_p">可领取 <span class="b_sp">12451</span></p>
-          <p>2018-10-10 20:00:00</p>
+    <div class="list_box">
+      <div class="list_wrp">
+        <Scroll
+          ref="scroll"
+          :data="recordList"
+          :hasMore="hasMore"
+          v-show="recordList.length > 0"
+          @pullingUp="queryCalculateRecord"
+        >
+          <ul class="his_list">
+            <h5 class="his_tit">领取记录</h5>
+            <li
+              class="li_single"
+              v-for="(item, index) in recordList"
+              :key="`his_record_${index}`"
+            >
+              <div class="li_left">
+                <p class="left_p">已领取 <span class="b_sp">{{item.poolAmount}}</span></p>
+                <p>{{params.outDatetime}}</p>
+              </div>
+              <div class="li_right">
+                <span>+{{item.poolAmount}}</span>
+              </div>
+            </li>
+          </ul>
+        </Scroll>
+        <div class="no-data" :class="{'hidden': recordList.length > 0}">
+          <img src="../outMine/wu.png" />
+          <p>暂无记录</p>
         </div>
-        <div class="li_right">
-          <span>+4644.1125</span>
-        </div>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  import {setTitle} from 'common/js/util';
+  import {setTitle, formatAmount, formatDate} from 'common/js/util';
+  import {ownerCalculateEarnings, queryCalculateRecord} from 'api/homeDig';
   import Scroll from 'base/scroll/scroll';
   export default {
     data() {
-      return {}
+      return {
+        outDatetime: '',
+        mapData: [],
+        selfProportion: 0,
+        teamProportion: 0,
+        dayPoolAmount: 0,
+        recordList: [],
+        hasMore: false,
+        params: {
+          start: 1,
+          limit: 10
+        }
+      }
     },
     created() {
       setTitle('历史出矿');
+      this.outDatetime = this.$route.query.outDatetime;
+      this.params.outDatetime = this.outDatetime;
+      this.queryCalculateRecord();
     },
     mounted() {
-      let chart = document.getElementById('charts');
-      let myChart = this.$echarts.init(chart);
-      const option = {
-        tooltip: {
-          trigger: 'item',
-          formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        color: ['#FFDA6B', '#6BAFFF'],
-        series: [
-          {
-            name:'访问来源',
-            type:'pie',
-            radius: ['50%', '70%'],
-            avoidLabelOverlap: false,
-            label: {
-              normal: {
-                show: false,
-                position: 'center'
-              },
-              emphasis: {
-                show: true,
-                textStyle: {
-                  fontSize: '30',
-                  fontWeight: 'bold'
-                }
-              }
+      ownerCalculateEarnings(this.outDatetime).then(data => {
+        this.dayPoolAmount = data.dayPoolAmount > 0 ? formatAmount(data.dayPoolAmount, '4', 'TWT') : '0.0000';
+        this.mapData.push({value: data.daySelfAmount > 0 ? data.daySelfAmount : 1});
+        this.mapData.push({value: data.dayTeamAmount > 0 ? data.dayTeamAmount : 1});
+        const allAmount = data.daySelfAmount + data.dayTeamAmount;
+        if(allAmount > 0) {
+          this.selfProportion = data.daySelfAmount / allAmount * 100;
+          this.teamProportion = data.dayTeamAmount / allAmount * 100;
+        }
+        setTimeout(() => {
+          let chart = document.getElementById('charts');
+          let myChart = this.$echarts.init(chart);
+          const option = {
+            tooltip: {
+              trigger: 'item',
+              formatter: "{a} <br/>{b}: {c} ({d}%)"
             },
-            labelLine: {
-              normal: {
-                show: false
+            color: ['#FFDA6B', '#6BAFFF'],
+            series: [
+              {
+                name:'访问来源',
+                type:'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                  normal: {
+                    show: false,
+                    position: 'center'
+                  },
+                  emphasis: {
+                    show: true,
+                    textStyle: {
+                      fontSize: '30',
+                      fontWeight: 'bold'
+                    }
+                  }
+                },
+                labelLine: {
+                  normal: {
+                    show: false
+                  }
+                },
+                data: this.mapData
               }
-            },
-            data:[
-              {value:335, name:'直接访问'},
-              {value:310, name:'邮件营销'}
             ]
+          };
+          myChart.setOption(option);
+        }, 0);
+      });
+    },
+    methods: {
+      queryCalculateRecord() {
+        queryCalculateRecord(this.params).then(data => {
+          data.list.forEach(item => {
+            item.poolAmount = item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0';
+          });
+          if (data.totalPage <= this.params.start) {
+            this.hasMore = false;
           }
-        ]
-      };
-      myChart.setOption(option);
+          this.recordList = [...this.recordList, ...data.list];
+          this.params.start ++;
+        });
+      }
     },
     components: {
       Scroll
@@ -159,11 +218,20 @@
         }
       }
     }
-    .his_list{
+    .list_box{
       flex: 1;
       position: relative;
-      padding: 0.3rem;
       background-color: #fff;
+      .list_wrp{
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        right: 0;
+      }
+    }
+    .his_list{
+      padding: 0.3rem 0.3rem 1rem 0.3rem;
       .his_tit{
         margin-bottom: 0.3rem;
         font-size: 0.36rem;

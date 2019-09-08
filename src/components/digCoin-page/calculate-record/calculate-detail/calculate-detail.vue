@@ -4,42 +4,97 @@
       <div class="h_con">
         <div class="h_left">
           <p class="tit">算力数</p>
-          <h5 class="txt">100</h5>
+          <h5 class="txt">{{dayCalculate}}</h5>
         </div>
         <div class="h_right">
-          <p class="tit">算力数</p>
-          <h5 class="txt">100</h5>
+          <p class="tit">获取代币</p>
+          <h5 class="txt">{{dayPoolAmount}}</h5>
         </div>
       </div>
-      <p>2019-10-10</p>
+      <p>{{params.outDatetime}}</p>
     </div>
     <div class="cal_con">
       <h5 class="con_tit">
         <span class="tit_left">算力记录</span>
       </h5>
-      <ul class="con_ul">
-        <li class="sing_li">
-          <div class="sing_left">
-            <h5 class="left_h5">直推持币算力</h5>
-            <p class="left_p">2018-10-10 20:00:00</p>
+      <div class="cal_con_box">
+        <div class="cal_wrp">
+          <Scroll
+            ref="scroll"
+            :data="recordList"
+            :hasMore="hasMore"
+            v-show="recordList.length > 0"
+            @pullingUp="queryCalculateRecord"
+          >
+            <ul class="con_ul">
+              <li
+                class="sing_li"
+                v-for="(item, index) in recordList"
+                :key="`record_${index}`"
+              >
+                <div class="sing_left">
+                  <h5 class="left_h5">{{item.bizNote}}</h5>
+                  <p class="left_p">{{params.outDatetime}}</p>
+                </div>
+                <div class="sing_right">
+                  {{item.calculate}}
+                </div>
+              </li>
+            </ul>
+          </Scroll>
+          <div class="no-data" :class="{'hidden': recordList.length > 0}">
+            <img src="../wu.png" />
+            <p>暂无记录</p>
           </div>
-          <div class="sing_right">
-            +4644.1125
-          </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { setTitle } from "common/js/util";
+  import Scroll from 'base/scroll/scroll';
+  import { setTitle, formatAmount } from "common/js/util";
+  import {ownerCalculateEarnings, queryCalculateRecord} from 'api/homeDig';
   export default {
     data() {
-      return {}
+      return {
+        params: {
+          start: 1,
+          limit: 10,
+          outDatetime: ''
+        },
+        recordList: [],
+        hasMore: true,
+        dayCalculate: '',
+        dayPoolAmount: ''
+      }
     },
     created() {
       setTitle('算力明细');
+      this.params.outDatetime = this.$route.query.outDatetime;
+      this.queryCalculateRecord();
+      ownerCalculateEarnings(this.params.outDatetime).then(data => {
+        this.dayCalculate = formatAmount(data.dayCalculate, '4', 'TWT');
+        this.dayPoolAmount = formatAmount(data.dayPoolAmount, '4', 'TWT');
+      });
+    },
+    methods: {
+      queryCalculateRecord() {
+        queryCalculateRecord(this.params).then(data => {
+          data.list.forEach(item => {
+            item.calculate = formatAmount(item.calculate, '4', 'TWT');
+          });
+          if (data.totalPage <= this.params.start) {
+            this.hasMore = false;
+          }
+          this.recordList = [...this.recordList, ...data.list];
+          this.params.start ++;
+        });
+      }
+    },
+    components: {
+      Scroll
     }
   }
 </script>
@@ -48,6 +103,8 @@
   .calculate-detail{
     height: 100%;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
     .header{
       background-image: url('../../image/Mask@2x.png');
       -webkit-background-size: 100% 100%;
@@ -77,6 +134,20 @@
     }
     .cal_con{
       padding: 0.3rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      .cal_con_box{
+        flex: 1;
+        position: relative;
+        .cal_wrp{
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+        }
+      }
       .con_tit{
         color: #333333;
         font-size: 0.36rem;
@@ -85,6 +156,7 @@
         justify-content: space-between;
       }
       .con_ul{
+        padding-bottom: 1rem;
         .sing_li{
           border-bottom: 1px solid #E6E6E6;
           padding: 0.3rem 0 0.24rem 0;

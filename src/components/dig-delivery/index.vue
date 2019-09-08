@@ -9,7 +9,7 @@
         交割记录
       </router-link>
     </div>
-    <FreeDelivery v-show="type === '0'"/>
+    <FreeDelivery v-show="type === '0'" :dueType="type"/>
     <DueToDelivery v-show="type === '1'" :dueType="type"/>
   </div>
 </template>
@@ -42,7 +42,7 @@
     },
     watch: {
       type(newVal) {
-        sessionStorage.setItem('deliveryType', '1');
+        sessionStorage.setItem('deliveryType', newVal);
         sessionStorage.removeItem('productMsg');
         sessionStorage.removeItem('freeSymbol');
         sessionStorage.removeItem('deliveryConfig');

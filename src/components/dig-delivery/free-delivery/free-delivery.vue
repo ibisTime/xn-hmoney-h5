@@ -77,6 +77,12 @@
         }
       }
     },
+    props: {
+      dueType: {
+        type: String,
+        default: '0'
+      }
+    },
     created() {
       const productMsg = sessionStorage.getItem('productMsg');
       const freeSymbol = sessionStorage.getItem('freeSymbol') || '';
@@ -97,6 +103,7 @@
         });
         if(freeSymbol) {
           this.symbol = freeSymbol;
+          this.getWallet();
         }
       });
     },
@@ -143,11 +150,22 @@
         sessionStorage.removeItem('productMsg');
         this.productMsg = {};
         this.getWallet();
-        sessionStorage.setItem('freeSymbol', newVal);
+        sessionStorage.setItem('freeSymbol', this.symbol);
       }
     },
     components: {
       Toast
+    },
+    watch: {
+      dueType(newVal) {
+        console.log(newVal);
+        if(newVal === '1') {
+          this.symbol = '';
+          this.avaAmount = '';
+          this.symbolObj = {};
+          this.productMsg = {};
+        }
+      }
     }
   }
 </script>

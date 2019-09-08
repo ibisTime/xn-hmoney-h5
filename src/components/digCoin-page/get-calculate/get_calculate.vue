@@ -2,20 +2,46 @@
   <div class="get_calculate">
     <ul class="cal_container">
       <li>
-        <img src="../image/get_yqhy.png" alt="">
-        <p>邀请好友</p>
+        <router-link to="my-inviteFriends">
+          <img src="../image/get_yqhy.png" alt="">
+          <p>邀请好友</p>
+        </router-link>
       </li>
       <li>
-        <img src="../image/get_cbi.png" alt="">
-        <p>持币</p>
+        <router-link :to="`wallet-into?adress=${walletObj.address}&currency=${walletObj.currency}&accountNumber=${walletObj.accountNumber}`">
+          <img src="../image/get_cbi.png" alt="">
+          <p>持币</p>
+        </router-link>
       </li>
       <li>
-        <img src="../image/get_zdjg.png" alt="">
-        <p>主动交割</p>
+        <router-link to="dig-delivery">
+          <img src="../image/get_zdjg.png" alt="">
+          <p>主动交割</p>
+        </router-link>
       </li>
     </ul>
   </div>
 </template>
+
+<script>
+import {wallet} from 'api/person';
+export default {
+  data() {
+    return {
+      walletObj: {
+        address: '',
+        currency: '',
+        accountNumber: ''
+      }
+    }
+  },
+  created() {
+    wallet().then(data => {
+      this.walletObj = data.accountList.filter(item => item.currency === 'TWT')[0];
+    });
+  }
+}
+</script>  
 
 <style lang="scss" scoped>
   .get_calculate{

@@ -46,13 +46,14 @@
           <img class="s_m_h_img" src="./success_icon.png" alt="">
           <p class="s_m_h_p">交割申请成功</p>
         </div>
-        <div class="con_btn"><span>查看交割记录</span></div>
+        <div class="con_btn" @click="toDeliveryRecord"><span>查看交割记录</span></div>
         <p class="tip">
           {{timer}}秒后自动跳转
         </p>
       </div>
     </div>
     <PawModal :isShow="isShowPawModal" @getPawList="getPawList" @removePaw="removePaw"/>
+    <Toast :text="toastMsg" ref="toast"/>
   </div>
 </template>
 
@@ -61,6 +62,7 @@
   import {getAddressList} from 'api/user';
   import {submitDelivery} from 'api/homeDig';
   import PawModal from 'base/pwd-modal/index';
+  import Toast from 'base/toast/toast';
   export default {
     data() {
       return {
@@ -75,7 +77,8 @@
           mobile: '',
           addressee: ''
         },
-        interval: null
+        interval: null,
+        toastMsg: ''
       }
     },
     created() {
@@ -107,7 +110,7 @@
       },
       getPawList(list) {
         if(list.length < 6) {
-          this.textMsg = '请填写完整';
+          this.toastMsg = '请填写完整';
           this.$refs.toast.show();
           return;
         }
@@ -138,10 +141,14 @@
         sessionStorage.setItem('storetype', '1');
         sessionStorage.setItem('toBank', `delivery-select-type`);
         this.$router.push('/mine-address');
+      },
+      toDeliveryRecord() {
+        this.$router.push('delivery-record');
       }
     },
     components: {
-      PawModal
+      PawModal,
+      Toast
     },
     beforeDestroy() {
       if(this.interval) {

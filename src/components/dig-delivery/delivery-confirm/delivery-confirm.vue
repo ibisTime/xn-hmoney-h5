@@ -47,7 +47,7 @@
 </template>
 
 <script>
-  import {getUserById} from 'api/user';
+  import {getUser} from 'api/user';
   import {submitDelivery} from 'api/homeDig';
   import { setTitle, formatMoneyMultiply } from "common/js/util";
   import Toast from 'base/toast/toast';
@@ -85,7 +85,7 @@
       toDeliverySelectType() {
         this.$validator.validateAll().then((result) => {
           if(result) {
-            getUserById().then(data => {
+            getUser().then(data => {
               if(data.tradepwdFlag) {
                 const totalPrice = quantity * +this.productMsg.price;
                 if(totalPrice > +this.avaAmount) {
@@ -101,8 +101,11 @@
                   this.$router.push('delivery-select-type');
                 }
               }else {
-                this.textMsg = '请先设置交易密码';
+                this.toastMsg = '请先设置交易密码';
                 this.$refs.toast.show();
+                setTimeout(() => {
+                  this.$router.push('security-center');
+                }, 1000);
                 return;
               }
             });
@@ -120,7 +123,7 @@
       },
       getPawList(list) {
         if(list.length < 6) {
-          this.textMsg = '请填写完整';
+          this.toastMsg = '请填写完整';
           this.$refs.toast.show();
           return;
         }

@@ -56,3 +56,67 @@ export function ownerDeliveryRecord(params) {
 export function deliveryRecordDetail(code) {
   return fetch('650253', {code})
 }
+
+// 我目前的挖矿代币值和算力值
+export function ownerDigValue() {
+  return fetch('650273')
+}
+
+// 我的待领取的矿列表
+export function willDigList() {
+  return fetch('650274')
+}
+
+// 领取挖矿值
+export function receiveDigValue(id) {
+  return fetch('650275', {id})
+}
+
+// 算力排行榜
+export function calculateList() {
+  return fetch('650276')
+}
+
+// 代币排行榜
+export function tokensList() {
+  return fetch('650277')
+}
+
+// 某日获取算力记录分页查询
+export function queryCalculateRecord(params) {
+  return fetch('650279', params)
+}
+
+// 我的历史记录统计分页查询
+export function queryHistoryRecord(params) {
+  return fetch(650280, params);
+}
+
+// 我的某一日算力和获取的代币(含自身收益和团队收益)
+export function ownerCalculateEarnings(outDatetime) {
+  return fetch(650278, {outDatetime});
+}
+
+// 目前的挖矿代币值和算力值
+export function outMineEarnings() {
+  return fetch(650273);
+}
+
+// 代币池转账申请
+export function outMineApply(params) {
+  return fetch(650290, params);
+}
+
+// 我的代币池转账申请记录
+export function ownerApplyRecord(params) {
+  return fetch(650294, {
+    ...params,
+    orderDir: 'desc',
+    orderColumn: 'id'
+  })
+}
+
+// 我的矿池余额，昨日出矿以及累计出矿值
+export function ownerDigAmount() {
+  return fetch(650282)
+}

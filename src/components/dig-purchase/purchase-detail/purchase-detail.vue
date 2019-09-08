@@ -102,7 +102,7 @@
   import FullLoading from 'base/full-loading/full-loading';
   import Toast from 'base/toast/toast';
   import {wallet} from 'api/person';
-  import {getUserById} from 'api/user';
+  import {getUser} from 'api/user';
   import {buyPurchase, purchaseDetail} from 'api/homeDig';
   import { setTitle, formatAmount, formatMoneyMultiply, formatDate } from "common/js/util";
   import PawModal from 'base/pwd-modal/index';
@@ -167,7 +167,7 @@
           this.$refs.toast.show();
           return;
         }
-        this.config.tradePwd = list.join('');
+        this.config.tradePwd = tradePwd;
         this.isShowLoading = true;
         const payAmount = formatMoneyMultiply(this.config.payAmount, '', this.purDetail.toSymbol);
         buyPurchase({
@@ -208,12 +208,15 @@
         }
       },
       showModalFn() {
-        getUserById().then(data => {
+        getUser().then(data => {
           if(data.tradepwdFlag) {
             this.isShowModal = true;
           }else {
             this.textMsg = '请先设置交易密码';
             this.$refs.toast.show();
+            setTimeout(() => {
+              this.$router.push('security-center');
+            }, 1000);
             return;
           }
         });

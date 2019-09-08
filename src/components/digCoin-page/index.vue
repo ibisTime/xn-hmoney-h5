@@ -1,92 +1,174 @@
 <template>
   <div class="dig_coin">
-    <div class="dig_head">
-      <div class="head_gg">
-        公告：xxx玩家挖到xxx矿
-      </div>
-      <div class="wa_dig">
-        <router-link to="dig-out_mine" class="left">
-          <img class="img_jb" src="./image/wa_jb.png" alt="">
-          <span>挖矿：0.0001</span>
-        </router-link>
-        <div class="right">
-          玩法介绍
-        </div>
-      </div>
-      <div class="wa_dig">
-        <router-link class="left" to="calculate-record">
-          <img class="img_sl" src="./image/wa_sl.png" alt="">
-          <span>算力：0.0001</span>
-        </router-link>
-      </div>
-      <div class="wa_con">
-        <div class="jbi_box">
-          <div
-            v-for="(item, index) in jbiList"
-            :style="{left: `${listX[index]}%`, top: `${listY[index]}%`}"
-            :key="`jb_${index}`"
-            class="jbi_single"
-          >
-            <img src="./image/jinbi_x.png" alt="">
-            <p>0.001</p>
+    <div class="dig_coin_wrp">
+      <Scroll :pullUpLoad="null">
+        <div class="coin_box">
+          <div class="dig_head">
+            <div class="head_gg">
+              公告：xxx玩家挖到xxx矿
+            </div>
+            <div class="wa_dig">
+              <router-link to="dig-out_mine" class="left">
+                <img class="img_jb" src="./image/wa_jb.png" alt="">
+                <span>挖矿：{{digValues.totalAmount}}</span>
+              </router-link>
+              <div class="right">
+                玩法介绍
+              </div>
+            </div>
+            <div class="wa_dig">
+              <router-link class="left" to="calculate-record">
+                <img class="img_sl" src="./image/wa_sl.png" alt="">
+                <span>算力：{{digValues.dayCalculate}}</span>
+              </router-link>
+            </div>
+            <div class="wa_con">
+              <div class="jbi_box">
+                <div
+                  v-for="(item, index) in digList"
+                  :style="{left: `${listX[index]}%`, top: `${listY[index]}%`}"
+                  :key="`jb_${index}`"
+                  class="jbi_single"
+                  @click="() => {jbiSingleClick(item.id, index)}"
+                >
+                  <img src="./image/jinbi_x.png" alt="">
+                  <p>{{item.poolAmount}}</p>
+                </div>
+              </div>
+              <router-link class="suanli_box" to="get-calculate">
+                <img src="./image/get_suanli.png" alt="">
+                <p class="sli_p">获取算力</p>
+              </router-link>
+            </div>
+          </div>
+          <div class="dig_con">
+            <div class="con_head">
+              <span :class="isSelectTab === 0 ? 'set_sp' : ''" @click="selectCalculate">算力排行榜</span>
+              <span :class="isSelectTab === 1 ? 'set_sp' : ''" @click="selectToken">代币排行榜</span>
+            </div>
+            <div class="con_tab">
+              <div class="tab_th">
+                <span>名次</span>
+                <span class="th_sp02">用户名</span>
+                <span class="th_sp03">{{isSelectTab === 0 ? '算力' : '代币'}}</span>
+              </div>
+              <ul class="tab_tbody">
+                <li v-for="(item, index) in calculateData" :key="`calculate_${index}`">
+                  <span
+                    class="t_sp01"
+                  >
+                    <i :class="index === 0 ? 'one_icon' : index === 1 ? 'two_icon' : index === 2 ? 'three_icon' : 'hidden'"></i>
+                    {{index > 2 ? index + 1 : ''}}
+                  </span>
+                  <span class="t_sp02">{{item.nickname}}</span>
+                  <span class="t_sp03">{{item.dayCalculate}}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-        <router-link class="suanli_box" to="get-calculate">
-          <img src="./image/get_suanli.png" alt="">
-          <p class="sli_p">获取算力</p>
-        </router-link>
-      </div>
-    </div>
-    <div class="dig_con">
-      <div class="con_head">
-        <span class="set_sp">算力排行榜</span>
-        <span>代币排行榜</span>
-      </div>
-      <div class="con_tab">
-        <div class="tab_th">
-          <span>名次</span>
-          <span>用户名</span>
-          <span>算力</span>
-        </div>
-        <ul class="tab_tbody">
-          <li>
-            <span></span>
-            <span>张三</span>
-            <span>10000</span>
-          </li>
-        </ul>
-      </div>
+      </Scroll>  
     </div>
   </div>
 </template>
 
 <script>
-  import {setTitle} from 'common/js/util';
+  import {ownerDigValue, willDigList, receiveDigValue, calculateList, tokensList} from 'api/homeDig';
+  import {setTitle, formatAmount} from 'common/js/util';
+  import Scroll from 'base/scroll/scroll';
   export default {
     data() {
       return {
-        jbiList: [1, 2, 3, 4, 5, 6],
         listX: [],
-        listY: []
+        listY: [],
+        digList: [],
+        digValues: {},
+        isReceive: true,
+        singleIndex: -1,
+        calculateData: [],
+        isSelectTab: 0
       }
     },
     created() {
       setTitle('挖矿');
-      const len = this.jbiList.length;
-      const listX = [], listY = [];
-      for(let i = 0; i < len; i ++) {
-        listX.push(generateRandom(listX, 100));
-        listY.push(generateRandom(listY, 100));
-      }
-      this.listX = listX;
-      this.listY = listY;
-      function generateRandom(list, scope) {
-        let num = Math.random() * scope;
-        if(list.includes(num)) {
-          return generateRandom(list, scope)
+      willDigList().then(data => {
+        this.digList = data.map(item => ({
+          ...item,
+          poolAmount: item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0.0000'
+        }));
+        const len = data.length;
+        const listX = [], listY = [];
+        for(let i = 0; i < len; i ++) {
+          listX.push(generateRandom(listX, 100));
+          listY.push(generateRandom(listY, 100));
         }
-        return +(num.toFixed(2));
+        this.listX = listX;
+        this.listY = listY;
+        function generateRandom(list, scope) {
+          let num = Math.random() * scope;
+          if(list.includes(num)) {
+            return generateRandom(list, scope)
+          }
+          return +(num.toFixed(2));
+        }
+      });
+      this.getOwnerDigValue();
+      this.getCalculateList();
+    },
+    methods: {
+      jbiSingleClick(id, index) {
+        if(this.isReceive) {
+          this.isReceive = false;
+          this.singleIndex = index;
+          receiveDigValue(id).then(() => {
+            this.isReceive = true;
+            this.getOwnerDigValue();
+            willDigList().then(data => {
+              this.digList = data.map(item => ({
+                ...item,
+                poolAmount: item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0.0000'
+              }));
+            });
+          });
+        }
+      },
+      getOwnerDigValue() {
+        ownerDigValue().then(data => {
+          this.digValues = {
+            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '4', 'TWT') : '0.0000',
+            totalAmount: data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0.0000'
+          }
+        });
+      },
+      getCalculateList() {
+        calculateList().then(data => {
+          // 算力排行榜
+          this.calculateData = data.map(item => ({
+            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '4', 'TWT') : '0.0000',
+            nickname: item.nickname
+          }));
+        });
+      },
+      getTokensList() {
+        tokensList().then(data => {
+          // 代币排行榜
+          this.calculateData = data.map(item => ({
+            dayCalculate: item.dayPoolAmount > 0 ? formatAmount(item.dayPoolAmount, '4', 'TWT') : '0.0000',
+            nickname: item.nickname
+          }));
+        });
+      },
+      selectCalculate() {
+        this.isSelectTab = 0;
+        this.getCalculateList();
+      },
+      selectToken() {
+        this.isSelectTab = 1;
+        this.getTokensList();
       }
+    },
+    components: {
+      Scroll
     }
   }
 </script>
@@ -95,6 +177,17 @@
   .dig_coin{
     height: 100%;
     background-color: #fff;
+    position: relative;
+    .dig_coin_wrp{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      .coin_box{
+        padding-bottom: 1rem;
+      }
+    }
     .dig_head{
       height: 8rem;
       background-image: url('./image/dig_bg.png');
@@ -159,6 +252,8 @@
             position: absolute;
             color: #ECE5FD;
             font-size: 0.22rem;
+            opacity: 1;
+            text-align: center;
             animation: jbiSingle 2s ease infinite;
             img{
               width: 0.6rem;
@@ -211,6 +306,16 @@
           display: flex;
           justify-content: space-between;
           font-size: 0.24rem;
+          span{
+            flex: 1;
+          }
+          .th_sp02{
+            text-align: center;
+          }
+          .th_sp03{
+            flex: 2;
+            text-align: right;
+          }
         }
         .tab_tbody{
           padding: 0 0.3rem;
@@ -221,6 +326,35 @@
             display: flex;
             padding: 0.22rem 0;
             justify-content: space-between;
+            .t_sp01{
+              background-size: 100% 100%;
+              flex: 1;
+              padding-left: 0.1rem;
+              i{
+                display: inline-block;
+                width: 0.28rem;
+                height: 0.36rem;
+                background-size: 100% 100%;
+              }
+            }
+            .t_sp02{
+              display: inline-block;
+              flex: 1;
+              text-align: center;
+            }
+            .t_sp03{
+              flex: 2;
+              text-align: right;
+            }
+            .one_icon{
+              background-image: url('./one.png');
+            }
+            .two_icon{
+              background-image: url('./two.png');
+            }
+            .three_icon{
+              background-image: url('./three.png');
+            }
           }
         }
       }
