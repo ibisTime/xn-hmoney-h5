@@ -3,7 +3,9 @@
       <div class='friends icon'>
             <div class='content' ref="copyImg" @click="isFz = true;">
                 <div class="con_box">
-                    <div class="pic icon"></div>
+                    <div class="pic icon">
+                        <img src="./friends_logo.png" alt="" style="width: 100%; height: 100%;">
+                    </div>
                     <div class="yq-box">
                         <p class="yq_p1">{{nickName}}</p>
                         <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
@@ -60,7 +62,7 @@ export default {
   },
   mounted() {
     getUser().then(data => {
-        this.nickName = data.realName;
+        this.nickName = data.realName ? data.realName : data.nickname;
         this.isLoading = false;
         this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
         this.container = document.getElementById('qrcode');
@@ -69,10 +71,10 @@ export default {
           correctLevel: 2,
           foreground: '#000000'
         });
-        qr.make(this.wxUrl);
-        this.$nextTick(() => {
+        setTimeout(() => {
+            qr.make(this.wxUrl);
             this.saveImgFn();
-        });
+        }, 0)
     }, () => {
         this.isLoading = false;
     });
@@ -95,7 +97,13 @@ export default {
         });
     },
     saveImgFn(){
-        html2canvas(this.$refs.copyImg).then((canvas) => {
+        html2canvas(this.$refs.copyImg, {
+            useCORS: true,
+            width: window.screen.availWidth,
+            height: window.screen.availHeight,
+            windowWidth: document.body.scrollWidth,
+            windowHeight: document.body.scrollHeight
+        }).then((canvas) => {
             this.picUrl = canvas.toDataURL('image/png');
             this.$refs.conImg.setAttribute('src', this.picUrl);
         });
@@ -183,12 +191,12 @@ export default {
                 height: .48rem;
             }
             .pic {
-                width: 2.5rem;
+                width: 2.15rem;
                 margin: 0 auto;
-                height: 2.25rem;
-                background-image: url('./logo.png');
+                height: 1.67rem;
                 margin-top: 60%;
                 margin-bottom: 8%;
+                font-size: 0;
             }
             .yq-box{
                 color: #fff;

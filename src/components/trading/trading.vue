@@ -62,7 +62,7 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red' :title="(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+              <span class='red' :title="(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)}}CNY</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -104,7 +104,7 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red'>≈{{(Math.floor((xjPrice * toSyMid) * 100) / 100).toFixed(2)}}CNY</span>
+              <span class='red'>≈{{(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)}}CNY</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -348,6 +348,11 @@
         params.symbol = symbol;
         params.toSymbol = toSymbol;
         this.show2 = false;
+        sessionStorage.setItem('setBazDeal', JSON.stringify({
+          id: 0,
+          symbol,
+          toSymbol
+        }));
       }
       getBazaarData(params).then(data => {  // 查询交易对
         if(!Array.isArray(data)) {
@@ -404,7 +409,7 @@
           this.marketId = data.id;
           this.bb_zxj = data.lastPrice;
           this.toSyMid = data.lastPriceCny; // toSymbol换算价
-          data.percent24h = (data.percent24h * 100).toFixed(2);
+          data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || 0;
           this.gkdsList = {
             ...data
           };

@@ -91,7 +91,7 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("login");
+    background-image: url('./login@2x.png');
     position: relative;
     z-index: 98;
 

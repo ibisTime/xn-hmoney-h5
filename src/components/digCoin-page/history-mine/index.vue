@@ -227,11 +227,11 @@
         left: 0;
         top: 0;
         right: 0;
-        right: 0;
+        bottom: 0;
       }
     }
     .his_list{
-      padding: 0.3rem 0.3rem 1rem 0.3rem;
+      padding: 0.3rem;
       .his_tit{
         margin-bottom: 0.3rem;
         font-size: 0.36rem;

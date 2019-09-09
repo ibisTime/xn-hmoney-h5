@@ -72,8 +72,9 @@ const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-p
 const MineAddress = () => import('components/address/address-list');
 const MineAddressAddEdit = () => import('components/address/address-addedit');
 
-// 首页 -- 系统公告
+// 首页 -- 系统公告 
 const systemNotice = () => import('components/system-notice/system-notice');
+const systemNoticeDetail = () => import('components/system-notice/system-notice-detail/system-notice-detail');
 
 // 行情
 const Market = () => import('components/market/market');
@@ -118,6 +119,10 @@ export default new Router({
     {
       path: '/system-notice',
       component: systemNotice
+    },
+    {
+      path: '/system-notice-detail',
+      component: systemNoticeDetail
     },
     {
       path: '/trading',

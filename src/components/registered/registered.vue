@@ -8,18 +8,18 @@
           </p>
           <router-view></router-view>
           <div class="main-tel">
-            <p><input type="text" name="username" v-validate="'required|nickname'" :placeholder="$t('registered.subject.srnc')" v-model="nickname">
+            <p class="iup_p"><input type="text" name="username" v-validate="'required|nickname'" :placeholder="$t('registered.subject.srnc')" v-model="nickname">
             <span v-show="errors.has('username')" class="error-tip">{{errors.first('username')}}</span>
             </p>
-            <p>
-            <input required v-model="phone" v-show="flag" name="phone" v-validate="'required|phone'" type="text" :placeholder="$t('registered.subject.srsjh')">
+            <p class="iup_p" v-show="flag">
+            <input required v-model="phone" name="phone" v-validate="'required|phone'" type="text" :placeholder="$t('registered.subject.srsjh')">
             <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
             </p>
-            <p>
-            <input required v-model="email" v-show="!flag" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')">
+            <p class="iup_p" v-show="!flag">
+            <input required v-model="email" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')">
             <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
             </p>
-            <p class="yzm">
+            <p class="yzm iup_p">
             <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" :placeholder="$t('registered.subject.sryzm')">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
             <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
@@ -27,11 +27,11 @@
             <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
             <span class="cxfs" v-if="fscg1 && type== '1'">{{$t('registered.subject.cxfs')}}({{time2}}s)</span>
             </p>
-            <p>
+            <p class="iup_p">
             <input required v-model="password1" name="password" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.ldslw')">
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
-            <p>
+            <p class="iup_p">
             <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.qrmm')">
             <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
             </p>
@@ -264,7 +264,6 @@ export default {
   .card {
     width: 6.3rem;
     margin: 0 auto;
-
     input[type="number"],
     input[type="text"],
     input[type="password"] {
@@ -272,10 +271,11 @@ export default {
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
       color: #999;
-      padding: 0.3rem 0.1rem;
+      padding: 0 0.1rem;
+      margin-bottom: 0.3rem;
       box-sizing: border-box;
-      height: 1.2rem;
-      line-height: 1.2rem;
+      height: 0.8rem;
+      line-height: 0.8rem;
       letter-spacing: 0.0027rem;
     }
 

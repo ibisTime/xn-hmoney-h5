@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="mine_tabs">
-          <router-link class="tab_box" to="mine-message">
+          <router-link class="tab_box" to="system-notice" @click.native="removeSession">
             <p><img src="./mine_gg@2x.png" alt=""></p>
             <p>消息</p>
           </router-link>
@@ -53,7 +53,7 @@
         </div>
         <p class="line"></p>
         <div class="card">
-          <router-link to="mine-help" class="item item-5">
+          <router-link to="about-platformIntroduced?ckey=help_note" class="item item-5">
             <i></i>
             <span class='txt'>帮助中心</span>
             <span class='icon'></span>
@@ -205,6 +205,9 @@
       },
       uploadPhoto(base64, key) {
         return this.$refs.qiniu.uploadByBase64(base64, key);
+      },
+      removeSession() {
+        sessionStorage.removeItem('mes_skey');
       }
     },
     components: {

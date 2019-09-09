@@ -1,7 +1,7 @@
 <template>
   <div class="aboutus-wrapper" @click.stop>
     <div class='content cont1'>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=about_us'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=plat_introduce'>
             <p>
             <span>平台介绍</span>
             <i class='icon'></i>
@@ -13,18 +13,14 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='system-notice'>
-            <p>
-            <span>公告</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=reg_protocol'>
             <p>
             <span>用户协议</span>
             <i class='icon'></i>
             </p>
         </router-link>
+    </div>
+    <div class='content'>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=privacy'>
             <p>
             <span>隐私条款</span>
@@ -37,20 +33,6 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=fee_note'>
-            <p>
-            <span>法律声明</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-    </div>
-    <div class='content'>
-        <a class='tag mb20' href="https://funmvp.zendesk.com/hc/zh-cn/">
-            <p>
-            <span>帮助中心</span>
-            <i class='icon'></i>
-            </p>
-        </a>
     </div>
   </div>
 </template>

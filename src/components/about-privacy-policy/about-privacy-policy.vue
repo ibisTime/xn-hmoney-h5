@@ -22,7 +22,7 @@ export default {
   created() {
     this.ckey = getUrlParam('ckey');
     switch(this.ckey){
-      case 'about_us': this.tit = this.$t('aboutprivacy.subject.ptjs');break;
+      case 'plat_introduce': this.tit = this.$t('aboutprivacy.subject.ptjs');break;
       case 'reg_protocol': this.tit = this.$t('aboutprivacy.subject.yhxy');break;
       case 'privacy': this.tit = this.$t('aboutprivacy.subject.ystk');break;
       case 'raw_note': this.tit = this.$t('aboutprivacy.subject.flsm');break;

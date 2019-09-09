@@ -46,11 +46,7 @@
             to.path === '/security-loginPassword') {
             next();
           } else {
-            this.textMsg = '请先登录';
-            this.$refs.toast.show();
-            setTimeout(() => {
-              next('/login');
-            }, 1500);
+            next('/login');
           }
         }
       });

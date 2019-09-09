@@ -61,7 +61,7 @@
             </router-link>
           </div>
           <div class="tabCar introduce">
-            <router-link to='about-platformIntroduced?ckey=about_us' style="display: flex; align-items: center;">
+            <router-link to='about-platformIntroduced?ckey=plat_introduce' style="display: flex; align-items: center;">
               <div class="tab_left">
                 <img src="./con_ptjs.png" alt="">
               </div>

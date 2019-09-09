@@ -16,11 +16,16 @@
         v-show="list.length > 0"
         @pullingUp="selectedSingle"
       >
-      <li class="single_li" v-for='(item,index) in list' :key='index'>
+      <li
+        class="single_li"
+        v-for='(item,index) in list'
+        :key='index'
+        @click="() => {toNoticeDetail(item.code)}"
+      >
         <h5>{{item.title}}</h5>
         <p>
           <span class="sp_left">{{item.createDatetime}}</span>
-          <span class="sp_right">{{item.type}}</span>
+          <!-- <span class="sp_right">{{item.type}}</span> -->
         </p>
       </li>
       </Scroll>
@@ -50,82 +55,79 @@
           start: 1,
           limit: 10
         },
-        start: 1,
-        limit: 10,
         configNtc: {
           userId: getUserId(),
           start: 1,
           limit: 10
         },
-        startNtc: 1,
-        limitNtc: 10,
         list: []
       }
     },
     created() {
       setTitle('消息');
-      this.config.start = this.start;
-      this.config.limit = this.limit;
-      this.mineMessage(this.config);
+      const mes_skey = sessionStorage.getItem('mes_skey');
+      if(mes_skey && mes_skey === 'msg') {
+        this.skey = mes_skey;
+        this.mineNotices();
+      }else {
+        this.mineMessage();
+      }
     },
     methods: {
       selectedSingle(ev) {
-        this.config.start = this.start;
-        this.config.limit = this.limit;
-        this.configNtc.start = this.startNtc;
-        this.configNtc.limit = this.limitNtc;
+        this.config.start = 1;
+        this.configNtc.start = 1;
+        this.list = [];
         const skey = ev.target.getAttribute('data-key');
         if(skey) {
           this.skey = skey;
+          sessionStorage.setItem('mes_skey', skey);
           switch (skey) {
             case 'todo':
-              this.list = [];
-              this.config.start = 1;
-              this.mineMessage(this.config);
+              this.mineMessage();
               return;
             case 'msg':
-              this.list = [];
-              this.configNtc.start = 1;
-              this.mineNotices(this.configNtc);
+              this.mineNotices();
               return;
           }
         }
       },
-      mineNotices(config) {
-         mineNotice(config).then(data => {
+      mineNotices() {
+         mineNotice(this.configNtc).then(data => {
           data.list.map(item => {
-            item.content = item.content;
-            item.type = (item.type === '1' ? '系统消息' : '订单消息');
-            item.title = item.title;
+            // item.type = (item.type === '1' ? '系统消息' : '订单消息');
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
           })
-          if (data.totalPage <= this.startNtc) {
+          if (data.totalPage <= this.configNtc.start) {
             this.hasMore = false;
           }
           this.list = [...this.list, ...data.list];
-          this.startNtc ++;
+          this.configNtc.start ++;
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
         });
       },
-      mineMessage(config) {
-        mineMessage(config).then(data => {
+      mineMessage() {
+        mineMessage(this.config).then(data => {
           data.list.map(item => {
             item.content = item.content;
-            item.type = (item.type === '1' ? '系统消息' : '订单消息');
+            // item.type = (item.type === '1' ? '系统消息' : '订单消息');
             item.title = item.title;
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
           })
-          if (data.totalPage <= this.start) {
+          if (data.totalPage <= this.config.start) {
             this.hasMore = false;
           }
           this.list = [...this.list, ...data.list];
-          this.start ++;
+          this.config.start ++;
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
         });
+      },
+      toNoticeDetail(code) {
+        this.$router.push(`/system-notice-detail?code=${code}`);
       }
     },
     components: {

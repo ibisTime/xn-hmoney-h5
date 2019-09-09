@@ -139,3 +139,7 @@ export function notice(start) {
       status: '1'
   });
 }
+
+export function noticeDetail(code) {
+  return fetch(805307, {code});
+}

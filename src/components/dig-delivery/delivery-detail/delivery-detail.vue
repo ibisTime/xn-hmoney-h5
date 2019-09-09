@@ -64,10 +64,8 @@
         </li>
       </ul>
       <div class="pur_introduce">
-        <h5 class="int_head">交割规则(待替换)</h5>
-        <p class="int_p">
-          无论是做内容营销还是产品市场,内容体系的完整性非常重要。而内容体系里面,文字性的内容,产品相关的内容,都是主力。
-        </p>
+        <h5 class="int_head">交割规则</h5>
+        <div class="int_p" v-html="cvalue"></div>
       </div>
     </div>
     <div class="pur_foo_btn" @click="comfirmPayment" v-if="deliveryStatus === '1'">
@@ -81,6 +79,7 @@
   import { setTitle, formatAmount } from "common/js/util";
   import {deliveryDetail} from 'api/homeDig';
   import {getAddressList} from 'api/user';
+  import { getSysConfig } from "api/general";
   import {wallet} from 'api/person';
   import Toast from 'base/toast/toast';
   export default {
@@ -110,7 +109,8 @@
         isMail: false,
         code: '',
         avaAmount: '',
-        deliveryStatus: ''
+        deliveryStatus: '',
+        cvalue: ''
       }
     },
     created() {
@@ -119,6 +119,9 @@
       const dueToProductMsg = sessionStorage.getItem('dueToProductMsg');
       this.isMail = sessionStorage.getItem('isMail');
       let setRess = sessionStorage.getItem('setRess');
+      getSysConfig('delivery_process').then(data => {
+        this.cvalue = data.cvalue;
+      });
       if(this.code) {
         this.deliveryConfig.coinDeliveryCode = this.code;
         deliveryDetail(this.code).then(data => {

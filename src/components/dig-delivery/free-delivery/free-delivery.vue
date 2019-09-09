@@ -30,17 +30,9 @@
       <div class="deli_iup_img" @click="toDeliveryImg" :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></div>
       <div class="foo_box">
         <h5 class="foo_box_h5">
-          交割流程：(待替换)
+          交割流程：
         </h5>
-        <p>
-          1，用户填写交割数量，提交交割申请
-        </p>
-        <p>
-          2，交割单位确认转交物权
-        </p>
-        <p>
-          3，智能合约自动销毁对应数量资产通证
-        </p>
+        <div class="foo_html" v-html="cvalue"></div>
       </div>
       <div class="foo_btn" @click="toDelivery">
         确认交割
@@ -54,6 +46,7 @@
   import {wallet} from 'api/person';
   import {formatDate, formatAmount} from 'common/js/util';
   import {deliveryCoinList} from 'api/homeDig';
+  import { getSysConfig } from "api/general";
   import Toast from 'base/toast/toast';
   export default {
     data() {
@@ -74,7 +67,8 @@
           quantity: '',
           pickWay: '',
           addressCode: ''
-        }
+        },
+        cvalue: ''
       }
     },
     props: {
@@ -105,6 +99,9 @@
           this.symbol = freeSymbol;
           this.getWallet();
         }
+      });
+      getSysConfig('delivery_process').then(data => {
+        this.cvalue = data.cvalue;
       });
     },
     methods: {
@@ -150,6 +147,19 @@
         sessionStorage.removeItem('productMsg');
         this.productMsg = {};
         this.getWallet();
+        deliveryCoinList().then(data => {
+          this.coinList = data.map(item => {
+            this.symbolObj[item.symbol] = {
+              icon: item.coinIcon,
+              endDatetime: formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss')
+            };
+            return {
+              symbol: item.symbol,
+              unit: item.unit,
+              icon: item.coinIcon
+            }
+          });
+        });
         sessionStorage.setItem('freeSymbol', this.symbol);
       }
     },
@@ -158,7 +168,6 @@
     },
     watch: {
       dueType(newVal) {
-        console.log(newVal);
         if(newVal === '1') {
           this.symbol = '';
           this.avaAmount = '';
@@ -226,7 +235,7 @@
       .foo_box_h5{
         margin-bottom: 0.14rem;
       }
-      p{
+      .foo_html{
         line-height: 0.36rem;
       }
     }

@@ -9,9 +9,17 @@
         v-show="noticeData.length > 0"
         @pullingUp="getNotice"
       >
-        <div class="list" v-for="(item, index) in noticeData" :key="index">
-          <div class='text1'><i class='icon'></i><span class='txt1'>FUNMVP</span><span class='txt2'>{{item.createDatetime}}</span></div>
-          <p class="text2">{{item.content}}</p>
+        <div
+          class="list"
+          v-for="(item, index) in noticeData"
+          :key="index"
+          @click="() => {toNoticeDetail(item.code)}"
+        >
+          <div class='text1'>
+            <i class='icon'></i>
+            <span class='txt1'>{{item.title}}</span>
+            <span class='txt2'>{{item.updateDatetime}}</span>
+          </div>
         </div>
       </Scroll>
       <div class="no-data" :class="{'hidden': noticeData.length > 0}">
@@ -50,7 +58,7 @@ export default {
     getNotice(){
       notice(this.start).then(data => {
         data.list.map(item => {
-          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+          item.updateDatetime = formatDate(item.updateDatetime, 'yyyy-MM-dd hh:mm:ss');
         });
         if(data.totalPage <= this.start){
           this.hasMore = false;
@@ -58,6 +66,9 @@ export default {
         this.noticeData = [...this.noticeData, ...data.list];
         this.start ++;
       });
+    },
+    toNoticeDetail(code) {
+      this.$router.push(`system-notice-detail?code=${code}`);
     }
   },
   components: {
@@ -114,7 +125,6 @@ export default {
       margin-bottom: .3rem;
       .text1 {
         line-height: .6rem;
-        padding-bottom: .3rem;
         .icon {
           width: .6rem;
           height: .6rem;
