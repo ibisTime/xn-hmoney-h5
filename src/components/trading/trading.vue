@@ -15,7 +15,7 @@
               {{symItem.symbol}}/{{symItem.toSymbol}}
             </option>
           </select>
-          <i class='icon' :class="{'icon-bai': !show2}"></i>
+          <i class='icon' :class="{'icon-bai': !show2}" style="margin-left: -0.2rem;"></i>
         </p>
         <div style="float: right;">
             <span v-show="show2" style="margin-right: -0.3rem;padding: 0.2rem;" @click="showTwo">
@@ -79,15 +79,15 @@
             </p>
             <p class='he9 btn green' v-show="downConfig.type === '1'">
               <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len">{{xjPrice > 0 && toSymWallet.kyAmount ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+              <span class="max-len">{{(xjPrice > 0 && toSymWallet.kyAmount) ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
               <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
             </p>
             <p class='he9 btn'>
-              <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-              <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+              <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.toSymbol}}</span>
+              <span class='black max-len' :title="toSymWallet.frozenAmount">{{toSymWallet.frozenAmount}}</span>
             </p>
           </div>
           <!-- 卖出 -->
@@ -129,7 +129,7 @@
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
-              <span class='black max-len' :title="symWallet.frozenAmount">{{symWallet.frozenAmount}}</span>
+              <span class='black max-len'>{{symWallet.frozenAmount}}</span>
             </p>
           </div>
 
@@ -167,15 +167,15 @@
               <Scroll :pullUpLoad="null">
                 <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
                   <p class='text1'>
-                    <span :class='myItem.direction === 0 ? "green" : "red1"'>{{myItem.direction === 0 ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                    <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
                     <span>{{myItem.createDatetime}}</span>
-                    <span class='red' v-show="(myItem.type !== 0 && (myItem.status === '0' || myItem.status === '1'))"
+                    <span class='red' v-show="(myItem.type.toString() !== '0' && (myItem.status === '0' || myItem.status === '1'))"
                           @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
                   </p>
                   <div class='text2'>
                     <div class='txt1'>
                       <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
-                      <p class='black'>{{myItem.type === 0 ? $t('trading.bbDeal.sj') : myItem.price}}</p>
+                      <p class='black'>{{myItem.type.toString() === '0' ? $t('trading.bbDeal.sj') : myItem.price}}</p>
                     </div>
                     <div class='txt2'>
                       <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
@@ -421,7 +421,7 @@
           if(data.accountList) {
             data.accountList.map(item => {
               item.amount = formatAmount(`${item.amount}`, '', item.currency);
-              item.frozenAmount = formatAmount(`${item.frozenAmount}`, '', item.currency);
+              item.frozenAmount = item.frozenAmount ? formatAmount(`${item.frozenAmount}`, '', item.currency) : '0';
             });
             data.accountList.forEach(item => {
               if (item.currency === this.setBazDeal.symbol) {

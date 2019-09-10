@@ -3,8 +3,8 @@
     <Scroll :pullUpLoad="null">
       <div class="mine-header">
         <div class="my">
-          <div class="pic" :style="{backgroundImage: picUrl}">
-            <HeadPic :content="picName" :class="{'hidden': data.photo}"/>
+          <div class="pic" :style="picUrl ? {backgroundImage: picUrl} : ''">
+            <HeadPic :content="picName" :class="{'hidden': data.photo || photos.length}"/>
             <qiniu
               ref="qiniu"
               style="visibility: hidden;position: absolute;"
@@ -176,10 +176,10 @@
               };
               if (item.ok === true) {
                 self.photos = [item];
-                changePhoto(self.photos[0].key).then(() => {
-                  self.textMsg = self.$t('mine.subject.ghcg');
-                  self.$refs.toast.show();
-                });
+                // changePhoto(self.photos[0].key).then(() => {
+                //   self.textMsg = self.$t('mine.subject.ghcg');
+                //   self.$refs.toast.show();
+                // });
               }
               self.updatePhotos(item);
             }).catch(err => {

@@ -1,28 +1,28 @@
 <template>
   <div class="invite-friends-wrapper" @click.stop>
-      <div class='friends icon'>
-            <div class='content' ref="copyImg" @click="isFz = true;">
-                <div class="con_box">
-                    <div class="pic icon">
-                        <img src="./friends_logo.png" alt="" style="width: 100%; height: 100%;">
-                    </div>
-                    <div class="yq-box">
-                        <p class="yq_p1">{{nickName}}</p>
-                        <p class="yq_p2">{{$t('myInviteFriends.subject.yqnjr')}}</p>
-                    </div>
-                    <div class="rq-code">
-                        <div id='qrcode'></div>
-                    </div>
+      <div class='content' ref="copyImg">
+            <div class="con_box">
+                <div class="pic icon">
+                    <img src="./friends_logo.png" alt="" style="width: 100%; height: 100%;">
+                </div>
+                <div class="yq-box">
+                    <p class="yq_p1">{{nickName}}</p>
+                    <p class="yq_p2">邀请您加入大文通</p>
+                </div>
+                <div class="rq-code">
+                    <div id='qrcode'></div>
                 </div>
             </div>
-            <img src="" alt="" class="con-img" ref="conImg" @click="isFz = false;">
-            <div class="qr-txt" @click.stop="isFz = false;">
-                点击复制邀请好友链接
-            </div>
-            <div class='main-btn' @click.stop="downPic">
-                请长按保存图片
-            </div>
-      </div>
+        </div>
+        <div class="con-img">
+            <img src="" alt="" ref="conImg" @click="isFz = true;">
+        </div>
+        <div class="qr-txt" @click.stop="isFz = false;">
+            点击复制邀请好友链接
+        </div>
+        <div class='main-btn' @click.stop="downPic">
+            请长按保存图片
+        </div>
       <div class="ress-box" v-show="!isFz" @click.stop>
           <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl">
           </textarea>
@@ -144,10 +144,13 @@ export default {
 
 .invite-friends-wrapper {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
     z-index: 1;
-    background: #fff;
+    background: #282A2E;
     font-size: .32rem;
     color: #333;
     background-size: 100% 100%;
@@ -164,93 +167,100 @@ export default {
         background-size: 100% 100%;
     }
 
-    .friends {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        .content {
-            width: 100%;
-            height: 100%;
-            background: #282A2E;
-            position: relative;
-            text-align: center;
-            overflow: hidden;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            position: relative;
-            .con_box{
-                position: relative;
-                bottom: 3.6rem;
-            }
-            .logo {
-                width: 1.1rem;
-                height: .48rem;
-            }
-            .pic {
-                width: 2.15rem;
-                margin: 0 auto;
-                height: 1.67rem;
-                margin-top: 60%;
-                margin-bottom: 8%;
-                font-size: 0;
-            }
-            .yq-box{
-                color: #fff;
-                margin-bottom: 4%;
-                margin-top: 10%;
-                p{
-                    margin-top: 4%;
-                }
-                .yq_p1{
-                    height: 0.42rem;
-                    font-size: 0.42rem;
-                }
-                .yq_p2{
-                    font-size: 0.28rem;
-                }
-            }
-            .rq-code{
-                margin: 0 auto;
-                width: 3.6rem;
-                height: 3.6rem;
-                border-radius: 0.12rem;
-                margin-bottom: 4.5%;
-                background-color: #fff;
-                padding: 0.28rem;
-            }
-        }
-        .con-img{
+    .content {
+        background: #282A2E;
+        position: absolute;
+        text-align: center;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 2;
+        overflow: hidden;
+        .con_box{
             position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
             left: 0;
-            z-index: 9;
+            top: 11%;
+            overflow: hidden;
         }
-        .qr-txt{
-            position: absolute;
-            bottom: 1.7rem;
-            z-index: 99;
-            width: 100%;
-            text-align: center;
-            height: 0.96rem;
-            line-height: .4rem;
+        .logo {
+            width: 1.1rem;
+            height: .48rem;
+        }
+        .pic {
+            width: 2.15rem;
+            margin: 0 auto;
+            height: 1.67rem;
+            margin-bottom: 8%;
+            font-size: 0;
+        }
+        .yq-box{
             color: #fff;
-            font-size: 0.26rem;
-            padding: 0 0.7rem;
-            span{
-                display: inline-block;
-                border-radius: 0.04rem;
-                border: 1px solid #fff;
-                margin-left: 0.2rem;
-                line-height: 1;
-                vertical-align: middle;
-                padding: 0.1rem 0.25rem;
+            margin-bottom: 4%;
+            margin-top: 10%;
+            p{
+                margin-top: 4%;
             }
+            .yq_p1{
+                height: 0.42rem;
+                font-size: 0.42rem;
+            }
+            .yq_p2{
+                font-size: 0.28rem;
+            }
+        }
+        .rq-code{
+            margin: 0 auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 0.12rem;
+            margin-bottom: 4.5%;
+            background-color: #fff;
+            padding: 0.28rem;
+        }
+    }
+    .con-img{
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: -21%;
+        right: 0;
+        z-index: 9;
+        overflow: hidden;
+        font-size: 0;
+        img{
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .qr-txt{
+        position: absolute;
+        bottom: 11%;
+        z-index: 99;
+        width: 100%;
+        text-align: center;
+        height: 0.96rem;
+        line-height: .4rem;
+        color: #fff;
+        font-size: 0.26rem;
+        padding: 0 0.7rem;
+        background-color: transparent;
+        span{
+            display: inline-block;
+            border-radius: 0.04rem;
+            border: 1px solid #fff;
+            margin-left: 0.2rem;
+            line-height: 1;
+            vertical-align: middle;
+            padding: 0.1rem 0.25rem;
         }
     }
     .main-btn{
@@ -263,8 +273,7 @@ export default {
         font-size: 0.3rem;
         color: #fff;
         text-align: center;
-        background-color: #2E3547;
-        opacity: 0.8;
+        background: #282A2E;
         border-top: 1px solid #9AA8C4;
         .ic_bz{
             display: inline-block;

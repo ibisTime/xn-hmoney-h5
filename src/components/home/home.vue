@@ -28,13 +28,13 @@
         <h5><span></span>应用</h5>
         <div class="tab-wrapper">
           <div class="tabCar fun">
-            <router-link to='shop' style="display: flex; align-items: center;">
+            <router-link to='/my-inviteFriends' style="display: flex; align-items: center;">
               <div class="tab_left">
                 <img src="./con_mk.png" alt="">
               </div>
               <div class="tab-text">
-                <p class="tit">{{ $t('page.cate.game') }}</p>
-                <p class="con">{{ $t('page.cate.splendid') }}</p>
+                <p class="tit">邀请好友</p>
+                <p class="con">推荐有礼</p>
               </div>
             </router-link>
           </div>
@@ -262,7 +262,7 @@
           color: #999;
           .tit {
             font: .28rem/.4rem PingFangSC-Semibold;
-            margin-bottom: .2rem;
+            margin-bottom: .16rem;
             color: #333;
           }
           .con {

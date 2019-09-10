@@ -24,7 +24,7 @@
                         <p class='black'>{{item.type == 0 ? $t('historyEntrust.subject.sj') : item.price}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>{{$t('historyEntrust.subject.ze')}}({{item.toSymbol}})</p>
+                        <p>{{$t('historyEntrust.subject.ze')}}({{item.symbol}})</p>
                         <p class='black'>{{item.direction == 0 && item.type == 0 ? item.totalAmount : item.totalCount}}</p>
                     </div>
                     <div class='txt2'>

@@ -270,7 +270,7 @@ export default {
       width: 6.1rem;
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
-      color: #999;
+      color: #333;
       padding: 0 0.1rem;
       margin-bottom: 0.3rem;
       box-sizing: border-box;

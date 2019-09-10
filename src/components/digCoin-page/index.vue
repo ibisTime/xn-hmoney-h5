@@ -12,9 +12,9 @@
                 <img class="img_jb" src="./image/wa_jb.png" alt="">
                 <span>挖矿：{{digValues.totalAmount}}</span>
               </router-link>
-              <!-- <div class="right">
+              <div class="right">
                 玩法介绍
-              </div> -->
+              </div>
             </div>
             <div class="wa_dig">
               <router-link class="left" to="calculate-record">

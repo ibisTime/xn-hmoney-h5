@@ -81,6 +81,7 @@
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
       this.wallet();
+      sessionStorage.removeItem('paw_go_back');
     },
     methods: {
       // 列表查询用户账户
@@ -111,6 +112,8 @@
             this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
             setTimeout(() => {
+              const goBack = this.$route.path;
+              sessionStorage.setItem('paw_go_back', goBack);
               this.$router.push('/security-tradePassword?istw=0');
             }, 1500);
           }

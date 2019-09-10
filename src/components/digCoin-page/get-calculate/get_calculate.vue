@@ -64,7 +64,7 @@ export default {
         text-align: center;
         padding: 0.6rem 0;
         img{
-          width: 0.78rem;
+          height: 0.78rem;
         }
         p{
           font-size: 0.32rem;

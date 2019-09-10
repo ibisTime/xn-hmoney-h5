@@ -1,5 +1,5 @@
 <template>
-  <div class="modal_tag" v-show="isShowPawModal" @click="removePaw">
+  <div class="modal_tag" v-show="isShowPawModal" @click.stop>
     <div class="bounced" @click.stop :style="{top: isFocus ? '30%' : '50%'}">
       <h5>请输入密码</h5>
       <div class="iup_box">
@@ -12,7 +12,7 @@
         <input
           type="password"
           @keyup.stop="inputPaw"
-          @focus.stop="isFocus = true"
+          @focus.stop="iupFocus"
           @blur="blurIn"
           @click.stop
           ref="pawRef"
@@ -61,6 +61,9 @@
       blurIn () {
         this.isFocus = false;
         window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+      },
+      iupFocus() {
+        this.isFocus = true;
       }
     },
     watch: {

@@ -50,13 +50,13 @@
             <i class="right_icon"></i>
           </div>
         </li>
-        <li class="li_single" v-if="deliveryConfig.pickWay === '1'">
+        <li class="li_single" v-if="deliveryConfig.addressCode">
           <div class="li_left">收货人</div>
           <div class="li_right">
             {{addRessMsg.addressee}}
           </div>
         </li>
-        <li class="li_single" v-if="deliveryConfig.pickWay === '1'">
+        <li class="li_single" v-if="deliveryConfig.addressCode">
           <div class="li_left">收货人电话</div>
           <div class="li_right">
             {{addRessMsg.mobile}}
@@ -141,7 +141,8 @@
             this.deliveryConfig.pickWay = data.pickWay;
           }
           wallet(data.symbol).then(res => {
-            this.avaAmount = formatAmount(res.accountList[0].amount - res.accountList[0].frozenAmount, '', data.symbol);
+            const amount = res.accountList[0].amount - res.accountList[0].frozenAmount;
+            this.avaAmount = (amount && amount > 0) ? formatAmount(amount, '', data.symbol) : '0';
           });
         });
       }

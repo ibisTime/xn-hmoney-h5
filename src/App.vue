@@ -52,19 +52,16 @@
       });
       this.$router.afterEach(() => {
         this.isLoading = false;
-        if(!sessionStorage.getItem('coinData')){
-          getBbListData().then(data => {
-            for(let i = 0; i < data.length; i ++){
-              let obj = {
-                ...data[i],
-                unit: '1e' + data[i].unit
-              };
-              this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
-            }
-            sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
-          }, () => {
-          });
-        }
+        getBbListData().then(data => {
+          for(let i = 0; i < data.length; i ++){
+            let obj = {
+              ...data[i],
+              unit: '1e' + data[i].unit
+            };
+            this.coinData[data[i].symbol] = JSON.parse(JSON.stringify(obj));
+          }
+          sessionStorage.setItem('coinData', JSON.stringify(this.coinData));
+        });
         let userId = getUrlParam('userId') || '';
         let token = getUrlParam('token') || '';
         if (userId && token) {

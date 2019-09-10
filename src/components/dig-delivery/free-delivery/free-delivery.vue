@@ -3,7 +3,7 @@
     <div class="deli_con">
       <div class="c_h_select">
         <select v-model="symbol" @change="changeSymbol">
-          <option value="" disabled>请选择资产交通证</option>
+          <option value="" disabled>请选择资产通证</option>
           <option
             :value="item.symbol"
             v-for="(item, index) in coinList" :key="`free_${index}`"
@@ -19,9 +19,9 @@
             了解更多
           </div> -->
         </div>
-        <p class="c_h_con_c">
+        <!-- <p class="c_h_con_c">
           到期交割时间：{{symbolObj[symbol] ? symbolObj[symbol].endDatetime : ''}}
-        </p>
+        </p> -->
       </div>
     </div>
     <p class="line" />
@@ -86,8 +86,7 @@
       deliveryCoinList().then(data => {
         this.coinList = data.map(item => {
           this.symbolObj[item.symbol] = {
-            icon: item.coinIcon,
-            endDatetime: formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss')
+            icon: item.coinIcon
           };
           return {
             symbol: item.symbol,
@@ -150,8 +149,7 @@
         deliveryCoinList().then(data => {
           this.coinList = data.map(item => {
             this.symbolObj[item.symbol] = {
-              icon: item.coinIcon,
-              endDatetime: formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss')
+              icon: item.coinIcon
             };
             return {
               symbol: item.symbol,

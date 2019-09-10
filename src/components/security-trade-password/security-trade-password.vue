@@ -4,16 +4,16 @@
       <p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
       <p v-if="mobile">{{mobile}}</p>
       <p v-if="email != ''">{{email}}</p>
-      <p>
-        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
-        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
-      </p>
       <p class='text3'>
         <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
         <span v-show="errors.has('smsCaptcha')" class="error-tip smsCaptcha">{{errors.first('smsCaptcha')}}</span>
         <i v-show="!show" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
+      </p>
+      <p>
+        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
+        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
     </div>
     <div class="foot">
@@ -79,10 +79,12 @@ export default {
             this.time --;
             if(this.time < 0){
               clearInterval(times);
+              this.time = 60;
               this.show = true;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.show = true;
           this.isLoading = false;
         });
@@ -97,10 +99,12 @@ export default {
             this.time --;
             if(this.time < 0){
               clearInterval(times);
+              this.time = 60;
               this.show = true;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.show = true;
           this.isLoading = false;
         });
@@ -126,7 +130,8 @@ export default {
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {
-                this.$router.push('mine');
+                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+                this.$router.push(goBack);
               }, 1500);
             }, () => {
               this.isLoading = false;
@@ -137,7 +142,8 @@ export default {
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {
-                this.$router.push('mine');
+                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+                this.$router.push(goBack);
               }, 1500);
             }, () => {
               this.isLoading = false;

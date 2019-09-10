@@ -104,9 +104,9 @@
           data.list.forEach(item => {
             item.startDatetime = formatDate(item.startDatetime, 'yyyy-MM-dd hh:mm:ss');
             item.endDatetime = formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss');
-            item.totalAmount = formatAmount(item.totalAmount, '', item.symbol);
-            item.remainAmount = formatAmount(item.remainAmount, '', item.symbol);
-            item.buyAmountMax = formatAmount(item.buyAmountMax, '', item.symbol);
+            item.totalAmount = formatAmount(item.totalAmount, '0', item.symbol);
+            item.remainAmount = formatAmount(item.remainAmount, '0', item.symbol);
+            item.buyAmountMax = formatAmount(item.buyAmountMax, '0', item.symbol);
             item.symbolIcon = PIC_PREFIX + item.symbolIcon;
             item.statusName = this.dictObj[item.status];
           });

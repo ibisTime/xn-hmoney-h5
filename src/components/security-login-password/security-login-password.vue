@@ -105,6 +105,7 @@ export default {
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
         });
       }else{
@@ -123,6 +124,7 @@ export default {
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
         });
       }

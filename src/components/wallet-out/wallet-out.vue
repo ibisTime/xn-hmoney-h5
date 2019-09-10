@@ -47,7 +47,7 @@
       </p>
       <div class='text2'>
         <ul v-if="langType === 'zh'">
-          <li>FMVP 地址只能充值 {{currency}} 资产，任何充入 {{currency}} 地址的非 {{currency}} 资产将不可找回。</li>
+          <li>{{currency}} 地址只能充值 {{currency}} 资产，任何充入 {{currency}} 地址的非 {{currency}} 资产将不可找回。</li>
           <li>在平台内相互转账是实时到账且免费的。</li>
         </ul>
         <ul else>
@@ -63,7 +63,7 @@
 </template>
 <script>
 import {walletOut, getSmsCaptchaPhone, getSmsCaptchaEmail} from 'api/person';
-import {getSysConfig} from 'api/general';
+import {getBbListData} from 'api/tradingOn';
 import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply, getLangType } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -106,9 +106,10 @@ export default {
     this.value = this.amount + this.currency;
     this.config.accountNumber = getUrlParam('accountNumber');
     this.config.payCardInfo = this.currency;
-    // getSysConfig('withdraw_fee').then(data => {
-    //   this.feeAmount = (data.cvalue * 100) + '%';
-    // })
+    getBbListData().then(data => {
+      const currencyData = data.filter(item => item.symbol === this.currency)[0];
+      this.feeAmount = currencyData.withdrawFeeType === '0' ? formatAmount(currencyData.withdrawFee, '4', this.currency) : currencyData.withdrawFee;
+    });
   },
   methods: {
     sendSmsCode() {

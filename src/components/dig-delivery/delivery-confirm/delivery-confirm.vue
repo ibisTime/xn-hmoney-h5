@@ -16,7 +16,7 @@
           name="quantity"
           v-model="quantity"
           :placeholder="`最多输入${productMsg.remainQuantity}个交割份数`"
-          @keyup="upQuantity"
+          @keyup.stop="upQuantity"
            v-validate="'required|intNumber'"
         />
         <span v-show="errors.has('quantity')" class="error-tip">{{errors.first('quantity')}}</span>
@@ -25,7 +25,7 @@
         <p>库存：<span>{{productMsg.remainQuantity}}</span></p>
         <p>余额：<span>{{avaAmount}}</span></p>
       </div>
-      <div class="foo_btn" @click="toDeliverySelectType">
+      <div class="foo_btn" @click.stop="toDeliverySelectType">
         确认交割
       </div>
     </div>
@@ -65,7 +65,8 @@
         isSuccessModal: false,
         pathType: '',
         interval: null,
-        timer: 5
+        timer: 5,
+        isDelivery: true
       }
     },
     created() {
@@ -80,6 +81,7 @@
         this.symbol = symbol;
         this.deliveryConfig = JSON.parse(deliveryConfig);
       }
+      sessionStorage.removeItem('paw_go_back');
     },
     methods: {
       toDeliverySelectType() {
@@ -104,7 +106,9 @@
                 this.toastMsg = '请先设置交易密码';
                 this.$refs.toast.show();
                 setTimeout(() => {
-                  this.$router.push('security-center');
+                  const goBack = `${this.$route.path}?avaAmount=${this.avaAmount}&type=${this.pathType}`;
+                  sessionStorage.setItem('paw_go_back', goBack);
+                  this.$router.push('/security-tradePassword?istw=0');
                 }, 1000);
                 return;
               }
@@ -127,23 +131,28 @@
           this.$refs.toast.show();
           return;
         }
-        this.deliveryConfig.tradePwd = list.join('');
-        submitDelivery(this.deliveryConfig).then(() => {
-          this.isShowPawModal = false;
-          this.isSuccessModal = true;
-          if(this.interval) {
-            clearInterval(this.interval);
-          }
-          this.interval = setInterval(() => {
-            this.timer --;
-            if(this.timer < 1) {
-              this.$router.push('delivery-record');
+        if(this.isDelivery) {
+          this.isDelivery = false;
+          this.deliveryConfig.tradePwd = list.join('');
+          submitDelivery(this.deliveryConfig).then(() => {
+            this.isDelivery = true;
+            this.isShowPawModal = false;
+            this.isSuccessModal = true;
+            if(this.interval) {
               clearInterval(this.interval);
             }
-          }, 1000);
-        }).catch(() => {
-          this.isShowPawModal = false;
-        });
+            this.interval = setInterval(() => {
+              this.timer --;
+              if(this.timer < 1) {
+                this.$router.push('delivery-record');
+                clearInterval(this.interval);
+              }
+            }, 1000);
+          }).catch(() => {
+            this.isDelivery = true;
+            this.isShowPawModal = false;
+          });
+        }
       },
       removePaw() {
         this.isShowPawModal = false;

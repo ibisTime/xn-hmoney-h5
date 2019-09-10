@@ -50,7 +50,7 @@ export function getRealTimeData(config) {
     return fetch('650057', config)
 }
 
-// 根据symbol查资料
+// 根据symbol查币种资料
 export function getSymbolDetail(symbol) {
     return fetch('802008', {
         symbol

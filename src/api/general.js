@@ -108,7 +108,7 @@ export function getDictList(parentKey) {
 export function getBannerList() {
   return fetch(630506, {
     type: 2,
-    location: 'h5_banner'
+    location: 'application_home'
   });
 }
 

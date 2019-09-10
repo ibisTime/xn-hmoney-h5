@@ -7,8 +7,7 @@
       <div class="iup_right">
         <select v-model="deliveryConfig.pickWay" @change="changePickWay">
           <option value="" disabled>请选择交割方式</option>
-          <option value="1">邮寄</option>
-          <option value="2">自提</option>
+          <option :value="item.key" v-for="(item, index) in selectObj" :key='`type_${index}`'>{{item.value}}</option>
         </select>
       </div>
     </div>
@@ -61,6 +60,7 @@
   import { setTitle } from "common/js/util";
   import {getAddressList} from 'api/user';
   import {submitDelivery} from 'api/homeDig';
+  import {getSymbolDetail} from 'api/bb.js';
   import PawModal from 'base/pwd-modal/index';
   import Toast from 'base/toast/toast';
   export default {
@@ -78,7 +78,9 @@
           addressee: ''
         },
         interval: null,
-        toastMsg: ''
+        toastMsg: '',
+        selectObj: [],
+        isDelivery: true
       }
     },
     created() {
@@ -88,6 +90,32 @@
       let setRess = sessionStorage.getItem('setRess');
       if(deliveryConfig) {
         this.deliveryConfig = JSON.parse(deliveryConfig);
+        getSymbolDetail(this.deliveryConfig.symbol).then(data => {
+          if(data.deliveryAdvanceFlag === '1') {
+            this.selectObj.push({
+              key: '1',
+              value: '邮寄'
+            })
+            this.deliveryConfig.pickWay = '1';
+          }
+          if(data.deliveryAdvanceFlag === '2') {
+            this.selectObj.push({
+              key: '2',
+              value: '自提'
+            })
+            this.deliveryConfig.pickWay = '2';
+          }
+          if(data.deliveryAdvanceFlag === '3') {
+            this.selectObj.push({
+              key: '1',
+              value: '邮寄'
+            });
+            this.selectObj.push({
+              key: '2',
+              value: '自提'
+            });
+          }
+        });
       }
       if(this.isMail && setRess) {
         this.deliveryConfig.pickWay = '1';
@@ -114,23 +142,28 @@
           this.$refs.toast.show();
           return;
         }
-        this.deliveryConfig.tradePwd = list.join('');
-        submitDelivery(this.deliveryConfig).then(() => {
-          this.isShowPawModal = false;
-          this.isSuccessModal = true;
-          if(this.interval) {
-            clearInterval(this.interval);
-          }
-          this.interval = setInterval(() => {
-            this.timer --;
-            if(this.timer < 1) {
-              this.$router.push('delivery-record');
+        if(this.isDelivery) {
+          this.isDelivery = false;
+          this.deliveryConfig.tradePwd = list.join('');
+          submitDelivery(this.deliveryConfig).then(() => {
+            this.isDelivery = true;
+            this.isShowPawModal = false;
+            this.isSuccessModal = true;
+            if(this.interval) {
               clearInterval(this.interval);
             }
-          }, 1000);
-        }).catch(() => {
-          this.isShowPawModal = false;
-        });
+            this.interval = setInterval(() => {
+              this.timer --;
+              if(this.timer < 1) {
+                this.$router.push('delivery-record');
+                clearInterval(this.interval);
+              }
+            }, 1000);
+          }).catch(() => {
+            this.isDelivery = true;
+            this.isShowPawModal = false;
+          });
+        }
       },
       removePaw() {
         this.isShowPawModal = false;

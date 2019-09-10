@@ -72,7 +72,7 @@
           </li>
         </ul>
         <p class="modal_p">
-          <span>得到 {{purDetail.price * config.payAmount}} {{purDetail.symbol}}</span>
+          <span>得到 {{(purDetail.price * config.payAmount).toFixed(2)}} {{purDetail.symbol}}</span>
           <span>TWT余额：{{userAmount}}</span>
         </p>
         <div class="foo_btn" @click="comfirmPayment">
@@ -131,12 +131,13 @@
       setTitle('申购详情');
       const purchaseCode = sessionStorage.getItem('purchaseCode');
       this.purchaseStatus = sessionStorage.getItem('purchaseStatus');
+      sessionStorage.removeItem('paw_go_back');
       if(purchaseCode) {
         purchaseDetail(purchaseCode).then(data => {
           data.startDatetime = formatDate(data.startDatetime, 'yyyy-MM-dd hh:mm:ss');
           data.endDatetime = formatDate(data.endDatetime, 'yyyy-MM-dd hh:mm:ss');
-          data.totalAmount = formatAmount(data.totalAmount, '', data.symbol);
-          data.remainAmount = formatAmount(data.remainAmount, '', data.symbol);
+          data.totalAmount = formatAmount(data.totalAmount, '0', data.symbol);
+          data.remainAmount = formatAmount(data.remainAmount, '0', data.symbol);
           data.personPayAmountMax = formatAmount(data.personPayAmountMax, '', data.toSymbol);
           data.symbolIcon = PIC_PREFIX + data.symbolIcon;
           data.toSymbolIcon = PIC_PREFIX + data.toSymbolIcon;
@@ -206,6 +207,12 @@
           this.config.payAmount = this.purDetail.personPayAmountMax;
           return;
         }
+        if(+this.config.payAmount > this.userAmount) {
+          this.textMsg = `申购数量不得大于余额${this.userAmount}`;
+          this.$refs.toast.show();
+          this.config.payAmount = this.userAmount;
+          return;
+        }
       },
       showModalFn() {
         getUser().then(data => {
@@ -215,7 +222,9 @@
             this.textMsg = '请先设置交易密码';
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('security-center');
+              const goBack = this.$route.path;
+              sessionStorage.setItem('paw_go_back', goBack);
+              this.$router.push('/security-tradePassword?istw=0');
             }, 1000);
             return;
           }

@@ -124,6 +124,7 @@
         this.totalPoolOutAmount = data.totalPoolOutAmount > 0 ? formatAmount(data.totalPoolOutAmount, '4', 'TWT') : '0';
         this.yesterdayPoolOutAmount = data.yesterdayPoolOutAmount > 0 ? formatAmount(data.yesterdayPoolOutAmount, '4', 'TWT') : '0';
       });
+      sessionStorage.removeItem('paw_go_back');
     },
     methods: {
       toHistoryMine(outDatetime) {
@@ -187,7 +188,9 @@
             this.textMsg = '请先设置交易密码';
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('security-center');
+              const goBack = this.$route.path;
+              sessionStorage.setItem('paw_go_back', goBack);
+              this.$router.push('/security-tradePassword?istw=0');
             }, 1000);
             return;
           }
