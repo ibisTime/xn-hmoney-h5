@@ -106,11 +106,11 @@
 
       &.item-0 {
         i {
-          @include bg-image('page');
+          background-image: url('./page.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('page2');
+            background-image: url('./page_active.png');
           }
         }
       }
@@ -128,33 +128,33 @@
 
       &.item-2 {
         i {
-          @include bg-image('trading');
+          background-image: url('trading.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('trading2');
+            background-image: url('trading_active.png');
           }
         }
       }
 
       &.item-3 {
         i {
-          @include bg-image('money');
+          background-image: url('money.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('money2');
+            background-image: url('money_active.png');
           }
         }
       }
 
       &.item-4 {
         i {
-          @include bg-image('mine');
+          background-image: url('mine.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('mine2');
+            background-image: url('mine_active.png');
           }
         }
       }

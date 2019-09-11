@@ -70,25 +70,16 @@ export default {
           key: ['withdraw'],
           value: this.$t('walletBill.subject.tb')
         },{
-          key: ['ccorder_buy', 'bborder_buy', 'accept_buy'],
+          key: ['bborder_buy', 'accept_buy'],
           value: this.$t('walletBill.subject.jymr')
         },{
-          key: ['ccorder_sell', 'bborder_sell', 'accept_sell'],
+          key: ['bborder_sell', 'accept_sell'],
           value: this.$t('walletBill.subject.jymc')
         },{
-          key: ['ccorder_fee', 'bborder_fee', 'withdraw_fee'],
+          key: ['bborder_fee', 'withdraw_fee'],
           value: this.$t('walletBill.subject.sxf')
         },{
-          key: ['game_in'],
-          value:  this.$t('walletBill.subject.yxzr')
-        },{
-          key: ['game_out'],
-          value: this.$t('walletBill.subject.yxzc')
-        },{
           key: [
-            'ccorder_frozen',
-            'ccorder_unfrozen_revoke',
-            'ccorder_unfrozen_trade',
             'bborder_frozen',
             'bborder_unfrozen_revoke',
             'bborder_unfrozen_trade',

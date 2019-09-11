@@ -159,6 +159,9 @@ export function getShareImg(imgs) {
  * @param isRe 是否去零
  */
 export function formatAmount(money, format, coin, isRe = false) {
+  if(money === 0) {
+    return 0;
+  }
   let unit = (coin && getCoinData()[coin]) ? getCoinUnit(coin) : '1000';
   let flag = false;// 是否是负数
   if (isNaN(money)) {

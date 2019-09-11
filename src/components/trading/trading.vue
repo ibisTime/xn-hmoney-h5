@@ -62,7 +62,7 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red' :title="(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)">≈{{(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)}}CNY</span>
+              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}CNY</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -104,7 +104,7 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red'>≈{{(Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2)}}CNY</span>
+              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}CNY</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
@@ -138,7 +138,7 @@
               <p class='text1' v-for="(sellItem, index) in bbAsks" :key="index" @click="selectAsksPrice(index)">
                 <span class='red txt1'>{{$t('trading.bbDeal.mai')}}{{7 - index}}</span>
                 <span class='txt2'>{{sellItem ? formatAmount(sellItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
-                <span class='txt3'>{{sellItem ? filterPrice(formatAmount(sellItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
+                <span class='txt3'>{{sellItem ? formatAmount(sellItem.count, 4, setBazDeal.symbol) : '--'}}</span>
               </p>
             </div>
             <p class='middle'>
@@ -149,7 +149,7 @@
               <p class='text1' v-for="(buyItem, index) in bbBids" :key="index" @click="selectBidsPrice(index)">
                 <span class='green txt1'>{{$t('trading.bbDeal.m')}}{{index + 1}}</span>
                 <span class='txt2'>{{buyItem ? formatAmount(buyItem.price, 4, setBazDeal.toSymbol) : '--'}}</span>
-                <span class='txt3'>{{buyItem ? filterPrice(formatAmount(buyItem.count, 2, setBazDeal.symbol)) : '--'}}</span>
+                <span class='txt3'>{{buyItem ? formatAmount(buyItem.count, 4, setBazDeal.symbol) : '--'}}</span>
               </p>
             </div>
 
@@ -229,10 +229,10 @@
             <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
             <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
           </div>
-          <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :show2="show2"/>
-          <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal"/>
-          <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal"/>
-          <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal"/>
+          <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :gkdsList="gkdsList" :show2="show2"/>
+          <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
+          <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
+          <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
           <!--<div class='foot'>-->
           <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
           <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
@@ -246,6 +246,7 @@
   </div>
 </template>
 <script>
+  import {isLogin} from 'common/js/util';
   import Footer from 'components/footer/footer';
   import Toast from 'base/toast/toast';
   import Scroll from 'base/scroll/scroll';
@@ -522,16 +523,18 @@
       },
       collectionTrading() {
         this.isLoading = true;
-        isCollectionTrading(this.marketId).then(() => {
-          this.isLoading = false;
-          this.isAttention = !this.isAttention;
-          this.textMsg = '操作成功';
-          this.$refs.toast.show();
-        }, () => {
-          this.isLoading = false;
-        }).catch(() => {
-          this.isLoading = false;
-        });
+        if(isLogin()) {
+          isCollectionTrading(this.marketId).then(() => {
+            this.isLoading = false;
+            this.isAttention = !this.isAttention;
+            this.textMsg = '操作成功';
+            this.$refs.toast.show();
+          }).catch(() => {
+            this.isLoading = false;
+          });
+        }else {
+          this.$router.push('/login');
+        }
       },
       buy() {
         this.downConfig.direction = '0';
@@ -854,7 +857,7 @@
         background-image: url('./xxhs.png');
       }
       .cg-bb {
-        padding: 0.2rem 0;
+        padding: 0.2rem 0.1rem;
       }
     }
 

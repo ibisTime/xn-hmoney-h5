@@ -8,13 +8,7 @@
         <span class='right'>{{$t('trading.bbDepth.cjl')}}({{setBazDeal.symbol}})</span>
       </p>
       <div class="t-box">
-        <Scroll
-          ref="scroll"
-          :data="realTimeList"
-          :hasMore="hasMore"
-          v-show="realTimeList.length > 0"
-          @pullingUp="realTimeData"
-        >
+        <Scroll :pullUpLoad="null">
           <p v-for="(item, index) in realTimeList" :key="index" :class="item.direction === '0' ? '' : 'red'">
             <span class='left'>{{item.createDatetime}}</span>
             <span class='center'>{{item.direction === '0' ? $t('common.mr') : $t('common.mc')}}</span>
@@ -22,10 +16,6 @@
             <span class='right'>{{item.tradedCount}}</span>
           </p>
         </Scroll>
-        <div class="no-data" :class="{'hidden': realTimeList.length > 0}">
-          <img src="./zwdata.png"/>
-          <p>{{$t('common.zwsj')}}</p>
-        </div>
       </div>
     </div>
   </div>
@@ -52,6 +42,12 @@
           return {};
         }
       },
+      gkdsList: {
+        type: Object,
+        default() {
+          return {};
+        }
+      },
       show2: {
         type: Boolean,
         default: true
@@ -61,7 +57,7 @@
       realTimeData() {
         this.timeConfig = {
           start: this.start,
-          limit: 10,
+          limit: 20,
           ...this.setBazDeal
         };
         getRealTimeData(this.timeConfig).then(data => {
@@ -70,11 +66,7 @@
             item.tradedPrice = formatAmount(`${item.tradedPrice}`, '', item.toSymbol);
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
           });
-          if (data.totalPage <= this.start) {
-            this.hasMore = false;
-          }
-          this.realTimeList = [...this.realTimeList, ...data.list];
-          this.start++;
+          this.realTimeList = data.list;
         });
       }
     },
@@ -85,14 +77,15 @@
       bazDeal: {
         handler(val, oldVal) {
           this.setBazDeal = val;
-          this.hasMore = true;
-          this.start = 1;
-          this.realTimeList = [];
           this.realTimeData();
         },
         deep: true
       },
       show2() {
+        this.realTimeData();
+      },
+      gkdsList(val, oldVal) {
+        this.setBazDeal = this.bazDeal;
         this.realTimeData();
       }
     }

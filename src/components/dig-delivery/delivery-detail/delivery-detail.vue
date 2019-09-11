@@ -10,7 +10,7 @@
       </div>
       <div class="h_right">
         <p :style="dueToProductMsg.productPic ? {backgroundImage: `url('${dueToProductMsg.productPic}')`} : ''"></p>
-        <div class="product_div">{{dueToProductMsg.productName ? dueToProductMsg.productName : 'xxx'}}</div>
+        <div class="product_div">{{dueToProductMsg.productName ? dueToProductMsg.productName : '???'}}</div>
       </div>
     </div>
     <div class="pur_con">
@@ -272,6 +272,7 @@
             color: #333333;
             select, input{
               width: 100%;
+              font-size: 0.26rem;
             }
             .right_icon{
               display: inline-block;

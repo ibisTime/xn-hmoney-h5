@@ -7,12 +7,13 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <router-link class='tag' to='security-idcard'>
+        <div class='tag' @click="toIdcard">
           <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
+            <span class="tel">{{this.isKind ? '已认证' : '待认证'}}</span>
           </p>
-        </router-link>
+        </div>
     </div>
     <div class='content cont1'>
         <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
@@ -76,7 +77,8 @@ export default {
       email: '',
       mobile: '',
       isTradepwdFlag: '',
-      googleAuthFlag: false
+      googleAuthFlag: false,
+      isKind: false
     };
   },
   created() {
@@ -85,6 +87,7 @@ export default {
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
+      this.isKind = !!data.idNo;
       this.isTradepwdFlag = data.tradepwdFlag ? 1 : 0;
       data.emailBindFlag === false ? this.show = true : this.show = false;
       this.googleAuthFlag = data.googleAuthFlag;
@@ -102,6 +105,13 @@ export default {
       setTimeout( () => {
         this.$router.push('/login');
       }, 500 );
+    },
+    toIdcard() {
+      if(!this.isKind) {
+        this.$router.push('/security-idcard');
+      }else {
+        return false;
+      }
     },
     ...mapMutations({
       setTencentLogined: SET_TENCENT_LOGINED
@@ -172,6 +182,7 @@ export default {
       .tel {
         float: right;
         margin-right: .2rem;
+        font-size: 0.26rem;
       }
     }
   }

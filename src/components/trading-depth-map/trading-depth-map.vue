@@ -21,6 +21,12 @@
         default() {
           return {};
         }
+      },
+      gkdsList: {
+        type: Object,
+        default() {
+          return {};
+        }
       }
     },
     mounted() {},
@@ -165,6 +171,12 @@
       bazDeal: {
         handler(val, oldVal) {
           this.setBazDeal = val;
+        },
+        deep: true
+      },
+      gkdsList: {
+        handler(val, oldVal) {
+          this.setBazDeal = this.bazDeal;
           this.getDepthFn();
         },
         deep: true

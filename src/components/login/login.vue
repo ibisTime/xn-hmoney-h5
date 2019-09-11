@@ -1,7 +1,7 @@
 <template>
   <div class="log-wrapper" @click.stop>
       <div class="bg">
-          <p>大文通</p>
+          <p></p>
       </div>
       <div class="card">
           <div class="main">
@@ -96,12 +96,14 @@ export default {
     z-index: 98;
 
     p {
-      font: 0.8rem/1.12rem PingFangSC-Semibold;
-      color: #fff;
       text-shadow: 0 0.04rem 0.08rem #cf5340;
       position: absolute;
-      top: 1.19rem;
+      top: 1.1rem;
       left: 50%;
+      width: 120px;
+      height: 70px;
+      background-image: url('./head_logo.png');
+      background-size: 100% 100%;
       transform: translateX(-50%);
     }
   }

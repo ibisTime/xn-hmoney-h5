@@ -45,7 +45,7 @@
                         剩余总量<span class="li_con_head_right_tit_sp">{{item.remainAmount}}</span>
                       </p>
                       <p class="li_con_head_right_progress">
-                        <span :width="item.totalAmount ? `${(1 - (item.remainAmount / item.totalAmount)) * 100}%` : ''"></span>
+                        <span :style="{width: item.totalAmount ? `${(1 - (item.remainAmount / item.totalAmount)) * 100}%` : '0%'}"></span>
                       </p>
                     </div>
                   </div>

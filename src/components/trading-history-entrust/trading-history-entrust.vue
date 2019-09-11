@@ -24,12 +24,12 @@
                         <p class='black'>{{item.type == 0 ? $t('historyEntrust.subject.sj') : item.price}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>{{$t('historyEntrust.subject.ze')}}({{item.symbol}})</p>
-                        <p class='black'>{{item.direction == 0 && item.type == 0 ? item.totalAmount : item.totalCount}}</p>
+                        <p>{{$t('historyEntrust.subject.ze')}}({{(item.direction == 0 && item.type == 0) ? item.toSymbol : item.symbol}})</p>
+                        <p class='black'>{{(item.direction == 0 && item.type == 0) ? item.totalAmount : item.totalCount}}</p>
                     </div>
                     <div class='txt2'>
-                        <p>{{$t('historyEntrust.subject.ycj')}}({{item.symbol}})</p>
-                        <p class='black'>{{item.direction == 0 && item.type == 0 ? item.tradedAmount : item.tradedCount}}</p>
+                        <p>{{$t('historyEntrust.subject.ycj')}}({{(item.direction == 0 && item.type == 0) ? item.toSymbol : item.symbol}})</p>
+                        <p class='black'>{{(item.direction == 0 && item.type == 0) ? item.tradedAmount : item.tradedCount}}</p>
                     </div>
                     <!--<div class='txt3'>-->
                         <!--<p>{{$t('historyEntrust.subject.sjcj')}}({{item.symbol}})</p>-->
@@ -149,15 +149,16 @@ export default {
     }
 
     .main {
+        position: absolute;
         width: 100%;
+        bottom: 0;
         top: 0;
-        bototm: 0;
         left: 0;
         right: 0;
         overflow: hidden;
         background-color: #fff;
         padding: 0 .3rem;
-        padding-bottom: 2rem;
+        padding-bottom: 0.9rem;
         .red {
             color: #d53d3d;
         }

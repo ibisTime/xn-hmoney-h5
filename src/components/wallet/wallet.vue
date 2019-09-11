@@ -13,8 +13,7 @@
             </div>
           </div>
           <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
-            <i class="icon"
-               :class="[{'ico1': infoItem.currency == 'TWT'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
+            <i class="icon" :style="{backgroundImage: `url('${infoItem.coinIcon}')`}"></i>
             <div class='my'>
               <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
               <p class='txt2'>{{infoItem.amount}}</p>
@@ -96,7 +95,8 @@
             ...item,
             syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency),
             amount: formatAmount(item.amount, '', item.currency),
-            frozenAmount: formatAmount(item.frozenAmount, '', item.currency)
+            frozenAmount: formatAmount(item.frozenAmount, '', item.currency),
+            coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;
         }, () => {
@@ -260,19 +260,14 @@
       border-radius: .14rem;
       position: relative;
       margin-bottom: 0.5rem;
-      .ico1, .ico2, .ico3 {
+      .icon {
         width: 1.2rem;
         height: 1.2rem;
-        @include bg-image("f");
         position: absolute;
         top: .3rem;
         right: .4rem;
-      }
-      .ico2 {
-        background-image: url('./yt.png');
-      }
-      .ico3 {
-        background-image: url('./bt.png');
+        border-radius: 100%;
+        opacity: 0.6;
       }
       .my {
         padding: .3rem .62rem .3rem .2rem;
@@ -319,10 +314,13 @@
           text-align: center;
           position: relative;
           color: #333;
-
           a {
             color: #333;
             display: inline-block;
+          }
+
+          .icon{
+            margin-top: -0.04rem;
           }
 
           .icod {

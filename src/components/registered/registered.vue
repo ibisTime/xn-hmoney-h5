@@ -4,7 +4,7 @@
           <h3 class="title">{{$t('registered.subject.zc')}}</h3>
           <p calss="tabs" id="tabs">
               <span :class="[flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag1">{{$t('registered.subject.sjzc')}}</span>
-              <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">{{$t('registered.subject.yxzc')}}</span>
+              <!-- <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">{{$t('registered.subject.yxzc')}}</span> -->
           </p>
           <router-view></router-view>
           <div class="main-tel">
@@ -55,12 +55,13 @@
 </template>
 <script>
 import {
+  login,
   reistered,
   reisteredEamil,
   getSmsCaptchaPhone,
   getSmsCaptchaEmail
 } from "api/person";
-import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
+import { rePwdValid, getUrlParam, setTitle, setUser } from "common/js/util";
 import { getSysConfig } from 'api/general';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -203,8 +204,8 @@ export default {
             this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('login');
-            }, 1500);
+              this.toLogin(this.config.email, this.config.loginPwd);
+            }, 1000);
           }, () => {
             this.isLoading = false;
           });
@@ -216,8 +217,8 @@ export default {
             this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('login');
-            }, 1500);
+              this.toLogin(this.config.mobile, this.config.loginPwd);
+            }, 1000);
           }, () => {
             this.isLoading = false;
           });
@@ -230,6 +231,15 @@ export default {
     },
     changeBg(){
       this.checked = !this.checked;
+    },
+    toLogin(username, password) {
+      login(username, password).then(data => {
+        this.isLoading = false;
+        setUser(data);
+        this.$router.push('page');
+      }, () => {
+        this.isLoading = false;
+      });
     }
   },
   components: {

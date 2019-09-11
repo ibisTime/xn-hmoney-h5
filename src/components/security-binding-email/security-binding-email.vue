@@ -8,8 +8,8 @@
       <p class='text3 item-captcha-wrap'>
         <input class="item-input" v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
         <i v-show="!show" class='icon' @click="captcha = ''"></i>
-        <span v-show="show" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
-        <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
+        <span v-show="show" class='txt2' @click="get">{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
       </p>
 
     </div>
@@ -163,7 +163,7 @@ export default {
       }
       .txt1 {
         display: inline-block;
-        width: 1.68rem;
+        width: 2.5rem;
         height: .52rem;
         margin-top: .24rem;
         line-height: .52rem;
@@ -178,7 +178,7 @@ export default {
           height: .34rem;
           background-image: url('./sc.png');
           margin-top: .29rem;
-          margin-right: -.2rem;
+          margin-right: .2rem;
       }
     }
     .item-captcha-wrap{

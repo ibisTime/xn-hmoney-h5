@@ -43,6 +43,12 @@ import { getHandicapData } from 'api/bb';
         default(){
           return {};
         }
+      },
+      gkdsList: {
+        type: Object,
+        default(){
+          return {};
+        }
       }
     },
     data(){
@@ -85,14 +91,18 @@ import { getHandicapData } from 'api/bb';
         });
       }
     },
-    components: {
-      // Scroll
-    },
     watch: {
       bazDeal: {
         handler(val, oldVal){
-            this.setBazDeal = val;
-            this.handicapData();
+          this.setBazDeal = val;
+          this.handicapData();
+        },
+        deep: true
+      },
+      gkdsList: {
+        handler(val, oldVal){
+          this.setBazDeal = this.bazDeal;
+          this.handicapData();
         },
         deep: true
       }

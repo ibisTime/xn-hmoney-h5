@@ -320,8 +320,9 @@ export default {
   .foot {
     width: 100%;
     text-align: center;
-    margin-top: 1.2rem;
+    padding-top: 1.2rem;
     padding-bottom: 0.98rem;
+    background-color: #fff;
     button {
       width: 6.28rem;
       height: 1rem;

@@ -121,7 +121,9 @@
         getBannerList().then((data) => {
           this.banners = data;
           this.isLoading = false;
-        })
+        }).catch(() => {
+          this.isLoading = false;
+        });
       },
       getImgSyl(imgs) {
         return {
@@ -164,7 +166,7 @@
     }
     .slider-wrapper {
       position: relative;
-      height: 2.9rem;
+      height: 3rem;
       width: 100%;
       border-radius: .08rem;
       overflow: hidden;
