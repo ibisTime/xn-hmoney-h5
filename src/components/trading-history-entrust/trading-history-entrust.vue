@@ -40,7 +40,7 @@
         </Scroll>
         <div class="no-data" :class="{'hidden': hisDataList.length > 0}">
           <img src="./zwdata.png" />
-          <p>{{$t('historyEntrust.subject.zwdd')}}</p>
+          <p>暂无数据</p>
         </div>
     </div>
     <FullLoading  ref="fullLoading" v-show="isLoading"/>

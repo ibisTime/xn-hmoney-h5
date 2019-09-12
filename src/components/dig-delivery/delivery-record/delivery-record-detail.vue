@@ -22,6 +22,18 @@
           </div>
         </li>
         <li class="li_single">
+          <div class="li_left">交割总量</div>
+          <div class="li_right">
+            {{deliveryRecordMsg.payAmount}}
+          </div>
+        </li>
+        <li class="li_single">
+          <div class="li_left">单价</div>
+          <div class="li_right">
+            {{deliveryRecordMsg.price}}
+          </div>
+        </li>
+        <li class="li_single">
           <div class="li_left">交割份数</div>
           <div class="li_right">
             {{deliveryRecordMsg.quantity}}
@@ -109,6 +121,8 @@
             data.symbolIcon = PIC_PREFIX + data.symbolIcon;
             data.pickWayName = this.wayObj[data.pickWay];
             data.status = this.statusObj[data.status];
+            data.price = formatAmount(data.price, '', data.symbol);
+            data.payAmount = formatAmount(data.payAmount, '', data.symbol);
             this.deliveryRecordMsg = data;
             this.isLoading = false;
         }).catch(() => {

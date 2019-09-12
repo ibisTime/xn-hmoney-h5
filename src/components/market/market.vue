@@ -28,11 +28,11 @@
             >
               <div class="sing_left">
                 <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
-                <p class="s_l_p">24H量 <span>{{item.volume ? item.volume : '0'}}</span></p>
+                <div class="s_l_p">24H <span>{{item.volume ? (Math.floor(item.volume * 10000) / 10000).toFixed(4) : '0'}}</span></div>
               </div>
               <div class="sing_mid">
-                <p class="li_head">{{item.lastPrice}}</p>
-                <p>≈￥{{item.lastPriceCny ? item.lastPriceCny : '0'}}</p>
+                <p class="li_head">{{(Math.floor(item.lastPrice * 10000) / 10000).toFixed(4)}}</p>
+                <p>≈ {{currency === 'CNY' ? '￥' + (item.lastPriceCny ? (Math.floor(item.lastPriceCny * 100) / 100).toFixed(2) : '0.00') : item.lastPriceUsd ? '$' + (Math.floor(item.lastPriceUsd * 100) / 100).toFixed(2) : '0.00'}}</p>
               </div>
               <div class="sing_right">
               <span
@@ -45,7 +45,11 @@
           </Scroll>
         </div>
       </div>
-      <NoData v-if="tradingData.length === 0"/>
+      <div class="no-data" :class="{'hidden': tradingData.length > 0}">
+        <img src="./wu.png"/>
+        <p>暂无数据</p>
+      </div>
+      <full-loading v-show="isLoading"/>
     </div>
     <Footer/>
   </div>
@@ -55,7 +59,7 @@
   import categoryScroll from 'base/category-scroll/category-scroll';
   import Scroll from 'base/scroll/scroll';
   import Footer from 'components/footer/footer';
-  import NoData from 'base/no-data/index';
+  import fullLoading from 'base/full-loading/full-loading';
   import {tradingOnApi, ownerTradingApi, queryPlateList} from 'api/tradingOn';
 
   export default {
@@ -75,11 +79,14 @@
         params: {
           start: 1,
           limit: 10
-        }
+        },
+        isLoading: true,
+        currency: ''
       }
     },
     created() {
       this.$set(document, 'title', '行情');
+      this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       queryPlateList().then(data => {
         if (Array.isArray(data)) {
           const list = data.map(item => ({
@@ -94,20 +101,29 @@
     methods: {
       ownerTrading() {
         ownerTradingApi().then(data => {
+          this.isLoading = false;
           this.tradingData = data;
+        }).catch(() => {
+          this.isLoading = false;
         });
       },
       selectCategory(index, key) {
         this.currentIndex = index;
+        this.isLoading = true;
         if(index === 0) {
           this.ownerTrading();
         }else if(index === 1) {
           tradingOnApi().then(data => {
+            this.isLoading = false;
             this.tradingData = data;
+          }).catch(() => {
+            this.isLoading = false;
           });
         }else {
           tradingOnApi({plateId: key}).then(data => {
             this.tradingData = data;
+          }).catch(() => {
+            this.isLoading = false;
           });
         }
       },
@@ -118,15 +134,15 @@
     filters: {
       percent24h(v) {
         if(!v) {
-          return 0;
+          return '0.00%';
         }
-        return (v * 100) + '%';
+        return Math.floor(v * 100).toFixed(2) + '%';
       }
     },
     components: {
       Footer,
       categoryScroll,
-      NoData,
+      fullLoading,
       Scroll
     }
   }
@@ -175,7 +191,7 @@
       padding: 0 0.3rem;
     }
     .mar_single {
-      padding: 0.3rem 0;
+      padding: 0.22rem 0;
       display: flex;
       border-bottom: 1px solid #E6E6E6;
       align-items: center;
@@ -184,8 +200,8 @@
         .s_l_p{
           font-size: 0.26rem;
           span{
-            font-size: 0.32rem;
-          }
+            font-size: 0.3rem;
+          };
         }
       }
       .sing_mid {
@@ -205,6 +221,7 @@
           color: #fff;
           vertical-align: super;
           text-align: center;
+          border-radius: 0.06rem;
         }
         .up_p {
           background-color: #28BE67;

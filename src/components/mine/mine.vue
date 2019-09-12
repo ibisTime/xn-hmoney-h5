@@ -64,6 +64,14 @@
             <span class='icon'></span>
           </router-link>
         </div>
+        <p class="line"></p>
+        <div class="card">
+          <router-link to="mine-setUp" class="item item-8">
+            <i></i>
+            <span class='txt'>设置</span>
+            <span class='icon'></span>
+          </router-link>
+        </div>
       </div>
       <div style="height: 1.1rem;"></div>
     </Scroll>

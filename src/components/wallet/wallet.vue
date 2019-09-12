@@ -7,7 +7,7 @@
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} TWT</p>
             <div class='txt2' style='margin-top:.12rem;'>
               <p class='t1'>{{cdInfo.totalAmountTWT}}</p>
-              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{cdInfo.totalAmountCNY}} {{currency}}</p>
+              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{this.currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
             </div>
@@ -18,7 +18,7 @@
               <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
               <p class='txt2'>{{infoItem.amount}}</p>
               <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
-                :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
+                :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}}</span>
               </p>
             </div>
             <div class='datil'>
@@ -79,6 +79,7 @@
     computed: {},
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
+      this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       this.wallet();
       sessionStorage.removeItem('paw_go_back');
     },
@@ -93,9 +94,9 @@
           };
           this.info = v.accountList.map(item => ({
             ...item,
-            syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency),
-            amount: formatAmount(item.amount, '', item.currency),
-            frozenAmount: formatAmount(item.frozenAmount, '', item.currency),
+            syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
+            amount: formatAmount(item.amount, '8', item.currency),
+            frozenAmount: formatAmount(item.frozenAmount, '8', item.currency),
             coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;

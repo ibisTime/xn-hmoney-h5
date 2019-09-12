@@ -51,11 +51,13 @@
         </div>
       </div>
     </div>
+    <full-loading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading'
 import {ownerDeliveryRecord} from 'api/homeDig';
 import {getDictList} from 'api/general';
 import {formatAmount, formatDate} from 'common/js/util';
@@ -69,7 +71,8 @@ export default {
         status: ''
       },
       hasMore: true,
-      recordStatus: {}
+      recordStatus: {},
+      isLoading: true
     }
   },
   created() {
@@ -83,6 +86,7 @@ export default {
   methods: {
     getDeliveryRecord() {
       ownerDeliveryRecord(this.params).then(data => {
+        this.isLoading = false;
           data.list.forEach(item => {
             item.status = this.recordStatus[item.status];
             item.payAmount = formatAmount(item.payAmount, '', item.symbol);
@@ -95,9 +99,12 @@ export default {
         }
         this.recordList = [...this.recordList, ...data.list];
         this.params.start ++;
+      }).catch(() => {
+        this.isLoading = false;
       });
     },
     selectedTab(ev) {
+      this.isLoading = true;
       const key = ev.target.getAttribute('data-key');
       this.params.status = key;
       this.recordList = [];
@@ -106,7 +113,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    FullLoading
   }
 }
 </script>

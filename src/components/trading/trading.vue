@@ -142,7 +142,7 @@
               </p>
             </div>
             <p class='middle'>
-              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0') + setBazDeal.toSymbol}} ≈ {{(Math.floor(toSyMid * bb_zxj * 100) / 100).toFixed(2) + referCurrency}}</span>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0')}} ≈ {{toSyMid + referCurrency}}</span>
               <!-- <i class='icon'></i> -->
             </p>
             <div class='one two'>
@@ -165,31 +165,33 @@
           <div v-show="!show3" class='current-history' @touchmove.prevent>
             <div class="history_wp">
               <Scroll :pullUpLoad="null">
-                <div class='list' v-for="(myItem, index) in myOrderData" :key="index">
-                  <p class='text1'>
-                    <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
-                    <span>{{myItem.createDatetime}}</span>
-                    <span class='red' v-show="(myItem.type.toString() !== '0' && (myItem.status === '0' || myItem.status === '1'))"
-                          @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
-                  </p>
-                  <div class='text2'>
-                    <div class='txt1'>
-                      <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
-                      <p class='black'>{{myItem.type.toString() === '0' ? $t('trading.bbDeal.sj') : myItem.price}}</p>
-                    </div>
-                    <div class='txt2'>
-                      <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
-                      <p class='black'>{{myItem.totalCount}}</p>
-                    </div>
-                    <div class='txt3'>
-                      <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
-                      <p class='black'>{{myItem.tradedCount}}</p>
+                <div class='list' v-show="myOrderData.length">
+                  <div v-for="(myItem, index) in myOrderData" :key="index" style="margin-bottom: 0.4rem;">
+                    <p class='text1'>
+                      <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                      <span>{{myItem.createDatetime}}</span>
+                      <span class='red' v-show="(myItem.type.toString() !== '0' && (myItem.status === '0' || myItem.status === '1'))"
+                            @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
+                    </p>
+                    <div class='text2'>
+                      <div class='txt1'>
+                        <p>{{$t('common.jg')}}({{setBazDeal.toSymbol}})</p>
+                        <p class='black'>{{myItem.type.toString() === '0' ? $t('trading.bbDeal.sj') : myItem.price}}</p>
+                      </div>
+                      <div class='txt2'>
+                        <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
+                        <p class='black'>{{myItem.totalCount}}</p>
+                      </div>
+                      <div class='txt3'>
+                        <p>{{$t('trading.bbDeal.sjcj')}}({{setBazDeal.symbol}})</p>
+                        <p class='black'>{{myItem.tradedCount}}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
                   <img src="./zwdata.png"/>
-                  <p>{{$t('trading.bbDeal.zwdd')}}</p>
+                  <p>暂无数据</p>
                 </div>
               </Scroll>
             </div>
@@ -200,7 +202,7 @@
       <div v-show="!show2" class='Two'>
         <div class="top-mian">
           <p class='text1'>
-            <span class='txt1'>{{setBazDeal.toSymbol}}</span>
+            <!-- <span class='txt1'>{{setBazDeal.toSymbol}}</span> -->
             <span class='red txt3'>{{ bb_zxj }}</span>
             <span class='red txt4'>≈ {{toSyMid}} CNY</span>
           </p>
@@ -411,6 +413,9 @@
           this.bb_zxj = data.lastPrice;
           this.toSyMid = data.lastPriceCny; // toSymbol换算价
           data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || 0;
+          data.volume = (Math.floor(data.volume * 10000) / 10000).toFixed(4);
+          data.low = (Math.floor(data.low * 10000) / 10000).toFixed(4);
+          data.high = (Math.floor(data.high * 10000) / 10000).toFixed(4);
           this.gkdsList = {
             ...data
           };

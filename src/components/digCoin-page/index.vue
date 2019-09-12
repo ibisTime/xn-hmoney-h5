@@ -84,7 +84,6 @@
         digList: [],
         digValues: {},
         isReceive: true,
-        singleIndex: -1,
         calculateData: [],
         isSelectTab: 0
       }
@@ -119,7 +118,6 @@
       jbiSingleClick(id, index) {
         if(this.isReceive) {
           this.isReceive = false;
-          this.singleIndex = index;
           receiveDigValue(id).then(() => {
             this.isReceive = true;
             this.getOwnerDigValue();
@@ -128,6 +126,8 @@
                 ...item,
                 poolAmount: item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0.0000'
               }));
+              this.listX.splice(index, 1);
+              this.listY.splice(index, 1);
             });
           });
         }

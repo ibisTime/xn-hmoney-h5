@@ -64,6 +64,12 @@ const myAboutUs = () => import('components/my-about-us/my-about-us');
 // 我的 -- 帮助中心
 const MineHelp = () => import('components/mine-help/mine-help');
 
+// 我的 -- 设置
+const MineSetUp = () => import('components/mine-setUp/mine-setUp');
+
+// 我的 -- 设置 -- 设置货币
+const SetUpSymbol = () => import('components/mine-setUp/set-up_symbol');
+
 // 关于我们 -- 平台介绍
 const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 隐私条款
@@ -341,6 +347,14 @@ export default new Router({
     {
       path: '/mine-help',
       component: MineHelp
+    },
+    {
+      path: '/mine-setUp',
+      component: MineSetUp
+    },
+    {
+      path: '/set-up_symbol',
+      component: SetUpSymbol
     }
   ],
   mode: 'history',

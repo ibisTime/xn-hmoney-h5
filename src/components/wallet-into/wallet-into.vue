@@ -133,11 +133,12 @@ export default {
     padding: 0.16rem 0.3rem 0.18rem;
     position: relative;
     .text {
-      width: 6.26rem;
       display: inline-block;
       font-size: 0.24rem;
       line-height: 0.33rem;
       color: #f59218;
+      text-align: left;
+      padding-right: 0.36rem;
     }
     .icon {
       width: 0.28rem;

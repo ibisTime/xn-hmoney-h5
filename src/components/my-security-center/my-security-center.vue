@@ -11,7 +11,7 @@
           <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
-            <span class="tel">{{this.isKind ? '已认证' : '待认证'}}</span>
+            <span class="tel">{{identifyObj[identifyStatus]}}</span>
           </p>
         </div>
     </div>
@@ -78,7 +78,13 @@ export default {
       mobile: '',
       isTradepwdFlag: '',
       googleAuthFlag: false,
-      isKind: false
+      identifyStatus: '0',
+      identifyObj: {
+        '0': '未认证',
+        '1': '已认证',
+        '2': '认证中',
+        '3': '认证失败'
+      }
     };
   },
   created() {
@@ -87,7 +93,7 @@ export default {
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
-      this.isKind = !!data.idNo;
+      this.identifyStatus = data.identifyStatus;
       this.isTradepwdFlag = data.tradepwdFlag ? 1 : 0;
       data.emailBindFlag === false ? this.show = true : this.show = false;
       this.googleAuthFlag = data.googleAuthFlag;
