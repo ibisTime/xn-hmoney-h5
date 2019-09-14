@@ -98,7 +98,7 @@
           userId: getUserId(),
           start: 1,
           limit: 5,
-          type: 0
+          type: 2
         },
         option: {
           step: 1,
