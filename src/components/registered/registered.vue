@@ -8,9 +8,6 @@
           </p>
           <router-view></router-view>
           <div class="main-tel">
-            <p class="iup_p"><input type="text" name="username" v-validate="'required|nickname'" :placeholder="$t('registered.subject.srnc')" v-model="nickname">
-            <span v-show="errors.has('username')" class="error-tip">{{errors.first('username')}}</span>
-            </p>
             <p class="iup_p" v-show="flag">
             <input required v-model="phone" name="phone" v-validate="'required|phone'" type="text" :placeholder="$t('registered.subject.srsjh')">
             <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
@@ -223,7 +220,7 @@ export default {
             this.isLoading = false;
           });
         }
-      }else if(this.nickname == '' || this.smsCaptcha == '' || this.password1 == ''){
+      }else if(this.smsCaptcha == '' || this.password1 == ''){
         this.textMsg = this.$t('registered.subject.txwz');
         this.$refs.toast.show();
         return;

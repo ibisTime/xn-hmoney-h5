@@ -142,7 +142,7 @@
               </p>
             </div>
             <p class='middle'>
-              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj : '0')}} ≈ {{toSyMid + referCurrency}}</span>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid.toFixed(2) + referCurrency}}</span>
               <!-- <i class='icon'></i> -->
             </p>
             <div class='one two'>
@@ -203,8 +203,8 @@
         <div class="top-mian">
           <p class='text1'>
             <!-- <span class='txt1'>{{setBazDeal.toSymbol}}</span> -->
-            <span class='red txt3'>{{ bb_zxj }}</span>
-            <span class='red txt4'>≈ {{toSyMid}} CNY</span>
+            <span class='red txt3'>{{ bb_zxj.toFixed(4) }}</span>
+            <span class='red txt4'>≈ {{toSyMid.toFixed(2)}} CNY</span>
           </p>
           <div class='text2'>
             <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>

@@ -4,9 +4,9 @@
       <Scroll :pullUpLoad="null">
         <div style="padding-bottom: 0.8rem; padding-top: 0.3rem;">
           <div class='banner'>
-            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} TWT</p>
+            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
             <div class='txt2' style='margin-top:.12rem;'>
-              <p class='t1'>{{cdInfo.totalAmountTWT}}</p>
+              <p class='t1'>{{formatAmount(cdInfo.totalAmountTWT, 4)}}</p>
               <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{this.currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
@@ -15,7 +15,7 @@
           <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
             <i class="icon" :style="{backgroundImage: `url('${infoItem.coinIcon}')`}"></i>
             <div class='my'>
-              <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
+              <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}</p>
               <p class='txt2'>{{infoItem.amount}}</p>
               <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
                 :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}}</span>
@@ -94,9 +94,9 @@
           };
           this.info = v.accountList.map(item => ({
             ...item,
-            syAmount: formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
-            amount: formatAmount(item.amount, '8', item.currency),
-            frozenAmount: formatAmount(item.frozenAmount, '8', item.currency),
+            syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
+            amount: item.amount === 0 ? item.amount.toString() + '.00000000' : formatAmount(item.amount, '8', item.currency),
+            frozenAmount: item.amount === 0 ? '0.00000000' : (item.frozenAmount === 0 ? item.frozenAmount.toString() + '.00000000' :formatAmount(item.frozenAmount, '8', item.currency)),
             coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;

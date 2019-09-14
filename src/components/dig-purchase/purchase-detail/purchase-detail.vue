@@ -17,11 +17,11 @@
       <ul class="con_ul">
         <li class="li_single">
           <div class="li_left">申购总量</div>
-          <div class="li_right">{{purDetail.totalAmount}} 个</div>
+          <div class="li_right">{{purDetail.totalAmount}} {{purDetail.symbol}}</div>
         </li>
         <li class="li_single">
           <div class="li_left">剩余总量</div>
-          <div class="li_right">{{purDetail.remainAmount}} 个</div>
+          <div class="li_right">{{purDetail.remainAmount}} {{purDetail.symbol}}</div>
         </li>
         <li class="li_single">
           <div class="li_left">申购单价</div>

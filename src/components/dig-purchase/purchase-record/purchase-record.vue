@@ -63,8 +63,8 @@
       myPurchaseRecord() {
         myPurchaseRecord(this.params).then(data => {
           data.list.forEach(item => {
-            item.amount = formatAmount(item.amount, '0', item.symbol);
-            item.payAmount = formatAmount(item.payAmount, '0', item.toSymbol);
+            item.amount = formatAmount(item.amount, 4, item.symbol);
+            item.payAmount = formatAmount(item.payAmount, 4, item.toSymbol);
             item.buyDatetime = formatDate(item.buyDatetime, 'yyyy-MM-dd hh:mm:ss');
             item.symbolIcon = PIC_PREFIX + item.symbolIcon;
           });
