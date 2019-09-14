@@ -5,7 +5,12 @@
         <div class="coin_box">
           <div class="dig_head">
             <div class="head_gg">
-              公告：xxx玩家挖到xxx矿
+              <span class="header-common">公告：{{msg}}</span>
+              <div class="echartsRight">
+                <vueSeamless :data='APIIpList' :class-option="option">
+                  <p v-for="(item, index) in APIIpList" :key="index">{{item.content}}</p>
+                </vueSeamless>
+              </div>
             </div>
             <div class="wa_dig">
               <router-link to="dig-out_mine" class="left">
@@ -67,14 +72,16 @@
             </div>
           </div>
         </div>
-      </Scroll>  
+      </Scroll>
     </div>
   </div>
 </template>
 
 <script>
   import {ownerDigValue, willDigList, receiveDigValue, calculateList, tokensList} from 'api/homeDig';
-  import {setTitle, formatAmount} from 'common/js/util';
+  import {setTitle, formatAmount, getUserId} from 'common/js/util';
+  import vueSeamless from 'vue-seamless-scroll'
+  import {mineNotice} from 'api/mine';
   import Scroll from 'base/scroll/scroll';
   export default {
     data() {
@@ -85,11 +92,36 @@
         digValues: {},
         isReceive: true,
         calculateData: [],
-        isSelectTab: 0
+        isSelectTab: 0,
+        msg: '',
+        configNtc: {
+          userId: getUserId(),
+          start: 1,
+          limit: 5,
+          type: 0
+        },
+        option: {
+          step: 1,
+          limitMoveNum: 1,
+          openTouch: false,
+          waitTime: 48,
+          direction: 1,
+          singleHeight: 1
+        },
+        APIIpList: []
       }
     },
     created() {
       setTitle('挖矿');
+      mineNotice(this.configNtc).then(data => {
+        let arr = [];
+        for(let i = 0; i < data.list.length; i++) {
+          arr.push({
+            content: data.list[i].content
+          });
+        }
+        this.APIIpList = arr;
+      });
       willDigList().then(data => {
         this.digList = data.map(item => ({
           ...item,
@@ -113,8 +145,21 @@
       });
       this.getOwnerDigValue();
       this.getCalculateList();
+      this.lang();
     },
     methods: {
+      lang(){
+        if(this.intervalId != null) return;
+        this.intervalId = setInterval( () => {
+          var start = this.msg.substring(0,1)
+          var end = this.msg.substring(1)
+          this.msg = end + start
+        } ,400)
+      },
+			stop() {	//停止定时器
+        clearInterval(this.intervalId)
+        this.intervalId = null;
+      },
       jbiSingleClick(id, index) {
         if(this.isReceive) {
           this.isReceive = false;
@@ -135,7 +180,7 @@
       getOwnerDigValue() {
         ownerDigValue().then(data => {
           this.digValues = {
-            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '4', 'TWT') : '0.0000',
+            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '2') : '0.0000',
             totalAmount: data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0.0000'
           }
         });
@@ -144,8 +189,8 @@
         calculateList().then(data => {
           // 算力排行榜
           this.calculateData = data.map(item => ({
-            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '4', 'TWT') : '0.0000',
-            nickname: item.nickname
+            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '2') : '0.0000',
+            nickname: item.mobile
           }));
         });
       },
@@ -153,8 +198,8 @@
         tokensList().then(data => {
           // 代币排行榜
           this.calculateData = data.map(item => ({
-            dayCalculate: item.dayPoolAmount > 0 ? formatAmount(item.dayPoolAmount, '4', 'TWT') : '0.0000',
-            nickname: item.nickname
+            dayCalculate: item.amount > 0 ? formatAmount(item.amount, '4', 'TWT') : '0.0000',
+            nickname: item.mobile
           }));
         });
       },
@@ -168,7 +213,8 @@
       }
     },
     components: {
-      Scroll
+      Scroll,
+      vueSeamless
     }
   }
 </script>
@@ -358,6 +404,33 @@
           }
         }
       }
+    }
+    .echartsRight .rowup {
+      -webkit-animation: 1s rowup linear infinite normal;
+      animation: 1s rowup linear infinite normal;
+      position: relative;
+    }
+    .echartsRight {
+      overflow: hidden;
+      height: 12px;
+      line-height: 12px;
+      float: left;
+      margin-left: 20px;
+      margin-top: 10px;
+      width: 80%;
+      color: #fff;
+      p {
+        margin-bottom: 20px;
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+    .header-common {
+      display: block;
+      height: 30px;
+      z-index: 1000;
+      float: left;
     }
   }
   @keyframes jbiSingle{

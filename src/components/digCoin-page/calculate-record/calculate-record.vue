@@ -69,14 +69,14 @@
       this.params.outDatetime = formatDate(new Date(), 'yyyy-MM-dd');
       this.queryCalculateRecord();
       ownerCalculateEarnings(this.params.outDatetime).then(data => {
-        this.dayCalculate = data.dayCalculate ? formatAmount(data.dayCalculate, '4', 'TWT') : '0.0000';
+        this.dayCalculate = data.dayCalculate ? formatAmount(data.dayCalculate, '2') : '0.0000';
       });
     },
     methods: {
       queryCalculateRecord() {
         queryCalculateRecord(this.params).then(data => {
           data.list.forEach(item => {
-            item.calculate = formatAmount(item.calculate, '4', 'TWT');
+            item.calculate = formatAmount(item.calculate, '2');
           });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
