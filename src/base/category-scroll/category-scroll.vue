@@ -128,7 +128,7 @@
 
   .category {
     min-height: 1px;
-
+    padding-top: 0.1rem;
     .category-group {
       position: relative;
       overflow: hidden;

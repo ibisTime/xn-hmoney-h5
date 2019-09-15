@@ -4,14 +4,6 @@
       <Scroll :pullUpLoad="null">
         <div class="coin_box">
           <div class="dig_head">
-            <div class="head_gg">
-              <span class="header-common">公告：{{msg}}</span>
-              <div class="echartsRight">
-                <vueSeamless :data='APIIpList' :class-option="option">
-                  <p v-for="(item, index) in APIIpList" :key="index">{{item.content}}</p>
-                </vueSeamless>
-              </div>
-            </div>
             <div class="wa_dig">
               <router-link to="dig-out_mine" class="left">
                 <img class="img_jb" src="./image/wa_jb.png" alt="">
@@ -73,6 +65,14 @@
           </div>
         </div>
       </Scroll>
+    </div>
+    <div class="head_gg">
+      <div class="header-common">公告：</div>
+      <div class="echartsRight">
+        <vueSeamless :data='APIIpList' :class-option="option">
+          <p v-for="(item, index) in APIIpList" :key="index">{{item.content}}</p>
+        </vueSeamless>
+      </div>
     </div>
   </div>
 </template>
@@ -145,7 +145,7 @@
       });
       this.getOwnerDigValue();
       this.getCalculateList();
-      this.lang();
+      // this.lang();
     },
     methods: {
       lang(){
@@ -154,7 +154,7 @@
           var start = this.msg.substring(0,1)
           var end = this.msg.substring(1)
           this.msg = end + start
-        } ,400)
+        }, 800)
       },
 			stop() {	//停止定时器
         clearInterval(this.intervalId)
@@ -180,7 +180,7 @@
       getOwnerDigValue() {
         ownerDigValue().then(data => {
           this.digValues = {
-            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '2') : '0.0000',
+            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '2') : '0.00',
             totalAmount: data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0.0000'
           }
         });
@@ -189,7 +189,7 @@
         calculateList().then(data => {
           // 算力排行榜
           this.calculateData = data.map(item => ({
-            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '2') : '0.0000',
+            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '2') : '0.00',
             nickname: item.mobile
           }));
         });
@@ -241,16 +241,7 @@
       background-size: 100% 100%;
       display: flex;
       flex-direction: column;
-      .head_gg{
-        background-color: #519AED;
-        opacity: 0.6;
-        color: #fff;
-        font-size: 0.24rem;
-        height: 0.6rem;
-        line-height: 0.6rem;
-        padding-left: 0.3rem;
-        margin-bottom: 0.34rem;
-      }
+      padding-top: 0.94rem;
       .wa_dig{
         display: flex;
         justify-content: space-between;
@@ -412,11 +403,10 @@
     }
     .echartsRight {
       overflow: hidden;
-      height: 12px;
-      line-height: 12px;
+      height: 0.5rem;
+      line-height: 0.5rem;
+      margin-top: 0.06rem;
       float: left;
-      margin-left: 20px;
-      margin-top: 10px;
       width: 80%;
       color: #fff;
       p {
@@ -426,11 +416,20 @@
         }
       }
     }
-    .header-common {
-      display: block;
-      height: 30px;
-      z-index: 1000;
-      float: left;
+    .head_gg{
+      background-color: #519AED;
+      opacity: 0.8;
+      color: #fff;
+      font-size: 0.24rem;
+      height: 0.6rem;
+      line-height: 0.6rem;
+      padding-left: 0.3rem;
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
     }
   }
   @keyframes jbiSingle{

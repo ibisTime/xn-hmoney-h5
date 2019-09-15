@@ -57,7 +57,7 @@ const walletOrderDetails = () => import('components/wallet-order-details/wallet-
 // 订单详情
 const OrderDetails = () => import('components/order-details/order-details');
 // 我的 -- 邀请好友
-const myInviteFriends = () => import('components/my-invite-friends/my-invite-friends');
+const myInviteFriends = () => import('components/my-invite-friends/invite-friends');
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
 

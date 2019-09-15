@@ -10,7 +10,7 @@
         </div>
         <div class="set_up_single" @click="toAbout">
             <div class="set_left">
-                版本更新
+                版本更新说明
             </div>
             <div class="set_right">
                 <i class="icon icon_right_to"></i>

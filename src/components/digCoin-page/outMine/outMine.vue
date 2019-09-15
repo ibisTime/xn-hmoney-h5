@@ -1,6 +1,6 @@
 <template>
   <div class="out-mine">
-    <div class="header">
+    <div class="header" @click="toRecord">
       <p class="ck_p">挖矿余额</p>
       <h5 class="head_h">{{userAmount}}</h5>
       <div class="head_box">
@@ -55,7 +55,7 @@
             <input
               type="text"
               v-model="amount"
-              :placeholder="`最多可转入${userAmount}个TWT`"
+              :placeholder="`请输入转入的数字`"
               @blur="blurIn"
             />
           </div>
@@ -63,6 +63,7 @@
             <span>全部金额</span>
           </div>
         </div>
+        <p class="user_amount">可转入：{{userAmount}}</p>
         <div class="foo_btn" @click="confirmInto">
           确认转入
         </div>
@@ -393,6 +394,11 @@
           }
         }
       }
+    }
+    .user_amount{
+      font-size: 0.3rem;
+      color: #888;
+      margin-top: 0.2rem;
     }
     .modal_success{
       position: fixed;

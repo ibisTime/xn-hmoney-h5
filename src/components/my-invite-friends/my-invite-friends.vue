@@ -14,9 +14,9 @@
                 </div>
             </div>
         </div>
-        <div class="con-img">
+        <!-- <div class="con-img">
             <img src="" alt="" ref="conImg" @click="isFz = true;">
-        </div>
+        </div> -->
         <div class="qr-txt" @click.stop="isFz = false;">
             点击复制邀请好友链接
         </div>
@@ -57,7 +57,7 @@ export default {
     };
   },
   created() {
-    setTitle(this.$t('myInviteFriends.subject.yqhy'));
+    setTitle('邀请有礼');
     this.userId = getUserId();
   },
   mounted() {

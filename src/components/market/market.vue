@@ -103,6 +103,15 @@
         ownerTradingApi().then(data => {
           this.isLoading = false;
           this.tradingData = data;
+          if(data.length === 0) {
+            this.currentIndex = 1;
+            tradingOnApi().then(data => {
+              this.isLoading = false;
+              this.tradingData = data;
+            }).catch(() => {
+              this.isLoading = false;
+            });
+          }
         }).catch(() => {
           this.isLoading = false;
         });
@@ -121,6 +130,7 @@
           });
         }else {
           tradingOnApi({plateId: key}).then(data => {
+            this.isLoading = false;
             this.tradingData = data;
           }).catch(() => {
             this.isLoading = false;

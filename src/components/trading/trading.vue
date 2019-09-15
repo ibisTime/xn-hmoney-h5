@@ -62,32 +62,32 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}CNY</span>
+              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}{{referCurrency}}</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
               <span class='black'>{{downConfig.type === '1' ? setBazDeal.symbol : setBazDeal.toSymbol}}</span>
             </p>
             <p class='he9 no-bor' v-show="downConfig.type === '1'">
-              <span class="he-jye">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+              <span class="he-jye max-len" style="max-width: 90%;">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
               <span class='black'>{{setBazDeal.toSymbol}}</span>
             </p>
             <button class='sell' @click="downClickFn">{{$t('trading.bbDeal.mr')}}{{setBazDeal.symbol}}</button>
             <p class='he9 green'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+              <span class="max-len">{{symWallet.kyAmount | symbolToFixed}}</span>
             </p>
             <p class='he9 btn green' v-show="downConfig.type === '1'">
               <span>{{$t('trading.bbDeal.km')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len">{{(xjPrice > 0 && toSymWallet.kyAmount) ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+              <span class="max-len">{{(xjPrice > 0 && toSymWallet.kyAmount) ? (Math.floor((toSymWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-              <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+              <span class='black max-len'>{{toSymWallet.kyAmount | symbolToFixed}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.toSymbol}}</span>
-              <span class='black max-len' :title="toSymWallet.frozenAmount">{{toSymWallet.frozenAmount}}</span>
+              <span class='black max-len'>{{toSymWallet.frozenAmount}}</span>
             </p>
           </div>
           <!-- 卖出 -->
@@ -104,28 +104,28 @@
             </p>
             <p class='text2' v-show="downConfig.type === '0'"></p>
             <p class='text2' v-show="downConfig.type === '1'">
-              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}CNY</span>
+              <span class='red'>≈{{bb_zxj > 0 ? (Math.floor((xjPrice * toSyMid / bb_zxj) * 100) / 100).toFixed(2) : '0.00'}}{{referCurrency}}</span>
             </p>
             <p class='he9 mb20'>
               <input type="number" :placeholder="$t('trading.bbDeal.wtsl')" v-model="wetNumber" @keyup="qrLength">
               <span class='black'>{{setBazDeal.symbol}}</span>
             </p>
             <p class='he9 no-bor' v-show="downConfig.type === '1'">
-              <span>{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
+              <span class="max-len" style="max-width: 90%;">{{$t('trading.bbDeal.jye')}}：{{(Math.floor((xjPrice * wetNumber) * 10000) / 10000).toFixed(4)}}</span>
               <span class='black'>{{setBazDeal.toSymbol}}</span>
             </p>
             <button class='buy' @click="downClickFn">{{$t('trading.bbDeal.mc')}} {{setBazDeal.symbol}}</button>
             <p class='he9 red'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len" :title="symWallet.kyAmount">{{symWallet.kyAmount}}</span>
+              <span class="max-len">{{symWallet.kyAmount | symbolToFixed}}</span>
             </p>
             <p class='he9 btn red' v-show="downConfig.type === '1'">
               <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0'}}</span>
+              <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
-              <span class='black max-len' :title="toSymWallet.kyAmount">{{toSymWallet.kyAmount}}</span>
+              <span class='black max-len'>{{toSymWallet.kyAmount | symbolToFixed}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.dj')}}{{setBazDeal.symbol}}</span>
@@ -142,7 +142,7 @@
               </p>
             </div>
             <p class='middle'>
-              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid.toFixed(2) + referCurrency}}</span>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid && toSyMid.toFixed(2) + referCurrency}}</span>
               <!-- <i class='icon'></i> -->
             </p>
             <div class='one two'>
@@ -203,18 +203,18 @@
         <div class="top-mian">
           <p class='text1'>
             <!-- <span class='txt1'>{{setBazDeal.toSymbol}}</span> -->
-            <span class='red txt3'>{{ bb_zxj.toFixed(4) }}</span>
-            <span class='red txt4'>≈ {{toSyMid.toFixed(2)}} CNY</span>
+            <span class='red txt3'>{{ bb_zxj > 0 ? (Math.floor(bb_zxj * 10000) / 10000).toFixed(4) : '0.0000' }}</span>
+            <span class='red txt4'>≈ {{toSyMid > 0 ? (Math.floor(toSyMid * 100) / 100).toFixed(2) : '0.00'}} {{referCurrency}}</span>
           </p>
           <div class='text2'>
             <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
             </p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0'}}</span>
+            <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0.0000'}}</span>
             </p>
           </div>
           <div class='text3'>
-            <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0' : '0'}}</span></p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0'}}</span>
+            <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0.0000' : '0.0000'}}</span></p>
+            <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0.0000'}}</span>
             </p>
           </div>
         </div>
@@ -346,6 +346,7 @@
       this.isLoading = true;
       const symbol = getUrlParam('symbol');
       const toSymbol = getUrlParam('toSymbol');
+      this.referCurrency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       let params = {};
       if(symbol && toSymbol) {
         params.symbol = symbol;
@@ -411,11 +412,11 @@
           this.isAttention = data.isAttention === '0';
           this.marketId = data.id;
           this.bb_zxj = data.lastPrice;
-          this.toSyMid = data.lastPriceCny; // toSymbol换算价
-          data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || 0;
-          data.volume = (Math.floor(data.volume * 10000) / 10000).toFixed(4);
-          data.low = (Math.floor(data.low * 10000) / 10000).toFixed(4);
-          data.high = (Math.floor(data.high * 10000) / 10000).toFixed(4);
+          this.toSyMid = this.referCurrency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
+          data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
+          data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
+          data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';
+          data.high = data.high > 0 ? (Math.floor(data.high * 10000) / 10000).toFixed(4) : '0.0000';
           this.gkdsList = {
             ...data
           };
@@ -426,8 +427,8 @@
         wallet().then(data => {
           if(data.accountList) {
             data.accountList.map(item => {
-              item.amount = formatAmount(`${item.amount}`, '', item.currency);
-              item.frozenAmount = item.frozenAmount ? formatAmount(`${item.frozenAmount}`, '', item.currency) : '0';
+              item.amount = item.amount > 0 ? formatAmount(item.amount, '', item.currency) : '0.0000';
+              item.frozenAmount = item.frozenAmount ? formatAmount(item.frozenAmount, '', item.currency) : '0.0000';
             });
             data.accountList.forEach(item => {
               if (item.currency === this.setBazDeal.symbol) {
@@ -437,8 +438,8 @@
                 this.toSymWallet = item;
               }
             });
-            this.symWallet.kyAmount = this.symWallet.amount - this.symWallet.frozenAmount;
-            this.toSymWallet.kyAmount = this.toSymWallet.amount - this.toSymWallet.frozenAmount;
+            this.symWallet.kyAmount = (+this.symWallet.amount) - (+this.symWallet.frozenAmount);
+            this.toSymWallet.kyAmount = (+this.toSymWallet.amount) - (+this.toSymWallet.frozenAmount);
           }
         });
       },
@@ -773,6 +774,20 @@
     },
     destroyed() {
       clearInterval(this.handTime);
+    },
+    filters: {
+      percent24h(v) {
+        if(!v) {
+          return '0.00';
+        }
+        return (Math.floor((v * 100)) / 100).toFixed(2);
+      },
+      symbolToFixed(v) {
+        if(!v) {
+          return '0.0000';
+        }
+        return (Math.floor((v * 10000)) / 10000).toFixed(4);
+      }
     }
   };
 </script>
@@ -965,14 +980,16 @@
             font-size: 0.22rem;
             justify-content: space-between;
             line-height: .9rem;
+            display: flex;
+            align-items: center;
             input[attr="placeholder"] {
               color: #999;
             }
             input {
               width: 85%;
-              height: .87rem;
+              height: .6rem;
               font-size: .26rem;
-              line-height: .87rem;
+              line-height: .6rem;
             }
             span {
               white-space: nowrap;
@@ -1049,7 +1066,7 @@
         }
       }
       .max-len {
-        max-width: 2.1rem;
+        max-width: 2.8rem;
         margin-left: 0.05rem;
         overflow: hidden;
         text-overflow: ellipsis;

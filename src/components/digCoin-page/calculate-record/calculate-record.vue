@@ -69,7 +69,7 @@
       this.params.outDatetime = formatDate(new Date(), 'yyyy-MM-dd');
       this.queryCalculateRecord();
       ownerCalculateEarnings(this.params.outDatetime).then(data => {
-        this.dayCalculate = data.dayCalculate ? formatAmount(data.dayCalculate, '2') : '0.0000';
+        this.dayCalculate = data.dayCalculate ? formatAmount(data.dayCalculate, '2') : '0.00';
       });
     },
     methods: {

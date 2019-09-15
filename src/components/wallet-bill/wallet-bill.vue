@@ -164,7 +164,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   overflow: auto;
-
+  background-color: #fff;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;

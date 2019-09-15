@@ -37,8 +37,8 @@
               :key="`his_record_${index}`"
             >
               <div class="li_left">
-                <p class="left_p">已领取 <span class="b_sp">{{item.poolAmount}}</span></p>
-                <p>{{params.outDatetime}}</p>
+                <p class="left_p">{{item.statusName}} <span class="b_sp">{{item.poolAmount}}</span></p>
+                <p>{{item.receiveDatetime}}</p>
               </div>
               <div class="li_right">
                 <span>+{{item.poolAmount}}</span>
@@ -88,8 +88,8 @@
         this.mapData.push({value: data.dayTeamAmount > 0 ? data.dayTeamAmount : 1});
         const allAmount = data.daySelfAmount + data.dayTeamAmount;
         if(allAmount > 0) {
-          this.selfProportion = data.daySelfAmount / allAmount * 100;
-          this.teamProportion = data.dayTeamAmount / allAmount * 100;
+          this.selfProportion = (data.daySelfAmount / allAmount * 100).toFixed(2);
+          this.teamProportion = 100 - this.selfProportion;
         }
         setTimeout(() => {
           let chart = document.getElementById('charts');
@@ -137,6 +137,8 @@
         queryCalculateRecord(this.params).then(data => {
           data.list.forEach(item => {
             item.poolAmount = item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0';
+            item.receiveDatetime = item.receiveDatetime ? formatDate(item.receiveDatetime, 'yyyy-MM-dd hh:mm:ss') : '';
+            item.statusName = item.status === '1' ? '待领取' : item.status === '2' ? '已领取' : '';
           });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;

@@ -6,7 +6,7 @@
           <div class='banner'>
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
             <div class='txt2' style='margin-top:.12rem;'>
-              <p class='t1'>{{formatAmount(cdInfo.totalAmountTWT, 4)}}</p>
+              <p class='t1'>{{cdInfo.totalAmountTWT}}</p>
               <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{this.currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
@@ -88,15 +88,15 @@
       wallet() {
         wallet().then(v => {
           this.cdInfo = {
-            totalAmountCNY: v.totalAmountCNY,
-            totalAmountTWT: v.totalAmountTWT,
-            totalAmountUSD: v.totalAmountUSD
+            totalAmountCNY: v.totalAmountCNY > 0 ? ((Math.floor(v.totalAmountCNY * 100)) / 100).toFixed(2) : '0.00',
+            totalAmountTWT: v.totalAmountTWT > 0 ? ((Math.floor(v.totalAmountTWT * 10000)) / 10000).toFixed(4) : '0.0000',
+            totalAmountUSD: v.totalAmountUSD > 0 ? ((Math.floor(v.totalAmountUSD * 100)) / 100).toFixed(2) : '0.00'
           };
           this.info = v.accountList.map(item => ({
             ...item,
             syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
-            amount: item.amount === 0 ? item.amount.toString() + '.00000000' : formatAmount(item.amount, '8', item.currency),
-            frozenAmount: item.amount === 0 ? '0.00000000' : (item.frozenAmount === 0 ? item.frozenAmount.toString() + '.00000000' :formatAmount(item.frozenAmount, '8', item.currency)),
+            amount: item.amount === 0 ? '0.00000000' : formatAmount(item.amount, '8', item.currency),
+            frozenAmount: item.frozenAmount === 0 ? '0.00000000' :formatAmount(item.frozenAmount, '8', item.currency),
             coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;
