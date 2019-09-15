@@ -3,7 +3,7 @@
     <div class="wrapper">
       <Scroll :pullUpLoad="null">
         <div class="main">
-          <p>
+          <p style="border-bottom: .01rem solid #e3e3e3;">
             <input
               class="item-input"
               type="text"
@@ -251,10 +251,9 @@ export default {
       height: 1.1rem;
       line-height: 1.1rem;
       margin-bottom: .1rem;
-      border-bottom: .01rem solid #e3e3e3;
     }
     input {
-      height: 1rem;
+      padding: 0.2rem 0;
     }
     input[attr='placeholder'] {
       color: #ccc;

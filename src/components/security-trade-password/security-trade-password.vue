@@ -167,7 +167,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
-  height: 12rem;
+  height: 100%;
   background: #fff;
 
   .icon {

@@ -273,6 +273,7 @@ export default {
   .card {
     width: 6.3rem;
     margin: 0 auto;
+    padding-bottom: 0.3rem;
     input[type="number"],
     input[type="text"],
     input[type="password"] {

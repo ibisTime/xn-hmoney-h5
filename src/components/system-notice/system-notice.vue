@@ -72,15 +72,16 @@
     },
     created() {
       setTitle('消息');
-      const mes_skey = sessionStorage.getItem('mes_skey');
-      if(mes_skey && mes_skey === 'todo') {
-        this.skey = mes_skey;
+      const mes_skey = sessionStorage.getItem('mes_skey') || 'todo';
+      this.skey = mes_skey;
+      if(mes_skey === 'todo') {
         this.mineMessage();
-      }else if(mes_skey && mes_skey === 'common'){
-        this.mineNotices();
+        return;
       }
-      // 默认加载我的消息
-      this.mineMessage();
+      if(mes_skey === 'common'){
+        this.mineNotices();
+        return;
+      }
     },
     methods: {
       selectedSingle(ev) {

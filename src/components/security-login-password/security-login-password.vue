@@ -2,12 +2,12 @@
   <div class="password-wrapper" @click.stop>
     <div class="main">
       <p v-if="isEmail">
-        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" :placeholder="$t('exitLoginPassword.subject.sryxsj')">
+        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" placeholder="请输入手机号">
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
       <p class='text3' v-if="(mobile == '' || email == '') && isEmail">
         <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')">
-        <i v-show="!show" class='icon'></i>
+        <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
@@ -189,7 +189,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
-  height: 12rem;
+  height: 100%;
   background: #fff;
 
   .icon {

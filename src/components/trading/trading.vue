@@ -798,8 +798,10 @@
 
   .trading-wrapper {
     width: 100%;
+    height: 100%;
     font-size: .28rem;
     color: #999;
+    background-color: #fff;
     .red {
       color: #d53d3d;
     }
@@ -968,7 +970,7 @@
         display: flex;
         width: 100%;
         padding: 0 .3rem;
-        border-bottom: .2rem solid #f7f7f7;
+        border-bottom: .02rem solid #f7f7f7;
         .left {
           margin-right: .2rem;
           width: 50%;

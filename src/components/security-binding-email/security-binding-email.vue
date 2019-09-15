@@ -85,7 +85,7 @@ export default {
   color: #333;
   width: 100%;
   background: #fff;
-
+  height: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;

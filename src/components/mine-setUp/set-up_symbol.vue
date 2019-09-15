@@ -45,6 +45,7 @@ export default {
 <style scoped lang="scss">
     .set_up_box{
         height: 100%;
+        background-color: #fff;
         padding: 0.2rem 0.3rem;
         .set_up_single{
             display: flex;

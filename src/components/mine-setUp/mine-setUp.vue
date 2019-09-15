@@ -39,6 +39,7 @@ export default {
     .set_up_box{
         height: 100%;
         padding: 0.2rem 0.3rem;
+        background-color: #fff;
         .set_up_single{
             display: flex;
             align-items: center;
