@@ -50,7 +50,7 @@
             </router-link>
           </div>
           <div class="tabCar notice">
-            <router-link to='system-notice' style="display: flex; align-items: center;">
+            <router-link to='system-notice' style="display: flex; align-items: center;" @click.native="toNotice">
               <div class="tab_left">
                 <img src="./con_xtgg.png" alt="">
               </div>
@@ -136,6 +136,9 @@
         if (url !== '' && url) {
           window.open(url);
         };
+      },
+      toNotice() {
+        sessionStorage.setItem('mes_skey', 'common');
       },
       resetSession() {
         sessionStorage.removeItem('freeSymbol');

@@ -14,7 +14,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="dig-delivery">
+        <router-link to="dig-delivery" @click.native="toDelivery">
           <img src="../image/get_zdjg.png" alt="">
           <p>主动交割</p>
         </router-link>
@@ -39,6 +39,11 @@ export default {
     wallet().then(data => {
       this.walletObj = data.accountList.filter(item => item.currency === 'TWT')[0];
     });
+  },
+  methods: {
+    toDelivery() {
+      sessionStorage.removeItem('deliveryType');
+    }
   }
 }
 </script>  

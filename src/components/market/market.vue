@@ -28,7 +28,7 @@
             >
               <div class="sing_left">
                 <p class="li_head">{{item.symbol}}/<span>{{item.referCurrency}}</span></p>
-                <div class="s_l_p">24H <span>{{item.volume ? (Math.floor(item.volume * 10000) / 10000).toFixed(4) : '0'}}</span></div>
+                <div class="s_l_p">24H <span>{{item.volume ? (Math.floor(item.volume * 10000) / 10000).toFixed(4) : '0.0000'}}</span></div>
               </div>
               <div class="sing_mid">
                 <p class="li_head">{{(Math.floor(item.lastPrice * 10000) / 10000).toFixed(4)}}</p>

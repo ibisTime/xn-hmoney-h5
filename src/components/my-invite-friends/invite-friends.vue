@@ -7,16 +7,18 @@
                     <p>邀请您加入大文通</p>
                 </div>
                 <div class="invite_qcode">
-                    <div id="qcode"></div>
+                    <div id="qcode">
+                        <qrcode :url="wxUrl" :iconurl="logoPic" :wid="140" :hei="140" :imgwid="30" :imghei="30"></qrcode>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="textarea_box">
             <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl" />
         </div>
-        <div class="img_box">
+        <!-- <div class="img_box">
             <img src="" alt="" ref="conImg">
-        </div>
+        </div> -->
         <div class="link_btn">
             <div class="left">您的专属邀请链接</div>
             <div class="right" ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj" @click='CopyUrl'>复制链接</div>
@@ -36,6 +38,7 @@ import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
 import {getUser} from 'api/user';
 import html2canvas from 'html2canvas';
+import qrcode from 'vue_qrcodes';
 
 export default {
   data() {
@@ -47,7 +50,8 @@ export default {
         textMsg: '',
         container: '',
         copyBtn: null,
-        picUrl: ''
+        picUrl: '',
+        logoPic: require('./yqbj.png')
     };
   },
   created() {
@@ -58,17 +62,17 @@ export default {
     getUser().then(data => {
         this.nickName = data.realName ? data.realName : data.nickname;
         this.isLoading = false;
-        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
-        this.container = document.getElementById('qcode');
-        const qr = new QRCode(this.container, {
-          typeNumber: -1,
-          correctLevel: 2,
-          foreground: '#000000'
-        });
-        setTimeout(() => {
-            qr.make(this.wxUrl);
-            this.saveImgFn();
-        }, 0)
+        this.wxUrl = '点击该链接' + window.location.origin + '/registered' + '?inviteCode=' + getUserId() + `，${this.nickName}邀请您加入大文通`;
+        // this.container = document.getElementById('qcode');
+        // const qr = new QRCode(this.container, {
+        //   typeNumber: -1,
+        //   correctLevel: 2,
+        //   foreground: '#000000'
+        // });
+        // setTimeout(() => {
+        //     qr.make(this.wxUrl);
+        //     this.saveImgFn();
+        // }, 0)
     }, () => {
         this.isLoading = false;
     });
@@ -128,7 +132,8 @@ export default {
   },
   components: {
       FullLoading,
-      Toast
+      Toast,
+      qrcode
   }
 };
 </script>

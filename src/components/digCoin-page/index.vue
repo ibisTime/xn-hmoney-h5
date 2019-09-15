@@ -9,9 +9,9 @@
                 <img class="img_jb" src="./image/wa_jb.png" alt="">
                 <span>挖矿：{{digValues.totalAmount}}</span>
               </router-link>
-              <div class="right">
+              <router-link to="/about-platformIntroduced?ckey=dig_introduce" class="right">
                 玩法介绍
-              </div>
+              </router-link>
             </div>
             <div class="wa_dig">
               <router-link class="left" to="calculate-record">
@@ -180,7 +180,7 @@
       getOwnerDigValue() {
         ownerDigValue().then(data => {
           this.digValues = {
-            dayCalculate: data.dayCalculate > 0 ? formatAmount(data.dayCalculate, '2') : '0.00',
+            dayCalculate: +data.dayCalculate > 0 ? data.dayCalculate : '0.00',
             totalAmount: data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0.0000'
           }
         });
@@ -189,7 +189,7 @@
         calculateList().then(data => {
           // 算力排行榜
           this.calculateData = data.map(item => ({
-            dayCalculate: item.dayCalculate > 0 ? formatAmount(item.dayCalculate, '2') : '0.00',
+            dayCalculate: +item.dayCalculate > 0 ? item.dayCalculate : '0.00',
             nickname: item.mobile
           }));
         });
@@ -205,10 +205,12 @@
       },
       selectCalculate() {
         this.isSelectTab = 0;
+        this.calculateData = [];
         this.getCalculateList();
       },
       selectToken() {
         this.isSelectTab = 1;
+        this.calculateData = [];
         this.getTokensList();
       }
     },
