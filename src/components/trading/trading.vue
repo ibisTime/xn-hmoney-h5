@@ -142,7 +142,7 @@
               </p>
             </div>
             <p class='middle'>
-              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid && toSyMid.toFixed(2) + referCurrency}}</span>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid && (Math.floor(toSyMid * 100) / 100).toFixed(2) + referCurrency}}</span>
               <!-- <i class='icon'></i> -->
             </p>
             <div class='one two'>
@@ -179,7 +179,7 @@
                         <p class='black'>{{myItem.type.toString() === '0' ? $t('trading.bbDeal.sj') : myItem.price}}</p>
                       </div>
                       <div class='txt2'>
-                        <p>{{$t('trading.bbDeal.sl')}}({{setBazDeal.symbol}})</p>
+                        <p>{{$t('trading.bbDeal.sl')}}({{myItem.type === '0' ?setBazDeal.toSymbol  : setBazDeal.symbol}})</p>
                         <p class='black'>{{myItem.totalCount}}</p>
                       </div>
                       <div class='txt3'>
@@ -515,11 +515,11 @@
         };
         getMyorderTicket(this.myOrderConfig).then(data => {
           data.list.map(item => {
-            let showTotalCount = item.direction === 0 && item.type === 0;
+            let showTotalCount = item.direction === '0' && item.type === '0';
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
-            item.price = item.type === 0 ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
-            item.totalCount = showTotalCount ? '-' : (formatAmount(`${item.totalCount}`, '', item.symbol));
-            item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol)
+            item.price = item.type === '0' ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
+            item.totalCount = showTotalCount ? formatAmount(`${item.totalCount}`, '', item.toSymbol) : (formatAmount(`${item.totalCount}`, '', item.symbol));
+            item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
           });
           this.myOrderData = data.list;
           this.isLoading = false;

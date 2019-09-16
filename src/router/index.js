@@ -91,7 +91,7 @@ const MineMessage = () => import('components/mine-message/index');
 // 团队
 const MineTeam = () => import('components/mine-team/index');
 
-// 挖矿
+// 挖矿 - 交割 - 申购
 const DigCoin = () => import('components/digCoin-page/index');
 const DigOutMine = () => import('components/digCoin-page/outMine/outMine');
 const DigHistoryMine = () => import('components/digCoin-page/history-mine/index');
@@ -100,9 +100,11 @@ const DigGetCalculate = () => import('components/digCoin-page/get-calculate/get_
 const DigCalculateRecord = () => import('components/digCoin-page/calculate-record/calculate-record');
 const DigHisCalculate = () => import('components/digCoin-page/calculate-record/his-calculate/his-calculate');
 const DigCalculateDetail = () => import('components/digCoin-page/calculate-record/calculate-detail/calculate-detail');
+
 const DigPurchase = () => import('components/dig-purchase/index');
 const DigPurchaseDetail = () => import('components/dig-purchase/purchase-detail/purchase-detail');
 const DigPurchaseRecord = () => import('components/dig-purchase/purchase-record/purchase-record');
+
 const DigDelivery = () => import('components/dig-delivery/index');
 const DigDeliveryImage = () => import('components/dig-delivery/delivery-image/delivery-image');
 const DigDeliveryConfirm = () => import('components/dig-delivery/delivery-confirm/delivery-confirm');
@@ -111,6 +113,7 @@ const DigDeliveryDetail = () => import('components/dig-delivery/delivery-detail/
 const DigDeliveryRecord = () => import('components/dig-delivery/delivery-record/delivery-record');
 const DigDeliveryRecordDetail = () => import('components/dig-delivery/record-detail/record-detail');
 const DeliveryRecordDetail = () => import('components/dig-delivery/delivery-record/delivery-record-detail');
+const DeliveryUnitDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail-unit');
 
 export default new Router({
   routes: [
@@ -343,6 +346,10 @@ export default new Router({
     {
       path: '/record-detail',
       component: DigDeliveryRecordDetail
+    },
+    {
+      path: '/delivery-unit',
+      component: DeliveryUnitDetail
     },
     {
       path: '/mine-help',

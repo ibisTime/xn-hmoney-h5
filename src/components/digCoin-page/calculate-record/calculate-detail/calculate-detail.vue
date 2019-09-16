@@ -75,16 +75,13 @@
       this.params.outDatetime = this.$route.query.outDatetime;
       this.queryCalculateRecord();
       ownerCalculateEarnings(this.params.outDatetime).then(data => {
-        this.dayCalculate = formatAmount(data.dayCalculate, '4', 'TWT');
+        this.dayCalculate = data.dayCalculate;
         this.dayPoolAmount = formatAmount(data.dayPoolAmount, '4', 'TWT');
       });
     },
     methods: {
       queryCalculateRecord() {
         queryCalculateRecord(this.params).then(data => {
-          data.list.forEach(item => {
-            item.calculate = formatAmount(item.calculate, '4', 'TWT');
-          });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
           }

@@ -81,7 +81,8 @@
           limit: 10
         },
         isLoading: true,
-        currency: ''
+        currency: '',
+        isFirst: true
       }
     },
     created() {
@@ -103,8 +104,9 @@
         ownerTradingApi().then(data => {
           this.isLoading = false;
           this.tradingData = data;
-          if(data.length === 0) {
+          if(data.length === 0 && this.isFirst) {
             this.currentIndex = 1;
+            this.isFirst = false;
             tradingOnApi().then(data => {
               this.isLoading = false;
               this.tradingData = data;

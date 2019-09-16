@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="textarea_box">
-            <textarea class="ress" type="text" id="copyObj" readonly v-model="wxUrl" />
+            <textarea class="ress" type="text" id="copyObj" readonly v-model="friendUrl" />
         </div>
         <div class="img_box">
             <img src="" alt="" ref="conImg">
@@ -46,12 +46,13 @@ export default {
         nickName: '',
         isLoading: true,
         wxUrl: '',
+        friendUrl: '',
         userId: '',
         textMsg: '',
         container: '',
         copyBtn: null,
         picUrl: '',
-        logoPic: require('./yqbj.png')
+        logoPic: require('./f_logo.png')
     };
   },
   created() {
@@ -62,7 +63,8 @@ export default {
     getUser().then(data => {
         this.nickName = data.realName ? data.realName : data.nickname;
         this.isLoading = false;
-        this.wxUrl = '点击该链接' + window.location.origin + '/registered' + '?inviteCode=' + getUserId() + `，${this.nickName}邀请您加入大文通`;
+        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
+        this.friendUrl = '点击该链接' + this.wxUrl + `，${this.nickName}邀请您加入大文通`;
         // this.container = document.getElementById('qcode');
         // const qr = new QRCode(this.container, {
         //   typeNumber: -1,

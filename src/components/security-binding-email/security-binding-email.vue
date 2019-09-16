@@ -7,7 +7,7 @@
       </p>
       <p class='text3 item-captcha-wrap'>
         <input class="item-input" v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
-        <i v-show="!show" class='icon' @click="captcha = ''"></i>
+        <i v-show="!show" class='icon' @click="captcha = ''" style="width: 0.44rem;"></i>
         <span v-show="show" class='txt2' @click="get">{{$t('bindEmail.subject.hqyz')}}</span>
         <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
       </p>
@@ -18,12 +18,14 @@
     </div>
 
   <FullLoading ref="fullLoading" v-show="isLoading"/>
+  <Toast :text="textMsg" ref="toast"/>
   </div>
 </template>
 <script>
 import {getUserId, CheckMail, setTitle} from 'common/js/util';
 import {bindingEmail, getSmsCaptchaEmail} from 'api/person';
 import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 
 export default {
   data() {
@@ -33,7 +35,9 @@ export default {
       captcha: '',
       bizType: '805086',
       isLoading: false,
-      time: 60
+      time: 60,
+      textMsg: '',
+      phTime: null
     };
   },
   created() {
@@ -41,26 +45,30 @@ export default {
   },
   methods: {
     get() {
-      this.show = false;
       if(CheckMail(this.email) === true) {
+        this.show = false;
         this.isLoading = true;
         getSmsCaptchaEmail({
           bizType: this.bizType,
           email: this.email
         }).then(() => {
           this.isLoading = false;
-          let phTime = setInterval(() => {
+          this.phTime = setInterval(() => {
             this.time --;
             if(this.time < 0){
-              clearInterval(phTime);
+              clearInterval(this.phTime);
               this.show = true;
               this.time = 60;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
           this.show = true;
         });
+      }else {
+        this.textMsg = '请先填写邮箱';
+        this.$refs.toast.show();
       }
     },
     bindEmail() {
@@ -72,7 +80,13 @@ export default {
     }
   },
   components: {
-    FullLoading
+    FullLoading,
+    Toast
+  },
+  beforeDestroy() {
+    if(this.phTime) {
+      clearTimeout(this.phTime);
+    }
   }
 };
 </script>
@@ -193,6 +207,9 @@ export default {
         line-height: 1rem;
         top: 0;
         z-index: 9;
+      }
+      i{
+        display: inline-block;
       }
     }
     .error-tip{

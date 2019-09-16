@@ -89,7 +89,7 @@
         const allAmount = data.daySelfAmount + data.dayTeamAmount;
         if(allAmount > 0) {
           this.selfProportion = (data.daySelfAmount / allAmount * 100).toFixed(2);
-          this.teamProportion = 100 - this.selfProportion;
+          this.teamProportion = (Math.floor((100 - this.selfProportion) * 100) / 100).toFixed(2);
         }
         setTimeout(() => {
           let chart = document.getElementById('charts');

@@ -7,22 +7,22 @@
             <i class='icon'></i>
             </p>
         </router-link>
-        <div class='tag' @click="toIdcard">
+    </div>
+    <div class='content cont1'>
+        <!-- <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
+            <p>
+            <span>{{$t('securityCenter.subject.ggrz')}}</span>
+            <i class='icon'></i>
+            <span class='tel'>{{googleAuthFlag == false ? '' : $t('securityCenter.subject.ykq')}}</span>
+            </p>
+        </router-link> -->
+        <div class='tag mb20' @click="toIdcard">
           <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
             <span class="tel">{{identifyObj[identifyStatus]}}</span>
           </p>
         </div>
-    </div>
-    <div class='content cont1'>
-        <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
-            <p>
-            <span>{{$t('securityCenter.subject.ggrz')}}</span>
-            <i class='icon'></i>
-            <span class='tel'>{{googleAuthFlag == false ? '' : $t('securityCenter.subject.ykq')}}</span>
-            </p>
-        </router-link>
         <router-link v-show="show" class='tag' to='security-bindingEmail'>
             <p>
             <span>{{$t('securityCenter.subject.bdyx')}}</span>

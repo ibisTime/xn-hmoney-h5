@@ -55,9 +55,6 @@
     methods: {
       queryHistoryRecord() {
         queryHistoryRecord(this.params).then(data => {
-          data.list.forEach(item => {
-            item.dayCalculate = formatAmount(item.dayCalculate, '', 'TWT');
-          });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
           }

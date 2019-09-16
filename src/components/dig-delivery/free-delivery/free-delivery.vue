@@ -44,7 +44,7 @@
 
 <script>
   import {wallet} from 'api/person';
-  import {formatDate, formatAmount} from 'common/js/util';
+  import {formatDate, formatAmount, formatMoneySubtract} from 'common/js/util';
   import {deliveryCoinList} from 'api/homeDig';
   import { getSysConfig } from "api/general";
   import Toast from 'base/toast/toast';
@@ -139,7 +139,7 @@
       },
       getWallet() {
         wallet(this.symbol).then(data => {
-          this.avaAmount = formatAmount(data.accountList[0].amount - data.accountList[0].frozenAmount, '', this.symbol);
+          this.avaAmount = formatMoneySubtract(data.accountList[0].amount, data.accountList[0].frozenAmount, '', this.symbol);
         });
       },
       changeSymbol() {

@@ -16,9 +16,10 @@
     <div class="pur_con">
       <ul class="con_ul">
         <li class="li_single">
-          <div class="li_left">交割名称</div>
-          <div class="li_right">
+          <div class="li_left">交割单位</div>
+          <div class="li_right" @click="toDeliveryUnit">
             {{deliveryMsg.mainUnit}}
+            <i class="right_icon"></i>
           </div>
         </li>
         <li class="li_single">
@@ -183,6 +184,10 @@
       },
       toDeliveryImg() {
         this.$router.push(`delivery-image?symbol=${this.deliveryMsg.symbol}&type=dueTo`);
+      },
+      toDeliveryUnit() {
+        sessionStorage.setItem('mainUnitIntroduce', this.deliveryMsg.mainUnitIntroduce);
+        this.$router.push(`delivery-unit`);
       },
       selectedPickWay() {
         if(this.deliveryConfig.pickWay === '1') {

@@ -477,7 +477,6 @@ export function CheckMail(mail) {
   if (filter.test(mail)) {
     return true;
   } else {
-    alert('您的电子邮件格式不正确');
     return false;
   }
 }
