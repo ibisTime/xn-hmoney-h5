@@ -184,10 +184,10 @@
               };
               if (item.ok === true) {
                 self.photos = [item];
-                // changePhoto(self.photos[0].key).then(() => {
-                //   self.textMsg = self.$t('mine.subject.ghcg');
-                //   self.$refs.toast.show();
-                // });
+                changePhoto(self.photos[0].key).then(() => {
+                  self.textMsg = self.$t('mine.subject.ghcg');
+                  self.$refs.toast.show();
+                });
               }
               self.updatePhotos(item);
             }).catch(err => {

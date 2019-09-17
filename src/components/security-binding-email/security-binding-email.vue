@@ -72,10 +72,13 @@ export default {
       }
     },
     bindEmail() {
-      if(CheckMail(this.email) === true) {
+      if(CheckMail(this.email) === true && this.captcha) {
         bindingEmail(this.captcha, this.email, getUserId()).then(data => {
           this.$router.push('security-center');
         })
+      }else {
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
       }
     }
   },

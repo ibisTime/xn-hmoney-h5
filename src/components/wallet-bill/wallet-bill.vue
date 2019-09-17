@@ -14,20 +14,22 @@
         v-show="list.length > 0"
         @pullingUp="walletBill"
       >
-        <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizNote" class="bill-list" v-for='(item,index) in list' :key='index'>
-          <div class="list">
-            <div class='mark'>
-              <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
+        <div class="bill-list">
+          <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizNote" v-for='(item,index) in list' :key='index'>
+            <div class="list">
+              <div class='mark'>
+                <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
+              </div>
+              <div class='item'>
+                <p class='collect'>
+                  <span class='txt1'>{{item.bizNote}}</span>
+                  <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
+                </p>
+                <p class='time'>{{item.createDatetime}}</p>
+              </div>
             </div>
-            <div class='item'>
-              <p class='collect'>
-                <span class='txt1'>{{item.bizNote}}</span>
-                <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
-              </p>
-              <p class='time'>{{item.createDatetime}}</p>
-            </div>
-          </div>
-        </router-link>
+          </router-link>
+        </div>
       </Scroll>
       <div class="no-data" :class="{'hidden': list.length > 0}">
         <img src="./wu.png" />
@@ -210,10 +212,9 @@ export default {
     display: block;
     width: 100%;
     background: #fff;
-    padding: .26rem .3rem 0;
-
     .list {
       width: 100%;
+      padding: .26rem .3rem 0;
       min-height: 1rem;
       display: flex;
       border-bottom: .01rem solid #e5e5e5;
@@ -298,9 +299,13 @@ export default {
   }
 
   .list-wrap{
-    position: relative;
-    height: 13rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: scroll;
+    background-color: #fff;
     .selected_wallet{
       position: absolute;
       right: 5%;

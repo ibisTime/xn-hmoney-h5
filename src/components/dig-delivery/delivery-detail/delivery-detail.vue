@@ -9,7 +9,7 @@
         <img src="./Fill 1@2x.png" alt="">
       </div>
       <div class="h_right">
-        <p :style="dueToProductMsg.productPic ? {backgroundImage: `url('${dueToProductMsg.productPic}')`} : ''"></p>
+        <p :style="dueToProductMsg.productPic ? {backgroundImage: `url('${dueToProductMsg.productPic}')`} : {backgroundImage: `url('${this.mrPic}')`}"></p>
         <div class="product_div">{{dueToProductMsg.productName ? dueToProductMsg.productName : '???'}}</div>
       </div>
     </div>
@@ -111,7 +111,8 @@
         code: '',
         avaAmount: '',
         deliveryStatus: '',
-        cvalue: ''
+        cvalue: '',
+        mrPic: require('./mr_pic.png')
       }
     },
     created() {

@@ -5,7 +5,6 @@
         <li class="h_single_li" :class="tabType === '0' ? 'h_single_li_active' : ''" data-key="0">全部</li>
         <li class="h_single_li" :class="tabType === '1' ? 'h_single_li_active' : ''" data-key="1">申购中</li>
         <li class="h_single_li" :class="tabType === '2' ? 'h_single_li_active' : ''" data-key="2">已结束</li>
-        <router-link to="purchase-record" class="h_single_li">申购记录</router-link>
       </ul>
     </div>
     <div class="pur_con">
@@ -57,6 +56,9 @@
           <p>暂无记录</p>
         </div>
       </div>
+    </div>
+    <div class="pur_foo">
+      <p @click="toRecord">申购记录</p>
     </div>
     <FullLoading v-show="isLoading" :title="''"/>
   </div>
@@ -131,6 +133,9 @@
       toPurchaseDetail(code, status) {
         sessionStorage.setItem('purchaseCode', code);
         sessionStorage.setItem('purchaseStatus', status);
+      },
+      toRecord() {
+        this.$router.push('/purchase-record');
       }
     },
     components: {
@@ -146,6 +151,7 @@
     background-color: #fafafa;
     display: flex;
     flex-direction: column;
+    position: relative;
     .header{
       background-color: #FFFFFF;
       .head_ul{
@@ -176,7 +182,7 @@
         right: 0;
       }
       .con_ul{
-        padding: 0.22rem 0.3rem;
+        padding: 0.22rem 0.3rem 1rem;
         .c_single{
           background-color: #fff;
           border-radius: 0.1rem;
@@ -254,6 +260,23 @@
             }
           }
         }
+      }
+    }
+    .pur_foo{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.4rem 0.3rem;
+      box-shadow: 0 -0.04rem 0.08rem 0 #E6E6E6;
+      p{
+        padding: 0.28rem 0;
+        text-align: center;
+        color: #D53D3D;
+        background-color: rgba(213,61,61,0.1);
+        border: 0.01rem solid #D53D3D;
+        border-radius: 0.06rem;
+        font-size: 0.32rem;
       }
     }
   }

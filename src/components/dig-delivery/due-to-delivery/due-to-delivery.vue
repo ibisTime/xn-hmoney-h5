@@ -61,11 +61,13 @@
         </div>
       </div>
     </div>
+    <FullLoading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll';
+import FullLoading from 'base/full-loading/full-loading';
 import {queryDelivery} from 'api/homeDig';
 import {getDictList} from 'api/general';
 import {formatAmount, formatDate} from 'common/js/util';
@@ -80,7 +82,8 @@ export default {
       },
       hasMore: true,
       deliveryStatus: {},
-      tabKey: ''
+      tabKey: '',
+      isLoading: true
     }
   },
   props: {
@@ -102,6 +105,7 @@ export default {
   methods: {
     queryDeliveryData() {
       queryDelivery(this.params).then(data => {
+        this.isLoading = false;
         data.list.forEach(item => {
           item.deliveryStatus = this.deliveryStatus[item.deliveryStatus];
           item.totalAmount = formatAmount(item.totalAmount, '2', item.symbol);
@@ -115,6 +119,8 @@ export default {
         }
         this.deliveryList = [...this.deliveryList, ...data.list];
         this.params.start ++;
+      }).catch(() => {
+        this.isLoading = false;
       });
     },
     selectedTab(ev) {
@@ -122,6 +128,7 @@ export default {
       this.params.deliveryStatus = this.tabKey;
       this.deliveryList = [];
       this.params.start = 1;
+      this.isLoading = true;
       this.queryDeliveryData();
     },
     toDeliveryDetail() {
@@ -131,7 +138,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    FullLoading
   },
   watch: {
     dueType(newVal) {

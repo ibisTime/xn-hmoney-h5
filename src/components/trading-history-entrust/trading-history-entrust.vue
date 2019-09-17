@@ -158,7 +158,6 @@ export default {
         overflow: hidden;
         background-color: #fff;
         padding: 0 .3rem;
-        padding-bottom: 0.9rem;
         .red {
             color: #d53d3d;
         }

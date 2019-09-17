@@ -82,7 +82,7 @@
       .h_right{
         position: absolute;
         right: 0.2rem;
-        top: 50%;
+        top: 65%;
         transform: translateY(-50%);
         color: #333333;
         font-size: 0.3rem;

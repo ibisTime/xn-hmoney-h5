@@ -128,7 +128,6 @@
 
   .category {
     min-height: 1px;
-    padding-top: 0.1rem;
     .category-group {
       position: relative;
       overflow: hidden;
@@ -143,6 +142,7 @@
         padding: 0 0.3rem;
       }
       .category-p{
+        padding-top: 0.1rem;
         padding-bottom: 0.1rem;
         &.active {
           color: #D53D3D;

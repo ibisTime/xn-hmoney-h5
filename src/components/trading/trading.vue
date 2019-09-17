@@ -1079,7 +1079,7 @@
         text-overflow: ellipsis;
         word-spacing: normal;
         font-size: 0.26rem;
-        padding-left: 0.1rem;
+        padding: 0.1rem 0 0.1rem 0.1rem;
       }
 
       .entrust {
