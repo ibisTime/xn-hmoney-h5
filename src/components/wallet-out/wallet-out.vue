@@ -11,7 +11,7 @@
       </p>
       <p class='text'>
         <span>接收地址</span>
-        <input type="text" placeholder="请输入转币地址" v-model="config.payCardNo">
+        <input type="text" placeholder="请输入接收地址" v-model="config.payCardNo">
       </p>
       <p class='text'>
         <span>转账数量</span>
@@ -46,8 +46,9 @@
       <p class='kgfee'>
         手续费：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
       </p>
+      <p class="kgfee_tit">手续费将在余额中扣除</p>
     </div>
-    <button @click="walletOut">{{$t('walletOut.subject.qrzz')}}</button>
+    <button @click="walletOut">确认提币</button>
     <Toast :text="textMsg" ref="toast" />
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
@@ -311,6 +312,12 @@ export default {
             font-size: 0.28rem;
             color: #666;
           }
+        }
+        .kgfee_tit{
+          font-size: 0.28rem;
+          color: #666;
+          text-align: left;
+          margin-top: 0.2rem;
         }
       .text1 {
         padding-top: .34rem;

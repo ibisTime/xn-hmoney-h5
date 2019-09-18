@@ -136,7 +136,12 @@ export default {
           this.$refs.toast.show();
           return;
         }
-        if(!this.errors.any()){
+        if(!this.newPayPwd || !this.surePwd) {
+          this.textMsg = '请填写完整';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.errors.items.length === 0){
           this.isLoading = true;
           changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
             this.isLoading = false;
@@ -156,7 +161,12 @@ export default {
           this.$refs.toast.show();
           return;
         }
-        if(!this.errors.any()){
+        if(!this.newPayPwd || !this.smsCaptcha) {
+          this.textMsg = '请填写完整';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.errors.items.length === 0){
           this.isLoading = true;
           this.config.newLoginPwd = this.newPayPwd;
           this.config.smsCaptcha = this.smsCaptcha;

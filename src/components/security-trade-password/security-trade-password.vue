@@ -111,46 +111,39 @@ export default {
       }
     },
     changeTradPwd() {
-      // if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
-        if(this.newPayPwd == '' || this.smsCaptcha == ''){
-          this.textMsg = this.$t('securityTradePassword.subject.txwz');
-          this.$refs.toast.show();
-          return;
+      if(this.newPayPwd == '' || this.smsCaptcha == ''){
+        this.textMsg = this.$t('securityTradePassword.subject.txwz');
+        this.$refs.toast.show();
+        return;
+      }
+      if(this.errors.items.length === 0){
+        this.isLoading = true;
+        if(this.istw == '1'){
+          changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
+            this.textMsg = this.$t('securityTradePassword.subject.czcg');
+            this.$refs.toast.show();
+            this.isLoading = false;
+            setTimeout(() => {
+              const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+              this.$router.push(goBack);
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
+          });
+        }else{
+          setTradePwd(this.newPayPwd, this.smsCaptcha).then(data => {
+            this.textMsg = this.$t('securityTradePassword.subject.szcg');
+            this.$refs.toast.show();
+            this.isLoading = false;
+            setTimeout(() => {
+              const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+              this.$router.push(goBack);
+            }, 1500);
+          }, () => {
+            this.isLoading = false;
+          })
         }
-      // if(this.newPayPwd !== this.surePwd){
-      //   this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
-      //   this.$refs.toast.show();
-      //   return;
-      // }else{
-        if(!this.errors.any()){
-          this.isLoading = true;
-          if(this.istw == '1'){
-            changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
-              this.textMsg = this.$t('securityTradePassword.subject.czcg');
-              this.$refs.toast.show();
-              this.isLoading = false;
-              setTimeout(() => {
-                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
-                this.$router.push(goBack);
-              }, 1500);
-            }, () => {
-              this.isLoading = false;
-            });
-          }else{
-            setTradePwd(this.newPayPwd, this.smsCaptcha).then(data => {
-              this.textMsg = this.$t('securityTradePassword.subject.szcg');
-              this.$refs.toast.show();
-              this.isLoading = false;
-              setTimeout(() => {
-                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
-                this.$router.push(goBack);
-              }, 1500);
-            }, () => {
-              this.isLoading = false;
-            })
-          }
-        }
-      // }
+      }
     }
   },
   components: {
