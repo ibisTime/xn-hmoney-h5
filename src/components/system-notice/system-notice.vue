@@ -32,7 +32,7 @@
     </ul>
     <div class="no-data" :class="{'hidden': list.length > 0}">
       <img src="./wu.png" />
-      <!-- <p>{{$t('walletBill.subject.zwjl')}}</p> -->
+      <p>暂无数据</p>
     </div>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>

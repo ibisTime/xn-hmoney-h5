@@ -47,6 +47,7 @@
         </Scroll>
         <div class="no-data" :class="{'hidden': userList.length > 0}">
           <img src="./wu.png" />
+          <p>暂无数据</p>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@
             <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
             </p>
             <p class="iup_p" v-show="!flag">
-            <input required v-model="email" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')" @blur="blurIn">
+            <!-- <input required v-model="email" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')" @blur="blurIn"> -->
             <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
             </p>
             <p class="yzm iup_p">

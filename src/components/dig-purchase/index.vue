@@ -53,7 +53,7 @@
         </Scroll>
         <div class="no-data" :class="{'hidden': list.length > 0}">
           <img src="./wu.png" />
-          <p>暂无记录</p>
+          <p>暂无数据</p>
         </div>
       </div>
     </div>

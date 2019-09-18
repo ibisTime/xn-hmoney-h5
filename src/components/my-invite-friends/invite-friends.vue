@@ -64,7 +64,7 @@ export default {
         this.nickName = data.realName ? data.realName : data.nickname;
         this.isLoading = false;
         this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
-        this.friendUrl = '点击该链接' + this.wxUrl + `，${this.nickName}邀请您加入大文通`;
+        this.friendUrl = `${this.nickName}邀请您加入大文通，点击该链接` + this.wxUrl;
         // this.container = document.getElementById('qcode');
         // const qr = new QRCode(this.container, {
         //   typeNumber: -1,

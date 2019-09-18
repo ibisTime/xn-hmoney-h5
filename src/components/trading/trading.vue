@@ -776,12 +776,6 @@
       clearInterval(this.handTime);
     },
     filters: {
-      percent24h(v) {
-        if(!v) {
-          return '0.00';
-        }
-        return (Math.floor((v * 100)) / 100).toFixed(2);
-      },
       symbolToFixed(v) {
         if(!v) {
           return '0.0000';
