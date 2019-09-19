@@ -6,7 +6,7 @@
           <div class='banner'>
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
             <div class='txt2' style='margin-top:.12rem;'>
-              <p class='t1'>{{cdInfo.totalAmountTWT}}</p>
+              <p class='t1'>{{cdInfo.totalAmountTWT}} TWT</p>
               <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{this.currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
@@ -89,7 +89,7 @@
         wallet().then(v => {
           this.cdInfo = {
             totalAmountCNY: v.totalAmountCNY > 0 ? ((Math.floor(v.totalAmountCNY * 100)) / 100).toFixed(2) : '0.00',
-            totalAmountTWT: v.totalAmountTWT > 0 ? ((Math.floor(v.totalAmountTWT * 10000)) / 10000).toFixed(4) : '0.0000',
+            totalAmountTWT: v.totalAmountTWT > 0 ? ((Math.floor(v.totalAmountTWT * 1e8)) / 1e8).toFixed(8) : '0.00000000',
             totalAmountUSD: v.totalAmountUSD > 0 ? ((Math.floor(v.totalAmountUSD * 100)) / 100).toFixed(2) : '0.00'
           };
           this.info = v.accountList.map(item => ({

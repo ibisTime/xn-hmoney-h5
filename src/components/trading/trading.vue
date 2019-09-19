@@ -220,7 +220,7 @@
         </div>
         <!-- k线图部分 -->
         <div class='main1'>
-          <TVChartContainer :locale="locale" :toSymbol="setBazDeal.toSymbol"/>
+          <TVChartContainer :locale="locale" :symbol="setBazDeal.symbol"/>
         </div>
 
         <!-- 主要内容区 -->
@@ -533,7 +533,7 @@
           isCollectionTrading(this.marketId).then(() => {
             this.isLoading = false;
             this.isAttention = !this.isAttention;
-            this.textMsg = '操作成功';
+            this.textMsg = this.isAttention ? '已移除自选' : '已添加自选';
             this.$refs.toast.show();
           }).catch(() => {
             this.isLoading = false;

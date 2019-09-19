@@ -38,23 +38,17 @@
         </div>
     </div>
     <div class='content'>
-        <router-link v-show="!mobile" class='tag mb20' to='security-phoneNumber'>
-            <p>
-            <span>{{$t('securityCenter.subject.bdsjh')}}</span>
-            <i class='icon'></i>
-            </p>
+      <router-link class='tag mb20' to='security-loginPassword'>
+          <p>
+          <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
+          <i class='icon'></i>
+          </p>
         </router-link>
-        <div v-show="mobile" class='tag mb20'>
+        <router-link class='tag mb20' :to='`security-phoneNumber?mobile=${mobile}`'>
             <p>
-            <span>{{$t('securityCenter.subject.ybdsjh')}}</span>
+            <span>绑定/修改手机号</span>
             <i class='icon'></i>
-            <span class='tel'>{{mobile}}</span>
-            </p>
-        </div>
-        <router-link class='tag mb20' to='security-loginPassword'>
-            <p>
-            <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
-            <i class='icon'></i>
+            <span class='tel'>{{mobile ? mobile : ''}}</span>
             </p>
         </router-link>
     </div>

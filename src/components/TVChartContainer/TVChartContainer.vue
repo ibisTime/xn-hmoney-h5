@@ -33,11 +33,11 @@
     name: 'TVChartContainer',
     props: {
       symbol: {
-        default: 'FMVP',
+        default: 'BTC',
         type: String,
       },
       toSymbol: {
-        default: 'BTC',
+        default: 'TWT',
         type: String,
       },
       interval: {
@@ -303,7 +303,7 @@
       }
     },
     watch: {
-      toSymbol() {
+      symbol() {
         this.onChartReady();
       }
     },

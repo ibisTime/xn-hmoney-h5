@@ -49,6 +49,8 @@ const securityBindingEmail = () => import('components/security-binding-email/sec
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
+// 修改昵称
+const securityLoginName = () => import('components/security-loginName/security-loginName');
 
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
@@ -218,6 +220,10 @@ export default new Router({
     {
       path: '/security-loginPassword',
       component: securityLoginPassword
+    },
+    {
+      path: '/security-loginName',
+      component: securityLoginName
     },
     {
       path: '/security-bindingEmail',

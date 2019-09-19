@@ -10,7 +10,7 @@
       <li>
         <router-link :to="`wallet-into?adress=${walletObj.address}&currency=${walletObj.currency}&accountNumber=${walletObj.accountNumber}`">
           <img src="../image/get_cbi.png" alt="">
-          <p>持币</p>
+          <p>持TWT币</p>
         </router-link>
       </li>
       <li>

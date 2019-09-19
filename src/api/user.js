@@ -339,6 +339,14 @@ export function changePhoto(photo) {
   });
 }
 
+// 修改昵称
+export function changeLoginName(nickname) {
+  return fetch("805082", {
+    nickname,
+    userId: getUserId()
+  });
+}
+
 /**
  * 忘記密码/重置密码
  * @param config {mobile, newLoginPwd, smsCaptcha}

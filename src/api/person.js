@@ -114,6 +114,15 @@ export function bindingPhone(isSendSms, mobile, smsCaptcha, userId) {
   })
 }
 
+//绑定手机号
+export function exitBindingPhone(params) {
+  return fetch(805061, {
+    ...params,
+    userId: getUserId()
+  })
+}
+
+
 // 修改密码
 export function changeLoginPwd(oldLoginPwd, newLoginPwd) {
   return fetch('805064', {

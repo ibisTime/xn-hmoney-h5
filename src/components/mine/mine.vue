@@ -17,9 +17,9 @@
                    @change="fileChange($event)"
                    accept="image/*"/>
           </div>
-          <div class="h-text">
+          <router-link :to="`security-loginName?loginName=${data.nickname ? data.nickname : data.loginName}`" class="h-text">
             {{data.nickname ? data.nickname : data.loginName}}
-          </div>
+          </router-link>
         </div>
         <div class="mine_tabs">
           <router-link class="tab_box" to="system-notice" @click.native="removeSession">
@@ -287,10 +287,11 @@
           text-align: left;
           letter-spacing: 0.004rem;
           padding-bottom: 0.12rem;
-          padding-top: 0.04rem;
+          padding: 0.24rem 0;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          width: 60%;
         }
       }
       .mine_tabs {
