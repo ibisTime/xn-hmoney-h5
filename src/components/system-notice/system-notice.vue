@@ -53,19 +53,19 @@
         config: {
           userId: getUserId(),
           start: 1,
-          limit: 10,
+          limit: 20,
           type: 1
         },
         configNtc: {
           userId: getUserId(),
           start: 1,
-          limit: 10,
+          limit: 20,
           type: 0
         },
         configAll: {
           userId: getUserId(),
           start: 1,
-          limit: 10
+          limit: 20
         },
         list: []
       }

@@ -15,14 +15,14 @@
           type="text"
           name="quantity"
           v-model="quantity"
-          :placeholder="`最多输入${productMsg.remainQuantity}个交割份数`"
+          :placeholder="`最多输入${productMsg.remainQuantity}份`"
           @keyup.stop="upQuantity"
            v-validate="'required|intNumber'"
         />
         <span v-show="errors.has('quantity')" class="error-tip">{{errors.first('quantity')}}</span>
       </div>
       <div class="con_foo">
-        <p>库存：<span>{{productMsg.remainQuantity}}</span></p>
+        <p>剩余数量：<span>{{productMsg.remainQuantity}}</span></p>
         <p>余额：<span>{{avaAmount}}</span></p>
       </div>
       <div class="foo_btn" @click.stop="toDeliverySelectType">

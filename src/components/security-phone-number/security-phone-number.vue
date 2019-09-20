@@ -1,7 +1,7 @@
 <template>
   <div class="phonenumber-wrapper" @click.stop>
     <div class="main">
-      <p v-if="!isExit">
+      <p>
         <input
           type="text"
           name="phone"
@@ -12,7 +12,7 @@
         >
         <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
       </p>
-      <p class='text3' v-if="!isExit">
+      <p class='text3'>
         <input name="smsCaptcha" v-model="smsCaptcha" v-validate="'required'" type="text" :placeholder="$t('securityPhone.subject.yzm')">
         <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('securityPhone.subject.hqyzm')}}</span>
@@ -48,7 +48,9 @@
   </div>
 </template>
 <script>
-import {getUserId} from '../../common/js/util';
+import {mapMutations} from 'vuex';
+import {SET_TENCENT_LOGINED} from 'store/mutation-types';
+import {getUserId, clearUser} from '../../common/js/util';
 import {bindingPhone, getSmsCaptchaPhone, exitBindingPhone} from '../../api/person';
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
@@ -143,7 +145,7 @@ export default {
     },
     bindPhone() {
       if(this.isExit) {
-        if(!this.newMobile || !this.newSmsCaptcha) {
+        if(!this.newMobile || !this.newSmsCaptcha || !this.smsCaptcha) {
           this.textMsg = '请填写完整';
           this.$refs.toast.show();
           return;
@@ -152,13 +154,19 @@ export default {
           this.isLoading = true;
           exitBindingPhone({
             newMobile: this.newMobile,
-            newSmsCaptcha: this.newSmsCaptcha
+            newSmsCaptcha: this.newSmsCaptcha,
+            oldMobile: this.mobile,
+            oldSmsCaptcha: this.smsCaptcha
           }).then(data => {
             this.isLoading = false;
             this.textMsg = '操作成功';
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('mine');
+              clearUser();
+              this.setTencentLogined(false);
+              setTimeout( () => {
+                this.$router.push('/login');
+              }, 500 );
             }, 1000);
           }, () => {
             this.isLoading = false;
@@ -180,7 +188,10 @@ export default {
           });
         }
       }
-    }
+    },
+    ...mapMutations({
+      setTencentLogined: SET_TENCENT_LOGINED
+    })
   },
   components: {
     FullLoading,

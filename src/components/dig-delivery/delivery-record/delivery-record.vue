@@ -67,7 +67,7 @@ export default {
       recordList: [],
       params: {
         start: 1,
-        limit: 10,
+        limit: 20,
         status: ''
       },
       hasMore: true,

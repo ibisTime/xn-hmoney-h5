@@ -4,12 +4,12 @@
       <div class='header' :class="{'col-header': !show2}">
           <span
             v-show="!show2"
-            @click="show2 = true"
+            @click="hideShow2"
             style="padding: 0.2rem 0.4rem;margin-left: -0.4rem;"
           >
             <i class='icon ico1'></i>
           </span>
-        <p>
+        <p v-show="!isMarket">
           <select name="" class="cg-bb" v-model="symId" @change="changeSymBaz">
             <option :value="symItem.id" v-for="(symItem, index) in symBazList" :key="index">
               {{symItem.symbol}}/{{symItem.toSymbol}}
@@ -17,6 +17,7 @@
           </select>
           <i class='icon' :class="{'icon-bai': !show2}" style="margin-left: -0.2rem;"></i>
         </p>
+        <p v-show="isMarket">{{setBazDeal.symbol}}/{{setBazDeal.toSymbol}}</p>
         <div style="float: right;">
             <span v-show="show2" style="margin-right: -0.3rem;padding: 0.2rem;" @click="showTwo">
               <i class='icon'></i>
@@ -338,7 +339,8 @@
         selIndex: 0,
         locale: getLangType(),
         isAttention: true,
-        marketId: ''
+        marketId: '',
+        isMarket: false
       };
     },
     created() {
@@ -352,6 +354,7 @@
         params.symbol = symbol;
         params.toSymbol = toSymbol;
         this.show2 = false;
+        this.isMarket = true;
         sessionStorage.setItem('setBazDeal', JSON.stringify({
           id: 0,
           symbol,
@@ -575,7 +578,13 @@
       },
       showTwo() {
         this.show2 = false;
+        this.isMarket = false;
         this.isLoading = true;
+      },
+      hideShow2() {
+        this.show2 = true;
+        this.isMarket = false;
+        this.$router.push('/trading');
       },
       downClickFn() {
         // 买入

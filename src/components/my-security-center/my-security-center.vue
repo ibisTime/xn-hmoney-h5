@@ -38,18 +38,18 @@
         </div>
     </div>
     <div class='content'>
+      <router-link class='tag mb20' :to='`security-phoneNumber?mobile=${mobile}`'>
+          <p>
+          <span>修改手机号</span>
+          <i class='icon'></i>
+          <span class='tel'>{{mobile ? mobile : ''}}</span>
+          </p>
+      </router-link>
       <router-link class='tag mb20' to='security-loginPassword'>
           <p>
           <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
           <i class='icon'></i>
           </p>
-        </router-link>
-        <router-link class='tag mb20' :to='`security-phoneNumber?mobile=${mobile}`'>
-            <p>
-            <span>绑定/修改手机号</span>
-            <i class='icon'></i>
-            <span class='tel'>{{mobile ? mobile : ''}}</span>
-            </p>
         </router-link>
     </div>
     <div class="footer">

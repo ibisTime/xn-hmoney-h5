@@ -58,11 +58,11 @@ export default {
         isLoading: true,
         hasMore: true,
         start: 1,
-        limit: 10,
+        limit: 20,
         hisConfig: {
             userId: getUserId(),
             start: 1,
-            limit: 10,
+            limit: 20,
             symbol: 'FMVP',
             toSymbol: 'BTC'
         },

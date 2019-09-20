@@ -53,12 +53,12 @@
         config: {
           userId: getUserId(),
           start: 1,
-          limit: 10
+          limit: 20
         },
         configNtc: {
           userId: getUserId(),
           start: 1,
-          limit: 10
+          limit: 20
         },
         list: []
       }

@@ -10,7 +10,7 @@
         <div>{{iupPawList[4] && '·'}}</div>
         <div>{{iupPawList[5] && '·'}}</div>
         <input
-          type="password"
+          type="number"
           @keyup.stop="inputPaw"
           @focus.stop="iupFocus"
           @blur="blurIn"
@@ -63,7 +63,9 @@
         window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
       },
       iupFocus() {
-        this.isFocus = true;
+        setTimeout(() => {
+          this.isFocus = true;
+        }, 100);
       }
     },
     watch: {

@@ -37,13 +37,6 @@
       </div>
     </div>
     <!-- 筛选弹窗 -->
-    <div class='select'>
-      <!-- <p>
-        <span>取消</span>
-        <span>确定</span>
-      </p> -->
-
-    </div>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
@@ -95,11 +88,11 @@ export default {
       ],
       code: '12345',
       start: 1,
-      limit: 10,
+      limit: 20,
       config: {
         accountNumber: '',
         start: 1,
-        limit: 10
+        limit: 20
       },
       bizTypeValueList: []
     }

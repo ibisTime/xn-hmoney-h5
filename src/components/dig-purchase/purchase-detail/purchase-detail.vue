@@ -2,14 +2,14 @@
   <div class="purchase-detail">
     <div class="header">
       <div class="h_left">
-        <img :src="purDetail.symbolIcon" alt="">
+        <img :src="purDetail.toSymbolIcon" alt="">
         <p>TWT</p>
       </div>
       <div class="h_m">
         <img src="./Fill 1@2x.png" alt="">
       </div>
       <div class="h_right">
-        <img :src="purDetail.toSymbolIcon" alt="">
+        <img :src="purDetail.symbolIcon" alt="">
         <p>{{purDetail.symbol}}</p>
       </div>
     </div>
@@ -58,6 +58,8 @@
         <ul class="modal_ul">
           <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">{{purDetail.symbol}}币</span></li>
           <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 TWT = {{purDetail.price}} {{purDetail.symbol}}</span></li>
+          <li class="modal_li_single">最小支付数量 <span class="modal_li_single_sp">{{purDetail.payAmountMin}} {{purDetail.toSymbol}}</span></li>
+          <li class="modal_li_single">支付步长 <span class="modal_li_single_sp">{{purDetail.payAmountStep}} {{purDetail.toSymbol}}</span></li>
           <li class="modal_li_single_num">
             <p>请输入支付数量</p>
             <p class="modal_li_single_num_p">
@@ -124,7 +126,9 @@
         },
         twtAmount: '',
         textMsg: '',
-        userAmount: 0
+        userAmount: 0,
+        payAmountStep: 0,
+        payAmountMin: 0
       }
     },
     created() {
@@ -136,12 +140,15 @@
         purchaseDetail(purchaseCode).then(data => {
           data.startDatetime = formatDate(data.startDatetime, 'yyyy-MM-dd hh:mm:ss');
           data.endDatetime = formatDate(data.endDatetime, 'yyyy-MM-dd hh:mm:ss');
-          data.totalAmount = formatAmount(data.totalAmount, '0', data.symbol);
-          data.remainAmount = formatAmount(data.remainAmount, '0', data.symbol);
+          data.totalAmount = formatAmount(data.totalAmount, '4', data.symbol);
+          data.remainAmount = formatAmount(data.remainAmount, '4', data.symbol);
           data.personPayAmountMax = formatAmount(data.personPayAmountMax, '', data.toSymbol);
+          data.payAmountMin = formatAmount(data.payAmountMin, '', data.toSymbol);
           data.symbolIcon = PIC_PREFIX + data.symbolIcon;
           data.toSymbolIcon = PIC_PREFIX + data.toSymbolIcon;
-          this.purDetail = data;
+          this.payAmountStep = data.payAmountStep;
+          this.purDetail = JSON.parse(JSON.stringify(data));
+          this.purDetail.payAmountStep = formatAmount(data.payAmountStep, '', data.toSymbol);
         });
         this.config.purchaseProductCode = purchaseCode;
       }
@@ -151,14 +158,29 @@
     },
     methods: {
       comfirmPayment() {
-        if(!this.config.payAmount) {
+        const payAmount = this.config.payAmount;
+        if(!payAmount) {
           this.textMsg = '请先填写申购数量';
           this.$refs.toast.show();
           return;
         }
-        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
-        this.isShowPawModal = true;
-        this.isShowModal = false;
+        if(+payAmount < +this.purDetail.payAmountMin) {
+          this.textMsg = `请输入大于${this.purDetail.payAmountMin}的数`;
+          this.$refs.toast.show();
+          return;
+        }
+        const payAmountPoor = +formatMoneyMultiply(payAmount, '', this.purDetail.toSymbol);
+        const payAmountMinPoor = +formatMoneyMultiply(this.purDetail.payAmountMin, '', this.purDetail.toSymbol);
+        const amountPoor = payAmountPoor - payAmountMinPoor;
+        if(amountPoor % this.payAmountStep === 0) {
+          this.isShowPawModal = true;
+          this.isShowModal = false;
+          window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+        }else {
+          this.textMsg = `请输入符合步长为${this.purDetail.payAmountStep}的数`;
+          this.$refs.toast.show();
+          return;
+        }
       },
       getPawList(list) {
         window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));

@@ -78,7 +78,7 @@
         isLoading: false,
         params: {
           start: 1,
-          limit: 10,
+          limit: 20,
           status: '0'
         },
         list: [],
@@ -106,9 +106,9 @@
           data.list.forEach(item => {
             item.startDatetime = formatDate(item.startDatetime, 'yyyy-MM-dd hh:mm:ss');
             item.endDatetime = formatDate(item.endDatetime, 'yyyy-MM-dd hh:mm:ss');
-            item.totalAmount = formatAmount(item.totalAmount, '0', item.symbol);
-            item.remainAmount = formatAmount(item.remainAmount, '0', item.symbol);
-            item.buyAmountMax = formatAmount(item.buyAmountMax, '0', item.symbol);
+            item.totalAmount = formatAmount(item.totalAmount, '4', item.symbol);
+            item.remainAmount = formatAmount(item.remainAmount, '4', item.symbol);
+            item.buyAmountMax = formatAmount(item.buyAmountMax, '4', item.symbol);
             item.symbolIcon = PIC_PREFIX + item.symbolIcon;
             item.statusName = this.dictObj[item.status];
           });
@@ -269,6 +269,7 @@
       right: 0;
       padding: 0.4rem 0.3rem;
       box-shadow: 0 -0.04rem 0.08rem 0 #E6E6E6;
+      background-color: #fff;
       p{
         padding: 0.28rem 0;
         text-align: center;

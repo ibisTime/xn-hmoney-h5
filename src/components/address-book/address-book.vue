@@ -40,10 +40,10 @@
         config: {
           userId: getUserId(),
           start: 1,
-          limit: 10
+          limit: 20
         },
         start: 1,
-        limit: 10
+        limit: 20
       }
     },
     created() {
@@ -57,7 +57,6 @@
         this.config.start = this.start;
         this.config.limit = this.limit;
         getAddressBookPage(this.config).then(data => {
-          console.log(data);
           data.list.map(item => {
             item.label = item.label;
             item.address = item.address;

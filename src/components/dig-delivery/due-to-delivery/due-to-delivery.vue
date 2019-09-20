@@ -77,7 +77,7 @@ export default {
       deliveryList: [],
       params: {
         start: 1,
-        limit: 10,
+        limit: 20,
         deliveryStatus: ''
       },
       hasMore: true,
