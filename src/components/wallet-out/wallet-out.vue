@@ -14,8 +14,8 @@
         <input type="text" placeholder="请输入接收地址" v-model="config.payCardNo">
       </p>
       <p class='text'>
-        <span>转账数量</span>
-        <input type="number" placeholder="请输入转币数量" v-model="zAmount">
+        <span>提币数量</span>
+        <input type="number" placeholder="请输入提币数量" v-model="zAmount">
       </p>
       <p class='text'>
         <span>交易密码</span>
@@ -99,7 +99,8 @@ export default {
     this.config.payCardInfo = this.currency;
     getBbListData().then(data => {
       const currencyData = data.filter(item => item.symbol === this.currency)[0];
-      this.feeAmount = +currencyData.withdrawFee > 0 ? formatAmount(currencyData.withdrawFee, '4', this.currency) : '0.0000';
+      const withdrawFee = +currencyData.withdrawFee;
+      this.feeAmount = withdrawFee > 0 ? (Math.floor(withdrawFee * 10000) / 10000).toFixed(4) : '0.0000';
     });
   },
   methods: {
