@@ -8,7 +8,7 @@
       <i></i>
       <p>行情</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-2" to="/trading">
+    <router-link tag="div" class="foot-item item-2" to="/trading" @click.native="toTrading">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
     </router-link>
@@ -44,10 +44,9 @@
       getUnreadMsgNum() {
         return this.unreadMsgNum > 0;
       },
-      // toOtcFn(){
-      //   sessionStorage.removeItem('coin');
-      //   sessionStorage.setItem('tradeType', '1');
-      // }
+      toTrading() {
+        sessionStorage.removeItem('setBazDeal');
+      }
     },
     components: {}
   };

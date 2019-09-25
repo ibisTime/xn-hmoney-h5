@@ -236,14 +236,14 @@
           <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
           <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
           <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
-          <!--<div class='foot'>-->
-          <!--<button class='sell' @click="toBuy">{{$t('trading.bbDeal.mr')}}USDT</button>-->
-          <!--<button class='buy' @click="toSell">{{$t('trading.bbDeal.mc')}}USDT</button>-->
-          <!--</div>-->
+          <div class='foot'>
+            <button class='sell' @click="toBuy">买入</button>
+            <button class='buy' @click="toSell">卖出</button>
+          </div>
         </div>
       </div>
     </div>
-    <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'"></Footer>
+    <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'" v-show="show2"></Footer>
     <Toast :text="textMsg" ref="toast"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
@@ -1259,19 +1259,22 @@
         .foot {
           width: 100%;
           position: fixed;
-          bottom: .96rem;
+          bottom: 0.2rem;
           display: flex;
+          padding: 0 0.2rem;
           .buy {
             background: #d53d3d;
           }
           .sell {
+            margin-right: 0.2rem;
             background: #0ec55b;
           }
           button {
             flex: 1;
             height: .9rem;
-            font-size: .32rem;
+            font-size: .36rem;
             color: #fff;
+            border-radius: 0.05rem;
           }
         }
 

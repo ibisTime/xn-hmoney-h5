@@ -315,7 +315,7 @@
 
 <style lang='scss' scoped>
   .TVChartContainer {
-    height: 6rem;
+    height: 6.6rem;
     background-color: #172b3f;
   }
   .chart-button-wrap{
