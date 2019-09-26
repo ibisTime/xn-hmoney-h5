@@ -30,23 +30,17 @@
           @click="sendSmsCode"
         >{{isSend ? `重新获取(${timer})s` : '获取验证码'}}</span>
       </p>
-      <!-- <p class='text'>
-        <span>提现说明</span>
-      </p>
-      <div class="tx-box">
-        <textarea
-          type="text"
-          placeholder="请输入提现说明"
-          v-model="config.applyNote"
-        ></textarea>
-      </div> -->
     </div>
     <p class="line"></p>
     <div class='plan'>
       <p class='kgfee'>
         手续费：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
       </p>
-      <p class="kgfee_tit">手续费将在余额中扣除</p>
+      <p class='tx_text'>
+        <span>提现说明</span>
+      </p>
+      <div class="tx_text_con" v-html="withdrawRule">
+      </div>
     </div>
     <button @click="walletOut">确认提币</button>
     <Toast :text="textMsg" ref="toast" />
@@ -67,6 +61,7 @@ export default {
       isLoading: false,
       isSend: false,
       currency: '',
+      withdrawRule: '',
       amount: '',
       feeAmount: '',
       value: '',
@@ -100,6 +95,7 @@ export default {
     getBbListData().then(data => {
       const currencyData = data.filter(item => item.symbol === this.currency)[0];
       const withdrawFee = +currencyData.withdrawFee;
+      this.withdrawRule = currencyData.withdrawRule;
       this.feeAmount = withdrawFee > 0 ? (Math.floor(withdrawFee * 10000) / 10000).toFixed(4) : '0.0000';
     });
   },
@@ -318,7 +314,7 @@ export default {
           font-size: 0.28rem;
           color: #666;
           text-align: left;
-          margin-top: 0.2rem;
+          margin-top: 0.1rem;
         }
       .text1 {
         padding-top: .34rem;
@@ -371,6 +367,20 @@ export default {
           line-height: .45rem;
         }
       }
+    }
+    .tx_text{
+      margin-top: 0.3rem;
+      color: #333;
+      font-size: 0.3rem;
+      text-align: left;
+    }
+    .tx_text_con{
+      overflow: hidden;
+      font-size: 0.28rem;
+      color: #666;
+      text-align: left;
+      margin-top: 0.2rem;
+      line-height: 0.4rem;
     }
 
     button {

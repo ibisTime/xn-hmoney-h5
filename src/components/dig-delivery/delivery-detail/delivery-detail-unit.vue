@@ -1,6 +1,6 @@
 <template>
     <div class="unit_detail">
-        <div class="unit_container" v-html="mainUnitIntroduce"></div>
+        <div class="unit_container" v-html="deliveryUnitIntroduce"></div>
     </div>
 </template>
 
@@ -8,14 +8,14 @@
 export default {
     data() {
         return {
-            mainUnitIntroduce: ''
+            deliveryUnitIntroduce: ''
         }
     },
     created() {
-        this.mainUnitIntroduce = sessionStorage.getItem('mainUnitIntroduce') || '';
+        this.deliveryUnitIntroduce = sessionStorage.getItem('deliveryUnitIntroduce') || '';
     },
     beforeDestroy() {
-        sessionStorage.removeItem('mainUnitIntroduce');
+        sessionStorage.removeItem('deliveryUnitIntroduce');
     }
 }
 </script>

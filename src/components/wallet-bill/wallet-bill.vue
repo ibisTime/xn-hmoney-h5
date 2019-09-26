@@ -57,33 +57,34 @@ export default {
       watlleType: [
         {
           key: [],
-          value: this.$t('walletBill.subject.qb')
+          value: '全部'
         },{
           key: ['charge'],
-          value: this.$t('walletBill.subject.cb')
+          value: '充币'
         },{
           key: ['withdraw'],
-          value: this.$t('walletBill.subject.tb')
+          value: '提币'
         },{
-          key: ['bborder_buy', 'accept_buy'],
-          value: this.$t('walletBill.subject.jymr')
+          key: ['bborder_buy'],
+          value: '交易买入'
         },{
-          key: ['bborder_sell', 'accept_sell'],
-          value: this.$t('walletBill.subject.jymc')
+          key: ['bborder_sell'],
+          value: '交易卖出'
         },{
           key: ['bborder_fee', 'withdraw_fee'],
-          value: this.$t('walletBill.subject.sxf')
+          value: '手续费'
         },{
-          key: [
-            'bborder_frozen',
-            'bborder_unfrozen_revoke',
-            'bborder_unfrozen_trade',
-            'withdraw_frozen',
-            'withdraw_unfrozen',
-            'accept_frozen',
-            'accept_unfrozen'
-          ],
-          value: this.$t('walletBill.subject.djjd')
+          key: ["bborder_frozen","bborder_unfrozen_revoke","bborder_unfrozen_trade","withdraw_frozen","withdraw_unfrozen","delivery_frozen","delivery_unfrozen"],
+          value: '冻结解冻'
+        },{
+          key: ["aj_purchase_product_in","aj_purchase_product_give"],
+          value: '申购'
+        },{
+          key: ["aj_delivery_pay"],
+          value: '交割'
+        },{
+          key: ["aj_dig_pool_out"],
+          value: '奖励池'
         }
       ],
       code: '12345',

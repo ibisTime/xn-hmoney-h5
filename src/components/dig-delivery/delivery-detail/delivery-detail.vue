@@ -66,7 +66,7 @@
       </ul>
       <div class="pur_introduce">
         <h5 class="int_head">交割规则</h5>
-        <div class="int_p" v-html="cvalue"></div>
+        <div class="int_p" v-html="deliveryRuleNote"></div>
       </div>
     </div>
     <div class="pur_foo_btn" @click="comfirmPayment" v-if="deliveryStatus === '1'">
@@ -81,6 +81,7 @@
   import {deliveryDetail} from 'api/homeDig';
   import {getAddressList} from 'api/user';
   import { getSysConfig } from "api/general";
+  import {getBbListData} from 'api/tradingOn';
   import {wallet} from 'api/person';
   import Toast from 'base/toast/toast';
   export default {
@@ -112,7 +113,9 @@
         avaAmount: '',
         deliveryStatus: '',
         cvalue: '',
-        mrPic: require('./mr_pic.png')
+        mrPic: require('./mr_pic.png'),
+        deliveryUnitIntroduce: '',
+        deliveryRuleNote: ''
       }
     },
     created() {
@@ -121,9 +124,6 @@
       const dueToProductMsg = sessionStorage.getItem('dueToProductMsg');
       this.isMail = sessionStorage.getItem('isMail');
       let setRess = sessionStorage.getItem('setRess');
-      getSysConfig('delivery_process').then(data => {
-        this.cvalue = data.cvalue;
-      });
       if(this.code) {
         this.deliveryConfig.coinDeliveryCode = this.code;
         deliveryDetail(this.code).then(data => {
@@ -131,6 +131,14 @@
           this.deliveryMsg = data;
           this.deliveryConfig.symbol = data.symbol;
           this.deliveryStatus = data.deliveryStatus;
+          getBbListData().then(data => {
+            data.forEach(item => {
+                if(item.symbol === this.deliveryConfig.symbol) {
+                    this.deliveryUnitIntroduce = item.deliveryUnitIntroduce;
+                    this.deliveryRuleNote = item.deliveryRuleNote;
+                }
+            });
+        });
           if(data.pickWay === '3') {
             this.pickWayList = [{
               key: '1',
@@ -187,7 +195,7 @@
         this.$router.push(`delivery-image?symbol=${this.deliveryMsg.symbol}&type=dueTo`);
       },
       toDeliveryUnit() {
-        sessionStorage.setItem('mainUnitIntroduce', this.deliveryMsg.mainUnitIntroduce);
+        sessionStorage.setItem('deliveryUnitIntroduce', this.deliveryUnitIntroduce);
         this.$router.push(`delivery-unit`);
       },
       selectedPickWay() {

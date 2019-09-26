@@ -29,7 +29,7 @@
       <h5 class="deli_h5">商品选择</h5>
       <div class="deli_iup_img" @click="toDeliveryImg" :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></div>
       <div class="foo_box">
-        <h5 class="foo_box_h5">
+        <h5 class="foo_box_h5" v-if="cvalue">
           交割流程：
         </h5>
         <div class="foo_html" v-html="cvalue"></div>
@@ -84,23 +84,23 @@
         this.productMsg = JSON.parse(productMsg);
       }
       deliveryCoinList().then(data => {
+        if(freeSymbol) {
+          this.symbol = freeSymbol;
+          this.getWallet();
+        }
         this.coinList = data.map(item => {
           this.symbolObj[item.symbol] = {
             icon: item.coinIcon
           };
+          if(item.symbol === this.symbol) {
+            this.cvalue = item.deliveryRuleNote;
+          }
           return {
             symbol: item.symbol,
             unit: item.unit,
             icon: item.coinIcon
           }
         });
-        if(freeSymbol) {
-          this.symbol = freeSymbol;
-          this.getWallet();
-        }
-      });
-      getSysConfig('delivery_process').then(data => {
-        this.cvalue = data.cvalue;
       });
     },
     methods: {
@@ -151,6 +151,9 @@
             this.symbolObj[item.symbol] = {
               icon: item.coinIcon
             };
+            if(item.symbol === this.symbol) {
+              this.cvalue = item.deliveryRuleNote;
+            }
             return {
               symbol: item.symbol,
               unit: item.unit,
