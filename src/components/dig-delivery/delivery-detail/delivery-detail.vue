@@ -134,8 +134,9 @@
           getBbListData().then(data => {
             data.forEach(item => {
                 if(item.symbol === this.deliveryConfig.symbol) {
-                    this.deliveryUnitIntroduce = item.deliveryUnitIntroduce;
+                    this.deliveryUnitIntroduce = item.deliveryUnitIntroduce || '';
                     this.deliveryRuleNote = item.deliveryRuleNote;
+                    this.deliveryMsg.mainUnit = item.deliveryUnit;
                 }
             });
         });

@@ -29,7 +29,7 @@
       <h5 class="deli_h5">商品选择</h5>
       <div class="deli_iup_img" @click="toDeliveryImg" :style="productMsg.productPic ? {backgroundImage: `url('${productMsg.productPic}')`} : ''"></div>
       <div class="foo_box">
-        <h5 class="foo_box_h5" v-if="cvalue">
+        <h5 class="foo_box_h5">
           交割流程：
         </h5>
         <div class="foo_html" v-html="cvalue"></div>

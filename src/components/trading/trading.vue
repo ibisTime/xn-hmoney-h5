@@ -122,7 +122,7 @@
             </p>
             <p class='he9 btn red' v-show="downConfig.type === '1'">
               <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len">{{xjPrice > 0 ? (Math.floor((symWallet.kyAmount / xjPrice) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
+              <span class="max-len">{{(xjPrice > 0 && symWallet.kyAmount) ? (Math.floor((symWallet.kyAmount / (+xjPrice)) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>

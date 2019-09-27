@@ -75,9 +75,6 @@
     methods: {
       queryCalculateRecord() {
         queryCalculateRecord(this.params).then(data => {
-          data.list.forEach(item => {
-            item.calculate = formatAmount(item.calculate, '2');
-          });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
           }

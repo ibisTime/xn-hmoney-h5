@@ -137,8 +137,8 @@
         queryCalculateRecord(this.params).then(data => {
           data.list.forEach(item => {
             item.poolAmount = item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0';
-            item.receiveDatetime = item.receiveDatetime ? formatDate(item.receiveDatetime, 'yyyy-MM-dd hh:mm:ss') : '';
-            item.statusName = item.status === '1' ? '待领取' : item.status === '2' ? '已领取' : '';
+            item.receiveDatetime = item.status === '3' ? (item.receiveEndDatetime ? formatDate(item.receiveEndDatetime, 'yyyy-MM-dd hh:mm:ss') : '') : (item.receiveDatetime ? formatDate(item.receiveDatetime, 'yyyy-MM-dd hh:mm:ss') : '');
+            item.statusName = item.status === '1' ? '待领取' : (item.status === '2' ? '已领取' : (item.status === '3' ? '已过期' : ''));
           });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;
