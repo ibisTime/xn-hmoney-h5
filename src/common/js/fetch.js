@@ -38,7 +38,7 @@ export default function fetch(code, param) {
     }
     if(res.errorCode !== ERR_OK) {
       if (res.errorInfo) {
-        message.show(res.errorInfo.toString());
+        message.show(res.errorInfo.toString(), 2000);
       } else {
         message.show('操作失败');
       }

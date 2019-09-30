@@ -15,7 +15,7 @@
         @pullingUp="walletBill"
       >
         <div class="bill-list">
-          <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizNote" v-for='(item,index) in list' :key='index'>
+          <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizType" v-for='(item,index) in list' :key='index'>
             <div class="list">
               <div class='mark'>
                 <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>

@@ -4,7 +4,7 @@
       </div>
       <div class='box'>
             <div class='mess'>
-                <p class='name'>{{type}}</p>
+                <p class='name'>{{typeName}}</p>
                 <p class='num'>{{data.transAmountString}} {{data.currency}}</p>
             </div>
       </div>
@@ -37,19 +37,27 @@ export default {
     data() {
         return {
             data: [],
-            type: '',
+            typeName: '',
+            code: '',
             isLoading: true,
             bizTypeValueList: []
         }
     },
     created() {
         setTitle(this.$t('billDetail.subject.zdxq'));
-        this.type = getUrlParam('type');
+        const type = getUrlParam('type');
+        this.code = getUrlParam('code');
+        getDictList('jour_biz_type_user').then(data => {
+            const list = data.filter(item => item.dkey === type);
+            if(list.length > 0) {
+                this.typeName = list[0].dvalue;
+            }
+        });
         this.billDetails();
     },
     methods: {
         billDetails() {
-            billDetails(getUrlParam('code')).then((data) => {
+            billDetails(this.code).then((data) => {
                 data.transAmountString = formatAmount(data.transAmountString, '', data.currency);
                 data.postAmountString = formatAmount(data.postAmountString, '', data.currency);
                 data.preAmountString = formatAmount(data.preAmountString, '', data.currency);

@@ -43,7 +43,7 @@
       </div>
     </div>
     <button @click="walletOut">确认提币</button>
-    <Toast :text="textMsg" ref="toast" />
+    <Toast :text="textMsg" ref="toast" :delay="2000"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>

@@ -53,9 +53,9 @@
         <div class="iup_box">
           <div class="left">
             <input
-              type="text"
+              type="number"
               v-model="amount"
-              :placeholder="`请输入转入的数字`"
+              :placeholder="`请输入转入的金额`"
               @blur="blurIn"
             />
           </div>
@@ -63,7 +63,7 @@
             <span>全部金额</span>
           </div>
         </div>
-        <p class="user_amount">可转入：{{userAmount}}</p>
+        <p class="user_amount">可转入：{{userAmount}} TWT</p>
         <div class="foo_btn" @click="confirmInto">
           确认转入
         </div>
@@ -76,7 +76,7 @@
       <div class="success_modal_box" @click.stop>
         <div class="suc_m_header">
           <img class="s_m_h_img" src="../image/success_icon.png" alt="">
-          <p class="s_m_h_p">转账成功</p>
+          <p class="s_m_h_p">转入申请成功</p>
         </div>
         <div class="con_btn"><span @click="toRecord">查看转账记录</span></div>
         <p class="tip">
@@ -174,7 +174,9 @@
         });
       },
       confirmInto() {
-        this.isShowPawModal = true;
+        if(this.amount > 0) {
+          this.isShowPawModal = true;
+        }
       },
       showModalFn() {
         if(this.userAmount === 0) {

@@ -582,9 +582,13 @@
         this.isLoading = true;
       },
       hideShow2() {
+        if(this.isMarket) {
+          this.$router.go(-1);
+        } else {
         this.show2 = true;
         this.isMarket = false;
         this.$router.push('/trading');
+      }
       },
       downClickFn() {
         // 买入
