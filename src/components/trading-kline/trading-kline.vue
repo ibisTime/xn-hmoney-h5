@@ -124,6 +124,7 @@ export default {
                 this.currency = currency;
             }
             if(symbol && toSymbol && origin === 'APP') {
+                document.body.style.backgroundColor = '#1c2b3f';
                 this.origin = origin;
                 this.bazDeal = {
                     symbol,
@@ -171,6 +172,7 @@ export default {
 <style lang="scss" scoped>
     // K线图页面
     .Two {
+        height: 100%;
       font-size: .32rem;
       color: #fff;
       background: #1c2b3f;
