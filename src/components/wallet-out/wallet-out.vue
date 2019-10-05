@@ -11,7 +11,7 @@
       </p>
       <p class='text'>
         <span>接收地址</span>
-        <input type="text" placeholder="请输入接收地址" v-model="config.payCardNo">
+        <input type="text" placeholder="请输入接收地址" v-model="config.payCardNo" autocomplete="new-password">
       </p>
       <p class='text'>
         <span>提币数量</span>
@@ -19,7 +19,7 @@
       </p>
       <p class='text'>
         <span>交易密码</span>
-        <input type="password" placeholder="请输入交易密码" v-model="config.tradePwd">
+        <input type="password" placeholder="请输入交易密码" v-model="config.tradePwd" autocomplete="new-password">
       </p>
       <p class='text' style="position: relative;">
         <span>验证码</span>

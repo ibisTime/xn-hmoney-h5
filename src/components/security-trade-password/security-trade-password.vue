@@ -5,14 +5,14 @@
       <p v-if="mobile">{{mobile}}</p>
       <p v-if="email != ''">{{email}}</p>
       <p class='text3'>
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')" autocomplete="off">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')" autocomplete="new-password">
         <span v-show="errors.has('smsCaptcha')" class="error-tip smsCaptcha">{{errors.first('smsCaptcha')}}</span>
         <i v-show="!show" @click="smsCaptcha = ''" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')" autocomplete="off">
+        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')" autocomplete="new-password">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
     </div>

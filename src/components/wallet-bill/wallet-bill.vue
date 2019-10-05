@@ -22,7 +22,7 @@
               </div>
               <div class='item'>
                 <p class='collect'>
-                  <span class='txt1'>{{item.bizNote}}</span>
+                  <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
                   <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
                 </p>
                 <p class='time'>{{item.createDatetime}}</p>
@@ -101,11 +101,11 @@ export default {
   created() {
     setTitle(this.$t('walletBill.subject.zzjl'));
     this.config.accountNumber = getUrlParam('accountNumber');
-    // getDictList('jour_biz_type_user').then(data => {
-    //   data.forEach((item) => {
-    //     this.bizTypeValueList[item.dkey] = item.dvalue;
-    //   });
-    // })
+    getDictList('jour_biz_type_user').then(data => {
+      data.forEach((item) => {
+        this.bizTypeValueList[item.dkey] = item.dvalue;
+      });
+    })
     this.walletBill();
   },
   methods: {

@@ -6,21 +6,21 @@
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
       <p class='text3' v-if="(mobile == '' || email == '') && isEmail">
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')" autocomplete="new-password">
         <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input class="item-input"  type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
+        <input class="item-input"  type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')" autocomplete="new-password">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p v-show="!isEmail">
-        <input class="item-input"  type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')">
+        <input class="item-input"  type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')" autocomplete="new-password">
         <span v-show="errors.has('password2')" class="error-tip password2">{{errors.first('password2')}}</span>
       </p>
       <p>
-        <input class="item-input"  type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
+        <input class="item-input"  type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')" autocomplete="new-password">
         <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
       </p>
     </div>

@@ -11,14 +11,8 @@ const Login = () => import('components/login/login');
 const Registered = () => import('components/registered/registered');
 // 交易
 const Trading = () => import('components/trading/trading');
-// k线图简介
-const TradingSynopsis = () => import('components/trading-synopsis/trading-synopsis');
-// k线图挂单
-const TradingPutUp = () => import('components/trading-put-up/trading-put-up');
-// k线图成交
-const TradingClinchadeal = () => import('components/trading-clinchadeal/trading-clinchadeal');
-// k线图深度图
-const tradingDepthMap = () => import('components/trading-depth-map/trading-depth-map');
+// k线图
+const TradingKline = () => import('components/trading-kline/trading-kline');
 // 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
 // 钱包
@@ -137,25 +131,11 @@ export default new Router({
     },
     {
       path: '/trading',
-      component: Trading,
-      children: [
-        {
-          path: '/trading-synopsis',
-          component: TradingSynopsis,
-        },
-        {
-          path: '/trading-putUp',
-          component: TradingPutUp,
-        },
-        {
-          path: '/trading-clinchADeal',
-          component: TradingClinchadeal,
-        },
-        {
-          path: '/trading-depthMap',
-          component: tradingDepthMap,
-        }
-      ]
+      component: Trading
+    },
+    {
+      path: '/trading-kline',
+      component: TradingKline
     },
     {
       path: '/trading-historyEntrust',

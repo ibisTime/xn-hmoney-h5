@@ -2,7 +2,7 @@
   <div>
     <div class="chart-button-wrap" id="chartBtn">
       <div class="wrap">
-        <div class="chart-button btn" v-for="(item, index) in btnList" v-if="item.show" :key="index"
+        <div class="chart-button btn" v-for="(item, index) in btnList" v-show="item.show" :key="index"
              :data-key="item.resolution" :data-charttype="item.chartType"
              :class="item.resolution === resolution && !showMoreBtn ? 'selected' : ''">
           <p :class="item.class">{{item.label}}</p>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="hidden-wrap" v-show="showMore">
-        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-if="!item.show" :key="index"
+        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-show="!item.show" :key="index"
              :data-key="item.resolution" :data-charttype="item.chartType"
              :class="item.resolution === resolution ? 'selected' : ''">
           <p :class="item.class">{{item.label}}</p>
@@ -32,13 +32,9 @@
   export default {
     name: 'TVChartContainer',
     props: {
-      symbol: {
-        default: 'BTC',
-        type: String,
-      },
-      toSymbol: {
-        default: 'TWT',
-        type: String,
+      setBazDeal: {
+        default: () => ({}),
+        type: Object,
       },
       interval: {
         default: '15',
@@ -167,7 +163,7 @@
         let _this = this;
         this.isLoadingTVChart = true;
         const widgetOptions = {
-          symbol: this.symbol,
+          symbol: this.setBazDeal.symbol,
           // BEWARE: no trailing slash is expected in feed URL
           datafeed: new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
           interval: this.interval,
@@ -303,8 +299,11 @@
       }
     },
     watch: {
-      symbol() {
-        this.onChartReady();
+      setBazDeal: {
+        handler(val) {
+          this.onChartReady();
+        },
+        deep: true
       }
     },
     components: {

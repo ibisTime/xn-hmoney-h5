@@ -200,48 +200,11 @@
         </div>
       </div>
       <!-- K线图 -->
-      <div v-show="!show2" class='Two'>
-        <div class="top-mian">
-          <p class='text1'>
-            <!-- <span class='txt1'>{{setBazDeal.toSymbol}}</span> -->
-            <span class='red txt3'>{{ bb_zxj > 0 ? (Math.floor(bb_zxj * 10000) / 10000).toFixed(4) : '0.0000' }}</span>
-            <span class='red txt4'>≈ {{toSyMid > 0 ? (Math.floor(toSyMid * 100) / 100).toFixed(2) : '0.00'}} {{referCurrency}}</span>
-          </p>
-          <div class='text2'>
-            <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='red txt2'>{{gkdsList.percent24h}} %</span>
-            </p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0.0000'}}</span>
-            </p>
-          </div>
-          <div class='text3'>
-            <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0.0000' : '0.0000'}}</span></p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0.0000'}}</span>
-            </p>
-          </div>
-        </div>
-        <!-- k线图部分 -->
-        <div class='main1'>
-          <TVChartContainer :locale="locale" :symbol="setBazDeal.symbol"/>
-        </div>
-
-        <!-- 主要内容区 -->
-        <div class='main2'>
-          <div class='tabs' @click="changeMain">
-            <span class='tab-item cj' :class="{'on': tShow === '1'}">{{$t('trading.bbDepth.cj')}}</span>
-            <span class='tab-item gd' :class="{'on': tShow === '2'}">{{$t('trading.bbDepth.gd')}}</span>
-            <span class='tab-item sd' :class="{'on': tShow === '3'}">{{$t('trading.bbDepth.sdt')}}</span>
-            <span class='tab-item jj' :class="{'on': tShow === '4'}">{{$t('trading.bbDepth.jj')}}</span>
-          </div>
-          <TradingClinchadeal v-show="tShow === '1'" :bazDeal="bazDeal" :gkdsList="gkdsList" :show2="show2"/>
-          <TradingPutUp v-show="tShow === '2'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
-          <TradingDepthMap v-show="tShow === '3'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
-          <TradingSynopsis v-show="tShow === '4'" :bazDeal="bazDeal" :gkdsList="gkdsList"/>
-          <div class='foot'>
-            <button class='sell' @click="toBuy">买入</button>
-            <button class='buy' @click="toSell">卖出</button>
-          </div>
-        </div>
-      </div>
+      <TradingKline v-show="!show2" :setBazDeal="setBazDeal" :referCurrency="referCurrency"/>
+    </div>
+    <div class='foot' v-show="!show2">
+      <button class='sell' @click="toBuy">买入</button>
+      <button class='buy' @click="toSell">卖出</button>
     </div>
     <Footer :bgColor="show2 ? '#fff' : '#1c2b3f'" v-show="show2"></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -260,6 +223,7 @@
   import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchadeal';
   import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
   import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
+  import TradingKline from 'components/trading-kline/trading-kline';
 
   import {
     formatAmount,
@@ -328,10 +292,6 @@
         },
         myOrderData: [],
         bazDeal: {},
-        realTimeConfig: {
-          start: 1,
-          limit: 1
-        },                    // 实时成交参数
         bb_zxj: '',            // 最新价
         symbolData: {},
         handTime: '',
@@ -449,6 +409,7 @@
       changeSymBaz() { // 选择交易对 this.symId
         this.bbAsks = [];
         this.bbBids = [];
+        this.selIndex = 0;
         this.symBazList.forEach((item) => {
           if(item.id === this.symId) {
             this.setBazDeal = {
@@ -775,7 +736,8 @@
       TradingPutUp,
       TradingClinchadeal,
       TradingDepthMap,
-      TVChartContainer
+      TVChartContainer,
+      TradingKline
     },
     watch: {  // 监听深度图
       setBazDeal: {
@@ -1260,32 +1222,30 @@
           }
 
         }
-        .foot {
-          width: 100%;
-          position: fixed;
-          bottom: 0.2rem;
-          display: flex;
-          padding: 0 0.2rem;
-          .buy {
-            background: #d53d3d;
-          }
-          .sell {
-            margin-right: 0.2rem;
-            background: #0ec55b;
-          }
-          button {
-            flex: 1;
-            height: .9rem;
-            font-size: .36rem;
-            color: #fff;
-            border-radius: 0.05rem;
-          }
-        }
-
       }
     }
   }
-
+  .foot {
+    width: 100%;
+    position: fixed;
+    bottom: 0.2rem;
+    display: flex;
+    padding: 0 0.2rem;
+    .buy {
+      background: #d53d3d;
+    }
+    .sell {
+      margin-right: 0.2rem;
+      background: #0ec55b;
+    }
+    button {
+      flex: 1;
+      height: .9rem;
+      font-size: .36rem;
+      color: #fff;
+      border-radius: 0.05rem;
+    }
+  }
   .back-wrapper {
     background-color: #172b3f;
     .header {
