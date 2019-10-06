@@ -1,7 +1,7 @@
 <template>
   <div class="map-wrapper" @click.stop>
     <div class='main' @touchmove.prevent>
-      <div id="charts" :style="{width: '7rem', height: '6rem'}"></div>
+      <div id="charts" :style="{width: '7.2rem', height: '6rem'}"></div>
     </div>
   </div>
 </template>
@@ -36,6 +36,13 @@
           this.depthFn(data.bids, data.asks);
         });
       },
+      filterPrice(price) {
+        const len = price.length;
+        const str = (+(price) / 1000).toString();
+        const strLeft = str.split('.')[0];
+        const strRight = str.split('.')[1] ? '.' + str.split('.')[1].substr(0, 2) : '';
+        return strLeft + strRight + 'k';
+      },
       depthFn(buyData, sellData) {
         let sellList = [],
           sellLjListData = [],
@@ -67,7 +74,7 @@
 
         let chart = document.getElementById('charts');
         let myChart = this.$echarts.init(chart);
-        chart.style.width = window.innerWidth / 750 * 690 + 'px';
+        // chart.style.width = window.innerWidth / 750 * 700 + 'px';
 
         var colors = ['rgba(79, 213, 141, 0.3)', 'rgba(225, 118, 118, 0.3)', '#6a7985'];
 
@@ -123,6 +130,7 @@
           yAxis: [{
             type: 'value',
             scale: true,
+            offset: -5,
             splitLine: {
               show: false
             },

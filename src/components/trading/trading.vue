@@ -143,7 +143,7 @@
               </p>
             </div>
             <p class='middle'>
-              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0')}} ≈ {{toSyMid && (Math.floor(toSyMid * 100) / 100).toFixed(2) + referCurrency}}</span>
+              <span class='red max-len_r'>{{(bb_zxj ? bb_zxj.toFixed(4) : '0.0000')}} ≈ {{toSyMid && (Math.floor(toSyMid * 100) / 100).toFixed(2) + referCurrency}}</span>
               <!-- <i class='icon'></i> -->
             </p>
             <div class='one two'>
@@ -711,19 +711,6 @@
       toOtcFn() {
         sessionStorage.removeItem('coin');
         sessionStorage.setItem('tradeType', '1');
-      },
-      filterPrice(price) {
-        const len = price.length;
-        if(len < 5) {
-          return price;
-        }else if(len === 5 ) {
-          return price.substr(0, 5);
-        }else {
-          const str = (parseFloat(price) / 1000).toString();
-          const strLeft = str.split('.')[0];
-          const strRight = str.split('.')[1] ? '.' + str.split('.')[1].substr(0, 2) : '';
-          return strLeft + strRight + 'k';
-        }
       }
     },
     components: {
