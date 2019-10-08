@@ -36,7 +36,7 @@
         {{addRessMsg.mobile}}
       </div>
     </div>
-    <div class="foo_btn" @click="isShowPawModal = true">
+    <div class="foo_btn" @click="showPawModal">
       确认支付
     </div>
     <div class="modal_success" v-if="isSuccessModal" @click="isSuccessModal = false">
@@ -91,21 +91,21 @@
       if(deliveryConfig) {
         this.deliveryConfig = JSON.parse(deliveryConfig);
         getSymbolDetail(this.deliveryConfig.symbol).then(data => {
-          if(data.deliveryAdvanceFlag === '1') {
+          if(data.deliveryAdvancePickway === '1') {
             this.selectObj.push({
               key: '1',
               value: '邮寄'
             })
             this.deliveryConfig.pickWay = '1';
           }
-          if(data.deliveryAdvanceFlag === '2') {
+          if(data.deliveryAdvancePickway === '2') {
             this.selectObj.push({
               key: '2',
               value: '自提'
             })
             this.deliveryConfig.pickWay = '2';
           }
-          if(data.deliveryAdvanceFlag === '3') {
+          if(data.deliveryAdvancePickway === '3') {
             this.selectObj.push({
               key: '1',
               value: '邮寄'
@@ -132,8 +132,10 @@
       },
       getAddressList() {
         getAddressList('1').then(data => {
-          this.addRessMsg = data[0];
-          this.deliveryConfig.addressCode = data[0].code;
+          if(data[0]) {
+            this.addRessMsg = data[0];
+            this.deliveryConfig.addressCode = data[0].code;
+          }
         });
       },
       getPawList(list) {
@@ -174,6 +176,21 @@
         sessionStorage.setItem('storetype', '1');
         sessionStorage.setItem('toBank', `delivery-select-type`);
         this.$router.push('/mine-address');
+      },
+      showPawModal() {
+        if(!this.deliveryConfig.pickWay) {
+          this.toastMsg = '请先选择交割方式';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.deliveryConfig.pickWay === '1') {
+          if(!this.deliveryConfig.addressCode) {
+            this.toastMsg = '请先选择邮寄地址';
+            this.$refs.toast.show();
+            return;
+          }
+        }
+        this.isShowPawModal = true;
       },
       toDeliveryRecord() {
         this.$router.push('delivery-record');

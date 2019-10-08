@@ -86,11 +86,16 @@ export default {
   },
   methods: {
     get() {
-      this.show = false;
       let mobile, email;
-      this.isLoading = true;
       if((this.config.mobile).match(/@/)){
         email = this.config.mobile;
+        if(email === '') {
+          this.textMsg = '请先填写邮箱号';
+          this.$refs.toast.show();
+          return;
+        }
+        this.show = false;
+        this.isLoading = true;
         getSmsCaptchaEmail({
           bizType: this.bizType,
           email
@@ -110,6 +115,13 @@ export default {
         });
       }else{
         mobile = this.config.mobile;
+        if(mobile === '') {
+          this.textMsg = '请先填写手机号';
+          this.$refs.toast.show();
+          return;
+        }
+        this.show = false;
+        this.isLoading = true;
         getSmsCaptchaPhone({
           bizType: this.bizType,
           mobile

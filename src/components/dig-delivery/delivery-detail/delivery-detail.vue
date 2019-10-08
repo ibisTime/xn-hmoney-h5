@@ -51,13 +51,13 @@
             <i class="right_icon"></i>
           </div>
         </li>
-        <li class="li_single" v-if="deliveryConfig.addressCode">
+        <li class="li_single" v-if="deliveryConfig.addressCode && deliveryConfig.pickWay === '1'">
           <div class="li_left">收货人</div>
           <div class="li_right">
             {{addRessMsg.addressee}}
           </div>
         </li>
-        <li class="li_single" v-if="deliveryConfig.addressCode">
+        <li class="li_single" v-if="deliveryConfig.addressCode && deliveryConfig.pickWay === '1'">
           <div class="li_left">收货人电话</div>
           <div class="li_right">
             {{addRessMsg.mobile}}
@@ -206,8 +206,10 @@
       },
       getAddressList() {
         getAddressList('1').then(data => {
-          this.addRessMsg = data[0];
-          this.deliveryConfig.addressCode = data[0].code;
+          if(data[0]) {
+            this.addRessMsg = data[0];
+            this.deliveryConfig.addressCode = data[0].code;
+          }
         });
       },
       toSelectedAddress() {
