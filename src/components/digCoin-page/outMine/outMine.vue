@@ -6,11 +6,11 @@
       <div class="head_box">
         <div class="left">
           <p class="ck_p">昨日出矿</p>
-          <p class="ck_num_p">{{totalPoolOutAmount}}</p>
+          <p class="ck_num_p">{{yesterdayPoolOutAmount}}</p>
         </div>
         <div class="right">
           <p class="ck_p">累计出矿</p>
-          <p class="ck_num_p">{{yesterdayPoolOutAmount}}</p>
+          <p class="ck_num_p">{{totalPoolOutAmount}}</p>
         </div>
       </div>
     </div>
