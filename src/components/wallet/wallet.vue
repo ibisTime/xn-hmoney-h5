@@ -22,7 +22,8 @@
               </p>
             </div>
             <div class='datil'>
-              <div class='box'><i class='icon icod'></i>
+              <div class='box'>
+                <i class='icod'></i>
                 <router-link
                   :to="`wallet-into?adress=${infoItem.address}&currency=${infoItem.currency}&accountNumber=${infoItem.accountNumber}`">
                   {{$t('wallet.subject.zr')}}
@@ -32,10 +33,10 @@
               <div
                 class='box'
                 @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"
-              ><i
-                class='icon icoz'></i><span>提币</span></div>
+              ><i class='icoz'></i><span>提币</span></div>
               |
-              <div class='box'><i class='icon icoc'></i>
+              <div class='box'>
+                <i class='icoc'></i>
                 <router-link
                   :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}
                 </router-link>
@@ -325,15 +326,21 @@
           }
 
           .icod {
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
             width: .3rem;
-            height: .3rem;
+            height: .26rem;
             background-image: url('./zr.png');
             background-size: .3rem;
             vertical-align: middle;
           }
           .icoz {
-            width: .3rem;
-            height: .3rem;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
+            width: .26rem;
+            height: .26rem;
             background-image: url('./zc.png');
             margin-right: .1rem;
             vertical-align: middle;
@@ -341,7 +348,10 @@
           }
 
           .icoc {
-            width: .3rem;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
+            width: .26rem;
             height: .3rem;
             background-image: url('./zd.png');
             margin-right: .1rem;

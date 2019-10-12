@@ -189,7 +189,7 @@ export default {
           loginPwd: this.password1
         }
         if(this.inviteCode != '' && this.inviteCode != undefined){
-          this.config.userReferee = this.inviteCode;
+          this.config.inviteCode = this.inviteCode;
         }
         this.isLoading = true;
         if(this.flag == false) {

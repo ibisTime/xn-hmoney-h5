@@ -74,7 +74,7 @@ export default {
         this.nickName = data.realName ? data.realName : data.nickname;
         this.inviteCode = data.interCode || '';
         this.isLoading = false;
-        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
+        this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + this.inviteCode;
         this.friendUrl = `${this.nickName}邀请您加入大文通，点击该链接` + this.wxUrl;
         setTimeout(() => {
             this.saveImgFn();

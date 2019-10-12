@@ -27,8 +27,8 @@
                   <div class="li_head_left">
                     <i :style="{backgroundImage: `url('${item.symbolIcon}')`}"></i>
                     <span>{{item.symbol}}</span>
-                    <span class="head_left_sp">{{item.pickWay === '1' ? '邮寄' : '自提'}}</span>
-                    <span class="head_left_sp" v-show="item.pickWay === '3'">{{item.pickWay === '3' ? '邮寄' : ''}}</span>
+                    <span class="head_left_sp" :class="item.pickWay === '1' ? 'left_sp_yj' : ''">{{item.pickWay === '1' ? '邮寄' : '自提'}}</span>
+                    <span class="head_left_sp left_sp_yj" v-show="item.pickWay === '3'">{{item.pickWay === '3' ? '邮寄' : ''}}</span>
                   </div>
                   <div class="li_head_right">
                     {{item.deliveryStatus}}
@@ -223,6 +223,9 @@ export default {
               color: #fff;
               font-size: 0.22rem;
               border-radius: 0.04rem;
+            }
+            .left_sp_yj{
+              background-color: #496FFF;
             }
           }
           .li_head_right{
