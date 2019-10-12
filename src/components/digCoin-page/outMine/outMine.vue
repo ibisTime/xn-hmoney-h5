@@ -308,6 +308,7 @@
     }
     .foo_box {
       position: absolute;
+      background-color: #fff;
       left: 0;
       right: 0;
       bottom: 0;

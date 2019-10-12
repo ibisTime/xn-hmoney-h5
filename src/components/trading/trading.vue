@@ -169,7 +169,7 @@
                 <div class='list' v-show="myOrderData.length">
                   <div v-for="(myItem, index) in myOrderData" :key="index" style="margin-bottom: 0.4rem;">
                     <p class='text1'>
-                      <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}}</span>
+                      <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}} ({{myItem.symbol}}/{{myItem.toSymbol}})</span>
                       <span>{{myItem.createDatetime}}</span>
                       <span class='red' v-show="(myItem.type.toString() !== '0' && (myItem.status === '0' || myItem.status === '1'))"
                             @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>

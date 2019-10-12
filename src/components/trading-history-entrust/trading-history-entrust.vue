@@ -14,7 +14,7 @@
         >
             <div class='list' v-for="(item, index) in hisDataList" :key="index">
                 <p class='text1'>
-                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? $t('historyEntrust.subject.mr') : $t('historyEntrust.subject.mc')}}</span>
+                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? $t('historyEntrust.subject.mr') : $t('historyEntrust.subject.mc')}} ({{item.symbol}}/{{item.toSymbol}})</span>
                     <span>{{item.createDatetime}}</span>
                     <span class='red'>{{item.status}}</span>
                 </p>

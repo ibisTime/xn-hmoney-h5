@@ -4,7 +4,15 @@
             <div class="invite_wrp">
                 <div class="invite_name">
                     <h5>{{nickName}}</h5>
-                    <p>邀请您加入大文通</p>
+                </div>
+                <div class="invite_code">
+                    <p class="invite_code_tit">您的专属邀请码</p>
+                    <div class="invite_code_iup">
+                        <input id="inviteCode" type="text" readonly v-model="inviteCode">
+                    </div>
+                    <div class="invite_code_btn">
+                        <span ref="copyInvite" data-clipboard-action="copy" data-clipboard-target="#inviteCode" @click="() => {CopyUrl('invite')}">复制</span>
+                    </div>
                 </div>
                 <div class="invite_qcode">
                     <div id="qcode">
@@ -44,6 +52,7 @@ export default {
   data() {
     return {
         nickName: '',
+        inviteCode: '',
         isLoading: true,
         wxUrl: '',
         friendUrl: '',
@@ -51,6 +60,7 @@ export default {
         textMsg: '',
         container: '',
         copyBtn: null,
+        copyInvite: null,
         picUrl: '',
         logoPic: require('./f_logo.png')
     };
@@ -62,15 +72,10 @@ export default {
   mounted() {
     getUser().then(data => {
         this.nickName = data.realName ? data.realName : data.nickname;
+        this.inviteCode = data.interCode || '';
         this.isLoading = false;
         this.wxUrl = window.location.origin + '/registered' + '?inviteCode=' + getUserId();
         this.friendUrl = `${this.nickName}邀请您加入大文通，点击该链接` + this.wxUrl;
-        // this.container = document.getElementById('qcode');
-        // const qr = new QRCode(this.container, {
-        //   typeNumber: -1,
-        //   correctLevel: 2,
-        //   foreground: '#000000'
-        // });
         setTimeout(() => {
             this.saveImgFn();
         }, 0)
@@ -78,11 +83,12 @@ export default {
         this.isLoading = false;
     });
     this.copyBtn = new this.clipboard(this.$refs.copy);
+    this.copyInvite = new this.clipboard(this.$refs.copyInvite);
   },
   methods: {
-    CopyUrl() {
+    CopyUrl(type) {
         let _this = this;
-        let clipboard = _this.copyBtn;
+        let clipboard = type === 'invite' ? _this.copyInvite : _this.copyBtn;
         clipboard.on('success', function() {
             _this.textMsg = _this.$t('walletInto.subject.fzcg');
             _this.$refs.toast.show();
@@ -150,19 +156,60 @@ export default {
             background-size: 100% 100%;
             .invite_wrp{
                 position: absolute;
-                top: 25%;
+                top: 8%;
                 left: 0;
                 right: 0;
                 text-align: center;
                 .invite_name{
                     color: #fff;
-                    margin-bottom: 0.6rem;
+                    margin-bottom: 0.3rem;
                     h5{
                         font-size: 0.36rem;
                         margin-bottom: 0.4rem;
                     }
                     p{
                         font-size: 0.28rem;
+                    }
+                }
+                .invite_code{
+                    margin-bottom: 0.6rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    .invite_code_tit{
+                        font-size: 0.34rem;
+                        font-family: 'PingFang-SC-Medium';
+                        margin-bottom: 0.36rem;
+                        text-align: center;
+                        color: #fff;
+                    }
+                    .invite_code_iup{
+                        font-size: 0.36rem;
+                        color: #D4A267;
+                        border: 1px solid #363636;
+                        padding: 0.22rem 0;
+                        width: 4rem;
+                        border-radius: 0.06rem;
+                        margin-bottom: 0.2rem;
+                        input{
+                            background-color: transparent;
+                            border: none;
+                            width: 100%;
+                            text-align: center;
+                        }
+                    }
+                    .invite_code_btn{
+                        position: relative;
+                        z-index: 99;
+                        text-align: center;
+                        span{
+                            background-color: #D4A267;
+                            color: #020202;
+                            border-radius: 0.08rem;
+                            padding: 0.14rem 0.34rem;
+                            font-size: 0.36rem;
+                        }
                     }
                 }
                 .invite_qcode{
