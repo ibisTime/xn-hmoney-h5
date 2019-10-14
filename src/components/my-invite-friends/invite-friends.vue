@@ -260,7 +260,8 @@ export default {
             border: 0.02rem solid #363636;
             display: flex;
             .left{
-                padding-right: 0.58rem;
+                white-space: normal;
+                padding-right: 0.5rem;
                 border-right: 0.02rem solid #2A2A28;
             }
             .right{
