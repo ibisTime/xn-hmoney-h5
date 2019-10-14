@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import { setTitle, formatDate } from 'common/js/util';
+  import { setTitle, formatDate, isLogin } from 'common/js/util';
   import {mineMessage, mineNotice} from 'api/mine';
   import {getUserId} from 'common/js/util';
   import Scroll from 'base/scroll/scroll';
@@ -122,6 +122,10 @@
       },
       // 我的消息
       mineMessage() {
+        if(!isLogin()) {
+          this.$router.push('login');
+          return;
+        }
         mineMessage(this.config).then(data => {
           data.list.map(item => {
             item.content = item.content;

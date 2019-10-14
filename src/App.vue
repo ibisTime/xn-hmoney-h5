@@ -24,32 +24,6 @@
       }
     },
     created() {
-      this.$router.beforeEach((to, from, next) => {
-        this.isLoading = true;
-        let userId = getUrlParam('userId') || '';
-        let token = getUrlParam('token') || '';
-        if (isLogin()) {
-          next();
-        } else if (userId && token) {
-          setUser({userId, token});
-          next();
-        }  else {
-          if (to.path === '/' ||
-            to.path === '/page' ||
-            to.path === '/shop-usedCar' ||
-            to.path === '/system-notice' ||
-            to.path === '/about-platformIntroduced?ckey=about_us' ||
-            to.path === '/trading' ||
-            to.path === '/market' ||
-            to.path === '/login' ||
-            to.path === '/registered' ||
-            to.path === '/security-loginPassword') {
-            next();
-          } else {
-            next('/login');
-          }
-        }
-      });
       this.$router.afterEach(() => {
         this.isLoading = false;
         getBbListData().then(data => {

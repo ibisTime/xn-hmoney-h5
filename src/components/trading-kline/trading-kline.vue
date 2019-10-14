@@ -88,7 +88,7 @@ export default {
                 }).then(data => {
                     // 获取涨幅
                     this.bb_zxj = data.lastPrice;
-                    this.toSyMid = this.referCurrency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
+                    this.toSyMid = this.currency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
                     data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
                     data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
                     data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';

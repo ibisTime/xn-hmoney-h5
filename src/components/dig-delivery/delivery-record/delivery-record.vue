@@ -25,7 +25,7 @@
                   <div class="s_h_left">
                     <img class="s_h_left_img" :src="item.pic" alt="">
                     <span class="s_h_left_sp">{{item.productName}}</span>
-                    <span class="left_zt">{{item.pickWay}}</span>
+                    <span class="left_zt" :class="item.pickWay === '1' ? 'left_sp_yj' : ''">{{item.pickWayName}}</span>
                   </div>
                   <div class="s_h_right">
                     {{item.status}}
@@ -91,7 +91,7 @@ export default {
             item.status = this.recordStatus[item.status];
             item.payAmount = formatAmount(item.payAmount, '', item.symbol);
             item.applyDatetime = formatDate(item.applyDatetime, 'yyyy-MM-dd hh:mm:ss');
-            item.pickWay = item.pickWay === '1' ? '邮寄' : '自提';
+            item.pickWayName = item.pickWay === '1' ? '邮寄' : '自提';
             item.pic = PIC_PREFIX + item.pic;
           });
         if (data.totalPage <= this.params.start) {
@@ -190,6 +190,9 @@ export default {
               padding: 0.04rem 0.12rem;
               margin-left: 0.14rem;
               border-radius: 0.06rem;
+            }
+            .left_sp_yj{
+              background-color: #496FFF;
             }
           }
           .s_h_right{

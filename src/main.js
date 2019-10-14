@@ -12,6 +12,7 @@ import echarts from 'echarts';
 import clipboard from 'clipboard';
 import zh from './common/lang/zh';
 import en from './common/lang/en';
+import {isLogin, getUrlParam, setUser} from './common/js/util';
 
 import 'common/scss/index.scss';
 import 'swiper/dist/css/swiper.css';
@@ -31,6 +32,34 @@ const i18n = new VueI18n({
   messages: {
     'zh': zh,
     'en': en
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  this.isLoading = true;
+  let userId = getUrlParam('userId') || '';
+  let token = getUrlParam('token') || '';
+  if (isLogin()) {
+    next();
+  } else if (userId && token) {
+    setUser({userId, token});
+    next();
+  }  else {
+    if (to.path === '/' ||
+      to.path === '/page' ||
+      to.path === '/shop-usedCar' ||
+      to.path === '/system-notice' ||
+      to.path === '/about-platformIntroduced?ckey=plat_introduce' ||
+      to.path === '/trading' ||
+      to.path === '/market' ||
+      to.path === '/login' ||
+      to.path === '/registered' ||
+      to.path === '/security-loginPassword' ||
+      to.path.includes('/trading-kline')) {
+      next();
+    } else {
+      next('/login');
+    }
   }
 });
 
