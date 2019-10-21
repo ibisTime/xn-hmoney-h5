@@ -41,7 +41,7 @@
                 <p>{{item.receiveDatetime}}</p>
               </div>
               <div class="li_right">
-                <span>+{{item.poolAmount}}</span>
+                <span>{{item.status === '3' ? "" : `+${item.poolAmount}`}}</span>
               </div>
             </li>
           </ul>
