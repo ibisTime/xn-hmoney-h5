@@ -31,3 +31,8 @@ export function queryPlateList() {
 export function isCollectionTrading(marketId) {
   return fetch(650075, {marketId});
 }
+
+// 首页行情列表查询
+export function queryHomeTrading() {
+  return fetch(650079, {location: '1'});
+}

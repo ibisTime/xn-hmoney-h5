@@ -80,7 +80,7 @@
 <script>
   import {ownerDigValue, willDigList, receiveDigValue, calculateList, tokensList} from 'api/homeDig';
   import {setTitle, formatAmount, getUserId} from 'common/js/util';
-  import vueSeamless from 'vue-seamless-scroll'
+  import vueSeamless from 'vue-seamless-scroll';
   import {mineNotice} from 'api/mine';
   import Scroll from 'base/scroll/scroll';
   export default {

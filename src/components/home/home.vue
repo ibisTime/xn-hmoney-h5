@@ -3,26 +3,62 @@
     <Scroll :pullUpLoad="null">
       <div class="banner-wrap">
         <div class="slider-wrapper">
-          <slider v-if="banners.length" :dots="banners">
+          <slider v-if="banners.length" :dots="banners" :isdots="false">
             <div class="slider-item home-slider" v-for="item in banners" :key="item.code" :style="getImgSyl(item.pic)"
                  @click="toUrl(item.url)">
             </div>
           </slider>
         </div>
+        <div class="warp-msg">
+          <div class="msg-left-icon"></div>
+          <div class="msg-right" @click="toNoticeDetail">
+            <vueSeamless :data='APIIpList' :class-option="option" :step="0.5">
+              <div
+                v-for="(item, index) in APIIpList"
+                :key="index"
+                v-html="item.content"
+                :data-code="item.code"
+              ></div>
+            </vueSeamless>
+          </div>
+        </div>
+        <div class="trading-warp">
+          <slider v-if="gkdsList.length" :dots="gkdsList" :autoPlay="false">
+            <div class="trading-single" v-for="(item, index) in gkdsList" :key="`gkds_${index}`">
+              <div class="single-box" v-for="singleItem in item" :key="`trading_${singleItem.id}`">
+                <h5 class="single-box-head">{{singleItem.symbol}}/{{singleItem.referCurrency}}</h5>
+                <div :class="+singleItem.percent24h < 0 ? 'trading-num-down' : 'trading-num-up'">
+                  <p class="trading-num-tit">{{singleItem.lastPrice}}</p>
+                  <p class="trading-num-txt">{{singleItem.percent24h < 0 ? `-` : `+`}}{{(Math.floor(+singleItem.percent24h * 100) / 100).toFixed(2)}}%</p>
+                </div>
+                <p class="single-box-foo">
+                  ≈{{singleItem.hsLastPrice}} {{currency}}
+                </p>
+              </div>
+            </div>
+          </slider>
+        </div>
       </div>
       <div class="cates-wrapper">
-        <router-link to="dig-purchase" tag="div" class="cate-item">
-          <i class="cate-icon game-icon"></i>
-          <p>申购</p>
-        </router-link>
-        <router-link to="dig-coin" class="cate-item">
-          <i class="cate-icon exchange-icon"></i>
-          <p>挖矿</p>
-        </router-link>
-        <router-link to='dig-delivery' tag="div" class="cate-item" @click.native="resetSession">
-          <i class="cate-icon otc-icon"></i>
-          <p>交割</p>
-        </router-link>
+        <div class="cates-wrapper-left">
+          <router-link to="dig-purchase" tag="div" class="cate-item">
+            <div class="cate-item-left">
+              <h5>申购</h5>
+              <p>优质通证放心购</p>
+            </div>
+            <div class="cate-item-icon"></div>
+          </router-link>
+        </div>
+        <div class="cates-wrapper-right">
+          <router-link to="dig-coin" tag="div" class="cate-item" style="margin-bottom: 0.2rem">
+            <div class="cate-icon exchange-icon"></div>
+            <p>挖矿</p>
+          </router-link>
+          <router-link to='dig-delivery' tag="div" class="cate-item" @click.native="resetSession">
+            <div class="cate-icon otc-icon"></div>
+            <p>交割</p>
+          </router-link>
+        </div>
       </div>
       <div class="home_con">
         <h5><span></span>应用</h5>
@@ -85,28 +121,50 @@
   import Scroll from 'base/scroll/scroll';
   import FullLoading from 'base/full-loading/full-loading';
   import Footer from 'components/footer/footer';
+  import {mineNotice} from 'api/mine';
+  import vueSeamless from 'vue-seamless-scroll';
   import LangStorage from '../../common/js/cookie';
+  import {queryHomeTrading} from 'api/tradingOn';
 
   export default {
     name: 'test-keep-alive',
     data() {
       return {
         banners: [],
+        APIIpList: [],
+        option: {
+          step: 1,
+          limitMoveNum: 1,
+          openTouch: false,
+          waitTime: 48,
+          direction: 1,
+          singleHeight: 1
+        },
         isLoading: true,
         data: '',
-        coinData: {}
+        coinData: {},
+        gkdsList: [],
+        currency: '',
+        timer: null
       };
     },
     created() {
       setTitle(this.$t('footer.navbar.page'));
+      this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       this.getBanner();
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
+      this.getNotice();
+      this.getQueryHomeTrading();
+      this.timer = setInterval(() => {
+        this.getNotice();
+        this.getQueryHomeTrading();
+      }, 5000);
     },
     activated() {
       this.$set(document, 'title', this.$t('footer.navbar.page'));
     },
-    mounted() {
-    },
-    computed: {},
     methods: {
       // 语言切换
       changeLocale() {
@@ -135,21 +193,73 @@
       toUrl(url) {
         if (url !== '' && url) {
           window.open(url);
-        };
+        }
       },
       toNotice() {
         sessionStorage.setItem('mes_skey', 'common');
       },
+      toNoticeDetail(ev) {
+        const target = ev.target;
+        const parentTag = target.parentNode;
+        if(target.tagName.toLocaleUpperCase() === 'P') {
+          const code = parentTag.getAttribute('data-code');
+          if(code) {
+            this.$router.push(`/system-notice-detail?code=${code}`);
+          }
+        } else if(parentTag.tagName.toLocaleUpperCase() === 'P') {
+          const ancestorsTag = parentTag.parentNode;
+          const code = ancestorsTag.getAttribute('data-code');
+          if(code) {
+            this.$router.push(`/system-notice-detail?code=${code}`);
+          }
+        }
+      },
       resetSession() {
         sessionStorage.removeItem('freeSymbol');
         sessionStorage.removeItem('productMsg');
+      },
+      getQueryHomeTrading() {
+        queryHomeTrading().then(data => {
+          let arr = [], index = 0;
+          for(let i = 0, len = data.length; i < len; i ++) {
+            data[i].lastPrice = (Math.floor(+data[i].lastPrice * 100) / 100).toFixed(2);
+            data[i].hsLastPrice = this.currency === 'USD' ? (Math.floor(+data[i].lastPriceUsd * 100) / 100).toFixed(2) : (Math.floor(+data[i].lastPriceCny * 100) / 100).toFixed(2);
+            if(i === 0) {
+              arr[0] = [data[0]];
+            }else if(i % 3 === 0) {
+              index ++;
+              arr[index] = [data[i]];
+            }else {
+              arr[index].push(data[i]);
+            }
+          }
+          this.gkdsList = arr;
+        });
+      },
+      getNotice() {
+        mineNotice({
+          start: 1,
+          limit: 20,
+          type: 0
+        }).then(data => {
+          this.APIIpList = data.list.map(item => ({
+            content: item.content,
+            code: item.code
+          }));
+        });
       }
     },
     components: {
       Slider,
       Scroll,
       Footer,
-      FullLoading
+      FullLoading,
+      vueSeamless
+    },
+    beforeDestroy() {
+      if(this.timer) {
+        clearInterval(this.timer);
+      }
     }
   };
 </script>
@@ -183,47 +293,144 @@
       }
 
     }
-
-    .cates-wrapper {
-      margin-top: .5rem;
+    .warp-msg{
+      margin: 0.1rem 0;
+      height: 0.7rem;
+      line-height: 0.7rem;
+      overflow: hidden;
       display: flex;
       align-items: center;
-      border-bottom: .2rem solid #F5F5F5;
-
-      .cate-item {
+      .msg-left-icon{
+        width: 0.3rem;
+        height: 0.26rem;
+        background-image: url('./home_msg.png');
+        background-size: 100% 100%;
+      }
+      .msg-right{
         flex: 1;
-        text-align: center;
+        padding-left: 0.2rem;
+        color: #3D3DD5;
+        font-size: 0.24rem;
+      }
+    }
+    .trading-warp{
+      position: relative;
+      width: 100%;
+      border-radius: .08rem;
+      overflow: hidden;
+      border-top: 0.01rem solid #EBEBEB;
+      .trading-single{
+        display: flex;
+        padding: 0.3rem 0 0.4rem;
+      }
+      .single-box{
+        width: 30%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .single-box-head{
+          color: #333;
+          font-weight: 600;
+          font-size: 0.24rem;
+          margin-bottom: 0.1rem;
+        }
+        .trading-num-up{
+          color: #11A746;
+        }
+        .trading-num-down{
+          color: #D53D3D;
+        }
+        .trading-num-tit{
+          font-weight: 500;
+          font-size: 0.32rem;
+          line-height: 0.45rem;
+        }
+        .trading-num-txt{
+          font-size: 0.22rem;
+          line-height: 0.3rem;
+          margin-bottom: 0.06rem;
+        }
+        .single-box-foo{
+          color: #999999;
+          font-size: 0.22rem;
+          line-height: 0.3rem;
+        }
+        &:nth-of-type(2){
+          margin: 0 5%;
+        }
+      }
+    }
 
-        .cate-icon {
-          display: inline-block;
-          width: 1rem;
-          height: 1rem;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
-
-          &.game-icon {
-            background-image: url('./tab_sg.png');
+    .cates-wrapper {
+      padding: 0.3rem 0.22rem;
+      align-items: center;
+      background-color: #F5F5F5;
+      display: flex;
+      justify-content: space-between;
+      .cates-wrapper-left{
+        width: 4.2rem;
+        padding: 0.46rem 0.3rem;
+        background-color: #fff;
+        border-radius: 0.08rem;
+        overflow: hidden;
+        .cate-item{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .cate-item-left{
+            flex: 1;
+            padding-right: 0.6rem;
+            h5{
+              font-size: 0.32rem;
+              color: #333;
+              line-height: 0.45rem;
+              margin-bottom: 0.1rem;
+            }
+            p{
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              color: #999999;
+              font-size: 0.24rem;
+            }
           }
-
-          &.exchange-icon {
+          .cate-item-icon{
+            width: 0.98rem;
+            height: 0.86rem;
+            background-image: url('./tab_sg.png');
+            -webkit-background-size: 100% 100%;
+            background-size: 100% 100%;
+          }
+        }
+      }
+      .cates-wrapper-right{
+        flex: 1;
+        padding-left: 0.2rem;
+        .cate-item{
+          font-size: 0.28rem;
+          background-color: #fff;
+          padding: 0.18rem 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 0.08rem;
+          p{
+            color: #333;
+          }
+          .cate-icon{
+            margin-right: 0.1rem;
+            width: 0.51rem;
+            height: 0.45rem;
+            background-size: 100% 100%;
+          }
+          .exchange-icon{
             background-image: url('./tab_wk.png');
           }
-
-          &.otc-icon {
+          .otc-icon {
             background-image: url('./tab_jg.png');
           }
-
         }
-
-        p {
-          font: .24rem/.33rem PingFangSC-Medium;
-          color: #666;
-          padding: .18rem 0 .5rem;
-        }
-
       }
-
     }
     .home_con{
       padding: 0.3rem;
