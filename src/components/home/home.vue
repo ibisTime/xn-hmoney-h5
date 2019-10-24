@@ -56,11 +56,22 @@
           </router-link>
         </div>
         <div class="cates-wrapper-right">
-          <router-link to="dig-coin" tag="div" class="cate-item" style="margin-bottom: 0.2rem">
+          <router-link
+            to="dig-coin"
+            tag="div"
+            class="cate-item"
+            style="margin-bottom: 0.2rem; background-color: rgba(241, 130, 79, 0.1)"
+          >
             <div class="cate-icon exchange-icon"></div>
             <p>挖矿</p>
           </router-link>
-          <router-link to='dig-delivery' tag="div" class="cate-item" @click.native="resetSession">
+          <router-link
+            to='dig-delivery'
+            tag="div"
+            class="cate-item"
+            style="background-color: rgba(97,79,241,0.1)"
+            @click.native="resetSession"
+          >
             <div class="cate-icon otc-icon"></div>
             <p>交割</p>
           </router-link>
@@ -361,26 +372,29 @@
     }
 
     .cates-wrapper {
-      padding: 0.3rem 0.22rem;
+      border-top: 0.5px solid #EBEBEB;
+      border-bottom: 0.01rem solid #EBEBEB;
+      padding: 0.3rem 0;
+      margin: auto 0.22rem;
+      background-color: #fff;
       align-items: center;
-      background-color: #F5F5F5;
       display: flex;
       justify-content: space-between;
       .cates-wrapper-left{
-        width: 4.2rem;
-        padding: 0.46rem 0.3rem;
-        background-color: #fff;
+        width: 3.8rem;
+        padding: 0.57rem 0.4rem;
         border-radius: 0.08rem;
         overflow: hidden;
+        background-color: rgba(79,127,241,0.1);
         .cate-item{
           display: flex;
           justify-content: space-between;
           align-items: center;
           .cate-item-left{
             flex: 1;
-            padding-right: 0.6rem;
+            padding-right: 0.34rem;
             h5{
-              font-size: 0.32rem;
+              font-size: 0.36rem;
               color: #333;
               line-height: 0.45rem;
               margin-bottom: 0.1rem;
@@ -408,7 +422,7 @@
         .cate-item{
           font-size: 0.28rem;
           background-color: #fff;
-          padding: 0.18rem 0;
+          padding: 0.23rem 0;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -418,14 +432,16 @@
           }
           .cate-icon{
             margin-right: 0.1rem;
-            width: 0.51rem;
-            height: 0.45rem;
             background-size: 100% 100%;
           }
           .exchange-icon{
+            width: 0.51rem;
+            height: 0.45rem;
             background-image: url('./tab_wk.png');
           }
           .otc-icon {
+            width: 0.5rem;
+            height: 0.46rem;
             background-image: url('./tab_jg.png');
           }
         }
