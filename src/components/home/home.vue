@@ -304,7 +304,7 @@
 
     }
     .warp-msg{
-      margin: 0.1rem 0;
+      margin: 0.04rem 0;
       height: 0.7rem;
       line-height: 0.7rem;
       overflow: hidden;
