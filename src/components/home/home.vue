@@ -24,7 +24,14 @@
         <div class="trading-warp">
           <slider v-if="gkdsList.length" :dots="gkdsList" :autoPlay="false">
             <div class="trading-single" v-for="(item, index) in gkdsList" :key="`gkds_${index}`">
-              <div class="single-box" v-for="singleItem in item" :key="`trading_${singleItem.id}`">
+              <div
+                class="single-box"
+                v-for="singleItem in item"
+                :key="`trading_${singleItem.id}`"
+                @click="() => {
+                  toTradingView({symbol: singleItem.symbol, toSymbol: singleItem.referCurrency})
+                }"
+              >
                 <h5 class="single-box-head">{{singleItem.symbol}}/{{singleItem.referCurrency}}</h5>
                 <div :class="+singleItem.percent24h < 0 ? 'trading-num-down' : 'trading-num-up'">
                   <p class="trading-num-tit">{{singleItem.lastPrice}}</p>
@@ -236,6 +243,9 @@
             code: item.code
           }));
         });
+      },
+      toTradingView(obj) {
+        this.$router.push(`/trading?symbol=${obj.symbol}&toSymbol=${obj.toSymbol}`);
       }
     },
     components: {
