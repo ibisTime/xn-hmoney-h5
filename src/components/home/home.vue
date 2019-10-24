@@ -16,9 +16,8 @@
               <div
                 v-for="(item, index) in APIIpList"
                 :key="index"
-                v-html="item.content"
                 :data-code="item.code"
-              ></div>
+              >{{item.title}}</div>
             </vueSeamless>
           </div>
         </div>
@@ -199,19 +198,9 @@
         sessionStorage.setItem('mes_skey', 'common');
       },
       toNoticeDetail(ev) {
-        const target = ev.target;
-        const parentTag = target.parentNode;
-        if(target.tagName.toLocaleUpperCase() === 'P') {
-          const code = parentTag.getAttribute('data-code');
-          if(code) {
-            this.$router.push(`/system-notice-detail?code=${code}`);
-          }
-        } else if(parentTag.tagName.toLocaleUpperCase() === 'P') {
-          const ancestorsTag = parentTag.parentNode;
-          const code = ancestorsTag.getAttribute('data-code');
-          if(code) {
-            this.$router.push(`/system-notice-detail?code=${code}`);
-          }
+        const code = ev.target.getAttribute('data-code');
+        if(code) {
+          this.$router.push(`/system-notice-detail?code=${code}`);
         }
       },
       resetSession() {
@@ -243,7 +232,7 @@
           type: 0
         }).then(data => {
           this.APIIpList = data.list.map(item => ({
-            content: item.content,
+            title: item.title,
             code: item.code
           }));
         });
