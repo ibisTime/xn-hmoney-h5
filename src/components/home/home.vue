@@ -98,7 +98,7 @@
               </div>
               <div class="tab-text">
                 <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
-                <p class="con">全球首创交易平台</p>
+                <p class="con">真实物权交易平台</p>
               </div>
             </router-link>
           </div>

@@ -23,6 +23,8 @@ const WalletInto = () => import('components/wallet-into/wallet-into');
 const WalletOut = () => import('components/wallet-out/wallet-out');
 // 钱包 -- 账单
 const WalletBill = () => import('components/wallet-bill/wallet-bill');
+// 钱包 -- 历史账单
+const WalletBillHis = () => import('components/wallet-bill/wallet-bill_his');
 // 账单 -- 详情
 const BillDetails = () => import('components/wallet-bill-details/wallet-bill-details');
 // 我的
@@ -148,6 +150,10 @@ export default new Router({
     {
       path: '/wallet-bill',
       component: WalletBill
+    },
+    {
+      path: '/wallet-hisBill',
+      component: WalletBillHis
     },
     {
       path: '/wallet-into',

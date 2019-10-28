@@ -7,17 +7,6 @@
           <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
         </select>
       </div>
-      <div class="warp_head">
-        <div class="head_icon" :style="{backgroundImage: `url('${walletItem.coinIcon}')`}"></div>
-        <div class="head_right">
-          <p>{{walletItem.currency}}</p>
-          <h5>{{walletItem.syAmount}}{{walletItem.currency}}</h5>
-        </div>
-      </div>
-      <div class="scroll_head">
-        <span>近期交易记录</span>
-        <span @click="toHisBill">更多</span>
-      </div>
       <div class="scroll_box" v-show="list.length > 0">
         <Scroll
         ref="scroll"
@@ -54,7 +43,7 @@
 </template>
 <script>
 import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText, formatMoneySubtract } from 'common/js/util';
-import { walletBill } from 'api/person';
+import { walletHisBill } from 'api/person';
 import { getDictList } from 'api/general';
 import Scroll from 'base/scroll/scroll';
 import FullLoading from 'base/full-loading/full-loading';
@@ -107,17 +96,12 @@ export default {
         start: 1,
         limit: 20
       },
-      bizTypeValueList: [],
-      walletItem: {}
+      bizTypeValueList: []
     }
   },
   created() {
     setTitle(this.$t('walletBill.subject.zzjl'));
     this.config.accountNumber = getUrlParam('accountNumber');
-    const walletItem = sessionStorage.getItem('walletItem') || '';
-    if(walletItem) {
-      this.walletItem = JSON.parse(walletItem);
-    }
     getDictList('jour_biz_type_user').then(data => {
       data.forEach((item) => {
         this.bizTypeValueList[item.dkey] = item.dvalue;
@@ -143,7 +127,7 @@ export default {
       this.config.start = this.start;
       this.config.limit = this.limit;
       // 获取账单列表
-      walletBill(this.config).then((data) => {
+      walletHisBill(this.config).then((data) => {
         data.list.map(item => {
           item.transAmountString = formatAmount(item.transAmountString, '', item.currency);
           item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
@@ -161,9 +145,6 @@ export default {
     getBizNote(item) {
       // 币币交易买入卖出
       return getTranslateText(item.bizNote);
-    },
-    toHisBill() {
-      this.$router.push(`/wallet-hisBill?accountNumber=${this.config.accountNumber}`);
     }
   },
   components: {
@@ -320,7 +301,7 @@ export default {
     overflow: scroll;
     background-color: #fff;
     .scroll_box{
-      height: calc(100% - 3.12rem);
+      height: 100%;
     }
     .scroll_head{
       color: '#999999';
@@ -333,7 +314,7 @@ export default {
     .selected_wallet{
       position: absolute;
       right: 5%;
-      top: 0.3rem;
+      top: 0.6rem;
       z-index: 5;
       &:hover .wallet-p{
         opacity: 0.9;

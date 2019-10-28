@@ -246,6 +246,12 @@ export function walletBill(config) {
   return fetch(802322, config);
 }
 
+// 钱包 -- 历史账单
+export function walletHisBill(config) {
+  return fetch(802323, config);
+}
+
+
 // 钱包 -- 账单 -- 账单详情
 export function billDetails(code) {
   return fetch(802321, {

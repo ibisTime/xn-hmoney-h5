@@ -38,7 +38,11 @@
               <div class='box'>
                 <i class='icoc'></i>
                 <router-link
-                  :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}
+                  :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber"
+                  @click.native="() => {
+                    toWalletBill(infoItem);
+                  }"
+                >{{$t('wallet.subject.zd')}}
                 </router-link>
               </div>
             </div>
@@ -98,7 +102,7 @@
             syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
             amount: item.amount === 0 ? '0.00000000' : formatAmount(item.amount, '8', item.currency),
             frozenAmount: item.frozenAmount === 0 ? '0.00000000' :formatAmount(item.frozenAmount, '8', item.currency),
-            coinIcon: PIC_PREFIX + item.coinPic
+            coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;
         }, () => {
@@ -130,6 +134,9 @@
       toOtcFn(){
         sessionStorage.removeItem('coin');
         sessionStorage.setItem('tradeType', '1');
+      },
+      toWalletBill(infoItem) {
+        sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
       }
     },
     components: {
