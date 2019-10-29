@@ -156,7 +156,7 @@ export default {
         this.textMsg = '操作成功';
         this.$refs.toast.show();
         setTimeout(() => {
-          this.$router.push(`/wallet-bill?accountNumber=${this.config.accountNumber}`);
+          this.$router.push(`/wallet`);
         }, 1500);
       }, () => {
         this.isLoading = false;

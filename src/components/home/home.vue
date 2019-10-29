@@ -169,11 +169,11 @@
       setTitle(this.$t('footer.navbar.page'));
       this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       this.getBanner();
+      this.getNotice();
+      this.getQueryHomeTrading();
       if(this.timer) {
         clearInterval(this.timer);
       }
-      this.getNotice();
-      this.getQueryHomeTrading();
       this.timer = setInterval(() => {
         this.getNotice();
         this.getQueryHomeTrading();
