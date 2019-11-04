@@ -2,11 +2,14 @@
   <div class="password-wrapper" @click.stop>
     <div class="main">
       <div class="iup_box">
-        <label for="loginName">昵称</label>
+        <label for="loginName">新昵称</label>
         <p>
-          <input class="item-input" type="text" v-model="newLoginName" id="loginName" :placeholder="loginName">
+          <input class="item-input" type="text" placeholder="请输入新昵称" v-model="newLoginName" id="loginName">
         </p>
       </div>
+      <p class="login_p">
+          昵称：<span style="color: #E06E6E;">{{loginName}}</span>
+      </p>
     </div>
     <div class="foot">
       <button @click="changeLoginName">确认</button>
@@ -112,6 +115,11 @@ export default {
       label{
         margin-right: 20px;
       }
+    }
+    .login_p{
+      color: '#999999';
+      font-size: 0.28rem;
+      margin-top: 0.2rem;
     }
     input {
       height: 1rem;

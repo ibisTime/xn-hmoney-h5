@@ -165,12 +165,19 @@
           </div>
           <div v-show="!show3" class='current-history' @touchmove.prevent>
             <div class="history_wp">
-              <Scroll :pullUpLoad="null">
+              <Scroll
+                :pullUpLoad="null"
+              >
                 <div class='list' v-show="myOrderData.length">
-                  <div v-for="(myItem, index) in myOrderData" :key="index" style="margin-bottom: 0.4rem;">
+                  <div v-for="(myItem, index) in myOrderData"
+                    :key="index"
+                    style="padding: 0.4rem 0;border-bottom: 1px solid #F0F0F0;"
+                  >
                     <p class='text1'>
-                      <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>{{myItem.direction.toString() === "0" ? $t('trading.bbDeal.mr') : $t('trading.bbDeal.mc')}} ({{myItem.symbol}}/{{myItem.toSymbol}})</span>
-                      <span>{{myItem.createDatetime}}</span>
+                      <span :class='myItem.direction.toString() === "0" ? "green" : "red1"'>
+                        {{myItem.direction.toString() === "0" ? '买入' : '卖出'}}
+                      </span>
+                      <span style="color: #333333; font-weight: 500;">({{myItem.symbol}}/{{myItem.toSymbol}})</span>
                       <span class='red' v-show="(myItem.type.toString() !== '0' && (myItem.status === '0' || myItem.status === '1'))"
                             @click="repealOrder(myItem.code)">{{$t('trading.bbDeal.cx')}}</span>
                     </p>
@@ -188,6 +195,7 @@
                         <p class='black'>{{myItem.tradedCount}}</p>
                       </div>
                     </div>
+                    <p style="">成交时间：{{myItem.createDatetime}}</p>
                   </div>
                 </div>
                 <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
@@ -285,7 +293,7 @@
         start: '1',
         myOrderConfig: {             // 我的委托单config
           start: '1',
-          limit: '20',
+          limit: '2000',
           userId: getUserId(),
           symbol: '',
           toSymbol: '',
@@ -300,7 +308,8 @@
         locale: getLangType(),
         isAttention: true,
         marketId: '',
-        isMarket: false
+        isMarket: false,
+        hasMore: true
       };
     },
     created() {
@@ -486,6 +495,11 @@
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
           });
           this.myOrderData = data.list;
+          // if (data.totalPage <= this.start) {
+          //       this.hasMore = false;
+          //   }
+          //   this.hisDataList = [...this.hisDataList, ...data.list];
+          //   this.start ++;
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
@@ -1078,7 +1092,7 @@
 
         .current-history {
           width: 100%;
-          height: 5rem;
+          height: 7rem;
           position: relative;
           .history_wp{
             position: absolute;
@@ -1090,7 +1104,7 @@
           }
           .list {
             width: 100%;
-            padding: .4rem 0 0.9rem 0;
+            padding: .0rem 0 0.9rem 0;
             border-top: .01rem solid #e5e5e5;
             .text1 {
               padding-bottom: .4rem;
@@ -1108,6 +1122,7 @@
               display: flex;
               justify-content: space-between;
               font-size: .24rem;
+              margin-bottom: 0.36rem;
               .black {
                 font-size: .28rem;
                 padding-top: .2rem;

@@ -17,9 +17,10 @@
             <div class='my'>
               <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}</p>
               <p class='txt2'>{{infoItem.amount}}</p>
-              <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
-                :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}}</span>
-              </p>
+              <div class='txt3'>
+                <p :title="infoItem.frozenAmount">折合：{{infoItem.current}}</p>
+                <p class="dj_p" :title="infoItem.syAmount">冻结：{{infoItem.frozenAmount}}</p>
+              </div>
             </div>
             <div class='datil'>
               <div class='box'>
@@ -102,6 +103,7 @@
             syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
             amount: item.amount === 0 ? '0.00000000' : formatAmount(item.amount, '8', item.currency),
             frozenAmount: item.frozenAmount === 0 ? '0.00000000' :formatAmount(item.frozenAmount, '8', item.currency),
+            current: this.current === 'CNY' ? item.currentCny : item.currentUsd,
             coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;
@@ -285,29 +287,31 @@
           letter-spacing: .0025rem;
           line-height: .42rem;
           padding-bottom: .22rem;
-          margin-left: .1rem;
         }
         .txt2 {
           font-size: .48rem;
           line-height: .48rem;
           color: #333;
-          margin-left: .1rem;
-          padding-bottom: .24rem;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          margin-bottom: 0.14rem;
         }
         .txt3 {
           font-size: .22rem;
           line-height: .24rem;
           color: #999;
-          display: flex;
           justify-content: space-between;
-          span {
-            width: 49%;
+          p {
+            width: 60%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+          }
+          .dj_p{
+            margin-top: 0.22rem;
+            padding: 0.14rem 0.2rem;
+            background-color: #F5F5F5;
           }
         }
       }
