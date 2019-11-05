@@ -158,12 +158,13 @@
         </div>
         <div class='entrust' v-show="isLogin">
           <div class='tabs'>
-            <p @click="showCurr" class='current'>{{$t('trading.bbDeal.dqwt')}}</p>
-            <p @click='showHisto' class='history'><i class='icon'></i>
-              <router-link to='/trading-historyEntrust'>{{$t('trading.bbDeal.ls')}}</router-link>
+            <p class='current'>当前委托</p>
+            <p class='history' @click="showHisto">
+              <i class='icon'></i>
+              <span>历史</span>
             </p>
           </div>
-          <div v-show="!show3" class='current-history' @touchmove.prevent>
+          <div class='current-history' @touchmove.prevent>
             <div class="history_wp">
               <Scroll
                 :pullUpLoad="null"
@@ -195,7 +196,7 @@
                         <p class='black'>{{myItem.tradedCount}}</p>
                       </div>
                     </div>
-                    <p style="">成交时间：{{myItem.createDatetime}}</p>
+                    <p>成交时间：{{myItem.createDatetime}}</p>
                   </div>
                 </div>
                 <div class="no-data" :class="{'hidden': myOrderData.length > 0}">
@@ -242,7 +243,7 @@
     getLangType,
     getUrlParam
   } from "common/js/util";
-  import {wallet} from 'api/person';
+  import {wallet, getUser} from 'api/person';
   import {
     getBazaarData,
     getBBExchange,
@@ -263,7 +264,6 @@
         isLogin: false,
         show1: true,
         show2: true,
-        show3: false,
         history: false,
         tShow: '1',
         xjPrice: '',      // 委托价格
@@ -309,7 +309,8 @@
         isAttention: true,
         marketId: '',
         isMarket: false,
-        hasMore: true
+        hasMore: true,
+        isNeedAuth: false
       };
     },
     created() {
@@ -317,19 +318,23 @@
       this.isLoading = true;
       const symbol = getUrlParam('symbol');
       const toSymbol = getUrlParam('toSymbol');
+      const symId = getUrlParam('symId');
       this.referCurrency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       let params = {};
       if(symbol && toSymbol) {
-        params.symbol = symbol;
-        params.toSymbol = toSymbol;
-        this.show2 = false;
-        this.isMarket = true;
+        if(!symId) {
+          params.symbol = symbol;
+          params.toSymbol = toSymbol;
+          this.show2 = false;
+          this.isMarket = true;
+        }
         sessionStorage.setItem('setBazDeal', JSON.stringify({
-          id: 0,
+          id: symId || 0,
           symbol,
           toSymbol
         }));
       }
+      sessionStorage.removeItem('toBank');
       getBazaarData(params).then(data => {  // 查询交易对
         if(!Array.isArray(data)) {
           return false;
@@ -350,11 +355,15 @@
         });
         data.forEach((item, index) => {
           this.symBazList.push({
+            isNeedAuth: item.isNeedAuth,
             id: index,
             'symbol': item.symbol,
             'toSymbol': item.toSymbol
           });
         });
+        if(data[0]) {
+          this.isNeedAuth = data[0].isNeedAuth === '1';
+        }
         this.handicapData();
         if (getUserId()) {
           this.getUserWalletData();
@@ -418,9 +427,11 @@
       changeSymBaz() { // 选择交易对 this.symId
         this.bbAsks = [];
         this.bbBids = [];
+        this.xjPrice = '';
         this.selIndex = 0;
         this.symBazList.forEach((item) => {
           if(item.id === this.symId) {
+            this.isNeedAuth = item.isNeedAuth === '1';
             this.setBazDeal = {
               id: item.id,
               symbol: item.symbol,
@@ -545,11 +556,7 @@
         }
       },
       showHisto() {
-        this.show3 = true;
         this.$router.push('trading-historyEntrust?symbol=' + this.myOrderConfig.symbol + '&toSymbol=' + this.myOrderConfig.toSymbol);
-      },
-      showCurr() {
-        this.show3 = false;
       },
       showTwo() {
         this.show2 = false;
@@ -573,6 +580,99 @@
           setTimeout(() => {
             this.$router.push('/login');
           }, 1500);
+          return;
+        }
+        if(this.isNeedAuth) {
+          getUser().then(userDetail => {
+            switch(userDetail.identifyStatus) {
+              case '0': // 未认证
+                this.textMsg = '请先进行实名认证';
+                this.$refs.toast.show();
+                setTimeout(() => {
+                  sessionStorage.setItem('toBank', `trading?symbol=${this.setBazDeal.symbol}&toSymbol=${this.setBazDeal.toSymbol}&symId=${this.symId}`);
+                  this.$router.push('/security-idcard');
+                }, 1500);
+                return;
+              case '1': // 已认证
+                this.isLoading = true;
+                if (this.downConfig.type === '1') {
+                  this.downConfig.price = formatMoneyMultiply(`${this.xjPrice}`, '', this.setBazDeal.toSymbol);
+                  if (this.xjPrice && this.xjPrice > 0 && this.wetNumber && this.wetNumber > 0) {
+                    this.downConfig = {
+                      ...this.downConfig,
+                      ...this.setBazDeal
+                    };
+                    this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
+                    downBBOrder(this.downConfig).then(() => {
+                      this.isLoading = false;
+                      this.textMsg = this.$t('common.xdcg');
+                      this.$refs.toast.show();
+                      this.xjPrice = '';
+                      this.wetNumber = '';
+                      this.start = 1;
+                      this.myOrderData = [];
+                      this.myOrderTicket();
+                    }, () => {
+                      this.isLoading = false;
+                    });
+                  } else if (this.xjPrice === '') {
+                    this.textMsg = this.$t('common.jg') + this.$t('trading.bbDepth.bkbwl');
+                    this.$refs.toast.show();
+                    this.isLoading = false;
+                  } else if (this.wetNumber === '') {
+                    this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
+                    this.$refs.toast.show();
+                    this.isLoading = false;
+                  }
+                } else {
+                  this.downConfig.price = '';
+                  if (this.wetNumber && this.wetNumber > 0) {
+                    this.downConfig = {
+                      ...this.downConfig,
+                      ...this.setBazDeal
+                    };
+                    if (this.downConfig.direction === '0') {
+                      if (this.show1) {
+                        this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.toSymbol);
+                      } else {
+                        this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
+                      }
+                    } else {
+                      this.downConfig.totalCount = formatMoneyMultiply(`${this.wetNumber}`, '', this.setBazDeal.symbol);
+                    }
+                    downBBOrder(this.downConfig).then(() => {
+                      this.isLoading = false;
+                      this.textMsg = this.$t('common.xdcg');
+                      this.$refs.toast.show();
+                      this.xjPrice = '';
+                      this.wetNumber = '';
+                    }, () => {
+                      this.isLoading = false;
+                    }).catch(() => {
+                      this.isLoading = false;
+                    });
+                  } else if (this.wetNumber === '') {
+                    this.textMsg = this.$t('common.sl') + this.$t('trading.bbDepth.bkbwl');
+                    this.$refs.toast.show();
+                    this.isLoading = false;
+                  }
+                }
+              return;
+              case '2': // 认证中
+                this.textMsg = '您的实名认证信息还在审核中，请耐心等待';
+                this.$refs.toast.show();
+                return;
+              return;
+              case '3': // 认证失败
+                this.textMsg = '实名认证失败，请重新认证';
+                this.$refs.toast.show();
+                setTimeout(() => {
+                  sessionStorage.setItem('toBank', `trading?symbol=${this.setBazDeal.symbol}&toSymbol=${this.setBazDeal.toSymbol}&symId=${this.symId}`);
+                  this.$router.push('/security-idcard');
+                }, 1500);
+              return;
+            }
+          });
           return;
         }
         this.isLoading = true;

@@ -14,14 +14,14 @@
         >
             <div class='list' v-for="(item, index) in hisDataList" :key="index">
                 <p class='text1'>
-                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? $t('historyEntrust.subject.mr') : $t('historyEntrust.subject.mc')}} ({{item.symbol}}/{{item.toSymbol}})</span>
-                    <span>{{item.createDatetime}}</span>
+                    <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? '买入' : '卖出'}}</span>
+                    <span style="color: #333333; font-weight: 500;">({{item.symbol}}/{{item.toSymbol}})</span>
                     <span class='red'>{{item.status}}</span>
                 </p>
                 <div class='text2'>
                     <div class='txt1'>
                         <p>{{$t('common.jg')}}({{item.toSymbol}})</p>
-                        <p class='black'>{{item.type == 0 ? $t('historyEntrust.subject.sj') : item.price}}</p>
+                        <p class='black'>{{item.type == 0 ? '市价' : item.price}}</p>
                     </div>
                     <div class='txt2'>
                         <p>{{$t('historyEntrust.subject.ze')}}({{(item.direction == 0 && item.type == 0) ? item.toSymbol : item.symbol}})</p>
@@ -31,11 +31,8 @@
                         <p>{{$t('historyEntrust.subject.ycj')}}({{(item.direction == 0 && item.type == 0) ? item.toSymbol : item.symbol}})</p>
                         <p class='black'>{{(item.direction == 0 && item.type == 0) ? item.tradedAmount : item.tradedCount}}</p>
                     </div>
-                    <!--<div class='txt3'>-->
-                        <!--<p>{{$t('historyEntrust.subject.sjcj')}}({{item.symbol}})</p>-->
-                        <!--<p class='black'>{{item.avgPrice}}</p>-->
-                    <!--</div>-->
                 </div>
+                <p style="margin-top: 0.36rem;">成交时间：{{item.createDatetime}}</p>
             </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': hisDataList.length > 0}">

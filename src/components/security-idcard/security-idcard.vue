@@ -11,7 +11,7 @@
               v-model="config.realName"
             >
           </p>
-          <p>
+          <p style="border-bottom: .01rem solid #e3e3e3;">
             <input
               class="item-input"
               type="text"
@@ -21,7 +21,7 @@
           </p>
         </div>
         <div class="id-pic">
-          <h5>{{$t('securityIdcard.subject.sc')}}{{rzText}}</h5>
+          <h5>请上传以下资料，保持图片清晰，文字可辨认</h5>
           <div class="pic-box">
             <qiniu
               ref="qiniu"
@@ -36,10 +36,10 @@
               @change="fileChange($event, 'z')"
               accept="image/*"
             />
-            <p class="add-pic"><img src="./sctp.png" alt=""></p>
-            <p class="pic-tit">身份证正面照</p>
+            <p class="add-pic pic_zm"></p>
             <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_z"></div>
           </div>
+          <p class="pic-tit">本人身份证人像面</p>
           <div class="pic-box" style="margin-top: 0.3rem;">
             <qiniu
               ref="qiniu"
@@ -54,10 +54,10 @@
               @change="fileChange($event, 'f')"
               accept="image/*"
             />
-            <p class="add-pic"><img src="./sctp.png" alt=""></p>
-            <p class="pic-tit">身份证反面照</p>
+            <p class="add-pic pic_fm"></p>
             <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_f"></div>
           </div>
+          <p class="pic-tit">本人身份证国徽面</p>
           <div class="pic-box" style="margin-top: 0.3rem;">
             <qiniu
               ref="qiniu"
@@ -72,10 +72,11 @@
               @change="fileChange($event, 'l')"
               accept="image/*"
             />
-            <p class="add-pic"><img src="./sctp.png" alt=""></p>
-            <p class="pic-tit">手持身份证照片</p>
+            <p class="add-pic pic_sc"></p>
             <div class="pic"><img src="" alt="" width="100%" height="100%" ref="zf_l"></div>
           </div>
+          <p class="pic-tit">本人手持身份证+手写纸条</p>
+          <p class="tip_tit">（示例:大文通2019.7.17实名认证)</p>
         </div>
         <div class="foot">
           <button @click="scIdCard">{{$t('securityIdcard.subject.qd')}}</button>
@@ -200,10 +201,21 @@ export default {
       reader.readAsDataURL(file);
     },
     scIdCard(){
+      const {realName, idNo, frontImage, backImage, faceImage} = this.config;
+      if(!realName || !idNo || !frontImage || !backImage || !faceImage) {
+        this.text = '请填写完整';
+        this.$refs.toast.show();
+        return;
+      }
       userAttestation(this.config).then(() => {
         this.$refs.toast.show();
+        const toBank = sessionStorage.getItem('toBank');
         setTimeout(() => {
-          this.$router.push('/mine');
+          if(toBank) {
+            this.$router.push(toBank);
+          }else {
+            this.$router.push('/mine');
+          }
         }, 1500);
       })
     }
@@ -223,7 +235,6 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
-
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -239,6 +250,7 @@ export default {
     left: 0;
     right: 0;
     overflow: hidden;
+    background-color: #fff;
   }
   .main {
     width: 100%;
@@ -263,23 +275,21 @@ export default {
     }
   }
   .id-pic{
-    margin-top: .3rem;
-    background-color: #fff;
-    padding-top: 0.4rem;
+    padding-top: 0.2rem;
     padding-left: 0.3rem;
     box-sizing: border-box;
     h5{
-      font-size: 0.32rem;
-      margin-bottom: .3rem;
-      color: #666;
+      font-size: 0.28rem;
+      margin-bottom: .4rem;
+      color: #999999;
       font-weight: 400;
     }
     .pic-box{
-      border: 0.01rem solid #ccc;
       border-radius: 0.04rem;
       padding: 0.03rem;
-      width: 95%;
-      height: 4.1rem;
+      width: 5.2rem;
+      margin: 0 auto;
+      height: 2.8rem;
       position: relative;
       font-size: 0.28rem;
       color: #b3b3b3;
@@ -293,16 +303,23 @@ export default {
         position: absolute;
         z-index: 9;
       }
-      .pic-tit{
-        margin-top: -1rem;
-      }
       .add-pic{
-        margin-top: 20%;
         color: #666;
         font-size: 2rem;
         font-weight: 200;
-        transform: translateY(-50%);
         z-index: 1;
+        width: 100%;
+        height: 100%;
+        background-size: 100% 100%;
+      }
+      .pic_zm{
+        background-image: url('./card__zheng.png')
+      }
+      .pic_fm{
+        background-image: url('./card__fan.png')
+      }
+      .pic_sc{
+        background-image: url('./card__sc.png')
       }
       .pic{
         width: 100%;
@@ -314,12 +331,25 @@ export default {
         background-color: transparent;
       }
     }
+    .pic-tit{
+      color: #333333;
+      font-size: 0.28rem;
+      margin: 0.16rem 0 0.3rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    .tip_tit{
+      color: #BABABA;
+      font-size: 0.26rem;
+      margin-top: -0.1rem;
+      text-align: center;
+    }
   }
 
   .foot {
     width: 100%;
     text-align: center;
-    padding-top: 1.2rem;
+    padding-top: 0.8rem;
     padding-bottom: 0.98rem;
     background-color: #fff;
     button {
