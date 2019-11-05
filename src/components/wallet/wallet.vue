@@ -19,7 +19,9 @@
               <p class='txt2'>{{infoItem.amount}}</p>
               <div class='txt3'>
                 <p :title="infoItem.frozenAmount">折合：{{infoItem.current}}</p>
-                <p class="dj_p" :title="infoItem.syAmount">冻结：{{infoItem.frozenAmount}}</p>
+                <p :title="infoItem.syAmount" class="sy_p">
+                  冻结：{{infoItem.frozenAmount}}
+                </p>
               </div>
             </div>
             <div class='datil'>
@@ -281,7 +283,7 @@
         opacity: 0.6;
       }
       .my {
-        padding: .3rem .62rem .3rem .2rem;
+        padding: .3rem .36rem .3rem .2rem;
         .txt1 {
           color: #D53D3D;
           letter-spacing: .0025rem;
@@ -299,16 +301,9 @@
         }
         .txt3 {
           font-size: .22rem;
-          line-height: .24rem;
           color: #999;
-          justify-content: space-between;
-          p {
-            width: 60%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          .dj_p{
+          .sy_p{
+            border-radius: 0.04rem;
             margin-top: 0.22rem;
             padding: 0.14rem 0.2rem;
             background-color: #F5F5F5;
