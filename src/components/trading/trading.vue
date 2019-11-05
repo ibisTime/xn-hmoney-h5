@@ -659,12 +659,12 @@
                 }
               return;
               case '2': // 认证中
-                this.textMsg = '您的实名认证信息还在审核中，请耐心等待';
+                this.textMsg = '您的实名认证还在审核中，请耐心等待';
                 this.$refs.toast.show();
                 return;
               return;
               case '3': // 认证失败
-                this.textMsg = '实名认证失败，请重新认证';
+                this.textMsg = '您的实名认证不通过，请重新认证';
                 this.$refs.toast.show();
                 setTimeout(() => {
                   sessionStorage.setItem('toBank', `trading?symbol=${this.setBazDeal.symbol}&toSymbol=${this.setBazDeal.toSymbol}&symId=${this.symId}`);
