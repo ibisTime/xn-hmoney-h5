@@ -229,7 +229,7 @@
         queryHomeTrading().then(data => {
           let arr = [], index = 0;
           for(let i = 0, len = data.length; i < len; i ++) {
-            data[i].lastPrice = (Math.floor(+data[i].lastPrice * 100) / 100).toFixed(2);
+            data[i].lastPrice = (Math.floor(+data[i].lastPrice * 10000) / 10000).toFixed(4);
             data[i].hsLastPrice = this.currency === 'USD' ? (Math.floor(+data[i].lastPriceUsd * 100) / 100).toFixed(2) : (Math.floor(+data[i].lastPriceCny * 100) / 100).toFixed(2);
             if(i === 0) {
               arr[0] = [data[0]];
