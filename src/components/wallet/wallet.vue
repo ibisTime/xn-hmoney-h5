@@ -7,7 +7,7 @@
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
             <div class='txt2' style='margin-top:.12rem;'>
               <p class='t1'>{{cdInfo.totalAmountTWT}} TWT</p>
-              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{this.currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
+              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
             </div>
@@ -18,7 +18,7 @@
               <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}</p>
               <p class='txt2'>{{infoItem.amount}}</p>
               <div class='txt3'>
-                <p :title="infoItem.frozenAmount">折合：{{infoItem.current}}</p>
+                <p :title="infoItem.frozenAmount">折合：{{infoItem.current}} {{currency}}</p>
                 <p :title="infoItem.syAmount" class="sy_p">
                   冻结：{{infoItem.frozenAmount}}
                 </p>
@@ -105,7 +105,7 @@
             syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
             amount: item.amount === 0 ? '0.00000000' : formatAmount(item.amount, '8', item.currency),
             frozenAmount: item.frozenAmount === 0 ? '0.00000000' :formatAmount(item.frozenAmount, '8', item.currency),
-            current: this.current === 'CNY' ? item.currentCny : item.currentUsd,
+            current: this.currency === 'CNY' ? item.currentCny : item.currentUsd,
             coinIcon: PIC_PREFIX + item.coinIcon
         }));
           this.isLoading = false;
