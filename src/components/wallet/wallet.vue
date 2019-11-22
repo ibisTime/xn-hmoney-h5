@@ -35,7 +35,7 @@
               |
               <div
                 class='box'
-                @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"
+                @click="zcMoneyFn(infoItem)"
               ><i class='icoz'></i><span>提币</span></div>
               |
               <div class='box'>
@@ -52,6 +52,9 @@
           </div>
         </div>
       </Scroll>
+    </div>
+    <div class="transfer_box" @click="toWalletTransfer">
+      转账
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -81,7 +84,8 @@
         isLoading: true,
         info: [{}, {}, {}],
         cdInfo: {},
-        currency: 'CNY'
+        currency: 'CNY',
+        loginName: ''
       };
     },
     computed: {},
@@ -90,6 +94,7 @@
       this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       this.wallet();
       sessionStorage.removeItem('paw_go_back');
+      sessionStorage.removeItem('walletItem');
     },
     methods: {
       // 列表查询用户账户
@@ -114,10 +119,11 @@
         });
       },
       // 转出
-      zcMoneyFn(currency, amount, accountNumber) {
+      zcMoneyFn(infoItem) {
         getUser().then(data => {
           if (data.tradepwdFlag) {
-            this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}&loginName=${data.loginName}`);
+            sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+            this.$router.push(`wallet-out?currency=${infoItem.currency}&amount=${infoItem.amount}&accountNumber=${infoItem.accountNumber}&loginName=${data.loginName}`);
           } else if (!data.tradepwdFlag) {
             this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
@@ -141,6 +147,9 @@
       },
       toWalletBill(infoItem) {
         sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+      },
+      toWalletTransfer() {
+        this.$router.push(`/wallet-transfer`);
       }
     },
     components: {
@@ -388,7 +397,24 @@
       }
 
     }
-
+    .transfer_box{
+      position: fixed;
+      bottom: 70px;
+      right: 10px;
+      width: 44px;
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+      border-radius: 100%;
+      background-color: #D53D3D;
+      color: #fff;
+      font-size: 0.26rem;
+      z-index: 999;
+      opacity: 0.8;
+      &:hover{
+        opacity: 0.9;
+      }
+    }
   }
 
 </style>

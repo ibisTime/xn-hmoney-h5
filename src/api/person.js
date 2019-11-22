@@ -241,6 +241,10 @@ export function walletOut(config) {
   return fetch(802350, config)
 }
 
+export function walletTransfer(config) {
+  return fetch(802351, config);
+}
+
 // 钱包 -- 账单
 export function walletBill(config) {
   return fetch(802322, config);

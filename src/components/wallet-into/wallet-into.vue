@@ -7,7 +7,7 @@
         <i class='icon' @click="txtShow = false"></i>
     </div>
     <p class='my-address'>
-        {{$t('walletInto.subject.zrdz')}}
+      我的充币地址
     </p>
     <div class='erweima'>
         <div class='ewm-wrap'>
@@ -15,7 +15,9 @@
         </div>
     </div>
     <div class='address'>
-        <p class='txt'>{{$t('walletInto.subject.dz')}} <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link></p>
+        <p class='txt'>{{$t('walletInto.subject.dz')}}
+          <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link>
+          </p>
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
     <button @click='CopyUrl' ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj">{{$t('walletInto.subject.fzskdz')}}</button>
@@ -38,7 +40,7 @@ export default {
     };
   },
   created() {
-    setTitle(this.$t('walletInto.subject.zr'));
+    setTitle('充币');
     this.adress = getUrlParam('adress');
     this.currency = getUrlParam('currency');
     this.accountNumber = getUrlParam('accountNumber');

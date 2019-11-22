@@ -1,13 +1,19 @@
 <template>
   <div class="wallet-out-wrapper" @click.stop>
     <div class='main'>
+      <p class='text'>
+        <span>可选币种</span>
+        <select style="width: 3.5rem;" v-model="config.payCardInfo" @change="changeCurrency">
+          <option :value="item" v-for="item in currencyList" :key="item">{{item}}</option>
+        </select>
+        <router-link
+          :to="`wallet-bill?accountNumber=${config.accountNumber}`"
+          style="position: absolute; right: 0rem;"
+        >记录</router-link>
+      </p>
       <p class='text' style="position: relative;">
         <span>可用余额</span>
         <input type="text" class='dis' readonly v-model="value">
-        <router-link
-          :to="'wallet-bill'+'?accountNumber=' + config.accountNumber"
-          style="position: absolute; right: 0rem;"
-        >记录</router-link>
       </p>
       <p class='text'>
         <span>接收地址</span>
@@ -34,7 +40,7 @@
     <p class="line"></p>
     <div class='plan'>
       <p class='kgfee'>
-        手续费：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
+        手续费：{{feeAmount}} <span class="cur_fee">({{config.payCardInfo}})</span>
       </p>
       <p class='tx_text'>
         <span>提现说明</span>
@@ -42,15 +48,15 @@
       <div class="tx_text_con" v-html="withdrawRule">
       </div>
     </div>
-    <button @click="walletOut">确认提币</button>
+    <button @click="walletTransfer">确认转账</button>
     <Toast :text="textMsg" ref="toast" :delay="2000"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import {walletOut, getSmsCaptchaPhone, getSmsCaptchaEmail} from 'api/person';
-import {getBbListData} from 'api/tradingOn';
-import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply, getLangType } from 'common/js/util';
+import {walletTransfer, getSmsCaptchaPhone, getSmsCaptchaEmail, wallet, getUser} from 'api/person';
+import {getTransferRules} from 'api/tradingOn';
+import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply, getLangType, formatMoneySubtract } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
@@ -69,7 +75,6 @@ export default {
       paw: '',
       bbNumber: '',
       zAmount: '',
-      loginName: '',
       timer: 60,
       timeInter: null,
       langType: getLangType(),
@@ -81,25 +86,47 @@ export default {
         payCardNo: '',
         tradePwd: '',
         smsCaptcha: ''
-      }
+      },
+      accountInfo: {},
+      currencyList: []
     }
   },
   created() {
-    setTitle('提币');
-    this.currency = getUrlParam('currency');
-    this.amount = getUrlParam('amount');
-    this.loginName = getUrlParam('loginName');
-    this.value = this.amount + this.currency;
-    this.config.accountNumber = getUrlParam('accountNumber');
-    this.config.payCardInfo = this.currency;
-    getBbListData().then(data => {
-      const currencyData = data.filter(item => item.symbol === this.currency)[0];
-      const withdrawFee = +currencyData.withdrawFee;
-      this.withdrawRule = currencyData.withdrawRule;
-      this.feeAmount = withdrawFee > 0 ? (Math.floor(withdrawFee * 10000) / 10000).toFixed(4) : '0.0000';
+    setTitle('转账');
+    wallet().then(v => {
+      if(Array.isArray(v.accountList)) {
+        const accountList = v.accountList.map(item => ({
+          ...item,
+          syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
+          current: this.currency === 'CNY' ? item.currentCny : item.currentUsd,
+            coinIcon: PIC_PREFIX + item.coinIcon
+        }));
+        for(let i = 0; i < accountList.length; i ++) {
+          this.accountInfo[accountList[i].currency] = accountList[i];
+          this.currencyList.push(accountList[i].currency);
+        }
+        this.config.payCardInfo = accountList[0].currency;
+        this.value = this.accountInfo[accountList[0].currency].syAmount + accountList[0].currency;
+        this.config.accountNumber = this.accountInfo[accountList[0].currency].accountNumber;
+        sessionStorage.setItem('walletItem', JSON.stringify(accountList[0]));
+        this.queryBbListData();
+      }
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   },
   methods: {
+    queryBbListData() {
+      getTransferRules({
+        symbol: this.config.payCardInfo,
+        type: 'transfer'
+      }).then(data => {
+        const withdrawFee = +data.withdrawFee;
+        this.withdrawRule = data.withdrawRule;
+        this.feeAmount = withdrawFee > 0 ? (Math.floor(withdrawFee * 10000) / 10000).toFixed(4) : '0.0000';
+      });
+    },
     sendSmsCode() {
       if(this.isSend) {
         return false;
@@ -109,41 +136,43 @@ export default {
         this.$refs.toast.show();
         return;
       }
-      if(this.loginName.match(/@/)) {
-        getSmsCaptchaEmail({
-          bizType: '802350',
-          email: this.loginName,
-          tradePwd: this.config.tradePwd
-        }).then(() => {
-          this.isSend = true;
-          this.timeInter = setInterval(() => {
-            this.timer --;
-            if(this.timer <= 0) {
-              clearInterval(this.timeInter);
-              this.timer = 60;
-              this.isSend = false;
-            }
-          }, 1000);
-        });
-      }else {
-        getSmsCaptchaPhone({
-          bizType: '802350',
-          mobile: this.loginName,
-          tradePwd: this.config.tradePwd
-        }).then(() => {
-          this.isSend = true;
-          this.timeInter = setInterval(() => {
-            this.timer --;
-            if(this.timer <= 0) {
-              clearInterval(this.timeInter);
-              this.timer = 60;
-              this.isSend = false;
-            }
-          }, 1000);
-        });
-      }
+      getUser().then(data => {
+        if(data.loginName.match(/@/)) {
+          getSmsCaptchaEmail({
+            bizType: '802350',
+            email: data.loginName,
+            tradePwd: this.config.tradePwd
+          }).then(() => {
+            this.isSend = true;
+            this.timeInter = setInterval(() => {
+              this.timer --;
+              if(this.timer <= 0) {
+                clearInterval(this.timeInter);
+                this.timer = 60;
+                this.isSend = false;
+              }
+            }, 1000);
+          });
+        }else {
+          getSmsCaptchaPhone({
+            bizType: '802350',
+            mobile: data.loginName,
+            tradePwd: this.config.tradePwd
+          }).then(() => {
+            this.isSend = true;
+            this.timeInter = setInterval(() => {
+              this.timer --;
+              if(this.timer <= 0) {
+                clearInterval(this.timeInter);
+                this.timer = 60;
+                this.isSend = false;
+              }
+            }, 1000);
+          });
+        }
+      });
     },
-    walletOut() {
+    walletTransfer() {
       if(!this.config.payCardNo || !this.zAmount || !this.config.tradePwd){
         this.textMsg = '请填写完整';
         this.$refs.toast.show();
@@ -151,7 +180,7 @@ export default {
       }
       this.isLoading = true;
       this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
-      walletOut(this.config).then(() => {
+      walletTransfer(this.config).then(() => {
         this.isLoading = false;
         this.textMsg = '操作成功';
         this.$refs.toast.show();
@@ -161,6 +190,11 @@ export default {
       }, () => {
         this.isLoading = false;
       })
+    },
+    changeCurrency() {
+      this.value = `${this.accountInfo[this.config.payCardInfo].syAmount} ${this.config.payCardInfo}`;
+      sessionStorage.setItem('walletItem', JSON.stringify(this.accountInfo[this.config.payCardInfo]));
+      this.queryBbListData();
     },
     formatAmount(money, unit, coin) {
       return formatAmount(money, unit, coin);
@@ -257,7 +291,6 @@ export default {
           text-align: left;
         }
         .dis {
-          width: 3.4rem;
           font-size: .3rem;
           color: #d53d3d;
           line-height: 1rem;

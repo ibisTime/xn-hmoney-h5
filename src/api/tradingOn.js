@@ -2,9 +2,14 @@ import fetch from 'common/js/fetch';
 
 //获取已发布币种列表
 export function getBbListData(){
-    return fetch('802007', {
-        status: '0'
-    })
+  return fetch('802007', {
+    status: '0'
+  })
+}
+
+//获取转账规则
+export function getTransferRules(config){
+  return fetch('802384', config);
 }
 
 // 交易对分页查询
