@@ -9,13 +9,6 @@
         </router-link>
     </div>
     <div class='content cont1'>
-        <!-- <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
-            <p>
-            <span>{{$t('securityCenter.subject.ggrz')}}</span>
-            <i class='icon'></i>
-            <span class='tel'>{{googleAuthFlag == false ? '' : $t('securityCenter.subject.ykq')}}</span>
-            </p>
-        </router-link> -->
         <div class='tag mb20' @click="toIdcard">
           <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>

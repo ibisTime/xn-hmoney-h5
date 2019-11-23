@@ -25,12 +25,9 @@
               </div>
             </div>
             <div class='datil'>
-              <div class='box'>
+              <div class='box' @click="toZrMoney(infoItem)">
                 <i class='icod'></i>
-                <router-link
-                  :to="`wallet-into?adress=${infoItem.address}&currency=${infoItem.currency}&accountNumber=${infoItem.accountNumber}`">
-                  {{$t('wallet.subject.zr')}}
-                </router-link>
+                <span>充币</span>
               </div>
               |
               <div
@@ -134,6 +131,10 @@
             }, 1500);
           }
         });
+      },
+      toZrMoney(infoItem) {
+        sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+        this.$router.push(`/wallet-into?adress=${infoItem.address}&currency=${infoItem.currency}&accountNumber=${infoItem.accountNumber}`);
       },
       formatAmount(money, format, coin) {
         return formatAmount(money, format, coin);
@@ -399,11 +400,11 @@
     }
     .transfer_box{
       position: fixed;
-      bottom: 70px;
-      right: 10px;
-      width: 44px;
-      height: 44px;
-      line-height: 44px;
+      bottom: 1.4rem;
+      right: 0.2rem;
+      width: 0.88rem;
+      height: 0.88rem;
+      line-height: 0.88rem;
       text-align: center;
       border-radius: 100%;
       background-color: #D53D3D;
