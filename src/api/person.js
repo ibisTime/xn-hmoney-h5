@@ -324,3 +324,8 @@ export function getPageTrust(config, to) {
 export function userEvaluate(config){
   return fetch("628279", config);
 }
+
+// 查询内部内部转账
+export function transferRecord(config) {
+  return fetch("802355", config);
+}

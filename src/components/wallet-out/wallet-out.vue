@@ -5,7 +5,7 @@
         <span>可用余额</span>
         <input type="text" class='dis' readonly v-model="value">
         <router-link
-          :to="'wallet-bill'+'?accountNumber=' + config.accountNumber"
+          :to="`transfer-record?accountNumber=${config.accountNumber}&bizType=withdraw`"
           style="position: absolute; right: 0rem;"
         >记录</router-link>
       </p>

@@ -114,6 +114,7 @@ const DeliveryRecordDetail = () => import('components/dig-delivery/delivery-reco
 const DeliveryUnitDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail-unit');
 
 const WalletTransfer = () => import('components/wallet-transfer/wallet-transfer');
+const transferRecord = () => import('components/wallet-transfer/transfer-record');
 
 export default new Router({
   routes: [
@@ -360,6 +361,10 @@ export default new Router({
     {
       path: '/wallet-transfer',
       component: WalletTransfer
+    },
+    {
+      path: '/transfer-record',
+      component: transferRecord
     }
   ],
   mode: 'history',

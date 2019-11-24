@@ -7,7 +7,7 @@
           <option :value="item" v-for="item in currencyList" :key="item">{{item}}</option>
         </select>
         <router-link
-          :to="`wallet-bill?accountNumber=${config.accountNumber}`"
+          :to="`transfer-record?accountNumber=${config.accountNumber}&bizType=transfer`"
           style="position: absolute; right: 0rem;"
         >记录</router-link>
       </p>
@@ -194,6 +194,7 @@ export default {
     },
     changeCurrency() {
       this.value = `${this.accountInfo[this.config.payCardInfo].syAmount} ${this.config.payCardInfo}`;
+      this.config.accountNumber = this.accountInfo[this.config.payCardInfo].accountNumber;
       sessionStorage.setItem('walletItem', JSON.stringify(this.accountInfo[this.config.payCardInfo]));
       this.queryBbListData();
     },
