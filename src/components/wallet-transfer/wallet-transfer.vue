@@ -94,12 +94,13 @@ export default {
   created() {
     setTitle('转账');
     wallet().then(v => {
+      const CURRY = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       if(Array.isArray(v.accountList)) {
         const accountList = v.accountList.map(item => ({
           ...item,
           syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
-          current: this.currency === 'CNY' ? item.currentCny : item.currentUsd,
-            coinIcon: PIC_PREFIX + item.coinIcon
+          current: CURRY === 'CNY' ? item.currentCny : item.currentUsd,
+          coinIcon: PIC_PREFIX + item.coinIcon
         }));
         for(let i = 0; i < accountList.length; i ++) {
           this.accountInfo[accountList[i].currency] = accountList[i];
@@ -179,7 +180,7 @@ export default {
         return;
       }
       this.isLoading = true;
-      this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
+      this.config.amount = formatMoneyMultiply(this.zAmount, '', this.config.payCardInfo);
       walletTransfer(this.config).then(() => {
         this.isLoading = false;
         this.textMsg = '操作成功';
