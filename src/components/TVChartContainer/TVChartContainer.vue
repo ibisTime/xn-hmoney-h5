@@ -25,7 +25,7 @@
 </template>
 
 <script>
-  // import io from 'socket.io-client';
+  import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
   import Loading from 'base/loading/loading';
@@ -156,7 +156,8 @@
         this.resolution = resolution;
       }
       this.onChartReady();
-      // window.SOCKET = io('localhost:3666');
+      // window.SOCKET = io('wss://api.huobi.pro/ws');
+      // console.log(window.SOCKET);
     },
     methods: {
       onChartReady() {
@@ -175,8 +176,35 @@
           autosize: this.autosize,
           studies_overrides: this.studiesOverrides,
           preset: this.preset,
-          disabled_features: ['show_chart_property_page', 'compare_symbol', 'display_market_status', 'go_to_date', 'header_chart_type', 'header_compare', 'header_interval_dialog_button', 'header_resolutions', 'header_screenshot', 'header_symbol_search', 'header_undo_redo', 'legend_context_menu', 'show_hide_button_in_legend', 'show_interval_dialog_on_key_press', 'snapshot_trading_drawings', 'symbol_info', 'use_localstorage_for_settings', 'volume_force_overlay'],
-          enabled_features: ['dont_show_boolean_study_arguments', 'hide_last_na_study_output', 'move_logo_to_main_pane', 'same_data_requery', 'side_toolbar_in_fullscreen_mode', 'disable_resolution_rebuild'],
+          disabled_features: [
+            'show_chart_property_page',
+            'compare_symbol',
+            'display_market_status',
+            'go_to_date',
+            'header_chart_type',
+            'header_compare',
+            'header_interval_dialog_button',
+            'header_resolutions',
+            'header_screenshot',
+            'header_symbol_search',
+            'header_undo_redo',
+            'legend_context_menu',
+            'show_hide_button_in_legend',
+            'show_interval_dialog_on_key_press',
+            'snapshot_trading_drawings',
+            'symbol_info',
+            'use_localstorage_for_settings',
+            'volume_force_overlay'
+          ],
+          enabled_features: [
+            'dont_show_boolean_study_arguments',
+            'hide_last_na_study_output',
+            'move_logo_to_main_pane',
+            'same_data_requery',
+            'side_toolbar_in_fullscreen_mode',
+            'disable_resolution_rebuild', 
+            'border_around_the_chart'
+          ],
           overrides: {
             'volumePaneSize': 'small',
             'scalesProperties.lineColor': '#1f2943',

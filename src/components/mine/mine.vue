@@ -116,11 +116,6 @@
         picUrl: ''
       };
     },
-    computed: {
-      ...mapGetters([
-        'unreadMsgNum'
-      ])
-    },
     created() {
       setTitle('我的');
       getUser().then((data) => {

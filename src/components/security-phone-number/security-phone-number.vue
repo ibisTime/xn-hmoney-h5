@@ -49,7 +49,6 @@
 </template>
 <script>
 import {mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED} from 'store/mutation-types';
 import {getUserId, clearUser} from '../../common/js/util';
 import {bindingPhone, getSmsCaptchaPhone, exitBindingPhone} from '../../api/person';
 import FullLoading from 'base/full-loading/full-loading';
@@ -163,7 +162,6 @@ export default {
             this.$refs.toast.show();
             setTimeout(() => {
               clearUser();
-              this.setTencentLogined(false);
               setTimeout( () => {
                 this.$router.push('/login');
               }, 500 );
@@ -188,10 +186,7 @@ export default {
           });
         }
       }
-    },
-    ...mapMutations({
-      setTencentLogined: SET_TENCENT_LOGINED
-    })
+    }
   },
   components: {
     FullLoading,

@@ -54,7 +54,6 @@
 import {getUser} from '../../api/person';
 import { clearUser, setTitle } from 'common/js/util';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED} from 'store/mutation-types';
 
 export default {
   data() {
@@ -86,15 +85,12 @@ export default {
       this.googleAuthFlag = data.googleAuthFlag;
     });
   },
-  computed: {
-    ...mapGetters([
-      'tencentLogined'
-    ])
-  },
   methods: {
     quitLogin(){
       clearUser();
-      this.setTencentLogined(false);
+      if(window.SOCKET) {
+        window.SOCKET.close();
+      }
       setTimeout( () => {
         this.$router.push('/login');
       }, 500 );
@@ -105,10 +101,7 @@ export default {
       }else {
         return false;
       }
-    },
-    ...mapMutations({
-      setTencentLogined: SET_TENCENT_LOGINED
-    })
+    }
   },
 };
 </script>

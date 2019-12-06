@@ -60,6 +60,11 @@ export default {
         login(this.username, this.password).then(data => {
           this.isLoading = false;
           setUser(data);
+          if(window.SOCKET) {
+            window.SOCKET.close();
+          }
+          const userId = data.userId;
+          window.SOCKET = new WebSocket(`ws://api.twtdev.hichengdai.com/ws?userId=${userId}`);
           this.$router.push('page');
         }, () => {
           this.isLoading = false;

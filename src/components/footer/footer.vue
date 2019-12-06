@@ -17,16 +17,12 @@
       <p>{{ $t('footer.navbar.wallet') }}</p>
     </router-link>
     <router-link tag="div" class="foot-item item-4" to="/mine">
-      <i>
-        <span class="hasUnreadMsg" v-if="getUnreadMsgNum()"></span>
-      </i>
+      <i></i>
       <p>{{ $t('footer.navbar.mine') }}</p>
     </router-link>
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
-
   export default {
     props: {
       bgColor: {
@@ -34,16 +30,7 @@
         default: '#fff'
       }
     },
-    computed: {
-      ...mapGetters([
-        'unreadMsgNum'
-      ])
-    },
     methods: {
-      // 是否显示小红点
-      getUnreadMsgNum() {
-        return this.unreadMsgNum > 0;
-      },
       toTrading() {
         sessionStorage.removeItem('setBazDeal');
       }

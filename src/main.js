@@ -35,6 +35,11 @@ const i18n = new VueI18n({
   }
 });
 
+// Vue.use(new VueSocketIO({
+//   debug: true,
+//   connection: 'http://192.168.1.136:9092'
+// }));
+
 router.beforeEach((to, from, next) => {
   this.isLoading = true;
   let userId = getUrlParam('userId') || '';

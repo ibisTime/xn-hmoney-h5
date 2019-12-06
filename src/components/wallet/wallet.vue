@@ -73,6 +73,7 @@
     setCoinData,
     setTitle
   } from 'common/js/util';
+  import { mapGetters } from 'vuex';
 
   export default {
     data() {
@@ -85,7 +86,6 @@
         loginName: ''
       };
     },
-    computed: {},
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
       this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
@@ -158,6 +158,14 @@
       Toast,
       FullLoading,
       Scroll
+    },
+    computed: mapGetters([
+      'isUpdateAccount'
+    ]),
+    watch: {
+      isUpdateAccount() {
+        this.wallet();
+      }
     }
   };
 </script>

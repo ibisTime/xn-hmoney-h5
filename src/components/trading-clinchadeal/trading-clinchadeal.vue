@@ -24,6 +24,7 @@
   import Scroll from 'base/scroll/scroll';
   import {getRealTimeData} from 'api/bb';
   import {formatDate, formatAmount} from 'common/js/util';
+  import { mapGetters } from 'vuex';
 
   export default {
     data() {
@@ -73,6 +74,9 @@
     components: {
       Scroll
     },
+    computed: mapGetters([
+      'isUpdateSimuorderdetail'
+    ]),
     watch: {
       bazDeal: {
         handler(val, oldVal) {
@@ -86,6 +90,8 @@
       },
       gkdsList(val, oldVal) {
         this.setBazDeal = this.bazDeal;
+      },
+      isUpdateSimuorderdetail() {
         this.realTimeData();
       }
     }

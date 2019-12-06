@@ -132,7 +132,10 @@
   </div>
 </template>
 <script>
-  import {isLogin, formatImg, setTitle} from 'common/js/util';
+  // import VueSocketio from 'vue-socket.io';
+  // import io from 'socket.io-client';
+  import {formatImg, setTitle} from 'common/js/util';
+  import {SOCKET_URL} from 'common/js/config';
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
   import Scroll from 'base/scroll/scroll';
@@ -142,6 +145,7 @@
   import vueSeamless from 'vue-seamless-scroll';
   import LangStorage from '../../common/js/cookie';
   import {queryHomeTrading} from 'api/tradingOn';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'test-keep-alive',
@@ -176,7 +180,6 @@
       }
       this.timer = setInterval(() => {
         this.getNotice();
-        this.getQueryHomeTrading();
       }, 5000);
     },
     activated() {
@@ -266,9 +269,12 @@
       FullLoading,
       vueSeamless
     },
-    beforeDestroy() {
-      if(this.timer) {
-        clearInterval(this.timer);
+    computed: mapGetters([
+      'isUpdateMarket'
+    ]),
+    watch: {
+      isUpdateMarket(val) {
+        this.getQueryHomeTrading();
       }
     }
   };

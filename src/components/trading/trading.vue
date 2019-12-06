@@ -231,9 +231,8 @@
   import TradingPutUp from 'components/trading-put-up/trading-put-up';
   import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchadeal';
   import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
-  import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
   import TradingKline from 'components/trading-kline/trading-kline';
-
+  import { mapGetters } from 'vuex';
   import {
     formatAmount,
     setTitle,
@@ -243,6 +242,7 @@
     getLangType,
     getUrlParam
   } from "common/js/util";
+  import {SOCKET_URL} from 'common/js/config';
   import {wallet, getUser} from 'api/person';
   import {
     getBazaarData,
@@ -293,7 +293,7 @@
         start: '1',
         myOrderConfig: {             // 我的委托单config
           start: '1',
-          limit: '2000',
+          limit: '1000',
           userId: getUserId(),
           symbol: '',
           toSymbol: '',
@@ -371,19 +371,6 @@
           this.history = true;
           this.myOrderTicket();
         }
-        clearInterval(this.handTime);
-        this.handTime = setInterval(() => {
-          if (this.isLogin) {
-            this.getUserWalletData();
-            this.myOrderTicket();
-          }
-          this.getSelectedTrading({
-            symbol: this.setBazDeal.symbol,
-            referCurrency: this.setBazDeal.toSymbol
-          });
-          this.handicapData();
-        }, 5000);
-
       });
     },
     methods: {
@@ -451,18 +438,6 @@
           this.myOrderData = [];
           this.myOrderTicket();
         }
-        clearInterval(this.handTime);
-        this.handTime = setInterval(() => {
-          if (this.isLogin) {
-            this.getUserWalletData();
-            this.myOrderTicket();
-          }
-          this.getSelectedTrading({
-            symbol: this.setBazDeal.symbol,
-            referCurrency: this.setBazDeal.toSymbol
-          });
-          this.handicapData();
-        }, 5000);
       },
       handicapData() {
         // 查询盘口
@@ -561,7 +536,6 @@
       showTwo() {
         this.show2 = false;
         this.isMarket = false;
-        this.isLoading = true;
       },
       hideShow2() {
         if(this.isMarket) {
@@ -802,6 +776,7 @@
       },
       // 去买
       toBuy() {
+        document.getElementById('app').scrollTo(0, 0);
         this.show2 = true;
         this.downConfig.direction = '0';
         this.show1 = true;
@@ -813,6 +788,7 @@
       },
       // 去卖
       toSell() {
+        document.getElementById('app').scrollTo(0, 0);
         this.show2 = true;
         this.downConfig.direction = '1';
         this.show1 = false;
@@ -837,19 +813,36 @@
       TradingPutUp,
       TradingClinchadeal,
       TradingDepthMap,
-      TVChartContainer,
       TradingKline
     },
+    computed: mapGetters([
+      'isUpdateMarket',
+      'isUpdateSimuorder',
+      'isUpdateAccount',
+      'isUpdateHandicap'
+    ]),
     watch: {  // 监听深度图
       setBazDeal: {
         handler(val) {
           this.bazDeal = val;
         },
         deep: true
+      },
+      isUpdateMarket() {
+        this.getSelectedTrading({
+          symbol: _this.setBazDeal.symbol,
+          referCurrency: _this.setBazDeal.toSymbol
+        });
+      },
+      isUpdateSimuorder() {
+        this.myOrderTicket();
+      },
+      isUpdateAccount() {
+        this.getUserWalletData();
+      },
+      isUpdateHandicap() {
+        this.handicapData();
       }
-    },
-    destroyed() {
-      clearInterval(this.handTime);
     },
     filters: {
       symbolToFixed(v) {

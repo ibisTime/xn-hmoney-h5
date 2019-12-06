@@ -8,6 +8,7 @@
 <script>
   import {getDepthData} from 'api/bb';
   import {formatAmount} from 'common/js/util';
+  import { mapGetters } from 'vuex';
 
   export default {
     data() {
@@ -29,7 +30,6 @@
         }
       }
     },
-    mounted() {},
     methods: {
       getDepthFn() {
         getDepthData(this.setBazDeal).then(data => {
@@ -175,6 +175,9 @@
         myChart.setOption(option);
       }
     },
+    computed: mapGetters([
+      'isUpdateHandicap'
+    ]),
     watch: {
       bazDeal: {
         handler(val, oldVal) {
@@ -185,9 +188,11 @@
       gkdsList: {
         handler(val, oldVal) {
           this.setBazDeal = this.bazDeal;
-          this.getDepthFn();
         },
         deep: true
+      },
+      isUpdateHandicap() {
+        this.getDepthFn();
       }
     }
   };

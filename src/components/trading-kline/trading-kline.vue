@@ -3,18 +3,45 @@
       <div class='Two' :style="{paddingTop: origin === 'APP' ? '0.2rem' : ''}">
         <div class="top-mian">
           <p class='text1'>
-            <span class='txt3' :class="+gkdsList.percent24h < 0 ? 'red' : 'green'">{{ bb_zxj > 0 ? (Math.floor(bb_zxj * 10000) / 10000).toFixed(4) : '0.0000' }}</span>
-            <span class='txt4' :class="+gkdsList.percent24h < 0 ? 'red' : 'green'">≈ {{toSyMid > 0 ? (Math.floor(toSyMid * 100) / 100).toFixed(2) : '0.00'}} {{currency}}</span>
+            <span
+              class='txt3'
+              :class="+gkdsList.percent24h < 0 ? 'red' : 'green'"
+            >
+              {{ bb_zxj > 0 ? (Math.floor(bb_zxj * 10000) / 10000).toFixed(4) : '0.0000' }}
+            </span>
+            <span
+              class='txt4'
+              :class="+gkdsList.percent24h < 0 ? 'red' : 'green'"
+            >
+              ≈ {{toSyMid > 0 ? (Math.floor(toSyMid * 100) / 100).toFixed(2) : '0.00'}} {{currency}}
+            </span>
           </p>
           <div class='text2'>
-            <p><span class='gray txt1'>{{$t('trading.bbDepth.zf')}}</span><span class='txt2' :class="+gkdsList.percent24h < 0 ? 'red' : 'green'">{{gkdsList.percent24h}} %</span>
+            <p>
+              <span class='gray txt1'>
+                {{$t('trading.bbDepth.zf')}}
+              </span>
+              <span class='txt2' :class="+gkdsList.percent24h < 0 ? 'red' : 'green'">
+                {{gkdsList.percent24h}} %
+              </span>
             </p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zg')}}</span><span>{{gkdsList ? gkdsList.high : '0.0000'}}</span>
+            <p>
+              <span class='gray'>
+                {{$t('trading.bbDepth.zg')}}
+              </span>
+              <span>
+                {{gkdsList ? gkdsList.high : '0.0000'}}
+              </span>
             </p>
           </div>
           <div class='text3'>
-            <p><span class='gray'>24h </span><span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0.0000' : '0.0000'}}</span></p>
-            <p><span class='gray'>{{$t('trading.bbDepth.zd')}}</span><span>{{gkdsList ? gkdsList.low : '0.0000'}}</span>
+            <p>
+              <span class='gray'>24h </span>
+              <span>{{gkdsList ? gkdsList.volume ? gkdsList.volume : '0.0000' : '0.0000'}}</span>
+            </p>
+            <p>
+              <span class='gray'>{{$t('trading.bbDepth.zd')}}</span>
+              <span>{{gkdsList ? gkdsList.low : '0.0000'}}</span>
             </p>
           </div>
         </div>
@@ -46,8 +73,9 @@ import TradingClinchadeal from 'components/trading-clinchadeal/trading-clinchade
 import TradingDepthMap from 'components/trading-depth-map/trading-depth-map';
 import TVChartContainer from 'components/TVChartContainer/TVChartContainer';
 import {selectedTradingApi} from 'api/tradingOn';
+import { mapGetters } from 'vuex';
 import {
-    getLangType
+    getLangType,
   } from "common/js/util";
 export default {
     data() {
@@ -80,70 +108,64 @@ export default {
         this.watchAppChange();
     },
     methods: {
-        getSelectedTrading() {
-            if(this.bazDeal.symbol) {
-                selectedTradingApi({
-                    symbol: this.bazDeal.symbol,
-                    referCurrency: this.bazDeal.toSymbol
-                }).then(data => {
-                    // 获取涨幅
-                    this.bb_zxj = data.lastPrice;
-                    this.toSyMid = this.currency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
-                    data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
-                    data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
-                    data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';
-                    data.high = data.high > 0 ? (Math.floor(data.high * 10000) / 10000).toFixed(4) : '0.0000';
-                    this.gkdsList = {
-                        ...data
-                    };
-                });
-            }
-        },
-        changeMain() {
-            let target = event.target;
-            if (target.classList.contains('jj')) {
-            // 简介
-            this.tShow = '4';
-            }
-            if (target.classList.contains('gd')) {
-            // 挂单
-            this.tShow = '2';
-            }
-            if (target.classList.contains('cj')) {
-            // 成交
-            this.tShow = '1';
-            }
-            if (target.classList.contains('sd')) {
-            // 深度图
-            this.tShow = '3';
-            }
-        },
-        watchAppChange() {
-            const {symbol, toSymbol, origin, currency} = this.$route.query;
-            if(currency) {
-                this.currency = currency;
-            }
-            if(symbol && toSymbol && origin === 'APP') {
-                document.body.style.backgroundColor = '#1c2b3f';
-                this.origin = origin;
-                this.bazDeal = {
-                    symbol,
-                    toSymbol
+      getSelectedTrading() {
+        if(this.bazDeal.symbol) {
+            selectedTradingApi({
+                symbol: this.bazDeal.symbol,
+                referCurrency: this.bazDeal.toSymbol
+            }).then(data => {
+                // 获取涨幅
+                this.bb_zxj = data.lastPrice;
+                this.toSyMid = this.currency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
+                data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
+                data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
+                data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';
+                data.high = data.high > 0 ? (Math.floor(data.high * 10000) / 10000).toFixed(4) : '0.0000';
+                this.gkdsList = {
+                    ...data
                 };
-                sessionStorage.setItem('setBazDeal', JSON.stringify({
-                    id: 0,
-                    symbol,
-                    toSymbol
-                }));
-                this.getSelectedTrading();
-                if(this.tradingTime) {
-                    clearInterval(this.tradingTime);
-                }
-                this.tradingTime = setInterval(() => {
-                    this.getSelectedTrading();
-                }, 4000);
-            }
+            });
         }
+      },
+      changeMain() {
+          let target = event.target;
+          if (target.classList.contains('jj')) {
+          // 简介
+          this.tShow = '4';
+          }
+          if (target.classList.contains('gd')) {
+          // 挂单
+          this.tShow = '2';
+          }
+          if (target.classList.contains('cj')) {
+          // 成交
+          this.tShow = '1';
+          }
+          if (target.classList.contains('sd')) {
+          // 深度图
+          this.tShow = '3';
+          }
+      },
+      watchAppChange() {
+          const {symbol, toSymbol, origin, currency} = this.$route.query;
+          if(currency) {
+              this.currency = currency;
+          }
+          if(symbol && toSymbol && origin === 'APP') {
+              document.body.style.backgroundColor = '#1c2b3f';
+              this.origin = origin;
+              this.bazDeal = {
+                  symbol,
+                  toSymbol
+              };
+              sessionStorage.setItem('setBazDeal', JSON.stringify({
+                  id: 0,
+                  symbol,
+                  toSymbol
+              }));
+              this.getSelectedTrading();
+          }
+      }
     },
     components: {
         TradingSynopsis,
@@ -152,19 +174,20 @@ export default {
         TradingDepthMap,
         TVChartContainer
     },
+    computed: mapGetters([
+      'isUpdateMarket'
+    ]),
     watch: {
-        setBazDeal: {
-            handler(val) {
-                this.bazDeal = val;
-                this.getSelectedTrading();
-            },
-            deep: true
-        }
-    },
-    beforeDestroy() {
-        if(this.tradingTime) {
-            clearInterval(this.tradingTime);
-        }
+      setBazDeal: {
+        handler(val) {
+          this.bazDeal = val;
+          this.getSelectedTrading();
+        },
+        deep: true
+      },
+      isUpdateMarket() {
+        this.getSelectedTrading();
+      }
     }
 }
 </script>

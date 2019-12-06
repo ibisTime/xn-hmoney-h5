@@ -35,7 +35,8 @@
 <script>
 import { formatAmount } from "common/js/util";
 import { getHandicapData } from 'api/bb';
-// import Scroll from 'base/scroll/scroll';
+import { mapGetters } from 'vuex';
+
   export default {
     props: {
       bazDeal: {
@@ -49,6 +50,10 @@ import { getHandicapData } from 'api/bb';
         default(){
           return {};
         }
+      },
+      isUpdate: {
+        type: Boolean,
+        default: false
       }
     },
     data(){
@@ -91,6 +96,9 @@ import { getHandicapData } from 'api/bb';
         });
       }
     },
+    computed: mapGetters([
+      'isUpdateHandicap'
+    ]),
     watch: {
       bazDeal: {
         handler(val, oldVal){
@@ -102,9 +110,11 @@ import { getHandicapData } from 'api/bb';
       gkdsList: {
         handler(val, oldVal){
           this.setBazDeal = this.bazDeal;
-          this.handicapData();
         },
         deep: true
+      },
+      isUpdateHandicap() {
+        this.handicapData();
       }
     }
   };

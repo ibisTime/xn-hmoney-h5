@@ -78,7 +78,7 @@ export default {
               data.list.map(item => {
                   item.amount = formatAmount(item.amount, '', item.currency);
                   item.fee = formatAmount(item.fee, '', item.currency);
-                  item.status = this.statusObj[item.status],
+                  item.status = this.statusObj[item.status];
                   item.applyDatetime = formatDate(item.applyDatetime, 'yyyy-MM-dd hh:mm:ss');
               });
               if (data.totalPage <= this.config.start) {
