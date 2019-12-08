@@ -110,6 +110,7 @@ import { mapGetters } from 'vuex';
       gkdsList: {
         handler(val, oldVal){
           this.setBazDeal = this.bazDeal;
+          this.handicapData();
         },
         deep: true
       },

@@ -830,8 +830,8 @@
       },
       isUpdateMarket() {
         this.getSelectedTrading({
-          symbol: _this.setBazDeal.symbol,
-          referCurrency: _this.setBazDeal.toSymbol
+          symbol: this.setBazDeal.symbol,
+          referCurrency: this.setBazDeal.toSymbol
         });
       },
       isUpdateSimuorder() {

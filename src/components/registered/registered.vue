@@ -232,11 +232,11 @@ export default {
       login(username, password).then(data => {
         this.isLoading = false;
         setUser(data);
-        if(window.SOCKET) {
-          window.SOCKET.close();
+        if(window.SOCKET && window.SOCKET.onmessage) {
+          window.SOCKET.send('close');
+          window.SOCKET = null;
         }
         const userId = data.userId;
-        window.SOCKET = new WebSocket(`ws://api.twtdev.hichengdai.com/ws?userId=${userId}`);
         this.$router.push('page');
       }, () => {
         this.isLoading = false;

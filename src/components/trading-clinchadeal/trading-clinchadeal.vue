@@ -90,6 +90,7 @@
       },
       gkdsList(val, oldVal) {
         this.setBazDeal = this.bazDeal;
+        this.realTimeData();
       },
       isUpdateSimuorderdetail() {
         this.realTimeData();

@@ -137,6 +137,7 @@
         code: '650066',
         json: JSON.stringify(requestParams)
       };
+      console.log(requestParams.startDatetime);
       return new Promise(function (resolve, reject) {
         $.ajax({
           type: 'post',
@@ -166,7 +167,8 @@
                 low: response[i].low,
                 volume: response[i].volume,
                 isBarClosed: true,
-                isLastBar: false
+                isLastBar: false,
+                sTime: formatDate(response[i].startDatetime, 'yyyy-MM-dd hh:mm')
               };
               if (i === response.length - 1) {
                 barValue.isBarClosed = false;
@@ -179,7 +181,7 @@
           if (bars.length >= 500) {
             $('#tv_chart_container').attr('startDatetime', bars[499].time);
           }
-          // console.log(bars, meta);
+          console.log(bars);
           resolve({
             bars: bars,
             meta: meta
@@ -239,6 +241,7 @@
           });
       };
       let _this1 = this;
+      console.log('1', this$1._subscribers);
       for (let listenerGuid in this$1._subscribers) {
         _loop1(listenerGuid);
       }

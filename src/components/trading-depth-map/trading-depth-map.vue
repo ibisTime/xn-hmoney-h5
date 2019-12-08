@@ -182,12 +182,14 @@
       bazDeal: {
         handler(val, oldVal) {
           this.setBazDeal = val;
+          this.getDepthFn();
         },
         deep: true
       },
       gkdsList: {
         handler(val, oldVal) {
           this.setBazDeal = this.bazDeal;
+          this.getDepthFn();
         },
         deep: true
       },

@@ -89,7 +89,8 @@ export default {
     quitLogin(){
       clearUser();
       if(window.SOCKET) {
-        window.SOCKET.close();
+        window.SOCKET.send('close');
+        window.SOCKET = null;
       }
       setTimeout( () => {
         this.$router.push('/login');
