@@ -1,58 +1,55 @@
 <template>
   <div class="wallet-out-wrapper" @click.stop>
     <div class='main'>
-      <p class='text'>
-        <span>{{$t('walletOut.subject.kyye')}}</span>
+      <p class='text' style="position: relative;">
+        <span>可用余额</span>
         <input type="text" class='dis' readonly v-model="value">
-        <router-link :to="'wallet-bill'+'?accountNumber=' + config.accountNumber" style="margin-left: 0.6rem;">{{$t('walletOut.subject.jl')}}</router-link>
+        <router-link
+          :to="`transfer-record?accountNumber=${config.accountNumber}&bizType=withdraw`"
+          style="position: absolute; right: 0rem;"
+        >记录</router-link>
       </p>
       <p class='text'>
-        <span>{{$t('walletOut.subject.jsdz')}}</span>
-        <input type="text" :placeholder="$t('walletOut.subject.qsrzzdz')" v-model="config.payCardNo">
+        <span>接收地址</span>
+        <input type="text" placeholder="请输入接收地址" v-model="config.payCardNo" autocomplete="new-password">
       </p>
       <p class='text'>
-        <span>{{$t('walletOut.subject.zzsl')}}</span>
-        <input type="number" :placeholder="$t('walletOut.subject.qsrsl')" v-model="zAmount">
+        <span>提币数量</span>
+        <input type="number" placeholder="请输入提币数量" v-model="zAmount">
       </p>
       <p class='text'>
-        <span>{{$t('walletOut.subject.zjmm')}}</span>
-        <input type="password" :placeholder="$t('walletOut.subject.qsrzjmm')" v-model="config.tradePwd">
+        <span>交易密码</span>
+        <input type="password" placeholder="请输入交易密码" v-model="config.tradePwd" autocomplete="new-password">
       </p>
-      <!-- <p class='text'>
-        <span>谷歌验证码</span>
-        <input type="text" placeholder="请输入谷歌验证码" v-model="config.tradePwd">
-      </p> -->
-      <p class='text'>
-        <span>{{$t('walletOut.subject.txsm')}}</span>
+      <p class='text' style="position: relative;">
+        <span>验证码</span>
+        <input type="text" placeholder="请输入验证码" v-model="config.smsCaptcha">
+        <span
+          style="position: absolute; right: 0rem; width: 1.8rem;text-align: right;"
+          :class="isSend ? '' : 'send_smc'"
+          @click="sendSmsCode"
+        >{{isSend ? `重新获取(${timer})s` : '获取验证码'}}</span>
       </p>
-      <div class="tx-box">
-        <textarea type="text" :placeholder="$t('walletOut.subject.qsrsm')" v-model="config.applyNote"></textarea>
-      </div>
-
     </div>
+    <p class="line"></p>
     <div class='plan'>
       <p class='kgfee'>
-        {{$t('walletOut.subject.kgf')}}：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
+        手续费：{{feeAmount}} <span class="cur_fee">({{currency}})</span>
       </p>
-      <div class='text2'>
-        <ul v-if="langType === 'zh'">
-          <li>FMVP 地址只能充值 {{currency}} 资产，任何充入 {{currency}} 地址的非 {{currency}} 资产将不可找回。</li>
-          <li>在平台内相互转账是实时到账且免费的。</li>
-        </ul>
-        <ul else>
-          <li>{{currency}} address can only recharge {{currency}} assets, any non - {{currency}} assets will not be recovered.</li>
-          <li>Mutual transfers within the platform are real-time and free of charge.</li>
-        </ul>
+      <p class='tx_text'>
+        <span>提现说明</span>
+      </p>
+      <div class="tx_text_con" v-html="withdrawRule">
       </div>
     </div>
-    <button @click="walletOut">{{$t('walletOut.subject.qrzz')}}</button>
-    <Toast :text="textMsg" ref="toast" />
+    <button @click="walletOut">确认提币</button>
+    <Toast :text="textMsg" ref="toast" :delay="2000"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import {walletOut} from 'api/person';
-import {getSysConfig} from 'api/general';
+import {walletOut, getSmsCaptchaPhone, getSmsCaptchaEmail} from 'api/person';
+import {getBbListData} from 'api/tradingOn';
 import { getUrlParam, getUserId, setTitle, formatAmount, formatMoneyMultiply, getLangType } from 'common/js/util';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -62,7 +59,9 @@ export default {
     return {
       textMsg: '',
       isLoading: false,
+      isSend: false,
       currency: '',
+      withdrawRule: '',
       amount: '',
       feeAmount: '',
       value: '',
@@ -70,44 +69,94 @@ export default {
       paw: '',
       bbNumber: '',
       zAmount: '',
+      loginName: '',
+      timer: 60,
+      timeInter: null,
       langType: getLangType(),
       config: {
         accountNumber: '',
         amount: '',
-        applyNote: '',
         applyUser: getUserId(),
         payCardInfo: '',
         payCardNo: '',
-        tradePwd: ''
+        tradePwd: '',
+        smsCaptcha: ''
       }
     }
   },
   created() {
-    setTitle(this.$t('walletOut.subject.zc'));
+    setTitle('提币');
     this.currency = getUrlParam('currency');
     this.amount = getUrlParam('amount');
+    this.loginName = getUrlParam('loginName');
     this.value = this.amount + this.currency;
     this.config.accountNumber = getUrlParam('accountNumber');
     this.config.payCardInfo = this.currency;
-    getSysConfig('withdraw_fee').then(data => {
-      this.feeAmount = (data.cvalue * 100) + '%';
-    })
+    getBbListData().then(data => {
+      const currencyData = data.filter(item => item.symbol === this.currency)[0];
+      const withdrawFee = +currencyData.withdrawFee;
+      this.withdrawRule = currencyData.withdrawRule;
+      this.feeAmount = withdrawFee > 0 ? (Math.floor(withdrawFee * 10000) / 10000).toFixed(4) : '0.0000';
+    });
   },
   methods: {
+    sendSmsCode() {
+      if(this.isSend) {
+        return false;
+      }
+      if(!this.config.tradePwd) {
+        this.textMsg = '请填写交易密码';
+        this.$refs.toast.show();
+        return;
+      }
+      if(this.loginName.match(/@/)) {
+        getSmsCaptchaEmail({
+          bizType: '802350',
+          email: this.loginName,
+          tradePwd: this.config.tradePwd
+        }).then(() => {
+          this.isSend = true;
+          this.timeInter = setInterval(() => {
+            this.timer --;
+            if(this.timer <= 0) {
+              clearInterval(this.timeInter);
+              this.timer = 60;
+              this.isSend = false;
+            }
+          }, 1000);
+        });
+      }else {
+        getSmsCaptchaPhone({
+          bizType: '802350',
+          mobile: this.loginName,
+          tradePwd: this.config.tradePwd
+        }).then(() => {
+          this.isSend = true;
+          this.timeInter = setInterval(() => {
+            this.timer --;
+            if(this.timer <= 0) {
+              clearInterval(this.timeInter);
+              this.timer = 60;
+              this.isSend = false;
+            }
+          }, 1000);
+        });
+      }
+    },
     walletOut() {
-      if(this.config.payCardNo == '' || this.zAmount == '' || this.config.tradePwd == '' || this.config.applyNote == ''){
-        this.textMsg = this.$t('common.txwz');
+      if(!this.config.payCardNo || !this.zAmount || !this.config.tradePwd){
+        this.textMsg = '请填写完整';
         this.$refs.toast.show();
         return;
       }
       this.isLoading = true;
       this.config.amount = formatMoneyMultiply(this.zAmount, '', this.currency);
-      walletOut(this.config).then(data => {
+      walletOut(this.config).then(() => {
         this.isLoading = false;
-        this.textMsg = this.$t('common.czcg');
+        this.textMsg = '操作成功';
         this.$refs.toast.show();
         setTimeout(() => {
-          this.$router.push(`/wallet-bill?accountNumber=${this.config.accountNumber}`);
+          this.$router.push(`/wallet`);
         }, 1500);
       }, () => {
         this.isLoading = false;
@@ -116,6 +165,11 @@ export default {
     formatAmount(money, unit, coin) {
       return formatAmount(money, unit, coin);
     },
+  },
+  beforeDestroy() {
+    if(this.timeInter) {
+      clearInterval(this.timeInter);
+    }
   },
   components: {
     Toast,
@@ -131,7 +185,8 @@ export default {
     font-size: 0.32rem;
     color: #333;
     text-align: center;
-
+    height: 100%;
+    background-color: #fff;
     .icon {
         display: inline-block;
         background-repeat: no-repeat;
@@ -177,7 +232,6 @@ export default {
       width: 100%;
       padding: 0 .3rem;
       background: #fff;
-      margin-bottom: .2rem;
       .tx-box{
         text-align: left;
         textarea{
@@ -236,7 +290,11 @@ export default {
         }
       }
     }
-
+    .line{
+      height: 0.2rem;
+      width: 100%;
+      background-color: #f5f5f5;
+    }
     .plan {
       width: 100%;
       padding: 0 .3rem;
@@ -251,6 +309,12 @@ export default {
             font-size: 0.28rem;
             color: #666;
           }
+        }
+        .kgfee_tit{
+          font-size: 0.28rem;
+          color: #666;
+          text-align: left;
+          margin-top: 0.1rem;
         }
       .text1 {
         padding-top: .34rem;
@@ -304,6 +368,20 @@ export default {
         }
       }
     }
+    .tx_text{
+      margin-top: 0.3rem;
+      color: #333;
+      font-size: 0.3rem;
+      text-align: left;
+    }
+    .tx_text_con{
+      overflow: hidden;
+      font-size: 0.28rem;
+      color: #666;
+      text-align: left;
+      margin-top: 0.2rem;
+      line-height: 0.4rem;
+    }
 
     button {
       width: 6.9rem;
@@ -314,9 +392,9 @@ export default {
       line-height: .96rem;
       color: #fff;
     }
-
-
-
+  .send_smc{
+    color: red;
+  }
 }
 
 </style>

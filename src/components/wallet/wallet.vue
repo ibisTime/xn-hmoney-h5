@@ -1,44 +1,57 @@
 <template>
-  <div class="wallet-wrapper" @click.stop>
-    <div class='banner'>
-      <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}} FMVP</p>
-      <div class='txt2' style='margin-top:.3rem;'>
-        <p class='t1'>{{cdInfo.currency}} {{currency}}</p>
-      </div>
-      <div class='txt3'>
-      </div>
+  <div class="wallet-wrapper">
+    <div class="wrapper">
+      <Scroll :pullUpLoad="null">
+        <div style="padding-bottom: 0.8rem; padding-top: 0.3rem;">
+          <div class='banner'>
+            <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
+            <div class='txt2' style='margin-top:.12rem;'>
+              <p class='t1'>{{cdInfo.totalAmountTWT}} TWT</p>
+              <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
+            </div>
+            <div class='txt3'>
+            </div>
+          </div>
+          <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
+            <i class="icon" :style="{backgroundImage: `url('${infoItem.coinIcon}')`}"></i>
+            <div class='my'>
+              <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}</p>
+              <p class='txt2'>{{infoItem.amount}}</p>
+              <div class='txt3'>
+                <p :title="infoItem.frozenAmount">折合：{{infoItem.current}} {{currency}}</p>
+                <p :title="infoItem.syAmount" class="sy_p">
+                  冻结：{{infoItem.frozenAmount}}
+                </p>
+              </div>
+            </div>
+            <div class='datil'>
+              <div class='box' @click="toZrMoney(infoItem)">
+                <i class='icod'></i>
+                <span>充币</span>
+              </div>
+              |
+              <div
+                class='box'
+                @click="zcMoneyFn(infoItem)"
+              ><i class='icoz'></i><span>提币</span></div>
+              |
+              <div class='box'>
+                <i class='icoc'></i>
+                <router-link
+                  :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber"
+                  @click.native="() => {
+                    toWalletBill(infoItem);
+                  }"
+                >{{$t('wallet.subject.zd')}}
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Scroll>
     </div>
-    <!-- <div class='dollar'>
-      <i class='icon ico1'></i>
-      <span>$1 ≈ ¥6.6079</span>
-      <i class='icon ico2'></i>
-      <i class='icon ico3'></i>
-    </div> -->
-    <div class='my-assets' v-for="(infoItem, index) in info" :key="index">
-      <i class="icon"
-         :class="[{'ico1': infoItem.currency == 'FMVP'}, {'ico2': infoItem.currency == 'ETH'}, {'ico3': infoItem.currency == 'BTC'}]"></i>
-      <div class='my'>
-        <p class='txt1'>{{infoItem.currency}}{{$t('wallet.subject.bzzc')}}({{infoItem.currency}})</p>
-        <p class='txt2'>{{infoItem.amount}}</p>
-        <p class='txt3'><span :title="infoItem.frozenAmount">{{$t('wallet.subject.dj')}}{{infoItem.frozenAmount}}</span><span
-          :title="infoItem.syAmount">{{$t('wallet.subject.ky')}}{{infoItem.syAmount}} {{infoItem.currency}}</span>
-        </p>
-      </div>
-      <div class='datil'>
-        <div class='box'><i class='icon icod'></i>
-          <router-link
-            :to="'wallet-into'+'?adress='+infoItem.address + '&currency=' + infoItem.currency + '&accountNumber=' + infoItem.accountNumber ">
-            {{$t('wallet.subject.zr')}}
-          </router-link>
-        </div>
-        |
-        <div class='box' @click="zcMoneyFn(infoItem.currency, infoItem.amount, infoItem.accountNumber)"><i
-          class='icon icoz'></i><span>{{$t('wallet.subject.zc')}}</span></div>
-        |
-        <div class='box'><i class='icon icoc'></i>
-          <router-link :to="'wallet-bill'+'?accountNumber='+infoItem.accountNumber">{{$t('wallet.subject.zd')}}</router-link>
-        </div>
-      </div>
+    <div class="transfer_box" @click="toWalletTransfer">
+      转账
     </div>
     <Footer></Footer>
     <Toast :text="textMsg" ref="toast"/>
@@ -47,7 +60,8 @@
 </template>
 <script>
   import Footer from 'components/footer/footer';
-  import {userAllMoneyX, wallet, getUser} from 'api/person';
+  import Scroll from 'base/scroll/scroll';
+  import {wallet, getUser} from 'api/person';
   import Toast from 'base/toast/toast';
   import FullLoading from 'base/full-loading/full-loading';
   import {
@@ -59,6 +73,7 @@
     setCoinData,
     setTitle
   } from 'common/js/util';
+  import { mapGetters } from 'vuex';
 
   export default {
     data() {
@@ -67,46 +82,59 @@
         isLoading: true,
         info: [{}, {}, {}],
         cdInfo: {},
-        currency: 'CNY'
+        currency: 'CNY',
+        loginName: ''
       };
     },
-    computed: {},
     created() {
       setTitle(this.$t('wallet.subject.wdzc'));
+      this.currency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       this.wallet();
-      userAllMoneyX(this.currency).then(v => {
-        v.currency = (Math.floor(v.currency * 100) / 100).toFixed(2);
-        this.cdInfo = v;
-      })
+      sessionStorage.removeItem('paw_go_back');
+      sessionStorage.removeItem('walletItem');
     },
     methods: {
       // 列表查询用户账户
       wallet() {
         wallet().then(v => {
-          v.map(item => {
-            item.syAmount = formatMoneySubtract(item.amount, item.frozenAmount, '', item.currency);
-            item.amount = formatAmount(item.amount, '', item.currency);
-            item.frozenAmount = formatAmount(item.frozenAmount, '', item.currency);
-          })
-          this.info = v;
+          this.cdInfo = {
+            totalAmountCNY: v.totalAmountCNY > 0 ? ((Math.floor(v.totalAmountCNY * 100)) / 100).toFixed(2) : '0.00',
+            totalAmountTWT: v.totalAmountTWT > 0 ? ((Math.floor(v.totalAmountTWT * 1e8)) / 1e8).toFixed(8) : '0.00000000',
+            totalAmountUSD: v.totalAmountUSD > 0 ? ((Math.floor(v.totalAmountUSD * 100)) / 100).toFixed(2) : '0.00'
+          };
+          this.info = v.accountList.map(item => ({
+            ...item,
+            syAmount: item.amount === 0 ? '0.00000000' : formatMoneySubtract(item.amount, item.frozenAmount, '8', item.currency),
+            amount: item.amount === 0 ? '0.00000000' : formatAmount(item.amount, '8', item.currency),
+            frozenAmount: item.frozenAmount === 0 ? '0.00000000' :formatAmount(item.frozenAmount, '8', item.currency),
+            current: this.currency === 'CNY' ? item.currentCny : item.currentUsd,
+            coinIcon: PIC_PREFIX + item.coinIcon
+        }));
           this.isLoading = false;
         }, () => {
           this.isLoading = false;
         });
       },
       // 转出
-      zcMoneyFn(currency, amount, accountNumber) {
+      zcMoneyFn(infoItem) {
         getUser().then(data => {
           if (data.tradepwdFlag) {
-            this.$router.push(`wallet-out?currency=${currency}&amount=${amount}&accountNumber=${accountNumber}`);
+            sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+            this.$router.push(`wallet-out?currency=${infoItem.currency}&amount=${infoItem.amount}&accountNumber=${infoItem.accountNumber}&loginName=${data.loginName}`);
           } else if (!data.tradepwdFlag) {
             this.textMsg = this.$t('wallet.subject.szjymm');
             this.$refs.toast.show();
             setTimeout(() => {
+              const goBack = this.$route.path;
+              sessionStorage.setItem('paw_go_back', goBack);
               this.$router.push('/security-tradePassword?istw=0');
             }, 1500);
           }
         });
+      },
+      toZrMoney(infoItem) {
+        sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+        this.$router.push(`/wallet-into?adress=${infoItem.address}&currency=${infoItem.currency}&accountNumber=${infoItem.accountNumber}`);
       },
       formatAmount(money, format, coin) {
         return formatAmount(money, format, coin);
@@ -117,12 +145,27 @@
       toOtcFn(){
         sessionStorage.removeItem('coin');
         sessionStorage.setItem('tradeType', '1');
+      },
+      toWalletBill(infoItem) {
+        sessionStorage.setItem('walletItem', JSON.stringify(infoItem));
+      },
+      toWalletTransfer() {
+        this.$router.push(`/wallet-transfer`);
       }
     },
     components: {
       Footer,
       Toast,
-      FullLoading
+      FullLoading,
+      Scroll
+    },
+    computed: mapGetters([
+      'isUpdateAccount'
+    ]),
+    watch: {
+      isUpdateAccount() {
+        this.wallet();
+      }
     }
   };
 </script>
@@ -135,10 +178,16 @@
     font-family: PingFangSC-Medium;
     color: #333;
     width: 100%;
-    padding: 0.3rem .3rem .96rem .3rem;
     background: #fff;
-    overflow: auto;
-
+    .wrapper{
+      position: absolute;
+      z-index: 10;
+      top: 0rem;
+      bottom: 0rem;
+      left: 0.3rem;
+      right: 0.3rem;
+      overflow: auto;
+    }
     .icon {
       display: inline-block;
       background-repeat: no-repeat;
@@ -242,47 +291,40 @@
       border-radius: .14rem;
       position: relative;
       margin-bottom: 0.5rem;
-      .ico1, .ico2, .ico3 {
+      .icon {
         width: 1.2rem;
         height: 1.2rem;
-        @include bg-image("f");
         position: absolute;
         top: .3rem;
         right: .4rem;
-      }
-      .ico2 {
-        background-image: url('./yt.png');
-      }
-      .ico3 {
-        background-image: url('./bt.png');
+        border-radius: 100%;
+        opacity: 0.6;
       }
       .my {
-        padding: .3rem .62rem .3rem .2rem;
+        padding: .3rem .36rem .3rem .2rem;
         .txt1 {
           color: #D53D3D;
           letter-spacing: .0025rem;
           line-height: .42rem;
           padding-bottom: .22rem;
-          margin-left: .1rem;
         }
         .txt2 {
           font-size: .48rem;
           line-height: .48rem;
           color: #333;
-          margin-left: .1rem;
-          padding-bottom: .24rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 0.14rem;
         }
         .txt3 {
           font-size: .22rem;
-          line-height: .24rem;
           color: #999;
-          display: flex;
-          justify-content: space-between;
-          span {
-            width: 49%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+          .sy_p{
+            border-radius: 0.04rem;
+            margin-top: 0.22rem;
+            padding: 0.14rem 0.2rem;
+            background-color: #F5F5F5;
           }
         }
       }
@@ -298,22 +340,31 @@
           text-align: center;
           position: relative;
           color: #333;
-
           a {
             color: #333;
             display: inline-block;
           }
 
+          .icon{
+            margin-top: -0.04rem;
+          }
+
           .icod {
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
             width: .3rem;
-            height: .3rem;
+            height: .26rem;
             background-image: url('./zr.png');
             background-size: .3rem;
             vertical-align: middle;
           }
           .icoz {
-            width: .3rem;
-            height: .3rem;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
+            width: .26rem;
+            height: .26rem;
             background-image: url('./zc.png');
             margin-right: .1rem;
             vertical-align: middle;
@@ -321,7 +372,10 @@
           }
 
           .icoc {
-            width: .3rem;
+            display: inline-block;
+            background-size: 100% 100%;
+            background-repeat: none;
+            width: .26rem;
             height: .3rem;
             background-image: url('./zd.png');
             margin-right: .1rem;
@@ -352,7 +406,24 @@
       }
 
     }
-
+    .transfer_box{
+      position: fixed;
+      bottom: 1.4rem;
+      right: 0.2rem;
+      width: 0.88rem;
+      height: 0.88rem;
+      line-height: 0.88rem;
+      text-align: center;
+      border-radius: 100%;
+      background-color: #D53D3D;
+      color: #fff;
+      font-size: 0.26rem;
+      z-index: 999;
+      opacity: 0.8;
+      &:hover{
+        opacity: 0.9;
+      }
+    }
   }
 
 </style>

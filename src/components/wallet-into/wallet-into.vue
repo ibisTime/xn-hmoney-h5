@@ -7,7 +7,7 @@
         <i class='icon' @click="txtShow = false"></i>
     </div>
     <p class='my-address'>
-        {{$t('walletInto.subject.zrdz')}}
+      我的充币地址
     </p>
     <div class='erweima'>
         <div class='ewm-wrap'>
@@ -15,7 +15,9 @@
         </div>
     </div>
     <div class='address'>
-        <p class='txt'>{{$t('walletInto.subject.dz')}} <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link></p>
+        <p class='txt'>{{$t('walletInto.subject.dz')}}
+          <router-link :to="'wallet-bill'+'?accountNumber=' + accountNumber" class='txt2'>{{$t('walletInto.subject.jl')}}</router-link>
+          </p>
         <input id='copyObj' class='url' readonly type="text" v-model="adress"/>
     </div>
     <button @click='CopyUrl' ref="copy" data-clipboard-action="copy" data-clipboard-target="#copyObj">{{$t('walletInto.subject.fzskdz')}}</button>
@@ -38,7 +40,7 @@ export default {
     };
   },
   created() {
-    setTitle(this.$t('walletInto.subject.zr'));
+    setTitle('充币');
     this.adress = getUrlParam('adress');
     this.currency = getUrlParam('currency');
     this.accountNumber = getUrlParam('accountNumber');
@@ -133,11 +135,12 @@ export default {
     padding: 0.16rem 0.3rem 0.18rem;
     position: relative;
     .text {
-      width: 6.26rem;
       display: inline-block;
       font-size: 0.24rem;
       line-height: 0.33rem;
       color: #f59218;
+      text-align: left;
+      padding-right: 0.36rem;
     }
     .icon {
       width: 0.28rem;

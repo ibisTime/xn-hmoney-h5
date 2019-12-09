@@ -4,41 +4,38 @@
           <h3 class="title">{{$t('registered.subject.zc')}}</h3>
           <p calss="tabs" id="tabs">
               <span :class="[flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag1">{{$t('registered.subject.sjzc')}}</span>
-              <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">{{$t('registered.subject.yxzc')}}</span>
+              <!-- <span :class="[!flag ? 'activeClass tab-item' : '', 'tab-item']" @click="changeFlag2">{{$t('registered.subject.yxzc')}}</span> -->
           </p>
           <router-view></router-view>
           <div class="main-tel">
-            <p><input type="text" name="username" v-validate="'required|nickname'" :placeholder="$t('registered.subject.srnc')" v-model="nickname">
-            <span v-show="errors.has('username')" class="error-tip">{{errors.first('username')}}</span>
-            </p>
-            <p>
-            <input required v-model="phone" v-show="flag" name="phone" v-validate="'required|phone'" type="text" :placeholder="$t('registered.subject.srsjh')">
+            <p class="iup_p" v-show="flag">
+            <input required v-model="phone" name="phone" v-validate="'required|phone'" type="number" :placeholder="$t('registered.subject.srsjh')" @blur="blurIn">
             <span v-show="errors.has('phone')" class="error-tip">{{errors.first('phone')}}</span>
             </p>
-            <p>
-            <input required v-model="email" v-show="!flag" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')">
+            <p class="iup_p" v-show="!flag">
+            <!-- <input required v-model="email" name="email" v-validate="'required|email'" type="text" :placeholder="$t('registered.subject.sryxh')" @blur="blurIn"> -->
             <span v-show="errors.has('email')" class="error-tip">{{errors.first('email')}}</span>
             </p>
-            <p class="yzm">
-            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" :placeholder="$t('registered.subject.sryzm')">
+            <p class="yzm iup_p">
+            <input required v-model="smsCaptcha" name="capt" v-validate="'required|capt'" pattern="^\d{4}$" type="number" :placeholder="$t('registered.subject.sryzm')" @blur="blurIn">
             <span v-show="errors.has('capt')" class="error-tip capt">{{errors.first('capt')}}</span>
-            <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
+            <input v-show="!fscg && type== '0'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')" @blur="blurIn">
             <span class="cxfs" v-if="fscg && type== '0'">{{$t('registered.subject.cxfs')}}({{time1}}s)</span>
-            <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')">
+            <input v-show="!fscg1 && type== '1'" type="button" class="getYam" @click="getSca1()" :value="$t('registered.subject.hqyzm')" @blur="blurIn">
             <span class="cxfs" v-if="fscg1 && type== '1'">{{$t('registered.subject.cxfs')}}({{time2}}s)</span>
             </p>
-            <p>
-            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.ldslw')">
+            <p class="iup_p">
+            <input required v-model="password1" name="password" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.ldslw')" @blur="blurIn">
             <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
             </p>
-            <p>
-            <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.qrmm')">
+            <p class="iup_p">
+            <input required v-model="password2"  name="password1" v-validate="'required|password'" type="password" :placeholder="$t('registered.subject.qrmm')" @blur="blurIn">
             <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
             </p>
             <p class="check">
             <span @click="changeBg" :class="[checked ? 'checkbox active' : 'checkbox']"></span><span @click="isLook = true">{{$t('registered.subject.wyjs')}}<i>{{$t('registered.subject.xytk')}}</i></span>
             </p>
-            <input type="submit" @click="regist" :value="$t('registered.subject.zc')" :class="{'nosubmut': !checked}"/>
+            <input type="submit" @click="regist" :value="$t('registered.subject.zc')" :class="{'nosubmut': !checked}" @blur="blurIn"/>
           </div>
       </div>
       <!-- 注册条款 -->
@@ -55,12 +52,13 @@
 </template>
 <script>
 import {
+  login,
   reistered,
   reisteredEamil,
-  getSmsCaptcha1,
-  getSmsCaptcha2
+  getSmsCaptchaPhone,
+  getSmsCaptchaEmail
 } from "api/person";
-import { rePwdValid, getUrlParam, setTitle } from "common/js/util";
+import { rePwdValid, getUrlParam, setTitle, setUser } from "common/js/util";
 import { getSysConfig } from 'api/general';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
@@ -127,7 +125,10 @@ export default {
         }
         this.isLoading = true;
         this.fscg = true;
-        getSmsCaptcha1(this.bizType1, this.phone).then(data => {
+        getSmsCaptchaPhone({
+          bizType: this.bizType1,
+          mobile: this.phone
+        }).then(() => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time1 --;
@@ -149,7 +150,10 @@ export default {
         }
         this.isLoading = true;
         this.fscg1 = true;
-        getSmsCaptcha2(this.bizType2, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType2,
+          email: this.email
+        }).then(() => {
           this.isLoading = false;
           let phTime = setInterval(() => {
             this.time2 --;
@@ -171,7 +175,7 @@ export default {
         this.$refs.toast.show();
         return;
       }
-      if(this.nickname != '' && this.smsCaptcha != '' && this.password1 != '' && !this.errors.any()){
+      if(this.smsCaptcha != '' && this.password1 != '' && !this.errors.any()){
         if(this.password1 !== this.password2){
           this.textMsg = this.$t('registered.subject.mmbyz');
           this.$refs.toast.show();
@@ -182,11 +186,10 @@ export default {
           smsCaptcha: this.smsCaptcha,
           email: this.email,
           mobile: this.phone,
-          loginPwd: this.password1,
-          nickname: this.nickname
+          loginPwd: this.password1
         }
         if(this.inviteCode != '' && this.inviteCode != undefined){
-          this.config.userReferee = this.inviteCode;
+          this.config.inviteCode = this.inviteCode;
         }
         this.isLoading = true;
         if(this.flag == false) {
@@ -197,8 +200,8 @@ export default {
             this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('login');
-            }, 1500);
+              this.toLogin(this.config.email, this.config.loginPwd);
+            }, 1000);
           }, () => {
             this.isLoading = false;
           });
@@ -210,13 +213,13 @@ export default {
             this.textMsg = this.$t('registered.subject.zccg');
             this.$refs.toast.show();
             setTimeout(() => {
-              this.$router.push('login');
-            }, 1500);
+              this.toLogin(this.config.mobile, this.config.loginPwd);
+            }, 1000);
           }, () => {
             this.isLoading = false;
           });
         }
-      }else if(this.nickname == '' || this.smsCaptcha == '' || this.password1 == ''){
+      }else if(this.smsCaptcha == '' || this.password1 == ''){
         this.textMsg = this.$t('registered.subject.txwz');
         this.$refs.toast.show();
         return;
@@ -224,6 +227,23 @@ export default {
     },
     changeBg(){
       this.checked = !this.checked;
+    },
+    toLogin(username, password) {
+      login(username, password).then(data => {
+        this.isLoading = false;
+        setUser(data);
+        if(window.SOCKET && window.SOCKET.onmessage) {
+          window.SOCKET.send('close');
+          window.SOCKET = null;
+        }
+        const userId = data.userId;
+        this.$router.push('page');
+      }, () => {
+        this.isLoading = false;
+      });
+    },
+    blurIn () {
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0))
     }
   },
   components: {
@@ -258,18 +278,19 @@ export default {
   .card {
     width: 6.3rem;
     margin: 0 auto;
-
+    padding-bottom: 0.3rem;
     input[type="number"],
     input[type="text"],
     input[type="password"] {
       width: 6.1rem;
       border-bottom: 0.02rem solid #e3e3e3;
       font: 0.32rem/1.28rem PingFangSC-Medium;
-      color: #999;
-      padding: 0.3rem 0.1rem;
+      color: #333;
+      padding: 0 0.1rem;
+      margin-bottom: 0.3rem;
       box-sizing: border-box;
-      height: 1.2rem;
-      line-height: 1.2rem;
+      height: 0.8rem;
+      line-height: 0.8rem;
       letter-spacing: 0.0027rem;
     }
 
@@ -383,13 +404,14 @@ export default {
       top: 0.3rem;
       right: 0;
       font: 0.26rem/.68rem PingFangSC-Regular;
-      font-size: 0.32rem;
+      font-size: 0.28rem;
       width: 2.45rem;
       text-align: center;
       height: 0.78rem;
       line-height: 0.78rem;
       display: inline-block;
-      border: 1px solid #ccc;
+      color: #666;
+      // border: 1px solid #ccc;
       border-radius: 0.04rem;
     }
   }

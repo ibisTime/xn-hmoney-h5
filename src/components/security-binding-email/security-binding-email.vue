@@ -7,9 +7,9 @@
       </p>
       <p class='text3 item-captcha-wrap'>
         <input class="item-input" v-model="captcha" type="text" :placeholder="$t('bindEmail.subject.sryz')">
-        <i v-show="!show" class='icon' @click="captcha = ''"></i>
-        <span v-show="show" @click="" class='txt2'>{{$t('bindEmail.subject.hqyz')}}</span>
-        <span v-show="!show" class='txt1'>{{$t('bindEmail.subject.cxhq')}}({{time}}s)</span>
+        <i v-show="!show" class='icon' @click="captcha = ''" style="width: 0.44rem;"></i>
+        <span v-show="show" class='txt2' @click="get">{{$t('bindEmail.subject.hqyz')}}</span>
+        <span v-show="!show" class='txt1'>重新获取({{time}}s)</span>
       </p>
 
     </div>
@@ -18,12 +18,14 @@
     </div>
 
   <FullLoading ref="fullLoading" v-show="isLoading"/>
+  <Toast :text="textMsg" ref="toast"/>
   </div>
 </template>
 <script>
 import {getUserId, CheckMail, setTitle} from 'common/js/util';
-import {bindingEmail, getSmsCaptcha2} from 'api/person';
+import {bindingEmail, getSmsCaptchaEmail} from 'api/person';
 import FullLoading from 'base/full-loading/full-loading';
+import Toast from 'base/toast/toast';
 
 export default {
   data() {
@@ -33,7 +35,9 @@ export default {
       captcha: '',
       bizType: '805086',
       isLoading: false,
-      time: 60
+      time: 60,
+      textMsg: '',
+      phTime: null
     };
   },
   created() {
@@ -41,35 +45,51 @@ export default {
   },
   methods: {
     get() {
-      this.show = false;
       if(CheckMail(this.email) === true) {
+        this.show = false;
         this.isLoading = true;
-        getSmsCaptcha2(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email: this.email
+        }).then(() => {
           this.isLoading = false;
-          let phTime = setInterval(() => {
+          this.phTime = setInterval(() => {
             this.time --;
             if(this.time < 0){
-              clearInterval(phTime);
+              clearInterval(this.phTime);
               this.show = true;
               this.time = 60;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
           this.show = true;
         });
+      }else {
+        this.textMsg = '请先填写邮箱';
+        this.$refs.toast.show();
       }
     },
     bindEmail() {
-      if(CheckMail(this.email) === true) {
+      if(CheckMail(this.email) === true && this.captcha) {
         bindingEmail(this.captcha, this.email, getUserId()).then(data => {
           this.$router.push('security-center');
         })
+      }else {
+        this.textMsg = '请填写完整';
+        this.$refs.toast.show();
       }
     }
   },
   components: {
-    FullLoading
+    FullLoading,
+    Toast
+  },
+  beforeDestroy() {
+    if(this.phTime) {
+      clearTimeout(this.phTime);
+    }
   }
 };
 </script>
@@ -82,7 +102,7 @@ export default {
   color: #333;
   width: 100%;
   background: #fff;
-
+  height: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -160,7 +180,7 @@ export default {
       }
       .txt1 {
         display: inline-block;
-        width: 1.68rem;
+        width: 2.5rem;
         height: .52rem;
         margin-top: .24rem;
         line-height: .52rem;
@@ -175,7 +195,7 @@ export default {
           height: .34rem;
           background-image: url('./sc.png');
           margin-top: .29rem;
-          margin-right: -.2rem;
+          margin-right: .2rem;
       }
     }
     .item-captcha-wrap{
@@ -190,6 +210,9 @@ export default {
         line-height: 1rem;
         top: 0;
         z-index: 9;
+      }
+      i{
+        display: inline-block;
       }
     }
     .error-tip{

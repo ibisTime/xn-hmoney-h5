@@ -2,25 +2,25 @@
   <div class="password-wrapper" @click.stop>
     <div class="main">
       <p v-if="isEmail">
-        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" :placeholder="$t('exitLoginPassword.subject.sryxsj')">
+        <input type="text" v-model="config.mobile" name="emailPhone" v-validate="'required|emailPhone'" placeholder="请输入手机号">
         <span v-show="errors.has('emailPhone')" class="error-tip">{{errors.first('emailPhone')}}</span>
       </p>
       <p class='text3' v-if="(mobile == '' || email == '') && isEmail">
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')">
-        <i v-show="!show" class='icon'></i>
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('exitLoginPassword.subject.yzm')" autocomplete="new-password">
+        <i v-show="!show" class='icon' @click="smsCaptcha = ''"></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('exitLoginPassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('exitLoginPassword.subject.cxhq')}}({{time}}s)</span>
       </p>
       <p>
-        <input class="item-input"  type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')">
+        <input class="item-input"  type="password" v-model="newPayPwd" name="password" v-validate="'required'" :placeholder="!isEmail ? $t('exitLoginPassword.subject.jmm') : $t('exitLoginPassword.subject.ywsz')" autocomplete="new-password">
         <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
       </p>
       <p v-show="!isEmail">
-        <input class="item-input"  type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')">
+        <input class="item-input"  type="password" v-model="sureNewPwd" name="password2" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.xmm')" autocomplete="new-password">
         <span v-show="errors.has('password2')" class="error-tip password2">{{errors.first('password2')}}</span>
       </p>
       <p>
-        <input class="item-input"  type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')">
+        <input class="item-input"  type="password" v-model="surePwd" name="password1" v-validate="'required|password'" :placeholder="$t('exitLoginPassword.subject.qrmm')" autocomplete="new-password">
         <span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>
       </p>
     </div>
@@ -33,7 +33,7 @@
   </div>
 </template>
 <script>
-import {getUser, changeLoginPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {getUser, changeLoginPwd, getSmsCaptchaPhone, getSmsCaptchaEmail} from '../../api/person';
 import {getUserId, setTitle, clearUser} from '../../common/js/util';
 import { resetPwd } from 'api/user';
 import Toast from 'base/toast/toast';
@@ -86,12 +86,20 @@ export default {
   },
   methods: {
     get() {
-      this.show = false;
       let mobile, email;
-      this.isLoading = true;
       if((this.config.mobile).match(/@/)){
         email = this.config.mobile;
-        getSmsCaptcha2(this.bizType, email).then(data => {
+        if(email === '') {
+          this.textMsg = '请先填写邮箱号';
+          this.$refs.toast.show();
+          return;
+        }
+        this.show = false;
+        this.isLoading = true;
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -102,11 +110,22 @@ export default {
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
         });
       }else{
         mobile = this.config.mobile;
-        getSmsCaptcha1(this.bizType, mobile).then(data => {
+        if(mobile === '') {
+          this.textMsg = '请先填写手机号';
+          this.$refs.toast.show();
+          return;
+        }
+        this.show = false;
+        this.isLoading = true;
+        getSmsCaptchaPhone({
+          bizType: this.bizType,
+          mobile
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
@@ -117,6 +136,7 @@ export default {
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.isLoading = false;
         });
       }
@@ -128,7 +148,12 @@ export default {
           this.$refs.toast.show();
           return;
         }
-        if(!this.errors.any()){
+        if(!this.newPayPwd || !this.surePwd) {
+          this.textMsg = '请填写完整';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.errors.items.length === 0){
           this.isLoading = true;
           changeLoginPwd(this.newPayPwd, this.surePwd).then((data) => {
             this.isLoading = false;
@@ -148,7 +173,12 @@ export default {
           this.$refs.toast.show();
           return;
         }
-        if(!this.errors.any()){
+        if(!this.newPayPwd || !this.smsCaptcha) {
+          this.textMsg = '请填写完整';
+          this.$refs.toast.show();
+          return;
+        }
+        if(this.errors.items.length === 0){
           this.isLoading = true;
           this.config.newLoginPwd = this.newPayPwd;
           this.config.smsCaptcha = this.smsCaptcha;
@@ -181,7 +211,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
-  height: 12rem;
+  height: 100%;
   background: #fff;
 
   .icon {

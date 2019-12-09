@@ -1,14 +1,14 @@
 <template>
-  <div class="foot-wrapper" @click.stop>
+  <div class="foot-wrapper" @click.stop :style="{'background-color': bgColor}">
     <router-link tag="div" class="foot-item item-0" to="/page">
       <i></i>
       <p>{{ $t('footer.navbar.page') }}</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-0" to="/market">
+    <router-link tag="div" class="foot-item item-1" to="/market">
       <i></i>
       <p>行情</p>
     </router-link>
-    <router-link tag="div" class="foot-item item-2" to="/trading">
+    <router-link tag="div" class="foot-item item-2" to="/trading" @click.native="toTrading">
       <i></i>
       <p>{{ $t('footer.navbar.trading') }}</p>
     </router-link>
@@ -17,32 +17,23 @@
       <p>{{ $t('footer.navbar.wallet') }}</p>
     </router-link>
     <router-link tag="div" class="foot-item item-4" to="/mine">
-      <i>
-        <span class="hasUnreadMsg" v-if="getUnreadMsgNum()"></span>
-      </i>
+      <i></i>
       <p>{{ $t('footer.navbar.mine') }}</p>
     </router-link>
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex';
-
   export default {
-    props: {},
-    computed: {
-      ...mapGetters([
-        'unreadMsgNum'
-      ])
+    props: {
+      bgColor: {
+        type: String,
+        default: '#fff'
+      }
     },
     methods: {
-      // 是否显示小红点
-      getUnreadMsgNum() {
-        return this.unreadMsgNum > 0;
-      },
-      // toOtcFn(){
-      //   sessionStorage.removeItem('coin');
-      //   sessionStorage.setItem('tradeType', '1');
-      // }
+      toTrading() {
+        sessionStorage.removeItem('setBazDeal');
+      }
     },
     components: {}
   };
@@ -58,7 +49,6 @@
     display: flex;
     height: .96rem;
     width: 100%;
-    background: #fff;
     font: .22rem/.3rem PingFangSC-Regular;
     color: #B3B3B3;
     text-align: center;
@@ -102,55 +92,55 @@
 
       &.item-0 {
         i {
-          @include bg-image('page');
+          background-image: url('./page.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('page2');
+            background-image: url('./page_active.png');
           }
         }
       }
 
       &.item-1 {
         i {
-          @include bg-image('shop');
+          background-image: url('hqing.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('shop2');
+            background-image: url('hqing_active.png');
           }
         }
       }
 
       &.item-2 {
         i {
-          @include bg-image('trading');
+          background-image: url('trading.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('trading2');
+            background-image: url('trading_active.png');
           }
         }
       }
 
       &.item-3 {
         i {
-          @include bg-image('money');
+          background-image: url('money.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('money2');
+            background-image: url('money_active.png');
           }
         }
       }
 
       &.item-4 {
         i {
-          @include bg-image('mine');
+          background-image: url('mine.png');
         }
         &.router-link-active {
           i {
-            @include bg-image('mine2');
+            background-image: url('mine_active.png');
           }
         }
       }

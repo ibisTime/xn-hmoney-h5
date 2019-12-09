@@ -6,25 +6,25 @@
          <span>{{$t('trading.putUp.sell20')}}</span>
        </p>
         <div class='title2'>
-          <p class='tit1'>
+          <p class='tit2'>
             <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
             <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
           </p>
-          <p class='tit2'>
+          <p class='tit1'>
             <span>{{$t('trading.putUp.jg')}}({{setBazDeal.toSymbol}})</span>
             <span>{{$t('trading.putUp.sl')}}({{setBazDeal.symbol}})</span>
           </p>
         </div>
        <div class='content'>
         <div class='left'>
-          <p v-for="(item, index) in bbAsks" :key="index">
-            <span class='red'>{{item ? item.price : '--'}}</span>
+          <p v-for="(item, index) in bbBids" :key="index">
+            <span class='green'>{{item ? item.price : '--'}}</span>
             <span class='white'>{{item ? item.count : '--'}}</span>
           </p>
         </div>
         <div class='right'>
-          <p v-for="(item, index) in bbBids" :key="index">
-            <span class='green'>{{item ? item.price : '--'}}</span>
+          <p v-for="(item, index) in bbAsks" :key="index">
+            <span class='red'>{{item ? item.price : '--'}}</span>
             <span class='white'>{{item ? item.count : '--'}}</span>
           </p>
         </div>
@@ -35,7 +35,8 @@
 <script>
 import { formatAmount } from "common/js/util";
 import { getHandicapData } from 'api/bb';
-// import Scroll from 'base/scroll/scroll';
+import { mapGetters } from 'vuex';
+
   export default {
     props: {
       bazDeal: {
@@ -43,6 +44,16 @@ import { getHandicapData } from 'api/bb';
         default(){
           return {};
         }
+      },
+      gkdsList: {
+        type: Object,
+        default(){
+          return {};
+        }
+      },
+      isUpdate: {
+        type: Boolean,
+        default: false
       }
     },
     data(){
@@ -70,31 +81,41 @@ import { getHandicapData } from 'api/bb';
             });
             this.bbAsks.map(item => {
               item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-              item.price = (Math.floor(item.price * 100000000) / 100000000).toFixed(8);
+              item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
               item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-              item.count = (Math.floor(item.count * 100000000) / 100000000).toFixed(8);
+              item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
             });
             this.bbBids.map(item => {
               item.price = formatAmount(`${item.price}`, '', this.setBazDeal.toSymbol);
-              item.price = (Math.floor(item.price * 100000000) / 100000000).toFixed(8);
+              item.price = (Math.floor(item.price * 10000) / 10000).toFixed(4);
               item.count = formatAmount(`${item.count}`, '', this.setBazDeal.symbol);
-              item.count = (Math.floor(item.count * 100000000) / 100000000).toFixed(8);
+              item.count = (Math.floor(item.count * 10000) / 10000).toFixed(4);
             });
           }
           return;
         });
       }
     },
-    components: {
-      // Scroll
-    },
+    computed: mapGetters([
+      'isUpdateHandicap'
+    ]),
     watch: {
       bazDeal: {
         handler(val, oldVal){
-            this.setBazDeal = val;
-            this.handicapData();
+          this.setBazDeal = val;
+          this.handicapData();
         },
         deep: true
+      },
+      gkdsList: {
+        handler(val, oldVal){
+          this.setBazDeal = this.bazDeal;
+          this.handicapData();
+        },
+        deep: true
+      },
+      isUpdateHandicap() {
+        this.handicapData();
       }
     }
   };

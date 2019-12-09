@@ -50,7 +50,7 @@ export default {
       start: 1,
       config: {
         start: 1,
-        limit: 10,
+        limit: 20,
         userId: getUserId()
       }
     };

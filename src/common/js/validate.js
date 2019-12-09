@@ -19,6 +19,15 @@ Validator.localize('zh_CN', {
   }
 });
 
+// 整数验证
+Validator.extend('intNumber', {
+  getMessage: field => getTranslateText('请输入整数值'),
+  validate: value => {
+    var IntNumber = /^[1-9]\d*$/;
+    return IntNumber.test(value);
+  }
+});
+
 // 银行卡格式校验
 Validator.extend('idCard', {
   getMessage: field => getTranslateText('格式错误'),

@@ -1,1 +1,1 @@
-window.PIC_PREFIX = 'http://image.hp.hichengdai.com/';
+window.PIC_PREFIX = 'http://twt.image.hichengdai.com/';

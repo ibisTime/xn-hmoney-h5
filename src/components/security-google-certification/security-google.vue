@@ -26,7 +26,7 @@
 </template>
 <script>
 import {getUserId, setTitle, getUrlParam} from 'common/js/util';
-import {getSmsCaptcha1, openGoogle, closeGoogle, getGooglePwd} from 'api/person';
+import {getSmsCaptchaPhone, openGoogle, closeGoogle, getGooglePwd} from 'api/person';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
 
@@ -64,7 +64,10 @@ export default {
     get() {
       this.show = false;
       this.isLoading = true;
-      getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+      getSmsCaptchaPhone({
+        bizType: this.bizType,
+        mobile: this.mobile
+      }).then(data => {
           this.isLoading = false;
           this.time --;
           let inTime = setInterval(() => {
@@ -123,7 +126,7 @@ export default {
   color: #333;
   width: 100%;
   background: #fff;
-
+  height: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;

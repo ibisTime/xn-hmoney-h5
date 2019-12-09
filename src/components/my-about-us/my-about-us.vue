@@ -1,56 +1,38 @@
 <template>
   <div class="aboutus-wrapper" @click.stop>
     <div class='content cont1'>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=about_us'>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=plat_introduce'>
             <p>
-            <span>{{$t('aboutprivacy.subject.ptjs')}}</span>
+            <span>平台介绍</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=service'>
             <p>
-            <span>{{$t('aboutprivacy.subject.lxwm')}}</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link class='tag mb20' to='system-notice'>
-            <p>
-            <span>{{$t('aboutprivacy.subject.gg')}}</span>
+            <span>联系我们</span>
             <i class='icon'></i>
             </p>
         </router-link>
         <router-link class='tag mb20' to='about-platformIntroduced?ckey=reg_protocol'>
             <p>
-            <span>{{$t('aboutprivacy.subject.yhxy')}}</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=privacy'>
-            <p>
-            <span>{{$t('aboutprivacy.subject.ystk')}}</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=raw_note'>
-            <p>
-            <span>{{$t('aboutprivacy.subject.flsm')}}</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link class='tag mb20' to='about-platformIntroduced?ckey=fee_note'>
-            <p>
-            <span>{{$t('aboutprivacy.subject.fvsm')}}</span>
+            <span>用户协议</span>
             <i class='icon'></i>
             </p>
         </router-link>
     </div>
     <div class='content'>
-        <a class='tag mb20' href="https://funmvp.zendesk.com/hc/zh-cn/">
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=privacy'>
             <p>
-            <span>{{$t('aboutprivacy.subject.bzzx')}}</span>
+            <span>隐私条款</span>
             <i class='icon'></i>
             </p>
-        </a>
+        </router-link>
+        <router-link class='tag mb20' to='about-platformIntroduced?ckey=raw_note'>
+            <p>
+            <span>法律声明</span>
+            <i class='icon'></i>
+            </p>
+        </router-link>
     </div>
   </div>
 </template>
@@ -80,7 +62,7 @@ export default {
   color: #333;
   width: 100%;
   background: #fff;
-
+  height: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;

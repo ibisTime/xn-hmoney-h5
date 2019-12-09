@@ -1,24 +1,20 @@
 <template>
   <div class="password-wrapper" @click.stop>
     <div class="main">
-      <p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>
+      <!--<p class='text1' v-if="email == ''"><span>{{$t('securityTradePassword.subject.zg')}}</span><span class='txt2'>+86</span><i class='icon'></i></p>-->
       <p v-if="mobile">{{mobile}}</p>
       <p v-if="email != ''">{{email}}</p>
-      <p>
-        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')">
-        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
-      </p>
       <p class='text3'>
-        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')">
+        <input v-model="smsCaptcha" type="text" name="capt" v-validate="'required|capt'" :placeholder="$t('securityTradePassword.subject.sryzm')" autocomplete="new-password">
         <span v-show="errors.has('smsCaptcha')" class="error-tip smsCaptcha">{{errors.first('smsCaptcha')}}</span>
-        <i v-show="!show" class='icon'></i>
+        <i v-show="!show" @click="smsCaptcha = ''" class='icon'></i>
         <span v-show="show" @click="get" class='txt2'>{{$t('securityTradePassword.subject.hqyzm')}}</span>
         <span v-show="!show" class='txt1'>{{$t('securityTradePassword.subject.cxhq')}}({{time}}s)</span>
       </p>
-      <!--<p>-->
-      <!--<input type="password" v-model="surePwd" name="password1" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.qrmm')">-->
-      <!--<span v-show="errors.has('password1')" class="error-tip password1">{{errors.first('password1')}}</span>-->
-      <!--</p>-->
+      <p>
+        <input class="item-input" type="password" v-model="newPayPwd" name="password" v-validate="'required|trade'" :placeholder="$t('securityTradePassword.subject.szjymm')" autocomplete="new-password">
+        <span v-show="errors.has('password')" class="error-tip password">{{errors.first('password')}}</span>
+      </p>
     </div>
     <div class="foot">
       <button @click="changeTradPwd">{{$t('securityTradePassword.subject.qd')}}</button>
@@ -29,7 +25,7 @@
   </div>
 </template>
 <script>
-import {getUser, changeTradPwd, getSmsCaptcha1, getSmsCaptcha2} from '../../api/person';
+import {getUser, changeTradPwd, getSmsCaptchaPhone, getSmsCaptchaEmail} from '../../api/person';
 import { setTradePwd } from 'api/user';
 import {getUserId, setTitle, getUrlParam} from '../../common/js/util';
 import { resetPwd } from 'api/user';
@@ -74,49 +70,54 @@ export default {
       this.show = false;
       this.isLoading = true;
       if(this.mobile){
-        getSmsCaptcha1(this.bizType, this.mobile).then(data => {
+        getSmsCaptchaPhone({
+            bizType: this.bizType,
+            mobile: this.mobile
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
             if(this.time < 0){
               clearInterval(times);
+              this.time = 60;
               this.show = true;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.show = true;
           this.isLoading = false;
         });
       }
       if(this.email){
-        getSmsCaptcha2(this.bizType, this.email).then(data => {
+        getSmsCaptchaEmail({
+          bizType: this.bizType,
+          email: this.email
+        }).then(data => {
           this.isLoading = false;
           let times = setInterval(() => {
             this.time --;
             if(this.time < 0){
               clearInterval(times);
+              this.time = 60;
               this.show = true;
             }
           }, 1000);
         }, () => {
+          this.time = 60;
           this.show = true;
           this.isLoading = false;
         });
       }
     },
     changeTradPwd() {
-      // if(this.newPayPwd == '' || this.smsCaptcha == '' || this.surePwd == ''){
-        if(this.newPayPwd == '' || this.smsCaptcha == ''){
-          this.textMsg = this.$t('securityTradePassword.subject.txwz');
-          this.$refs.toast.show();
-          return;
-        }
-      // if(this.newPayPwd !== this.surePwd){
-      //   this.textMsg = this.$t('securityTradePassword.subject.mmbyz');
-      //   this.$refs.toast.show();
-      //   return;
-      // }else{
-        if(!this.errors.any()){
+      if(this.newPayPwd == '' || this.smsCaptcha == ''){
+        this.textMsg = this.$t('securityTradePassword.subject.txwz');
+        this.$refs.toast.show();
+        return;
+      }
+      setTimeout(() => {
+        if(this.errors.items.length === 0){
           this.isLoading = true;
           if(this.istw == '1'){
             changeTradPwd(this.newPayPwd, this.smsCaptcha, getUserId()).then((data) => {
@@ -124,7 +125,8 @@ export default {
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {
-                this.$router.push('mine');
+                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+                this.$router.push(goBack);
               }, 1500);
             }, () => {
               this.isLoading = false;
@@ -135,14 +137,15 @@ export default {
               this.$refs.toast.show();
               this.isLoading = false;
               setTimeout(() => {
-                this.$router.push('mine');
+                const goBack = sessionStorage.getItem('paw_go_back') || 'mine';
+                this.$router.push(goBack);
               }, 1500);
             }, () => {
               this.isLoading = false;
             })
           }
         }
-      // }
+      }, 100);
     }
   },
   components: {
@@ -159,7 +162,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
-  height: 12rem;
+  height: 100%;
   background: #fff;
 
   .icon {

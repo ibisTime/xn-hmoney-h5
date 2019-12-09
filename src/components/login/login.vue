@@ -1,13 +1,27 @@
 <template>
   <div class="log-wrapper" @click.stop>
       <div class="bg">
-          <p>FUNMVP</p>
+          <p></p>
       </div>
       <div class="card">
           <div class="main">
               <h3>{{$t('login.subject.hyhl')}}</h3>
-              <input type="text" v-model="username" name="phone|email" v-validate="'required|phone|email'" :placeholder="$t('login.subject.srzh')">
-              <input type="password" v-model="password" name="password" v-validate="'required|password'" :placeholder="$t('login.subject.srldsl')">
+              <input
+                type="text"
+                v-model="username"
+                name="phone|email"
+                v-validate="'required|phone|email'"
+                :placeholder="$t('login.subject.srzh')"
+                @blur="blurIn"
+              >
+              <input
+                type="password"
+                v-model="password"
+                name="password"
+                v-validate="'required|password'"
+                :placeholder="$t('login.subject.srldsl')"
+                @blur="blurIn"
+              >
               <input type="submit" :value="$t('login.subject.dl')" @click='login'>
               <p>
                   <router-link class="reg" to="/registered">{{$t('login.subject.ljzc')}}</router-link>
@@ -34,7 +48,11 @@ export default {
   created(){
     setTitle(this.$t('login.subject.dl'));
   },
-  computed: {},
+  computed: {
+    scrollHeight () {
+      return document.documentElement.scrollTop || document.body.scrollTop || 0
+    }
+  },
   methods: {
     login() {
       if(this.errors.any()){
@@ -42,11 +60,18 @@ export default {
         login(this.username, this.password).then(data => {
           this.isLoading = false;
           setUser(data);
+          if(window.SOCKET && window.SOCKET.onmessage) {
+            window.SOCKET.send('close');
+            window.SOCKET = null;
+          }
           this.$router.push('page');
         }, () => {
           this.isLoading = false;
         });
       }
+    },
+    blurIn () {
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0))
     }
   },
   components: {
@@ -70,17 +95,19 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
-    @include bg-image("login");
+    background-image: url('./login@2x.png');
     position: relative;
     z-index: 98;
 
     p {
-      font: 0.8rem/1.12rem PingFangSC-Semibold;
-      color: #fff;
       text-shadow: 0 0.04rem 0.08rem #cf5340;
       position: absolute;
-      top: 1.19rem;
+      top: 1.1rem;
       left: 50%;
+      width: 120px;
+      height: 70px;
+      background-image: url('./head_logo.png');
+      background-size: 100% 100%;
       transform: translateX(-50%);
     }
   }
@@ -108,11 +135,12 @@ export default {
         width: 6.1rem;
         border-bottom: 0.02rem solid #e3e3e3;
         font: 0.32rem/1.28rem PingFangSC-Medium;
-        color: #999;
-        padding: 0.3rem 0.1rem;
+        color: #333;
+        padding: 0 0.1rem;
+        margin: 0.3rem 0;
         box-sizing: border-box;
-        height: 1.2rem;
-        line-height: 1.2rem;
+        height: 0.6rem;
+        line-height: 0.6rem;
       }
 
       input[type="submit"] {

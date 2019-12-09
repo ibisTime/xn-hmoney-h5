@@ -253,7 +253,7 @@ export default {
       sdt: '深度图',
       jj: '简介',
       bkbwl: '不能为空或小于等于零',
-      xsbdy: '小数部分不得大于8位',
+      xsbdy: '小数部分不得大于4位',
       xsldy: '小数部分不得大于2位',
       cjsj: '成交时间',
       cjjg: '成交价格',
@@ -311,7 +311,7 @@ export default {
       jl: '记录',
       fzskdz: '复制收款地址',
       zr: '转入',
-      gbzc: '该机型不支持点击复制，请长按文本复制',
+      gbzc: '该机型不支持点击复制',
       fzcg: '复制成功'
     }
   },
@@ -517,12 +517,12 @@ export default {
   // 邀请好友
   myInviteFriends: {
     subject: {
-      yqnjr: '邀请您加入FUNMVP',
+      yqnjr: '邀请您加入XXX',
       casb: '长按识别二维码',
       yqhy: '邀请好友',
-      fuzzs: '复制您的专属邀请链接',
+      fuzzs: '下载至本地',
       fz: '复制',
-      bzbd: '请长按保存图片至本地'
+      bzbd: '复制您的专属邀请链接'
     }
   },
   // 安全中心
@@ -669,7 +669,7 @@ export default {
       ldslw: '英文数字组合6位-16位',
       qrmm: '请确认密码',
       wyjs: '我已阅读并接受',
-      xytk: '《FUNMVP产品服务条款》',
+      xytk: '《大文通产品服务条款》',
       zcxy: '注册协议',
       sjhwk: '手机号不能为空',
       yxhwk: '邮箱号不能为空',

@@ -55,8 +55,8 @@ export function getUser() {
  * 获取用户详情
  * @param {string} userId
  */
-export function getUserById(userId) {
-  return fetch(805121, { userId });
+export function getUserById() {
+  return fetch(805121, { userId: getUserId() });
 }
 
 /**
@@ -162,10 +162,7 @@ export function changeGender (gender) {
  * @param params {addressee, mobile, province, city, district, detailAddress, isDefault?}
  */
 export function addAddress(params) {
-  return fetch(805160, {
-    userId: getUserId(),
-    ...params
-  });
+  return fetch('805170', params);
 }
 
 /**
@@ -173,7 +170,7 @@ export function addAddress(params) {
  * @param {string} code
  */
 export function deleteAddress(code) {
-  return fetch(805161, {code});
+  return fetch(805171, {code});
 }
 
 /**
@@ -181,10 +178,7 @@ export function deleteAddress(code) {
  * @param  params {code, addressee, mobile, province, city, district, detailAddress, isDefault?}
  */
 export function editAddress(params) {
-  return fetch(805162, {
-    userId: getUserId(),
-    ...params
-  });
+  return fetch(805172, params);
 }
 
 /**
@@ -192,15 +186,17 @@ export function editAddress(params) {
  * @param {string} code
  */
 export function setDefaultAddress (code) {
-  return fetch(805163, {code});
+  return fetch(805173, {code});
 }
 
 /**
  * 列表查询地址
  */
-export function getAddressList() {
-  return fetch(805165, {
-    userId: getUserId()
+export function getAddressList(isDefault = '') {
+  return fetch(805175, {
+    start: 1,
+    limit: 100,
+    isDefault
   });
 }
 
@@ -209,7 +205,7 @@ export function getAddressList() {
  * @param {string} code
  */
 export function getAddress(code) {
-  return fetch(805166, {code});
+  return fetch(805176, {code});
 }
 
 /**
@@ -332,7 +328,7 @@ export function editIntroduce (introduce) {
  * 用户认证
  */
 export function userAttestation (config) {
-  return fetch(805160, config);
+  return fetch(805200, config);
 }
 
 // 修改头像
@@ -340,6 +336,14 @@ export function changePhoto(photo) {
   return fetch("805080", {
       photo,
       userId: getUserId()
+  });
+}
+
+// 修改昵称
+export function changeLoginName(nickname) {
+  return fetch("805082", {
+    nickname,
+    userId: getUserId()
   });
 }
 
@@ -352,4 +356,14 @@ export function resetPwd(config) {
       kind: 'C',
       ...config
   });
+}
+
+// 我的一代用户分页查询 详情含有二级用户列表
+export function userChildren(params) {
+  return fetch(805122, params);
+}
+
+// 我的团队人数分布
+export function userChildrenNum() {
+  return fetch(805125);
 }

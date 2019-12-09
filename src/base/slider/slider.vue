@@ -4,8 +4,8 @@
       <slot>
       </slot>
     </div>
-    <div class="dots">
-      <!-- <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex === index}"></span> -->
+    <div class="dots" v-show="isdots">
+       <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex === index}"></span>
     </div>
   </div>
 </template>
@@ -26,6 +26,10 @@
         default: function(){
           return [];
         }
+      },
+      isdots: {
+        type: Boolean,
+        default: true
       },
       loop: {
         type: Boolean,
@@ -142,9 +146,6 @@
       },
       _onScrollEnd() {
         let pageIndex = this.slider.getCurrentPage().pageX;
-        if(this.loop) {
-          pageIndex -= 1;
-        }
         this.currentPageIndex = pageIndex;
         if(this.autoPlay) {
           this._play();
@@ -232,14 +233,11 @@
 
       .dot {
         display: inline-block;
-        margin: 0 0.08rem;
-        width: 0.16rem;
-        height: 0.16rem;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.6);
-
+        width: 0.26rem;
+        height: 0.04rem;
+        background-color: #D8D8D8;
         &.active {
-          background: $primary-color;
+          background-color: #D53D3D;
         }
       }
     }

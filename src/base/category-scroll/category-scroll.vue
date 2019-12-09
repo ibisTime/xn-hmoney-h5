@@ -3,13 +3,12 @@
     <div class="category-group" :style="_getGroupBgColor()" ref="categoryGroup">
       <div
         v-for="(item,index) in categorys"
-        :key="index"
+        :key="item.key"
         ref="cate"
-        @click="_selectItem(index)"
+        @click="_selectItem(index, item.key)"
         class="category-item"
-        :class="{active: index===currentIndex}"
         :style="_getItemColor(index)">
-        {{item.value}}
+        <p class="category-p" :class="{active: index === currentIndex}">{{item.value}}</p>
       </div>
     </div>
   </div>
@@ -57,9 +56,9 @@
       });
     },
     methods: {
-      _selectItem(index) {
+      _selectItem(index, key) {
         this.scroll.scrollToElement(this.$refs.cate[index], 200, true);
-        this.$emit('select', index);
+        this.$emit('select', index, key);
       },
       _getGroupBgColor() {
         if (this.bgColor) {
@@ -129,7 +128,6 @@
 
   .category {
     min-height: 1px;
-
     .category-group {
       position: relative;
       overflow: hidden;
@@ -142,9 +140,13 @@
         text-align: center;
         font-size: $font-size-medium;
         padding: 0 0.3rem;
-
+      }
+      .category-p{
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
         &.active {
-          color: $primary-color;
+          color: #D53D3D;
+          border-bottom: 2px solid #D53D3D;
         }
       }
     }

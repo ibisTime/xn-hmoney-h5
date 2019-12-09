@@ -4,7 +4,7 @@
       </div>
       <div class='box'>
             <div class='mess'>
-                <p class='name'>{{type}}</p>
+                <p class='name'>{{typeName}}</p>
                 <p class='num'>{{data.transAmountString}} {{data.currency}}</p>
             </div>
       </div>
@@ -17,92 +17,54 @@
               <span class='txt1'>{{$t('billDetail.subject.bdhje')}}</span>
               <span class='txt2'>{{data.postAmountString}} {{data.currency}}</span>
           </div>
-          <!--<div class='list'>-->
-              <!--<span class='txt1'>{{$t('billDetail.subject.sxf')}}</span>-->
-              <!--<span class='txt2'>{{data.fee}}</span>-->
-          <!--</div>-->
           <div class='list'>
               <span class='txt1'>{{$t('billDetail.subject.bdsj')}}</span>
               <span class='txt2'>{{data.createDatetime}}</span>
           </div>
           <div class='list'>
-              <span class='txt1'>{{$t('billDetail.subject.jymx')}}</span>
-              <span class='txt2'>{{getBizNote(data)}}</span>
+              <span class='txt1'>明细说明</span>
+              <span class='txt2'>{{data.bizNote}}</span>
           </div>
-          <!-- <div class='list'>
-              <span class='txt1'>明细摘要</span>
-              <span class='txt3'>转出至239120320190djkfdsahf djfafk djfafk djfafk</span>
-          </div> -->
       </div>
-      <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
 import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText } from 'common/js/util';
 import { billDetails } from 'api/person';
 import { getSysConfig, getDictList } from 'api/general';
-import FullLoading from 'base/full-loading/full-loading';
 
 export default {
     data() {
         return {
             data: [],
-            type: '',
-            fee: '',
+            typeName: '',
+            code: '',
             isLoading: true,
             bizTypeValueList: []
         }
     },
     created() {
         setTitle(this.$t('billDetail.subject.zdxq'));
-        this.type = getUrlParam('type');
+        const type = getUrlParam('type');
+        this.code = getUrlParam('code');
         getDictList('jour_biz_type_user').then(data => {
-          data.forEach((item) => {
-            this.bizTypeValueList[item.dkey] = item.dvalue;
-          });
-        });
-        getSysConfig('withdraw_fee').then(data => {
-          this.fee = data.cvalue * 100 + '%';
-          this.isLoading = false;
-        }, () => {
-          this.isLoading = false;
+            const list = data.filter(item => item.dkey === type);
+            if(list.length > 0) {
+                this.typeName = list[0].dvalue;
+            }
         });
         this.billDetails();
     },
     methods: {
         billDetails() {
-            billDetails(getUrlParam('code')).then((data) => {
+            billDetails(this.code).then((data) => {
                 data.transAmountString = formatAmount(data.transAmountString, '', data.currency);
                 data.postAmountString = formatAmount(data.postAmountString, '', data.currency);
                 data.preAmountString = formatAmount(data.preAmountString, '', data.currency);
                 this.data = data;
                 this.data.createDatetime = formatDate(data.createDatetime, 'yyyy-MM-dd hh:mm:ss');
             });
-        },
-        getBizNote(item) {
-          // 币币交易买入卖出
-          if (item.bizType === 'bborder_frozen') {
-            return getTranslateText(item.bizNote);
-            // 充值
-          } else if (item.bizType === 'charge') {
-            if(item.bizNote.indexOf('充币-来自地址') > -1) {
-              return item.bizNote.replace('充币-来自地址', getTranslateText('充币-来自地址'));
-            } else if(item.bizNote.indexOf('充币-来自交易') > -1) {
-              return item.bizNote.replace('充币-来自交易', getTranslateText('充币-来自交易'));
-            } else if(item.bizNote.indexOf('充币-交易id') > -1) {
-              return item.bizNote.replace('充币-交易id', getTranslateText('充币-交易id'));
-            } else if(item.bizNote.indexOf('充币-来自地址') > -1) {
-              return item.bizNote.replace('充币-外部地址', getTranslateText('充币-外部地址'));
-            } else {
-              return this.bizTypeValueList[item.bizType];
-            }
-          } else {
-            return this.bizTypeValueList[item.bizType];
-          }
         }
-    },
-    components: {
-        FullLoading
     }
 };
 </script>
@@ -114,7 +76,7 @@ export default {
     font-size: 0.3rem;
     color: #333;
     background: #fff;
-
+    height: 100%;
     .icon {
         display: inline-block;
         background-repeat: no-repeat;

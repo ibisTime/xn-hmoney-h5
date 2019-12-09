@@ -1,4 +1,5 @@
 import {setCookie, getCookie, delCookie} from './cookie';
+import {getBbListData} from 'api/tradingOn';
 import './BigDecimal';
 import avatarDefault from '../image/avatar@2x.png';
 import Language from '../lang/language';
@@ -158,7 +159,10 @@ export function getShareImg(imgs) {
  * @param isRe 是否去零
  */
 export function formatAmount(money, format, coin, isRe = false) {
-  let unit = coin && getCoinData()[coin] ? getCoinUnit(coin) : '1000';
+  if(money === 0) {
+    return 0;
+  }
+  let unit = (coin && getCoinData()[coin]) ? getCoinUnit(coin) : '1000';
   let flag = false;// 是否是负数
   if (isNaN(money)) {
     return '-';
@@ -170,11 +174,10 @@ export function formatAmount(money, format, coin, isRe = false) {
     flag = true;
   }
   if (coin && isUnDefined(format)) {
-    format = 8;
+    format = 4;
   }else if (isUnDefined(format) || typeof format === 'object') {// 默认格式为2位小数
     format = 2;
   }
-
   // 金额格式化 金额除以unit并保留format位小数
   money = new BigDecimal(money.toString());
   money = money.divide(new BigDecimal(unit), format, MathContext.ROUND_DOWN).toString();
@@ -249,7 +252,12 @@ export function formatMoneySubtract(s1, s2, format, coin) {
  *}
  */
 export function getCoinData() {
-  return JSON.parse(sessionStorage.getItem('coinData'));
+  const coinData = sessionStorage.getItem('coinData');
+  if(coinData) {
+    return JSON.parse(coinData);
+  }else {
+    return false;
+  }
 }
 
 /**
@@ -469,7 +477,6 @@ export function CheckMail(mail) {
   if (filter.test(mail)) {
     return true;
   } else {
-    alert('您的电子邮件格式不正确');
     return false;
   }
 }

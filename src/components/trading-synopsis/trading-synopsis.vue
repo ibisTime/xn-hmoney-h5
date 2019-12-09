@@ -24,6 +24,16 @@ import { getLangType } from 'common/js/util';
         }
       }
     },
+    created() {
+      const {symbol, toSymbol, origin} = this.$route.query;
+      if(symbol && toSymbol && origin === 'APP') {
+        this.setBazDeal = {
+            symbol,
+            toSymbol
+        };
+        this.symbolDetail();
+      }
+    },
     methods: {
       symbolDetail(){// 查询资料
         getSymbolDetail(this.setBazDeal.symbol).then(data => {
@@ -37,8 +47,8 @@ import { getLangType } from 'common/js/util';
     watch: {
       bazDeal: {
         handler(val, oldVal){
-            this.setBazDeal = val;
-            this.symbolDetail();
+          this.setBazDeal = val;
+          this.symbolDetail();
         },
         deep: true
       }

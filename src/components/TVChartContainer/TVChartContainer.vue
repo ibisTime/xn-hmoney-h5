@@ -2,7 +2,7 @@
   <div>
     <div class="chart-button-wrap" id="chartBtn">
       <div class="wrap">
-        <div class="chart-button btn" v-for="(item, index) in btnList" v-if="item.show" :key="index"
+        <div class="chart-button btn" v-for="(item, index) in btnList" v-show="item.show" :key="index"
              :data-key="item.resolution" :data-charttype="item.chartType"
              :class="item.resolution === resolution && !showMoreBtn ? 'selected' : ''">
           <p :class="item.class">{{item.label}}</p>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="hidden-wrap" v-show="showMore">
-        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-if="!item.show" :key="index"
+        <div class="chart-button btn more-btn" v-for="(item, index) in btnList" v-show="!item.show" :key="index"
              :data-key="item.resolution" :data-charttype="item.chartType"
              :class="item.resolution === resolution ? 'selected' : ''">
           <p :class="item.class">{{item.label}}</p>
@@ -25,20 +25,16 @@
 </template>
 
 <script>
-  // import io from 'socket.io-client';
+  import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
   import Loading from 'base/loading/loading';
   export default {
     name: 'TVChartContainer',
     props: {
-      symbol: {
-        default: 'FMVP',
-        type: String,
-      },
-      toSymbol: {
-        default: 'BTC',
-        type: String,
+      setBazDeal: {
+        default: () => ({}),
+        type: Object,
       },
       interval: {
         default: '15',
@@ -155,15 +151,20 @@
       }
     },
     mounted() {
+      const resolution = sessionStorage.getItem('resolution');
+      if(resolution) {
+        this.resolution = resolution;
+      }
       this.onChartReady();
-      // window.SOCKET = io('localhost:3666');
+      // window.SOCKET = io('wss://api.huobi.pro/ws');
+      // console.log(window.SOCKET);
     },
     methods: {
       onChartReady() {
         let _this = this;
         this.isLoadingTVChart = true;
         const widgetOptions = {
-          symbol: this.symbol,
+          symbol: this.setBazDeal.symbol,
           // BEWARE: no trailing slash is expected in feed URL
           datafeed: new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
           interval: this.interval,
@@ -175,8 +176,35 @@
           autosize: this.autosize,
           studies_overrides: this.studiesOverrides,
           preset: this.preset,
-          disabled_features: ['show_chart_property_page', 'compare_symbol', 'display_market_status', 'go_to_date', 'header_chart_type', 'header_compare', 'header_interval_dialog_button', 'header_resolutions', 'header_screenshot', 'header_symbol_search', 'header_undo_redo', 'legend_context_menu', 'show_hide_button_in_legend', 'show_interval_dialog_on_key_press', 'snapshot_trading_drawings', 'symbol_info', 'timeframes_toolbar', 'use_localstorage_for_settings', 'volume_force_overlay'],
-          enabled_features: ['dont_show_boolean_study_arguments', 'hide_last_na_study_output', 'move_logo_to_main_pane', 'same_data_requery', 'side_toolbar_in_fullscreen_mode', 'disable_resolution_rebuild'],
+          disabled_features: [
+            'show_chart_property_page',
+            'compare_symbol',
+            'display_market_status',
+            'go_to_date',
+            'header_chart_type',
+            'header_compare',
+            'header_interval_dialog_button',
+            'header_resolutions',
+            'header_screenshot',
+            'header_symbol_search',
+            'header_undo_redo',
+            'legend_context_menu',
+            'show_hide_button_in_legend',
+            'show_interval_dialog_on_key_press',
+            'snapshot_trading_drawings',
+            'symbol_info',
+            'use_localstorage_for_settings',
+            'volume_force_overlay'
+          ],
+          enabled_features: [
+            'dont_show_boolean_study_arguments',
+            'hide_last_na_study_output',
+            'move_logo_to_main_pane',
+            'same_data_requery',
+            'side_toolbar_in_fullscreen_mode',
+            'disable_resolution_rebuild', 
+            'border_around_the_chart'
+          ],
           overrides: {
             'volumePaneSize': 'small',
             'scalesProperties.lineColor': '#1f2943',
@@ -292,14 +320,18 @@
               if (chart.chartType() !== _this.chartType) {
                 chart.setChartType(Number(_this.chartType));
               }
+              sessionStorage.setItem('resolution', _this.resolution);
             }
           });
         });
       }
     },
     watch: {
-      toSymbol() {
-        this.onChartReady();
+      setBazDeal: {
+        handler(val) {
+          this.onChartReady();
+        },
+        deep: true
       }
     },
     components: {
@@ -310,7 +342,7 @@
 
 <style lang='scss' scoped>
   .TVChartContainer {
-    height: 6rem;
+    height: 6.6rem;
     background-color: #172b3f;
   }
   .chart-button-wrap{

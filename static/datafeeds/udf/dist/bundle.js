@@ -96,7 +96,7 @@
     }
 
     HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onLoadedCallback) {
-      let period = '';
+      const resolutionOwner = sessionStorage.getItem('resolution');
       let foramtList = {
         '1': '1min',
         '5': '5min',
@@ -109,10 +109,19 @@
         '1M': '1mon'
       };
       // console.log(window.SOCKET);
-      period = foramtList[resolution];
+      const period = resolutionOwner ? foramtList[resolutionOwner] : foramtList[resolution];
+      let setBazDeal = sessionStorage.getItem('setBazDeal');
+      if(setBazDeal) {
+        setBazDeal = JSON.parse(setBazDeal);
+      }else {
+        setBazDeal = {
+          symbol: 'TWT',
+          toSymbol: 'BTC'
+        };
+      }
       let requestParams = {
-        symbol: 'FMVP',
-        toSymbol: symbolInfo.toSymbol || 'BTC',
+        symbol: setBazDeal.symbol,
+        toSymbol: setBazDeal.toSymbol,
         period: period,
         resolution: resolution,
         startDatetime: formatDate(new Date(rangeStartDate * 1000), 'yyyy-MM-dd hh:mm'),
@@ -128,6 +137,7 @@
         code: '650066',
         json: JSON.stringify(requestParams)
       };
+      console.log(requestParams.startDatetime);
       return new Promise(function (resolve, reject) {
         $.ajax({
           type: 'post',
@@ -157,7 +167,8 @@
                 low: response[i].low,
                 volume: response[i].volume,
                 isBarClosed: true,
-                isLastBar: false
+                isLastBar: false,
+                sTime: formatDate(response[i].startDatetime, 'yyyy-MM-dd hh:mm')
               };
               if (i === response.length - 1) {
                 barValue.isBarClosed = false;
@@ -170,7 +181,7 @@
           if (bars.length >= 500) {
             $('#tv_chart_container').attr('startDatetime', bars[499].time);
           }
-          // console.log(bars, meta);
+          console.log(bars);
           resolve({
             bars: bars,
             meta: meta
@@ -230,6 +241,7 @@
           });
       };
       let _this1 = this;
+      console.log('1', this$1._subscribers);
       for (let listenerGuid in this$1._subscribers) {
         _loop1(listenerGuid);
       }
@@ -694,11 +706,11 @@
       }
 
       let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal')) || {
-        symbol: 'FMVP',
+        symbol: 'TWT',
         toSymbol: 'BTC'
       };
       let symbolInfo = {
-        'name': 'FMVP',
+        'name': setBazDeal.symbol,
         'timezone': 'Asia/Shanghai',
         'minmov': 1,
         'pointvalue': 1,
@@ -710,8 +722,8 @@
         'type': 'coin',
         'ticker': setBazDeal.symbol,
         'toSymbol': setBazDeal.toSymbol,
-        'pricescale': 100000000,
-        'volumescale': 100000000,
+        'pricescale': 10000,
+        'volumescale': 10000,
         'intraday-multipliers': []
       };
       onResultReady(symbolInfo);

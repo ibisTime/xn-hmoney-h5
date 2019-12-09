@@ -72,27 +72,19 @@ export function reisteredEamil(config) {
   return fetch(805043, config);
 }
 
+
 // 获取手机验证码
-export function getSmsCaptcha1(bizType, mobile) {
-  return fetch(630090, {
-    bizType,
-    mobile
-  });
+export function getSmsCaptchaPhone(params) {
+  return fetch(630090, params);
 }
 
 // 获取邮箱验证码
-export function getSmsCaptcha2(bizType, email) {
-  return fetch(630093, {
-    bizType,
-    email
-  });
+export function getSmsCaptchaEmail(params) {
+  return fetch(630093, params);
 }
-
 // 列表查询用户账户
-export function wallet() {
-  return fetch(802301, {
-    userId: getUserId()
-  });
+export function wallet(currency = '') {
+  return fetch(802301, {currency});
 }
 
 // 个人总资产转换
@@ -121,6 +113,15 @@ export function bindingPhone(isSendSms, mobile, smsCaptcha, userId) {
     userId
   })
 }
+
+//绑定手机号
+export function exitBindingPhone(params) {
+  return fetch(805061, {
+    ...params,
+    userId: getUserId()
+  })
+}
+
 
 // 修改密码
 export function changeLoginPwd(oldLoginPwd, newLoginPwd) {
@@ -240,10 +241,20 @@ export function walletOut(config) {
   return fetch(802350, config)
 }
 
+export function walletTransfer(config) {
+  return fetch(802351, config);
+}
+
 // 钱包 -- 账单
 export function walletBill(config) {
   return fetch(802322, config);
 }
+
+// 钱包 -- 历史账单
+export function walletHisBill(config) {
+  return fetch(802323, config);
+}
+
 
 // 钱包 -- 账单 -- 账单详情
 export function billDetails(code) {
@@ -312,4 +323,9 @@ export function getPageTrust(config, to) {
 //个人-评价
 export function userEvaluate(config){
   return fetch("628279", config);
+}
+
+// 查询内部内部转账
+export function transferRecord(config) {
+  return fetch("802355", config);
 }

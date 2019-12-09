@@ -1,147 +1,217 @@
 <template>
-  <div class="idcard-wrapper" @click.stop>
-    <div class='main'>
-      <Scroll 
-        ref="scroll"
-        :data="noticeData"
-        :hasMore="hasMore"
-        :pullUpLoad="pullUpLoad"
-        v-show="noticeData.length > 0"
-        @pullingUp="getNotice"
-      >
-        <div class="list" v-for="(item, index) in noticeData" :key="index">
-          <div class='text1'><i class='icon'></i><span class='txt1'>FUNMVP</span><span class='txt2'>{{item.createDatetime}}</span></div>
-          <p class="text2">{{item.content}}</p>
-        </div>
-      </Scroll>
-      <div class="no-data" :class="{'hidden': noticeData.length > 0}">
-        <img src="./wu.png" />
-        <p>{{ $t('notice.subject.zwgg') }}</p>
+  <div class="mine_message">
+    <div class="header" @click="selectedSingle">
+      <div class="single" :class="skey === 'todo' ? 'active' : ''" data-key="todo">
+        我的消息
+      </div>
+      <div class="single" :class="skey === 'common' ? 'active' : ''" data-key="common">
+        系统公告
       </div>
     </div>
-    
-
+    <ul class="msg_main">
+      <Scroll
+        ref="scroll"
+        :data="list"
+        :hasMore="hasMore"
+        v-show="list.length > 0"
+        @pullingUp="selectedSingle"
+      >
+        <li
+          class="single_li"
+          v-for='(item,index) in list'
+          :key='index'
+          @click="() => {toNoticeDetail(item.code)}"
+        >
+          <h5>{{item.title}}</h5>
+          <p>
+            <span class="sp_left">{{item.createDatetime}}</span>
+            <!-- <span class="sp_right">{{item.type}}</span> -->
+          </p>
+        </li>
+      </Scroll>
+    </ul>
+    <div class="no-data" :class="{'hidden': list.length > 0}">
+      <img src="./wu.png" />
+      <p>暂无数据</p>
+    </div>
+    <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
+
 <script>
-import { setTitle, formatDate } from 'common/js/util';
-import { notice } from 'api/general';
-import Scroll from 'base/scroll/scroll';
-export default {
-  data() {
-    return {
-      start: 1,
-      hasMore: true,
-      noticeData: [],
-      pullUpLoad: {
-        threshold: 40,
-        txt: {
-          more: this.$t('common.jzz') + '...',
-          noMore: this.$t('common.jzwb')
-        }
+  import { setTitle, formatDate, isLogin } from 'common/js/util';
+  import {mineMessage, mineNotice} from 'api/mine';
+  import {getUserId} from 'common/js/util';
+  import Scroll from 'base/scroll/scroll';
+  import FullLoading from 'base/full-loading/full-loading';
+  export default {
+    data() {
+      return {
+        skey: 'todo',
+        isLoading: true,
+        hasMore: true,
+        config: {
+          userId: getUserId(),
+          start: 1,
+          limit: 20,
+          type: 1
+        },
+        configNtc: {
+          userId: getUserId(),
+          start: 1,
+          limit: 20,
+          type: 0
+        },
+        configAll: {
+          userId: getUserId(),
+          start: 1,
+          limit: 20
+        },
+        list: []
       }
-    };
-  },
-  created() {
-    setTitle(this.$t('notice.subject.gg'));
-    this.getNotice();
-  },
-  methods: {
-    getNotice(){
-      notice(this.start).then(data => {
-        data.list.map(item => {
-          item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+    },
+    created() {
+      setTitle('消息');
+      const mes_skey = sessionStorage.getItem('mes_skey') || 'todo';
+      this.skey = mes_skey;
+      if(mes_skey === 'todo') {
+        this.mineMessage();
+        return;
+      }
+      if(mes_skey === 'common'){
+        this.mineNotices();
+        return;
+      }
+    },
+    methods: {
+      selectedSingle(ev) {
+        this.config.start = 1;
+        this.configNtc.start = 1;
+        this.configAll.start = 1;
+        this.list = [];
+        const skey = ev.target.getAttribute('data-key');
+        if(skey) {
+          this.skey = skey;
+          sessionStorage.setItem('mes_skey', skey);
+          switch (skey) {
+            case 'todo':
+              this.mineMessage();
+              return;
+            case 'common':
+              this.mineNotices();
+              return;
+          }
+        }
+      },
+      // 公告
+      mineNotices() {
+        mineNotice(this.configNtc).then(data => {
+          data.list.map(item => {
+            // item.type = (item.type === '1' ? '系统消息' : '订单消息');
+            item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+          })
+          if (data.totalPage <= this.configNtc.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.configNtc.start ++;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
         });
-        if(data.totalPage <= this.start){
-          this.hasMore = false;
+      },
+      // 我的消息
+      mineMessage() {
+        if(!isLogin()) {
+          this.$router.push('login');
+          return;
         }
-        this.noticeData = [...this.noticeData, ...data.list];
-        this.start ++;
-      });
+        mineMessage(this.config).then(data => {
+          data.list.map(item => {
+            item.content = item.content;
+            item.code = item.smsCode;
+            // item.type = (item.type === '1' ? '系统消息' : '订单消息');
+            item.title = item.title;
+            item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+          })
+          if (data.totalPage <= this.config.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.config.start ++;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+        });
+      },
+      mineMessageAll() {
+        mineMessage(this.configAll).then(data => {
+          data.list.map(item => {
+            item.content = item.content;
+            // item.type = (item.type === '1' ? '系统消息' : '订单消息');
+            item.title = item.title;
+            item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+          })
+          if (data.totalPage <= this.configAll.start) {
+            this.hasMore = false;
+          }
+          this.list = [...this.list, ...data.list];
+          this.configAll.start ++;
+          this.isLoading = false;
+        }, () => {
+          this.isLoading = false;
+        });
+      },
+      toNoticeDetail(code) {
+        this.$router.push(`/system-notice-detail?code=${code}`);
+      }
+    },
+    components: {
+      Scroll,
+      FullLoading
     }
-  },
-  components: {
-    Scroll
   }
-};
 </script>
+
 <style lang="scss" scoped>
-@import "~common/scss/mixin";
-@import "~common/scss/variable";
-
-.idcard-wrapper {
-  font-size: 0.28rem;
-  color: #333;
-  width: 100%;
-
-  .icon {
-    display: inline-block;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
-  }
-
-  header {
-    line-height: 0.88rem;
-    text-align: center;
-    font-size: 0.36rem;
-    font-weight: bold;
-    background: #fff;
-    width: 100%;
-    padding: 0 0.3rem;
-    margin-bottom: .3rem;
-
-    .icon {
-      width: 0.21rem;
-      height: 0.36rem;
-      background-image: url('./fh.png');
-      float: left;
-      margin-top: 0.31rem;
-    }
-  }
-
-  .main {
-    width: 100%;
-    height: 12rem;
-    padding: 0 .3rem;
-    padding-bottom: 1rem;
-    margin-top: 0.3rem;
-    .list {
-      width: 100%;
-      border-radius: .08rem;
-      background: #fff;
-      padding: .4rem .3rem .52rem;
-      margin-bottom: .3rem;
-      .text1 {
-        line-height: .6rem;
-        padding-bottom: .3rem;
-        .icon {
-          width: .6rem;
-          height: .6rem;
-          background-image: url('./gg.png');
-          vertical-align: middle;
-          margin-right: .18rem;
-        }
-        .txt1 {
-          font-weight: bold;
-          color: #323232;
-        }
-        .txt2 {
-          float: right;
-          font-size: .24rem;
-          color: #989898;
-        }
+  .mine_message{
+    height: 100%;
+    background-color: #fff;
+    .header{
+      border-bottom: 1px solid #B7B7B7;
+      display: flex;
+      justify-content: space-around;
+      .single{
+        width: 30%;
+        text-align: center;
+        color: #595959;
+        font-size: 0.32rem;
+        border-bottom: 2px solid transparent;
+        padding-top: 0.28rem;
+        padding-bottom: 0.28rem;
       }
-      .text2 {
-        color: #323232;
-        font-weight: bold;
-        line-height: .4rem;
+      .active{
+        color: #DA5454;
+        border-bottom: 2px solid #DA5454;
+      }
+    }
+    .msg_main{
+      .single_li{
+        padding: 0.3rem 0.3rem;
+        border-bottom: 1px solid #E6E6E6;
+        h5{
+          font-weight: 500;
+          font-size: 0.3rem;
+          color: #333333;
+          margin-bottom: 0.22rem;
+        }
+        p{
+          font-size: 0.24rem;
+          color: #999;
+          display: flex;
+          justify-content: space-between;
+        }
       }
     }
   }
-
-
-
-
-}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="security-wrapper" @click.stop>
     <div class='content cont1'>
-        <router-link class='tag' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
+        <router-link class='tag mb20' :to='"security-tradePassword?istw=" + isTradepwdFlag'>
             <p>
             <span>{{$t('securityCenter.subject.jymm')}}</span>
             <i class='icon'></i>
@@ -9,19 +9,13 @@
         </router-link>
     </div>
     <div class='content cont1'>
-        <router-link class='tag mb20' to='security-identity'>
-            <p>
+        <div class='tag mb20' @click="toIdcard">
+          <p>
             <span>{{$t('securityCenter.subject.sfrz')}}</span>
             <i class='icon'></i>
-            </p>
-        </router-link>
-        <router-link class='tag mb20' :to='"security-google?google=" + googleAuthFlag + "&mobile=" + mobile'>
-            <p>
-            <span>{{$t('securityCenter.subject.ggrz')}}</span>
-            <i class='icon'></i>
-            <span class='tel'>{{googleAuthFlag == false ? '' : $t('securityCenter.subject.ykq')}}</span>
-            </p>
-        </router-link>
+            <span class="tel">{{identifyObj[identifyStatus]}}</span>
+          </p>
+        </div>
         <router-link v-show="show" class='tag' to='security-bindingEmail'>
             <p>
             <span>{{$t('securityCenter.subject.bdyx')}}</span>
@@ -37,24 +31,18 @@
         </div>
     </div>
     <div class='content'>
-        <router-link v-show="!mobile" class='tag mb20' to='security-phoneNumber'>
-            <p>
-            <span>{{$t('securityCenter.subject.bdsjh')}}</span>
-            <i class='icon'></i>
-            </p>
-        </router-link>
-        <div v-show="mobile" class='tag mb20'>
-            <p>
-            <span>{{$t('securityCenter.subject.ybdsjh')}}</span>
-            <i class='icon'></i>
-            <span class='tel'>{{mobile}}</span>
-            </p>
-        </div>
-        <router-link class='tag mb20' to='security-loginPassword'>
-            <p>
-            <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
-            <i class='icon'></i>
-            </p>
+      <router-link class='tag mb20' :to='`security-phoneNumber?mobile=${mobile}`'>
+          <p>
+          <span>修改手机号</span>
+          <i class='icon'></i>
+          <span class='tel'>{{mobile ? mobile : ''}}</span>
+          </p>
+      </router-link>
+      <router-link class='tag mb20' to='security-loginPassword'>
+          <p>
+          <span>{{$t('securityCenter.subject.xgdlmm')}}</span>
+          <i class='icon'></i>
+          </p>
         </router-link>
     </div>
     <div class="footer">
@@ -66,7 +54,6 @@
 import {getUser} from '../../api/person';
 import { clearUser, setTitle } from 'common/js/util';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
-import {SET_TENCENT_LOGINED} from 'store/mutation-types';
 
 export default {
   data() {
@@ -76,35 +63,46 @@ export default {
       email: '',
       mobile: '',
       isTradepwdFlag: '',
-      googleAuthFlag: false
+      googleAuthFlag: false,
+      identifyStatus: '0',
+      identifyObj: {
+        '0': '未认证',
+        '1': '已认证',
+        '2': '认证中',
+        '3': '认证失败'
+      }
     };
   },
   created() {
-    setTitle(this.$t('securityCenter.subject.aqzx'));
+    setTitle('账户与安全');
+    document.getElementById('app').style.height = '100%';
     getUser().then((data) => {
       this.mobile = data.mobile;
       this.email = data.email;
+      this.identifyStatus = data.identifyStatus;
       this.isTradepwdFlag = data.tradepwdFlag ? 1 : 0;
       data.emailBindFlag === false ? this.show = true : this.show = false;
       this.googleAuthFlag = data.googleAuthFlag;
     });
   },
-  computed: {
-    ...mapGetters([
-      'tencentLogined'
-    ])
-  },
   methods: {
     quitLogin(){
       clearUser();
-      this.setTencentLogined(false);
+      if(window.SOCKET) {
+        window.SOCKET.send('close');
+        window.SOCKET = null;
+      }
       setTimeout( () => {
         this.$router.push('/login');
       }, 500 );
     },
-    ...mapMutations({
-      setTencentLogined: SET_TENCENT_LOGINED
-    })
+    toIdcard() {
+      if(!this.isKind) {
+        this.$router.push('/security-idcard');
+      }else {
+        return false;
+      }
+    }
   },
 };
 </script>
@@ -116,6 +114,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   width: 100%;
+  height: 100%;
   background: #fff;
 
   .icon {
@@ -170,6 +169,7 @@ export default {
       .tel {
         float: right;
         margin-right: .2rem;
+        font-size: 0.26rem;
       }
     }
   }

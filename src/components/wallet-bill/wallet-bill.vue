@@ -1,51 +1,59 @@
 <template>
   <div class="bill-wrapper" @click.stop>
     <div class='list-wrap'>
-      <p class="wallet-p"></p>
-      <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
-        <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
+      <div class="selected_wallet">
+        <p class="wallet-p"></p>
+        <select name="" id="wallet-set" v-model="billType" @change="walletTypeFn">
+          <option :value="item.key" v-for="(item, index) in watlleType" :key="index">{{item.value}}</option>
         </select>
-      <Scroll
+      </div>
+      <div class="warp_head">
+        <div class="head_icon" :style="{backgroundImage: `url('${walletItem.coinIcon}')`}"></div>
+        <div class="head_right">
+          <p>{{walletItem.currency}}</p>
+          <h5>{{walletItem.syAmount}}{{walletItem.currency}}</h5>
+        </div>
+      </div>
+      <div class="scroll_head">
+        <span>近期交易记录</span>
+        <span @click="toHisBill">更多</span>
+      </div>
+      <div class="scroll_box" v-show="list.length > 0">
+        <Scroll
         ref="scroll"
         :data="list"
         :hasMore="hasMore"
-        v-show="list.length > 0"
         @pullingUp="walletBill"
       >
-        <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + bizTypeValueList[item.bizType]" class="bill-list" v-for='(item,index) in list' :key='index'>
-          <div class="list">
-            <div class='mark'>
-              <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
+        <div class="bill-list">
+          <router-link :to="'bill-details' + '?code=' + item.code + '&type=' + item.bizType" v-for='(item,index) in list' :key='index'>
+            <div class="list">
+              <div class='mark'>
+                <i :class="[item.transAmountString > 0 ? 'icon' : 'icon ico3']"></i>
+              </div>
+              <div class='item'>
+                <p class='collect'>
+                  <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
+                  <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
+                </p>
+                <p class='time'>{{item.createDatetime}}</p>
+              </div>
             </div>
-            <div class='item'>
-              <p class='collect'>
-                <span class='txt1'>{{bizTypeValueList[item.bizType]}}</span>
-                <span :class="[item.transAmountString > 0 ? 'txt2' : 'txt2 txt22']">{{item.transAmountString}}{{item.currency}}</span>
-              </p>
-              <p class='time'>{{item.createDatetime}}</p>
-              <p class='explain'>{{getBizNote(item)}}</p>
-            </div>
-          </div>
-        </router-link>
+          </router-link>
+        </div>
       </Scroll>
+      </div>
       <div class="no-data" :class="{'hidden': list.length > 0}">
         <img src="./wu.png" />
         <p>{{$t('walletBill.subject.zwjl')}}</p>
       </div>
     </div>
     <!-- 筛选弹窗 -->
-    <div class='select'>
-      <!-- <p>
-        <span>取消</span>
-        <span>确定</span>
-      </p> -->
-
-    </div>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
-import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText } from 'common/js/util';
+import { getUrlParam, formatDate, formatAmount, setTitle, getTranslateText, formatMoneySubtract } from 'common/js/util';
 import { walletBill } from 'api/person';
 import { getDictList } from 'api/general';
 import Scroll from 'base/scroll/scroll';
@@ -61,58 +69,55 @@ export default {
       watlleType: [
         {
           key: [],
-          value: this.$t('walletBill.subject.qb')
+          value: '全部'
         },{
           key: ['charge'],
-          value: this.$t('walletBill.subject.cb')
+          value: '充币'
         },{
           key: ['withdraw'],
-          value: this.$t('walletBill.subject.tb')
+          value: '提币'
         },{
-          key: ['ccorder_buy', 'bborder_buy', 'accept_buy'],
-          value: this.$t('walletBill.subject.jymr')
+          key: ['bborder_buy'],
+          value: '交易买入'
         },{
-          key: ['ccorder_sell', 'bborder_sell', 'accept_sell'],
-          value: this.$t('walletBill.subject.jymc')
+          key: ['bborder_sell'],
+          value: '交易卖出'
         },{
-          key: ['ccorder_fee', 'bborder_fee', 'withdraw_fee'],
-          value: this.$t('walletBill.subject.sxf')
+          key: ['bborder_fee', 'withdraw_fee'],
+          value: '手续费'
         },{
-          key: ['game_in'],
-          value:  this.$t('walletBill.subject.yxzr')
+          key: ["bborder_frozen","bborder_unfrozen_revoke","bborder_unfrozen_trade","withdraw_frozen","withdraw_unfrozen","delivery_frozen","delivery_unfrozen"],
+          value: '冻结解冻'
         },{
-          key: ['game_out'],
-          value: this.$t('walletBill.subject.yxzc')
+          key: ["aj_purchase_product_in","aj_purchase_product_give"],
+          value: '申购'
         },{
-          key: [
-            'ccorder_frozen',
-            'ccorder_unfrozen_revoke',
-            'ccorder_unfrozen_trade',
-            'bborder_frozen',
-            'bborder_unfrozen_revoke',
-            'bborder_unfrozen_trade',
-            'withdraw_frozen',
-            'withdraw_unfrozen',
-            'accept_frozen',
-            'accept_unfrozen'
-          ],
-          value: this.$t('walletBill.subject.djjd')
+          key: ["aj_delivery_pay"],
+          value: '交割'
+        },{
+          key: ["aj_dig_pool_out"],
+          value: '奖励池'
         }
       ],
       code: '12345',
       start: 1,
-      limit: 10,
+      limit: 20,
       config: {
         accountNumber: '',
         start: 1,
-        limit: 10
+        limit: 20
       },
-      bizTypeValueList: []
+      bizTypeValueList: [],
+      walletItem: {}
     }
   },
   created() {
     setTitle(this.$t('walletBill.subject.zzjl'));
     this.config.accountNumber = getUrlParam('accountNumber');
+    const walletItem = sessionStorage.getItem('walletItem') || '';
+    if(walletItem) {
+      this.walletItem = JSON.parse(walletItem);
+    }
     getDictList('jour_biz_type_user').then(data => {
       data.forEach((item) => {
         this.bizTypeValueList[item.dkey] = item.dvalue;
@@ -142,7 +147,7 @@ export default {
         data.list.map(item => {
           item.transAmountString = formatAmount(item.transAmountString, '', item.currency);
           item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
-        })
+        });
         if (data.totalPage <= this.start) {
           this.hasMore = false;
         }
@@ -155,25 +160,10 @@ export default {
     },
     getBizNote(item) {
       // 币币交易买入卖出
-      if (item.bizType === 'bborder_frozen') {
-        console.log(getTranslateText(item.bizNote));
-        return getTranslateText(item.bizNote);
-        // 充值
-      } else if (item.bizType === 'charge') {
-        if(item.bizNote.indexOf('充币-来自地址') > -1) {
-          return item.bizNote.replace('充币-来自地址', getTranslateText('充币-来自地址'));
-        } else if(item.bizNote.indexOf('充币-来自交易') > -1) {
-          return item.bizNote.replace('充币-来自交易', getTranslateText('充币-来自交易'));
-        } else if(item.bizNote.indexOf('充币-交易id') > -1) {
-          return item.bizNote.replace('充币-交易id', getTranslateText('充币-交易id'));
-        } else if(item.bizNote.indexOf('充币-来自地址') > -1) {
-          return item.bizNote.replace('充币-外部地址', getTranslateText('充币-外部地址'));
-        } else {
-          return this.bizTypeValueList[item.bizType];
-        }
-      } else {
-        return this.bizTypeValueList[item.bizType];
-      }
+      return getTranslateText(item.bizNote);
+    },
+    toHisBill() {
+      this.$router.push(`/wallet-hisBill?accountNumber=${this.config.accountNumber}`);
     }
   },
   components: {
@@ -190,7 +180,7 @@ export default {
   font-size: 0.28rem;
   color: #333;
   overflow: auto;
-
+  background-color: #fff;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -236,17 +226,15 @@ export default {
     display: block;
     width: 100%;
     background: #fff;
-    padding: .26rem .3rem 0;
-
     .list {
       width: 100%;
-      height: 1.52rem;
+      padding: .26rem .3rem 0;
+      min-height: 1rem;
       display: flex;
       border-bottom: .01rem solid #e5e5e5;
-
       .mark {
         border-radius: 50%;
-        margin-top: .26rem;
+        margin-top: .1rem;
 
         .icon {
           width: .6rem;
@@ -324,28 +312,76 @@ export default {
   }
 
   .list-wrap{
-    position: relative;
-    height: 13rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: scroll;
-    .wallet-p{
+    background-color: #fff;
+    .scroll_box{
+      height: calc(100% - 3.12rem);
+    }
+    .scroll_head{
+      color: '#999999';
+      font-size: 0.28rem;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.2rem;
+      padding: 0.04rem 0.3rem;
+    }
+    .selected_wallet{
       position: absolute;
-      right: 15%;
-      top: 0.6rem;
+      right: 5%;
+      top: 0.3rem;
       z-index: 5;
+      &:hover .wallet-p{
+        opacity: 0.9;
+      }
+    }
+    .warp_head{
+      height: 2.12rem;
+      margin: 0.4rem 0.14rem 0.26rem;
+      background-size: 100% 100%;
+      background-image: url('./bill_bg.png');
+      display: flex;
+      align-items: center;
+      padding: 0.54rem 0 0.6rem 0.46rem;
+      .head_icon{
+        margin-right: 0.2rem;
+        width: 0.8rem;
+        height: 0.8rem;
+        background-size: 100% 100%;
+      }
+      .head_right{
+        p{
+          color: '#999999';
+          font-size: 0.28rem;
+          line-height: 0.4rem;
+          margin-bottom: 0.04rem;
+        }
+        h5{
+          color: '#333333';
+          font-size: 0.44rem;
+          line-height: 0.66rem;
+        }
+      }
+    }
+    .wallet-p{
       height: 1rem;
       width: 1rem;
-      opacity: 0.7;
+      opacity: 0.3;
       background-image: url('./sxuan.png');
       background-size: 100%;
     }
     #wallet-set{
       position: absolute;
       opacity: 0;
-      right: 15%;
-      top: 0.6rem;
+      right: 0.1rem;
+      top: 0.1rem;
+      left: 0.1rem;
+      bottom: 0.1rem;
       z-index: 9;
-      height: 1rem;
-      width: 1rem;
     }
   }
 
