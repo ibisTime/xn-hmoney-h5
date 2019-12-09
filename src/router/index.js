@@ -53,8 +53,6 @@ const securityBindingEmail = () => import('components/security-binding-email/sec
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
-// 我的 -- 我的广告
-const myAdvertising = () => import('components/my-advertising/my-advertising');
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
 // 我要购买 -- 订单详情
@@ -168,10 +166,6 @@ export default new Router({
     {
       path: '/mine',
       component: Mine
-    },
-    {
-      path: '/my-advertising',
-      component: myAdvertising
     },
     {
       path: '/my-order',

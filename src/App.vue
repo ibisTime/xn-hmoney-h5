@@ -96,7 +96,7 @@
           setUser({userId, token});
         }
         if (isLogin()) {
-          this.tencentLogin();
+          // this.tencentLogin();
         } else {
           if (to.path === '/' ||
             to.path === '/page' ||
