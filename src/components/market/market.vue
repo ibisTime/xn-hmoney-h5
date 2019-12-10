@@ -148,7 +148,7 @@
         if(!v) {
           return '0.00%';
         }
-        return (Math.floor(v * 10000) / 100).toFixed(2) + '%';
+        return (Math.floor(+v * 10000) / 100).toFixed(2) + '%';
       }
     },
     components: {

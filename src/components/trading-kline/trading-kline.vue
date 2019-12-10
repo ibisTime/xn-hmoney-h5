@@ -19,7 +19,7 @@
           <div class='text2'>
             <p>
               <span class='gray txt1'>
-                {{$t('trading.bbDepth.zf')}}
+                涨幅
               </span>
               <span class='txt2' :class="+gkdsList.percent24h < 0 ? 'red' : 'green'">
                 {{gkdsList.percent24h}} %
@@ -117,7 +117,7 @@ export default {
                 // 获取涨幅
                 this.bb_zxj = data.lastPrice;
                 this.toSyMid = this.currency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
-                data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
+                data.percent24h = data.percent24h ? (Math.floor(+data.percent24h * 10000) / 100).toFixed(2) : '0.00';
                 data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
                 data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';
                 data.high = data.high > 0 ? (Math.floor(data.high * 10000) / 10000).toFixed(4) : '0.0000';

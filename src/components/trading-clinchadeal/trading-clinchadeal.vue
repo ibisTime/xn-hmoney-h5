@@ -136,7 +136,7 @@
           display: inline-block;
           overflow: hidden;
           text-overflow: ellipsis;
-          word-spacing: normal;
+          white-space: nowrap;
           font-size: 0.2rem;
           &:nth-of-type(1) {
             width: 26%;

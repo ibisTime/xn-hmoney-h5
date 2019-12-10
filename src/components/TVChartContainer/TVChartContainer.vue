@@ -28,6 +28,7 @@
   import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
+  import {SOCKET_URL} from 'common/js/config';
   import Loading from 'base/loading/loading';
   export default {
     name: 'TVChartContainer',
@@ -147,17 +148,44 @@
             resolution: "1M",
             chartType: 1
           }
-        ]
+        ],
+        interTime: null,
+        outTimer: null
       }
     },
     mounted() {
       const resolution = sessionStorage.getItem('resolution');
       if(resolution) {
         this.resolution = resolution;
+        const isShow = resolution !== '15' && resolution !== '60' && resolution !== '240' && resolution !== '1D';
+        this.showMoreBtn = isShow;
       }
       this.onChartReady();
-      // window.SOCKET = io('wss://api.huobi.pro/ws');
-      // console.log(window.SOCKET);
+      if(!window.SOCKET_KLINE) {
+        window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}/kline`);
+        window.SOCKET_KLINE.onerror = function() {
+          window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`);
+          window.SOCKET_KLINE.onerror = function() {
+            window.SOCKET_KLINE = null;
+          }
+        }
+      }
+      if(this.interTime) {
+        clearInterval(this.interTime);
+      }
+      this.interTime = setInterval(() => {
+        if(!window.SOCKET_KLINE || (window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 3)) {
+          window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}/kline`);
+          if(this.outTimer) {
+            clearTimeout(this.outTimer);
+          }
+          this.outTimer = setTimeout(() => {
+            if(window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 1) {
+              window.location.reload();
+            }
+          }, 20000);
+        }
+      }, 3000);
     },
     methods: {
       onChartReady() {
@@ -167,7 +195,7 @@
           symbol: this.setBazDeal.symbol,
           // BEWARE: no trailing slash is expected in feed URL
           datafeed: new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
-          interval: this.interval,
+          interval: this.resolution,
           container_id: this.containerId,
           library_path: this.libraryPath,
           locale: this.locale,
@@ -329,6 +357,7 @@
     watch: {
       setBazDeal: {
         handler(val) {
+          $("#tv_chart_container").attr("firstLoad", "0");
           this.onChartReady();
         },
         deep: true
@@ -336,6 +365,18 @@
     },
     components: {
       Loading
+    },
+    beforeDestroy() {
+      if(window.SOCKET_KLINE && window.SOCKET_KLINE.onmessage) {
+        window.SOCKET_KLINE.send('close');
+        window.SOCKET_KLINE = null;
+      }
+      if(this.interTime) {
+        clearInterval(this.interTime);
+      }
+      if(this.outTimer) {
+        clearTimeout(this.outTimer);
+      }
     }
   }
 </script>

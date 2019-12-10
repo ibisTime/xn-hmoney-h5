@@ -88,6 +88,52 @@
   function formatDate(date, f = 'yyyy-MM-dd') {
     return date ? new Date(date).format(f) : '--';
   }
+  let kresData = [], pulseNumber = 0, updateTimer = {};
+  function responseData(requestParams, resolve) {
+    let bars = [];
+    let meta = {
+      noData: false
+    };
+    $('#tv_chart_container').attr('firstLoad', '1');
+    // 这一次结尾时间是前一次的开始时间 时间是右往左
+    $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
+    if (kresData.length <= 0) {
+      meta.noData = true;
+    } else if(kresData.length === 1 && kresData[0].volume === 0) {
+      meta.noData = true;
+    } else {
+      for (let i = 0; i < kresData.length; ++i) {
+        let barValue = {
+          time: typeof kresData[i].startDatetime !== 'number' ? Date.parse(new Date(kresData[i].startDatetime)) : Math.floor(kresData[i].startDatetime / 1000) * 1000,
+          close: kresData[i].close,
+          open: kresData[i].open,
+          high: kresData[i].high,
+          low: kresData[i].low,
+          volume: kresData[i].volume,
+          isBarClosed: true,
+          isLastBar: false,
+          isTime: formatDate(new Date(kresData[i].startDatetime), 'yyyy-MM-dd hh:mm')
+        };
+        if (i === kresData.length - 1) {
+          barValue.isBarClosed = false;
+          barValue.isLastBar = true;
+        }
+        bars.push(barValue);
+      }
+    }
+    // 500数据线限制
+    if (bars.length >= 500) {
+      $('#tv_chart_container').attr('startDatetime', bars[499].time);
+    }
+    updateTimer.endDatetime = bars[0] ? formatDate(new Date(bars[0].time), 'yyyy-MM-dd hh:mm') : '';
+    if(pulseNumber === 10 && !!updateTimer.startDatetime && updateTimer.endDatetime) {
+      window.SOCKET_KLINE.send(JSON.stringify(updateTimer));
+    }
+    return resolve({
+      bars,
+      meta
+    });
+  };
 
   let HistoryProvider = /** @class */ (function () {
     function HistoryProvider(datafeedUrl, requester) {
@@ -96,6 +142,7 @@
     }
 
     HistoryProvider.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onLoadedCallback) {
+      pulseNumber ++;
       const resolutionOwner = sessionStorage.getItem('resolution');
       let foramtList = {
         '1': '1min',
@@ -108,17 +155,20 @@
         '1W': '1week',
         '1M': '1mon'
       };
-      // console.log(window.SOCKET);
       const period = resolutionOwner ? foramtList[resolutionOwner] : foramtList[resolution];
       let setBazDeal = sessionStorage.getItem('setBazDeal');
       if(setBazDeal) {
         setBazDeal = JSON.parse(setBazDeal);
       }else {
         setBazDeal = {
-          symbol: 'TWT',
-          toSymbol: 'BTC'
+          symbol: 'USDT',
+          toSymbol: 'TWT'
         };
       }
+      updateTimer = {
+        ...setBazDeal,
+        period
+      };
       let requestParams = {
         symbol: setBazDeal.symbol,
         toSymbol: setBazDeal.toSymbol,
@@ -128,70 +178,43 @@
         endDatetime: formatDate(new Date(rangeEndDate * 1000), 'yyyy-MM-dd hh:mm')
       };
 
+      updateTimer.startDatetime = rangeStartDate > 0 ? formatDate(new Date(rangeStartDate * 1000), 'yyyy-MM-dd hh:mm') : '';
+
       // 保存下一次结束时间 这一次结尾时间是前一次的开始时间 时间是右往左
-      if ($('#tv_chart_container').attr('firstLoad') === '1') {
-        $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
-        requestParams.endDatetime = $('#tv_chart_container').attr('startDatetime');
-      }
+      // if ($('#tv_chart_container').attr('firstLoad') === '1') {
+      //   $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
+      //   requestParams.endDatetime = $('#tv_chart_container').attr('startDatetime');
+      // }
       let sendParam = {
         code: '650066',
         json: JSON.stringify(requestParams)
       };
-      console.log(requestParams.startDatetime);
-      return new Promise(function (resolve, reject) {
-        $.ajax({
-          type: 'post',
-          url: '/api',
-          data: sendParam
-        }).then(function (res) {
-          let response = res.data;
-          let bars = [];
-          let meta = {
-            noData: false
-          };
-          // 如果是第一次加载
-          if ($('#tv_chart_container').attr('firstLoad') === '0') {
-            $('#tv_chart_container').attr('firstLoad', '1');
-            // 这一次结尾时间是前一次的开始时间 时间是右往左
-            $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
-          }
-          if (response.length <= 0) {
-            meta.noData = true;
-          } else {
-            for (let i = 0; i < response.length; ++i) {
-              let barValue = {
-                time: Date.parse(new Date(response[i].startDatetime)),
-                close: response[i].close,
-                open: response[i].open,
-                high: response[i].high,
-                low: response[i].low,
-                volume: response[i].volume,
-                isBarClosed: true,
-                isLastBar: false,
-                sTime: formatDate(response[i].startDatetime, 'yyyy-MM-dd hh:mm')
-              };
-              if (i === response.length - 1) {
-                barValue.isBarClosed = false;
-                barValue.isLastBar = true;
-              }
-              bars.push(barValue);
-            }
-          }
-          // 500数据线限制
-          if (bars.length >= 500) {
-            $('#tv_chart_container').attr('startDatetime', bars[499].time);
-          }
-          console.log(bars);
-          resolve({
-            bars: bars,
-            meta: meta
+      const firstLoad = $('#tv_chart_container').attr('firstLoad');
+      if (!firstLoad || firstLoad === '0') {
+        return new Promise(function (resolve, reject) {
+          $.ajax({
+            type: 'post',
+            url: '/api',
+            data: sendParam
+          }).then(function (res) {
+            kresData = res.data;
+            window.SOCKET_KLINE.send(JSON.stringify({
+              ...setBazDeal,
+              period
+            }));
+            return responseData(requestParams, resolve);
+          }).fail(function (error) {
+            error && logMessage(error);
           });
-        }).fail(function (error) {
-          error && logMessage(error);
         });
-      });
+      }else {
+        return new Promise(function (resolve, reject) {
+          $('#tv_chart_container').attr('startDatetime', requestParams.startDatetime);
+          requestParams.endDatetime = $('#tv_chart_container').attr('startDatetime');
+          return responseData(requestParams, resolve);
+        });
+      }
     };
-
     return HistoryProvider;
   }());
 
@@ -200,7 +223,20 @@
       this._subscribers = {};
       this._requestsPending = 0;
       this._historyProvider = historyProvider;
-      setInterval(this._updateData.bind(this), updateFrequency);
+      const _this = this;
+      if(!window.SOCKET_KLINE) {
+        setTimeout(() => {
+          window.SOCKET_KLINE.onmessage = function(ev) {
+            if(ev.data) {
+              _this._requestsPending = 0;
+              kresData = JSON.parse(ev.data).data;
+              _this._updateData.bind(_this)();
+              pulseNumber = 0;
+            }
+          }
+        }, 1500);
+      }
+      // setInterval(this._updateData.bind(this), updateFrequency);
     }
 
     DataPulseProvider.prototype.subscribeBars = function (symbolInfo, resolution, newDataCallback, listenerGuid) {
@@ -241,7 +277,6 @@
           });
       };
       let _this1 = this;
-      console.log('1', this$1._subscribers);
       for (let listenerGuid in this$1._subscribers) {
         _loop1(listenerGuid);
       }
@@ -252,7 +287,8 @@
       let rangeEndTime = parseInt((Date.now() / 1000).toString());
       // BEWARE: please note we really need 2 bars, not the only last one
       // see the explanation below. `10` is the `large enough` value to work around holidays
-      let rangeStartTime = rangeEndTime - periodLengthSeconds(subscriptionRecord.resolution, 10);
+      let rangeStartTime = '';
+      rangeStartTime = rangeEndTime - periodLengthSeconds(subscriptionRecord.resolution, 10);
       return this._historyProvider.getBars(subscriptionRecord.symbolInfo, subscriptionRecord.resolution, rangeStartTime, rangeEndTime)
         .then(function (result) {
           _this._onSubscriberDataReceived(listenerGuid, result);
@@ -273,16 +309,18 @@
       if (subscriptionRecord.lastBarTime !== null && lastBar.time < subscriptionRecord.lastBarTime) {
         return;
       }
-      let isNewBar = subscriptionRecord.lastBarTime !== null && lastBar.time > subscriptionRecord.lastBarTime;
+      // let isNewBar = subscriptionRecord.lastBarTime !== null && lastBar.time > subscriptionRecord.lastBarTime;
       // Pulse updating may miss some trades data (ie, if pulse period = 10 secods and new bar is started 5 seconds later after the last update, the
       // old bar's last 5 seconds trades will be lost). Thus, at fist we should broadcast old bar updates when it's ready.
-      if (isNewBar) {
-        if (bars.length < 2) {
-          throw new Error('Not enough bars in history for proper pulse update. Need at least 2.');
-        }
-        let previousBar = bars[bars.length - 2];
-        subscriptionRecord.listener(previousBar);
-      }
+      // if (isNewBar) {
+      //   if (bars.length < 1) {
+      //     throw new Error('Not enough bars in history for proper pulse update. Need at least 1.');
+      //   }
+      //   let previousBar = bars[bars.length - 1];
+      //   subscriptionRecord.lastBarTime = previousBar.time;
+      //   subscriptionRecord.listener(previousBar);
+      //   return;
+      // }
       subscriptionRecord.lastBarTime = lastBar.time;
       subscriptionRecord.listener(lastBar);
     };

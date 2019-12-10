@@ -121,8 +121,8 @@
               <span class="max-len">{{symWallet.kyAmount | symbolToFixed}}</span>
             </p>
             <p class='he9 btn red' v-show="downConfig.type === '1'">
-              <span>{{$t('trading.bbDeal.kmai')}}{{setBazDeal.symbol}}</span>
-              <span class="max-len">{{(xjPrice > 0 && symWallet.kyAmount) ? (Math.floor((symWallet.kyAmount / (+xjPrice)) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
+              <span>可得{{setBazDeal.toSymbol}}</span>
+              <span class="max-len">{{(xjPrice > 0 && symWallet.kyAmount) ? (Math.floor((symWallet.kyAmount * (+xjPrice)) * 10000) / 10000).toFixed(4) : '0.0000'}}</span>
             </p>
             <p class='he9 btn'>
               <span>{{$t('trading.bbDeal.ky')}}{{setBazDeal.toSymbol}}</span>
@@ -381,7 +381,7 @@
           this.marketId = data.id;
           this.bb_zxj = data.lastPrice;
           this.toSyMid = this.referCurrency === 'USD' ? data.lastPriceUsd : data.lastPriceCny; // toSymbol换算价
-          data.percent24h = (data.percent24h && (data.percent24h * 100).toFixed(2)) || '0.00';
+          data.percent24h = data.percent24h ? (Math.floor(+data.percent24h * 10000) / 100).toFixed(2) : '0.00';
           data.volume = data.volume > 0 ? (Math.floor(data.volume * 10000) / 10000).toFixed(4) : '0.0000';
           data.low = data.low > 0 ? (Math.floor(data.low * 10000) / 10000).toFixed(4) : '0.0000';
           data.high = data.high > 0 ? (Math.floor(data.high * 10000) / 10000).toFixed(4) : '0.0000';

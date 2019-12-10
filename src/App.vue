@@ -21,7 +21,8 @@
       return {
         textMsg: '',
         coinData: {},
-        isLoading: false
+        isLoading: false,
+        interTime: null
       }
     },
     created() {
@@ -32,35 +33,7 @@
             new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
             new WebSocket(SOCKET_URL);
           const _this = this;
-          window.SOCKET.onmessage = function(ev) {
-            const pathname = window.location.pathname;
-            if(ev.data) {
-              const scoketData = JSON.parse(ev.data);
-              const obj = {
-                'market.notice': () => { // 行情
-                  _this.MARKET_NOTICE();
-                },
-                'simuorder.notice': () => { // 我的委托单
-                  _this.SIMUORDER_NOTICE();
-                },
-                'account.notice': () => { // 我的账户
-                  _this.ACCOUNT_NOTICE();
-                },
-                'handicap.notice': () => { // 盘口
-                  _this.HANDICAP_NOTICE();
-                },
-                'simuorder_detail.notice': () => { // 实时成交
-                  _this.SIMUORDERDETAIL_NOTICE();
-                }
-              };
-              obj[scoketData.ch] && obj[scoketData.ch]();
-            }
-          }
-          window.SOCKET.onerror = function() {
-            window.SOCKET = isLogin() ?
-              new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
-              new WebSocket(SOCKET_URL);
-          }
+          this.socketWatch();
         }
         getBbListData().then(data => {
           for(let i = 0; i < data.length; i ++){
@@ -78,18 +51,70 @@
           setUser({userId, token});
         }
       });
+      if(this.interTime) {
+        clearInterval(this.interTime);
+      }
+      this.interTime = setInterval(() => {
+        if(!window.SOCKET || (window.SOCKET && window.SOCKET.readyState === 3)) {
+          window.SOCKET = isLogin() ?
+            new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
+            new WebSocket(SOCKET_URL);
+          this.socketWatch();
+        }
+      }, 3000);
     },
     methods: {
       ...mapMutations({
         ...types
-      })
+      }),
+      socketWatch() {
+        const _this = this;
+        window.SOCKET.onmessage = function(ev) {
+          const pathname = window.location.pathname;
+          if(ev.data) {
+            const scoketData = JSON.parse(ev.data);
+            const obj = {
+              'market.notice': () => { // 行情
+                _this.MARKET_NOTICE();
+              },
+              'simuorder.notice': () => { // 我的委托单
+                _this.SIMUORDER_NOTICE();
+              },
+              'account.notice': () => { // 我的账户
+                _this.ACCOUNT_NOTICE();
+              },
+              'handicap.notice': () => { // 盘口
+                _this.HANDICAP_NOTICE();
+              },
+              'simuorder_detail.notice': () => { // 实时成交
+                _this.SIMUORDERDETAIL_NOTICE();
+              }
+            };
+            obj[scoketData.ch] && obj[scoketData.ch]();
+          }
+        }
+        window.SOCKET.onerror = function() {
+          window.SOCKET = isLogin() ?
+            new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
+            new WebSocket(SOCKET_URL);
+          window.SOCKET.onerror = function() {
+            window.SOCKET = null;
+          }
+        }
+      }
     },
     components: {
       Toast,
       FullLoading
     },
     beforeDestroy() {
-      window.SOCKET && window.SOCKET.close();
+      if(window.SOCKET && window.SOCKET.onmessage) {
+        window.SOCKET.send('close');
+        window.SOCKET = null;
+      }
+      if(this.interTime) {
+        clearInterval(this.interTime);
+      }
     }
   };
 </script>
