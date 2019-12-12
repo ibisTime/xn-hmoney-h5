@@ -11,14 +11,8 @@ const Login = () => import('components/login/login');
 const Registered = () => import('components/registered/registered');
 // 交易
 const Trading = () => import('components/trading/trading');
-// k线图简介
-const TradingSynopsis = () => import('components/trading-synopsis/trading-synopsis');
-// k线图挂单
-const TradingPutUp = () => import('components/trading-put-up/trading-put-up');
-// k线图成交
-const TradingClinchadeal = () => import('components/trading-clinchadeal/trading-clinchadeal');
-// k线图深度图
-const tradingDepthMap = () => import('components/trading-depth-map/trading-depth-map');
+// k线图
+const TradingKline = () => import('components/trading-kline/trading-kline');
 // 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
 // 钱包
@@ -29,6 +23,8 @@ const WalletInto = () => import('components/wallet-into/wallet-into');
 const WalletOut = () => import('components/wallet-out/wallet-out');
 // 钱包 -- 账单
 const WalletBill = () => import('components/wallet-bill/wallet-bill');
+// 钱包 -- 历史账单
+const WalletBillHis = () => import('components/wallet-bill/wallet-bill_his');
 // 账单 -- 详情
 const BillDetails = () => import('components/wallet-bill-details/wallet-bill-details');
 // 我的
@@ -49,26 +45,76 @@ const securityBindingEmail = () => import('components/security-binding-email/sec
 const securityPhoneNumber = () => import('components/security-phone-number/security-phone-number');
 // 安全中心 -- 修改登录密码
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
+// 修改昵称
+const securityLoginName = () => import('components/security-loginName/security-loginName');
+
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
 // 我要购买 -- 订单详情
 const walletOrderDetails = () => import('components/wallet-order-details/wallet-order-details');
 // 订单详情
 const OrderDetails = () => import('components/order-details/order-details');
+// 我的 -- 邀请好友
+const myInviteFriends = () => import('components/my-invite-friends/invite-friends');
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
+
+// 我的 -- 帮助中心
+const MineHelp = () => import('components/mine-help/mine-help');
+
+// 我的 -- 设置
+const MineSetUp = () => import('components/mine-setUp/mine-setUp');
+
+// 我的 -- 设置 -- 设置货币
+const SetUpSymbol = () => import('components/mine-setUp/set-up_symbol');
+
 // 关于我们 -- 平台介绍
 const aboutPlatformIntroduced = () => import('components/about-privacy-policy/about-privacy-policy');
 // 关于我们 -- 隐私条款
 const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-privacy-policy');
-// 首页 -- 系统公告
+// 我的-收货地址
+const MineAddress = () => import('components/address/address-list');
+const MineAddressAddEdit = () => import('components/address/address-addedit');
+
+// 首页 -- 系统公告 
 const systemNotice = () => import('components/system-notice/system-notice');
+const systemNoticeDetail = () => import('components/system-notice/system-notice-detail/system-notice-detail');
 
 // 行情
 const Market = () => import('components/market/market');
 
-// app k线
-const TradingKline = () => import('components/trading-kline/trading-kline');
+// 消息
+const MineMessage = () => import('components/mine-message/index');
+
+// 团队
+const MineTeam = () => import('components/mine-team/index');
+
+// 挖矿 - 交割 - 申购
+const DigCoin = () => import('components/digCoin-page/index');
+const DigOutMine = () => import('components/digCoin-page/outMine/outMine');
+const DigHistoryMine = () => import('components/digCoin-page/history-mine/index');
+const DigOutRecord = () => import('components/digCoin-page/outRecord/outRecord');
+const DigGetCalculate = () => import('components/digCoin-page/get-calculate/get_calculate');
+const DigCalculateRecord = () => import('components/digCoin-page/calculate-record/calculate-record');
+const DigHisCalculate = () => import('components/digCoin-page/calculate-record/his-calculate/his-calculate');
+const DigCalculateDetail = () => import('components/digCoin-page/calculate-record/calculate-detail/calculate-detail');
+
+const DigPurchase = () => import('components/dig-purchase/index');
+const DigPurchaseDetail = () => import('components/dig-purchase/purchase-detail/purchase-detail');
+const DigPurchaseRecord = () => import('components/dig-purchase/purchase-record/purchase-record');
+
+const DigDelivery = () => import('components/dig-delivery/index');
+const DigDeliveryImage = () => import('components/dig-delivery/delivery-image/delivery-image');
+const DigDeliveryConfirm = () => import('components/dig-delivery/delivery-confirm/delivery-confirm');
+const DigDeliverySelectType = () => import('components/dig-delivery/delivery-select-type/delivery-select-type');
+const DigDeliveryDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail');
+const DigDeliveryRecord = () => import('components/dig-delivery/delivery-record/delivery-record');
+const DigDeliveryRecordDetail = () => import('components/dig-delivery/record-detail/record-detail');
+const DeliveryRecordDetail = () => import('components/dig-delivery/delivery-record/delivery-record-detail');
+const DeliveryUnitDetail = () => import('components/dig-delivery/delivery-detail/delivery-detail-unit');
+
+const WalletTransfer = () => import('components/wallet-transfer/wallet-transfer');
+const transferRecord = () => import('components/wallet-transfer/transfer-record');
 
 export default new Router({
   routes: [
@@ -85,26 +131,16 @@ export default new Router({
       component: systemNotice
     },
     {
+      path: '/system-notice-detail',
+      component: systemNoticeDetail
+    },
+    {
       path: '/trading',
-      component: Trading,
-      children: [
-        {
-          path: '/trading-synopsis',
-          component: TradingSynopsis,
-        },
-        {
-          path: '/trading-putUp',
-          component: TradingPutUp,
-        },
-        {
-          path: '/trading-clinchADeal',
-          component: TradingClinchadeal,
-        },
-        {
-          path: '/trading-depthMap',
-          component: tradingDepthMap,
-        }
-      ]
+      component: Trading
+    },
+    {
+      path: '/trading-kline',
+      component: TradingKline
     },
     {
       path: '/trading-historyEntrust',
@@ -117,6 +153,10 @@ export default new Router({
     {
       path: '/wallet-bill',
       component: WalletBill
+    },
+    {
+      path: '/wallet-hisBill',
+      component: WalletBillHis
     },
     {
       path: '/wallet-into',
@@ -143,6 +183,10 @@ export default new Router({
       component: Mine
     },
     {
+      path: '/my-inviteFriends',
+      component: myInviteFriends
+    },
+    {
       path: '/security-center',
       component: mySecurityCenter
     },
@@ -159,12 +203,16 @@ export default new Router({
       component: securityIdentity
     },
     {
-      path: '/security-idcard/:type',
+      path: '/security-idcard',
       component: securityIdcard
     },
     {
       path: '/security-loginPassword',
       component: securityLoginPassword
+    },
+    {
+      path: '/security-loginName',
+      component: securityLoginName
     },
     {
       path: '/security-bindingEmail',
@@ -187,6 +235,14 @@ export default new Router({
       component: aboutPrivacyPolicy
     },
     {
+      path: '/mine-address',
+      component: MineAddress
+    },
+    {
+      path: '/mine-address-addedit',
+      component: MineAddressAddEdit
+    },
+    {
       path: '/order-details',
       component: OrderDetails
     },
@@ -203,8 +259,112 @@ export default new Router({
       component: Market
     },
     {
-      path: '/trading-kline',
-      component: TradingKline
+      path: '/mine-message',
+      component: MineMessage
+    },
+    {
+      path: '/mine-team',
+      component: MineTeam
+    },
+    {
+      path: '/dig-coin',
+      component: DigCoin
+    },
+    {
+      path: '/dig-out_mine',
+      component: DigOutMine
+    },
+    {
+      path: '/history-mine',
+      component: DigHistoryMine
+    },
+    {
+      path: '/out-record',
+      component: DigOutRecord
+    },
+    {
+      path: '/get-calculate',
+      component: DigGetCalculate
+    },
+    {
+      path: '/calculate-record',
+      component: DigCalculateRecord
+    },
+    {
+      path: '/his-calculate',
+      component: DigHisCalculate
+    },
+    {
+      path: '/calculate-detail',
+      component: DigCalculateDetail
+    },
+    {
+      path: '/dig-purchase',
+      component: DigPurchase
+    },
+    {
+      path: '/purchase-detail',
+      component: DigPurchaseDetail
+    },
+    {
+      path: '/purchase-record',
+      component: DigPurchaseRecord
+    },
+    {
+      path: '/dig-delivery',
+      component: DigDelivery
+    },
+    {
+      path: '/delivery-image',
+      component: DigDeliveryImage
+    },
+    {
+      path: '/delivery-confirm',
+      component: DigDeliveryConfirm
+    },
+    {
+      path: '/delivery-select-type',
+      component: DigDeliverySelectType
+    },
+    {
+      path: '/delivery-detail',
+      component: DigDeliveryDetail
+    },
+    {
+      path: '/delivery-record',
+      component: DigDeliveryRecord
+    },
+    {
+      path: '/delivery-record-detail',
+      component: DeliveryRecordDetail
+    },
+    {
+      path: '/record-detail',
+      component: DigDeliveryRecordDetail
+    },
+    {
+      path: '/delivery-unit',
+      component: DeliveryUnitDetail
+    },
+    {
+      path: '/mine-help',
+      component: MineHelp
+    },
+    {
+      path: '/mine-setUp',
+      component: MineSetUp
+    },
+    {
+      path: '/set-up_symbol',
+      component: SetUpSymbol
+    },
+    {
+      path: '/wallet-transfer',
+      component: WalletTransfer
+    },
+    {
+      path: '/transfer-record',
+      component: transferRecord
     }
   ],
   mode: 'history',
