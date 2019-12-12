@@ -174,12 +174,12 @@
       this.getBanner();
       this.getNotice();
       this.getQueryHomeTrading();
-      if(this.timer) {
-        clearInterval(this.timer);
-      }
-      this.timer = setInterval(() => {
-        this.getNotice();
-      }, 5000);
+      // if(this.timer) {
+      //   clearInterval(this.timer);
+      // }
+      // this.timer = setInterval(() => {
+      //   this.getNotice();
+      // }, 5000);
     },
     activated() {
       this.$set(document, 'title', this.$t('footer.navbar.page'));

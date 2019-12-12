@@ -129,16 +129,18 @@
       bars = JSON.parse(JSON.stringify(kresData));
       bars[kresDataLen - 1].isBarClosed = false;
       bars[kresDataLen - 1].isLastBar = true;
-      updateTimer.endDatetime = bars[0] ? formatDate(new Date(bars[0].time), 'yyyy-MM-dd hh:mm') : '';
       if(allBarData.length === 0) {
         allBarData = [...bars];
       }else {
         const barList = bars.filter(item => item.time < allBarData[0].time);
         allBarData = [...barList, ...allBarData];
       }
+      updateTimer.endDatetime = allBarData[0] ? formatDate(new Date(allBarData[0].time), 'yyyy-MM-dd hh:mm') : '';
       pulseNumber = 0;
+      kresData = [];
     }
-    // console.log(bars, allBarData);
+    // console.log(bars);
+    // console.log('updateTimer.endDatetime', updateTimer.endDatetime, pulseNumber);
     return resolve({
       bars: allBarData,
       meta
@@ -200,7 +202,7 @@
       if (firstLoad === '1' && pulseNumber > 3) {
         requestParams.endDatetime = updateTimer.endDatetime;
       }
-      if (!firstLoad || firstLoad === '0' || pulseNumber === 4) {
+      if (!firstLoad || firstLoad === '0' || pulseNumber > 3) {
         return new Promise(function (resolve, reject) {
           $.ajax({
             type: 'post',

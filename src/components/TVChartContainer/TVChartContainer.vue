@@ -329,6 +329,7 @@
             }
             // 时分
             if ($(this).hasClass('btn')) {
+              _this.showMore = false;
               if ($(this).hasClass('more-btn') && !$(this).hasClass('selected')) {
                 _this.showMore = false;
               } else if ($(this).hasClass('selected')) {

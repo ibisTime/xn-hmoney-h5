@@ -1,10 +1,11 @@
 <template>
   <div class="bill-wrapper" @click.stop>
-    <div class='list-wrap' v-show="list.length > 0">
+    <div class='list-wrap'>
       <Scroll
         ref="scroll"
         :data="list"
         :hasMore="hasMore"
+        v-show="list.length > 0"
         @pullingUp="getTransferRecord"
       >
         <div class="bill-list">
