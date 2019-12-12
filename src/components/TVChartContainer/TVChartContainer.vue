@@ -28,7 +28,7 @@
   import io from 'socket.io-client';
   import {TradingView} from 'common/js/charting_library.min.js';
   import {getLangType} from 'common/js/util.js';
-  import {SOCKET_URL} from 'common/js/config';
+  import {getSysConfig} from 'api/general';
   import Loading from 'base/loading/loading';
   export default {
     name: 'TVChartContainer',
@@ -154,38 +154,43 @@
       }
     },
     mounted() {
-      const resolution = sessionStorage.getItem('resolution');
-      if(resolution) {
-        this.resolution = resolution;
-        const isShow = resolution !== '15' && resolution !== '60' && resolution !== '240' && resolution !== '1D';
-        this.showMoreBtn = isShow;
-      }
-      this.onChartReady();
-      if(!window.SOCKET_KLINE) {
-        window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}/kline`);
-        window.SOCKET_KLINE.onerror = function() {
-          window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`);
-          window.SOCKET_KLINE.onerror = function() {
-            window.SOCKET_KLINE = null;
-          }
+      getSysConfig('socket_url').then(obj => {
+        localStorage.setItem('SOCKET_URL', obj.cvalue);
+        const resolution = sessionStorage.getItem('resolution');
+        if(resolution) {
+          this.resolution = resolution;
+          const isShow = resolution !== '15' && resolution !== '60' && resolution !== '240' && resolution !== '1D';
+          this.showMoreBtn = isShow;
         }
-      }
-      if(this.interTime) {
-        clearInterval(this.interTime);
-      }
-      this.interTime = setInterval(() => {
-        if(!window.SOCKET_KLINE || (window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 3)) {
+        this.onChartReady();
+        if(!window.SOCKET_KLINE) {
+          const SOCKET_URL = localStorage.getItem('SOCKET_URL');
           window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}/kline`);
-          if(this.outTimer) {
-            clearTimeout(this.outTimer);
-          }
-          this.outTimer = setTimeout(() => {
-            if(window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 1) {
-              window.location.reload();
+          window.SOCKET_KLINE.onerror = function() {
+            window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`);
+            window.SOCKET_KLINE.onerror = function() {
+              window.SOCKET_KLINE = null;
             }
-          }, 20000);
+          }
         }
-      }, 3000);
+        if(this.interTime) {
+          clearInterval(this.interTime);
+        }
+        this.interTime = setInterval(() => {
+          if(!window.SOCKET_KLINE || (window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 3)) {
+            const SOCKET_URL = localStorage.getItem('SOCKET_URL');
+            window.SOCKET_KLINE = new WebSocket(`${SOCKET_URL}/kline`);
+            if(this.outTimer) {
+              clearTimeout(this.outTimer);
+            }
+            this.outTimer = setTimeout(() => {
+              if(window.SOCKET_KLINE && window.SOCKET_KLINE.readyState === 1) {
+                window.location.reload();
+              }
+            }, 20000);
+          }
+        }, 5000);
+      });
     },
     methods: {
       onChartReady() {
@@ -343,6 +348,11 @@
               if (chart.resolution() !== _this.resolution) {
                 $("#tv_chart_container").attr("firstLoad", "0");
                 $("#tv_chart_container").attr("startDatetime", '');
+                // if(_this.resolution === '1D' || _this.resolution === '1W' || _this.resolution === '1M') {
+                //   _this.onChartReady();
+                // }else {
+                //   chart.setResolution(_this.resolution);
+                // }
                 chart.setResolution(_this.resolution);
               }
               if (chart.chartType() !== _this.chartType) {

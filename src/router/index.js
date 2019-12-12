@@ -21,10 +21,6 @@ const TradingClinchadeal = () => import('components/trading-clinchadeal/trading-
 const tradingDepthMap = () => import('components/trading-depth-map/trading-depth-map');
 // 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
-// 购买发布
-const BuyPublish = () => import('components/buy-publish/buy-publish');
-// 出售发布
-const SellPublish = () => import('components/sell-publish/sell-publish');
 // 钱包
 const Wallet = () => import('components/wallet/wallet');
 // 钱包 -- 转入
@@ -57,14 +53,8 @@ const securityLoginPassword = () => import('components/security-login-password/s
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
 // 我要购买 -- 订单详情
 const walletOrderDetails = () => import('components/wallet-order-details/wallet-order-details');
-// 我的订单
-const MyOrder = () => import('components/my-order/my-order');
 // 订单详情
 const OrderDetails = () => import('components/order-details/order-details');
-// 我的 -- 交易对手
-const myGuest = () => import('components/my-guest/my-guest');
-// 我的 -- 邀请好友
-const myInviteFriends = () => import('components/my-invite-friends/my-invite-friends');
 // 我的 -- 关于我们
 const myAboutUs = () => import('components/my-about-us/my-about-us');
 // 关于我们 -- 平台介绍
@@ -73,19 +63,12 @@ const aboutPlatformIntroduced = () => import('components/about-privacy-policy/ab
 const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-privacy-policy');
 // 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
-// 个人主页 homepage
-const Homepage = () => import('components/homepage/homepage');
-
-// 用户评价
-const Userpj = () => import('components/user-pj/userpj');
-
-// 消息
-const Message = () => import('components/message/message');
-// 聊天
-const MessageChat = () => import('components/message-chat/message-chat');
 
 // 行情
 const Market = () => import('components/market/market');
+
+// app k线
+const TradingKline = () => import('components/trading-kline/trading-kline');
 
 export default new Router({
   routes: [
@@ -156,28 +139,8 @@ export default new Router({
       component: walletOrderDetails
     },
     {
-      path: '/buy-publish',
-      component: BuyPublish
-    },
-    {
-      path: '/sell-publish',
-      component: SellPublish
-    },
-    {
       path: '/mine',
       component: Mine
-    },
-    {
-      path: '/my-order',
-      component: MyOrder
-    },
-    {
-      path: '/my-inviteFriends',
-      component: myInviteFriends
-    },
-    {
-      path: '/my-guest',
-      component: myGuest
     },
     {
       path: '/security-center',
@@ -236,24 +199,12 @@ export default new Router({
       component: Registered
     },
     {
-      path: '/homepage',
-      component: Homepage
-    },
-    {
-      path: '/userpj',
-      component: Userpj
-    },
-    {
-      path: '/message',
-      component: Message
-    },
-    {
-      path: '/messageCart',
-      component: MessageChat
-    },
-    {
       path: '/market',
       component: Market
+    },
+    {
+      path: '/trading-kline',
+      component: TradingKline
     }
   ],
   mode: 'history',

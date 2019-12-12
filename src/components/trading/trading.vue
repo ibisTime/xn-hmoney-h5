@@ -242,7 +242,6 @@
     getLangType,
     getUrlParam
   } from "common/js/util";
-  import {SOCKET_URL} from 'common/js/config';
   import {wallet, getUser} from 'api/person';
   import {
     getBazaarData,
@@ -316,10 +315,10 @@
     created() {
       setTitle('币币交易');
       this.isLoading = true;
+      this.referCurrency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       const symbol = getUrlParam('symbol');
       const toSymbol = getUrlParam('toSymbol');
       const symId = getUrlParam('symId');
-      this.referCurrency = sessionStorage.getItem('WALLET_CURRY') || 'CNY';
       let params = {};
       if(symbol && toSymbol) {
         if(!symId) {
@@ -334,46 +333,49 @@
           toSymbol
         }));
       }
+      this.queryBazaarData(params);
       sessionStorage.removeItem('toBank');
-      getBazaarData(params).then(data => {  // 查询交易对
-        if(!Array.isArray(data)) {
-          return false;
-        }
-        let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal'));
-        this.setBazDeal = setBazDeal || {
-          id: 0,
-          symbol: data[0].symbol,
-          toSymbol: data[0].toSymbol
-        };
-        this.symId = this.setBazDeal.id;
-        if (!setBazDeal) {
-          sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
-        }
-        this.getSelectedTrading({
-          symbol: this.setBazDeal.symbol,
-          referCurrency: this.setBazDeal.toSymbol
-        });
-        data.forEach((item, index) => {
-          this.symBazList.push({
-            isNeedAuth: item.isNeedAuth,
-            id: index,
-            'symbol': item.symbol,
-            'toSymbol': item.toSymbol
-          });
-        });
-        if(data[0]) {
-          this.isNeedAuth = data[0].isNeedAuth === '1';
-        }
-        this.handicapData();
-        if (getUserId()) {
-          this.getUserWalletData();
-          this.isLogin = true;
-          this.history = true;
-          this.myOrderTicket();
-        }
-      });
     },
     methods: {
+      queryBazaarData(params) {
+        getBazaarData(params).then(data => {  // 查询交易对
+          if(!Array.isArray(data)) {
+            return false;
+          }
+          let setBazDeal = JSON.parse(sessionStorage.getItem('setBazDeal'));
+          this.setBazDeal = setBazDeal || {
+            id: 0,
+            symbol: data[0].symbol,
+            toSymbol: data[0].toSymbol
+          };
+          this.symId = this.setBazDeal.id;
+          if (!setBazDeal) {
+            sessionStorage.setItem('setBazDeal', JSON.stringify(this.setBazDeal));
+          }
+          this.getSelectedTrading({
+            symbol: this.setBazDeal.symbol,
+            referCurrency: this.setBazDeal.toSymbol
+          });
+          data.forEach((item, index) => {
+            this.symBazList.push({
+              isNeedAuth: item.isNeedAuth,
+              id: index,
+              'symbol': item.symbol,
+              'toSymbol': item.toSymbol
+            });
+          });
+          if(data[0]) {
+            this.isNeedAuth = data[0].isNeedAuth === '1';
+          }
+          this.handicapData();
+          if (getUserId()) {
+            this.getUserWalletData();
+            this.isLogin = true;
+            this.history = true;
+            this.myOrderTicket();
+          }
+        });
+      },
       getSelectedTrading(params) {
         selectedTradingApi(params).then(data => {
           // 获取涨幅
@@ -829,10 +831,12 @@
         deep: true
       },
       isUpdateMarket() {
-        this.getSelectedTrading({
-          symbol: this.setBazDeal.symbol,
-          referCurrency: this.setBazDeal.toSymbol
-        });
+        if(this.setBazDeal.symbol && this.setBazDeal.toSymbol) {
+          this.getSelectedTrading({
+            symbol: this.setBazDeal.symbol,
+            referCurrency: this.setBazDeal.toSymbol
+          });
+        }
       },
       isUpdateSimuorder() {
         this.myOrderTicket();

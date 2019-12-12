@@ -11,7 +11,7 @@
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam, setUser, getUserId} from 'common/js/util';
   import {getBbListData} from 'api/tradingOn';
-  import {SOCKET_URL} from 'common/js/config';
+  import {getSysConfig} from 'api/general';
   import { mapMutations } from 'vuex';
   import * as types from './store/mutation-types';
 
@@ -26,9 +26,13 @@
       }
     },
     created() {
+      getSysConfig('socket_url').then(obj => {
+        localStorage.setItem('SOCKET_URL', obj.cvalue);
+      });
       this.$router.afterEach(() => {
         this.isLoading = false;
         if(!window.SOCKET || !window.SOCKET.onmessage) {
+          const SOCKET_URL = localStorage.getItem('SOCKET_URL');
           window.SOCKET = isLogin() ?
             new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
             new WebSocket(SOCKET_URL);
@@ -56,12 +60,13 @@
       }
       this.interTime = setInterval(() => {
         if(!window.SOCKET || (window.SOCKET && window.SOCKET.readyState === 3)) {
+          const SOCKET_URL = localStorage.getItem('SOCKET_URL');
           window.SOCKET = isLogin() ?
             new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
             new WebSocket(SOCKET_URL);
           this.socketWatch();
         }
-      }, 3000);
+      }, 5000);
     },
     methods: {
       ...mapMutations({
@@ -94,6 +99,7 @@
           }
         }
         window.SOCKET.onerror = function() {
+          const SOCKET_URL = localStorage.getItem('SOCKET_URL');
           window.SOCKET = isLogin() ?
             new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
             new WebSocket(SOCKET_URL);

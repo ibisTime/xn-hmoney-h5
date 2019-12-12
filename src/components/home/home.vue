@@ -35,7 +35,7 @@
                 <h5 class="single-box-head">{{singleItem.symbol}}/{{singleItem.referCurrency}}</h5>
                 <div :class="+singleItem.percent24h < 0 ? 'trading-num-down' : 'trading-num-up'">
                   <p class="trading-num-tit">{{singleItem.lastPrice}}</p>
-                  <p class="trading-num-txt">{{singleItem.percent24h < 0 ? '' : `+`}}{{(Math.floor(++singleItem.percent24h * 10000) / 100).toFixed(2)}}%</p>
+                  <p class="trading-num-txt">{{singleItem.percent24h < 0 ? '' : `+`}}{{(Math.floor(+singleItem.percent24h * 10000) / 100).toFixed(2)}}%</p>
                 </div>
                 <p class="single-box-foo">
                   ≈{{singleItem.hsLastPrice}} {{currency}}
@@ -135,7 +135,6 @@
   // import VueSocketio from 'vue-socket.io';
   // import io from 'socket.io-client';
   import {formatImg, setTitle} from 'common/js/util';
-  import {SOCKET_URL} from 'common/js/config';
   import {getBannerList} from 'api/general';
   import Slider from 'base/slider/slider';
   import Scroll from 'base/scroll/scroll';
