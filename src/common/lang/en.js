@@ -147,7 +147,7 @@ export default {
       fkqx: 'The payment term',
       qsfkqx: 'The payment term',
       fz: 'Minute',
-      ggly: 'BTC/ETH/FMVP, digital currency, blockchain, etc. must not appear in the payment notes.',
+      ggly: 'BTC/ETH, digital currency, blockchain, etc. must not appear in the payment notes.',
       gjsz: 'Advanced settings',
       kfsj: 'Schedule',
       rhsh: 'Anytime',

@@ -47,7 +47,12 @@ const securityPhoneNumber = () => import('components/security-phone-number/secur
 const securityLoginPassword = () => import('components/security-login-password/security-login-password');
 // 修改昵称
 const securityLoginName = () => import('components/security-loginName/security-loginName');
-
+// 我的 -- 我的广告
+const myAdvertising = () => import('components/my-advertising/my-advertising');
+// 我的订单
+const MyOrder = () => import('components/my-order/my-order');
+// 我的 -- 交易对手
+const myGuest = () => import('components/my-guest/my-guest');
 // 我要购买 -- 订单记录
 const wallectOrderRecord = () => import('components/wallect-order-record/wallect-order-record');
 // 我要购买 -- 订单详情
@@ -76,7 +81,7 @@ const aboutPrivacyPolicy = () => import('components/about-privacy-policy/about-p
 const MineAddress = () => import('components/address/address-list');
 const MineAddressAddEdit = () => import('components/address/address-addedit');
 
-// 首页 -- 系统公告 
+// 首页 -- 系统公告
 const systemNotice = () => import('components/system-notice/system-notice');
 const systemNoticeDetail = () => import('components/system-notice/system-notice-detail/system-notice-detail');
 
@@ -115,6 +120,26 @@ const DeliveryUnitDetail = () => import('components/dig-delivery/delivery-detail
 
 const WalletTransfer = () => import('components/wallet-transfer/wallet-transfer');
 const transferRecord = () => import('components/wallet-transfer/transfer-record');
+
+// 场外交易
+const Otc = () => import('components/otc/otc');
+// 场外交易 -- 购买
+const OtcBuy = () => import('components/otc-buy/otc-buy');
+// 联系对方
+const otcContactOther = () => import('components/otc-contact-other/otc-contact-other');
+// 购买发布
+const BuyPublish = () => import('components/buy-publish/buy-publish');
+
+// 个人主页 homepage
+const Homepage = () => import('components/homepage/homepage');
+
+// 用户评价
+const Userpj = () => import('components/user-pj/userpj');
+
+// 消息
+const Message = () => import('components/message/message');
+// 聊天
+const MessageChat = () => import('components/message-chat/message-chat');
 
 export default new Router({
   routes: [
@@ -169,6 +194,18 @@ export default new Router({
     {
       path: '/bill-details',
       component: BillDetails
+    },
+    {
+      path: '/my-advertising',
+      component: myAdvertising
+    },
+    {
+      path: '/my-order',
+      component: MyOrder
+    },
+    {
+      path: '/my-guest',
+      component: myGuest
     },
     {
       path: '/wallect-orderRecord',
@@ -365,6 +402,38 @@ export default new Router({
     {
       path: '/transfer-record',
       component: transferRecord
+    },
+    {
+      path: '/otc',
+      component: Otc
+    },
+    {
+      path: '/otc-buy',
+      component: OtcBuy
+    },
+    {
+      path: '/otc-contactOther',
+      component: otcContactOther
+    },
+    {
+      path: '/buy-publish',
+      component: BuyPublish
+    },
+    {
+      path: '/homepage',
+      component: Homepage
+    },
+    {
+      path: '/userpj',
+      component: Userpj
+    },
+    {
+      path: '/message',
+      component: Message
+    },
+    {
+      path: '/messageCart',
+      component: MessageChat
     }
   ],
   mode: 'history',

@@ -47,23 +47,23 @@
       </div>
       <div class="cates-wrapper">
         <div class="cates-wrapper-left">
-          <router-link to="dig-purchase" tag="div" class="cate-item">
+          <router-link to="otc" tag="div" class="cate-item">
             <div class="cate-item-left">
-              <h5>申购</h5>
-              <p>优质通证放心购</p>
+              <h5>法币交易</h5>
+              <p>快捷买卖数字货币</p>
             </div>
             <div class="cate-item-icon"></div>
           </router-link>
         </div>
         <div class="cates-wrapper-right">
           <router-link
-            to="dig-coin"
+            to="dig-purchase"
             tag="div"
             class="cate-item"
-            style="margin-bottom: 0.2rem; background-color: rgba(241, 130, 79, 0.1)"
+            style="margin-bottom: 0.2rem; background-color: rgba(79,127,241,0.1)"
           >
-            <div class="cate-icon exchange-icon"></div>
-            <p>挖矿</p>
+            <div class="cate-icon otc-sg—icon"></div>
+            <p>申购</p>
           </router-link>
           <router-link
             to='dig-delivery'
@@ -92,13 +92,13 @@
             </router-link>
           </div>
           <div class="tabCar bibi">
-            <router-link to='trading' style="display: flex; align-items: center;">
+            <router-link to='dig-coin' style="display: flex; align-items: center;">
               <div class="tab_left">
-                <img src="./con_bbjy.png" alt="">
+                <img src="./tab_wk.png" alt="">
               </div>
               <div class="tab-text">
-                <p class="tit">{{ $t('page.cate.bbDeal') }}</p>
-                <p class="con">真实物权交易平台</p>
+                <p class="tit">挖矿</p>
+                <p class="con">每日尽享平台奖励</p>
               </div>
             </router-link>
           </div>
@@ -390,7 +390,7 @@
         padding: 0.57rem 0.4rem;
         border-radius: 0.08rem;
         overflow: hidden;
-        background-color: rgba(79,127,241,0.1);
+        background-color: rgba(241,138,79,0.1);
         .cate-item{
           display: flex;
           justify-content: space-between;
@@ -403,6 +403,7 @@
               color: #333;
               line-height: 0.45rem;
               margin-bottom: 0.1rem;
+              font-weight: 500;
             }
             p{
               white-space: nowrap;
@@ -412,14 +413,14 @@
               font-size: 0.24rem;
             }
           }
-          .cate-item-icon{
-            width: 0.98rem;
-            height: 0.86rem;
-            background-image: url('./tab_sg.png');
-            -webkit-background-size: 100% 100%;
-            background-size: 100% 100%;
-          }
         }
+      }
+      .cate-item-icon{
+        width: 0.98rem;
+        height: 0.86rem;
+        background-image: url('./tab_otc.png');
+        -webkit-background-size: 100% 100%;
+        background-size: 100% 100%;
       }
       .cates-wrapper-right{
         flex: 1;
@@ -439,15 +440,15 @@
             margin-right: 0.1rem;
             background-size: 100% 100%;
           }
-          .exchange-icon{
-            width: 0.51rem;
-            height: 0.45rem;
-            background-image: url('./tab_wk.png');
-          }
           .otc-icon {
             width: 0.5rem;
             height: 0.46rem;
             background-image: url('./tab_jg.png');
+          }
+          .otc-sg—icon{
+            width: 0.5rem;
+            height: 0.44rem;
+            background-image: url('./tab_sg.png');
           }
         }
       }

@@ -33,8 +33,11 @@
   </div>
 </template>
 <script>
+import TIM from 'tim-js-sdk';
+import COS from 'cos-js-sdk-v5';
 import fetch from '../../common/js/fetch';
 import {login} from '../../api/person';
+import {getTencentParamsAPi} from 'api/user';
 import {setUser, setTitle} from '../../common/js/util';
 import FullLoading from 'base/full-loading/full-loading';
 export default {
@@ -60,6 +63,18 @@ export default {
         login(this.username, this.password).then(data => {
           this.isLoading = false;
           setUser(data);
+          getTencentParamsAPi().then(tenData => {
+            let options = {
+              SDKAppID: tenData.txAppCode
+            };
+            let tim = TIM.create(options); // SDK 实例通常用 tim 表示
+            tim.registerPlugin({'cos-js-sdk': COS});
+            tim.login({userID: data.userId, userSig: tenData.sign}).then(tenLogin => {
+              console.log('tenLogin', tenLogin);
+            }).catch(err => {
+              console.log('err---------------', err);
+            });
+          });
           if(window.SOCKET && window.SOCKET.onmessage) {
             window.SOCKET.send('close');
             window.SOCKET = null;

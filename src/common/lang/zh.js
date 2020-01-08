@@ -147,7 +147,7 @@ export default {
       fkqx: '付款期限',
       qsfkqx: '请输入付款期限',
       fz: '分钟',
-      ggly: '付款备注里不得出现 BTC/ETH/FMVP、数字货币、区块链等字眼。',
+      ggly: '付款备注里不得出现 BTC/ETH、数字货币、区块链等字眼。',
       gjsz: '高级设置',
       kfsj: '开放时间',
       rhsh: '任何时候',

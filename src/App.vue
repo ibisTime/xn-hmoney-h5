@@ -12,10 +12,12 @@
   import {isLogin, getUrlParam, setUser, getUserId} from 'common/js/util';
   import {getBbListData} from 'api/tradingOn';
   import {getSysConfig} from 'api/general';
+  import {messageMixin} from 'common/js/message-mixin';
   import { mapMutations } from 'vuex';
   import * as types from './store/mutation-types';
 
   export default {
+    mixins: [messageMixin],
     name: 'app',
     data() {
       return {
@@ -36,7 +38,6 @@
           window.SOCKET = isLogin() ?
             new WebSocket(`${SOCKET_URL}?userId=${getUserId()}`) :
             new WebSocket(SOCKET_URL);
-          const _this = this;
           this.socketWatch();
         }
         getBbListData().then(data => {
@@ -53,6 +54,11 @@
         let token = getUrlParam('token') || '';
         if (userId && token) {
           setUser({userId, token});
+        }
+        const isFirst = sessionStorage.getItem('tencentIsFirst') || '0';
+        if(isLogin()) {
+          sessionStorage.setItem('tencentIsFirst', '1');
+          this.tencentLogin();
         }
       });
       if(this.interTime) {

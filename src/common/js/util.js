@@ -75,7 +75,7 @@ export function clearUser() {
   delCookie('__txAppCode__');
   window.localStorage.removeItem('__message__');
   window.localStorage.removeItem('__usermap__');
-  // webim && webim.logout();
+  webim && webim.logout();
   sessionStorage.clear();
 }
 

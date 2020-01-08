@@ -257,6 +257,7 @@ export default {
 @import "~common/scss/variable";
 
 .regist-wrapper {
+  height: 100%;
   position: relative;
   background: #fff;
   padding-bottom: 0.6rem;

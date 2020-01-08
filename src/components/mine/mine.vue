@@ -17,9 +17,16 @@
                    @change="fileChange($event)"
                    accept="image/*"/>
           </div>
-          <router-link :to="`security-loginName?loginName=${data.nickname ? data.nickname : data.loginName}`" class="h-text">
-            {{data.nickname ? data.nickname : data.loginName}}
-          </router-link>
+          <div class="h-text">
+            <p class="h-text_p">
+              <router-link :to="`security-loginName?loginName=${data.nickname ? data.nickname : data.loginName}`" class="name">
+                {{data.nickname ? data.nickname : data.loginName}}
+              </router-link>
+            </p>
+            <p class="intro">{{$t('mine.subject.jy')}} {{data.userStatistics && data.userStatistics.jiaoYiCount}} | {{$t('mine.subject.hpl')}}
+              {{data.userStatistics && getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} |
+              {{$t('mine.subject.xr')}} {{data.userStatistics && data.userStatistics.beiXinRenCount}}</p>
+          </div>
         </div>
         <div class="mine_tabs">
           <router-link class="tab_box" to="system-notice" @click.native="removeSession">
@@ -39,6 +46,31 @@
         </div>
       </div>
       <div class="mine-main">
+        <div class="card">
+          <router-link to="my-advertising" class="item item-advertising">
+            <i></i>
+            <span class='txt'>我的广告</span>
+            <span class='icon'></span>
+          </router-link>
+          <router-link to="my-order" class="item item-order" @click.native="toOrderFn">
+            <p class="item-left">
+              <i></i>
+              <span class="txt">我的订单</span>
+            </p>
+            <p class="item-right">
+              <span class='newMsg'>
+                <samp v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp>
+              </span>
+              <span class='icon'></span>
+            </p>
+          </router-link>
+          <router-link to="my-guest" class="item item-guest">
+            <i></i>
+            <span class='txt'>交易对手</span>
+            <span class='icon'></span>
+          </router-link>
+        </div>
+        <p class="line"></p>
         <div class="card">
           <router-link to="security-center" class="item item-6">
             <i></i>
@@ -116,6 +148,11 @@
         picUrl: ''
       };
     },
+    computed: {
+      ...mapGetters([
+        'unreadMsgNum'
+      ])
+    },
     created() {
       setTitle('我的');
       getUser().then((data) => {
@@ -137,6 +174,10 @@
       });
     },
     methods: {
+      // 是否显示有新消息
+      getUnreadMsgNum() {
+        return this.unreadMsgNum > 0;
+      },
       // 计算百分比
       getPercentum(num1, num2) {
         return getPercentum(num1, num2);
@@ -211,6 +252,9 @@
       },
       removeSession() {
         sessionStorage.removeItem('mes_skey');
+      },
+      toOrderFn(){
+        sessionStorage.setItem('ordering', 'starting');
       }
     },
     components: {
@@ -276,17 +320,30 @@
         }
 
         .h-text {
+          height: 1.16rem;
           margin-left: 0.3rem;
-          font: 0.44rem/0.48rem PingFangSC-Medium;
-          color: #fff;
-          text-align: left;
-          letter-spacing: 0.004rem;
-          padding-bottom: 0.12rem;
-          padding: 0.24rem 0;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          width: 60%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .h-text_p{
+            font-size: 0;
+            text-align: left;
+          }
+          .name {
+            font: 0.44rem/0.48rem PingFangSC-Medium;
+            color: #fff;
+            letter-spacing: 0.004rem;
+            padding-bottom: 0.12rem;
+            padding-top: 0.04rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .intro {
+            font: 0.28rem/0.48rem PingFangSC-Regular;
+            color: #fff;
+            letter-spacing: 0.0023rem;
+          }
         }
       }
       .mine_tabs {
@@ -337,6 +394,8 @@
 
       .card {
         padding: 0 0.3rem;
+        /*box-shadow: 0 0 0.36rem 0.04rem rgba(200,193,193,0.30);*/
+        /*border-radius: 0.16rem;*/
         .item {
           display: block;
           width: 100%;
@@ -368,7 +427,6 @@
             margin-top: 0.5rem;
             width: 0.15rem;
             height: 0.26rem;
-            font-size: 0.25rem;
             background-repeat: no-repeat;
             background-position: center right;
             background-size: 0.15rem;
@@ -379,6 +437,44 @@
           &.item-4 {
             i {
               background-image: url('./Fill 1@2x.png');
+            }
+          }
+
+          &.item-advertising{
+            i {
+              background-image: url('./wdgg.png');
+            }
+          }
+
+          &.item-guest{
+            i {
+              background-image: url('./jyds.png');
+            }
+          }
+
+          &.item-order {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .item-left{
+              i {
+                height: 1.18rem;
+                background-image: url('./wddd.png');
+              }
+            }
+            .item-right{
+              display: flex;
+              align-items: center;
+              .newMsg{
+                font-size: 0.24rem;
+                color: $primary-color;
+                text-align: right;
+                padding-right: 0.3rem;
+                white-space: nowrap;
+              }
+              .icon{
+                margin-top: 0;
+              }
             }
           }
 

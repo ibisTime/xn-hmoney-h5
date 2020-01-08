@@ -28,6 +28,15 @@ Validator.extend('intNumber', {
   }
 });
 
+// 数字验证
+Validator.extend('floatNumber', {
+  getMessage: field => getTranslateText('请输入数字'),
+  validate: value => {
+    var IntNumber = /^\d+(\.\d+)?$/;
+    return IntNumber.test(value);
+  }
+});
+
 // 银行卡格式校验
 Validator.extend('idCard', {
   getMessage: field => getTranslateText('格式错误'),

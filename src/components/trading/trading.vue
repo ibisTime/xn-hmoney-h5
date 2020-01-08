@@ -479,7 +479,9 @@
             let showTotalCount = item.direction === '0' && item.type === '0';
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
             item.price = item.type === '0' ? '市价' : formatAmount(`${item.price}`, '', item.toSymbol);
-            item.totalCount = showTotalCount ? formatAmount(`${item.totalCount}`, '', item.toSymbol) : (formatAmount(`${item.totalCount}`, '', item.symbol));
+            item.totalCount = showTotalCount ?
+              formatAmount(`${item.totalCount}`, '', item.toSymbol) :
+              (formatAmount(`${item.totalCount}`, '', item.symbol));
             item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
           });
           this.myOrderData = data.list;

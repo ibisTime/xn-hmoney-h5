@@ -207,7 +207,7 @@
 
     .before-trigger {
       font-size: 0.24rem;
-
+      padding-top: 0.2rem;
       img {
         width: 0.44rem;
         vertical-align: middle;
