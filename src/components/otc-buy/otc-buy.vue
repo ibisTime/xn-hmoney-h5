@@ -5,7 +5,7 @@
       </header> -->
       <div class='header'>
         <div class='person'>
-          <div class='pic'>
+          <div class='pic' @click="toHomePage">
             <p :style="getUserPic(photo)" :class="{'hidden': !(photo)}" alt=""></p>
             <!-- <img :class="{'hidden': photo}" src="./txiang.png"/> -->
             <HeadPic :content="nickname.substring(0, 1)" :class="{'hidden': photo}"/>
@@ -171,7 +171,7 @@ export default {
       this.photo = data.photo;
     });
     this.otcBuy();
-    getSysConfig('trade_remind').then(data => {
+    getSysConfig('trade_remind_notice').then(data => {
       this.jyText = data.cvalue.replace(/\n/g, '<br>');
       this.remark = data.remark;
       this.isLoading = false;
@@ -179,9 +179,12 @@ export default {
   },
   methods: {
     // 开始聊天，提交交易订单
+    toHomePage() {
+      this.$router.push(`/homepage?userId=${this.userId}&currency=${this.data.tradeCurrency}`);
+    },
     getChatOrderBuy() {
       this.isLoading = true;
-      if(this.type == '0'){
+      if(this.type === '0'){
         chatOrderSell(this.config.adsCode).then(data => {
           this.isLoading = false;
           this.goChat(data.code);

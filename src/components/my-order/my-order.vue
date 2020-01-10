@@ -177,8 +177,6 @@
             v.countString = formatAmount(v.countString, '', v.tradeCoin);
             v.unreadMsgNum = this.groupList[v.code];
             if (v.unreadMsgNum > 0 && firstLoad) {
-              // 判断未读消息的订单状态
-              console.log(this.statusList['starting'].indexOf(v.status) > -1);
               if (this.statusList['starting'].indexOf(v.status) > -1) {
                 startingUnread += v.unreadMsgNum;
               } else {

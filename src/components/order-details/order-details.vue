@@ -1,11 +1,5 @@
 <template>
   <div class="order-detail-wrapper" @click.stop>
-    <!-- <header>
-        <p>
-        <i class='icon'></i>
-        订单详情
-        </p>
-    </header> -->
     <div class='order'>
         <p>
             <span class='num'><i class='icon'></i>{{$t('myOrderDetail.subject.ddbh')}}{{orderDetailData.code.substring(orderDetailData.code.length-8)}}</span>
@@ -27,10 +21,10 @@
             <p class="titly">{{$t('orderDetail.subject.ggly')}}：</p>
             <p class='text2'>{{orderDetailData.leaveMessage}}</p>
         </div>
-        <div class='appraise'>
+        <div class='appraise' v-show="showPj">
           <p class='txt1'>
             {{$t('myOrderDetail.subject.pj')}}
-            <span class="fr" :class="ishpTxt == $t('common.hp') ? 'hptxt' : 'cptxt'">
+            <span class="fr" :class="ishpTxt === $t('common.hp') ? 'hptxt' : 'cptxt'">
               <i class="icon pjback" :style="pjback"></i>{{ishpTxt}}
             </span>
             </p>
@@ -132,7 +126,8 @@
       buyNick: '',
       sellNick: '',
       pjComment: '',
-      pjback: ''
+      pjback: '',
+      showPj: false
     };
   },
   created() {
@@ -159,11 +154,11 @@
   methods: {
     // 评价
     pjClick(value){
-      if(value == '0'){ // 差评
+      if(value === '0'){ // 差评
         this.userHp = false;
         this.userCp = !this.userCp;
       }
-      if(value == '2'){ // 好评
+      if(value === '2'){ // 好评
         this.userCp = false;
         this.userHp = !this.userHp;
       }
@@ -173,7 +168,7 @@
       this.showFlag = false;
     },
     qrUserPj(){
-      if(this.comment == ''){
+      if(this.comment === ''){
         this.textMsg = this.$t('myOrderDetail.subject.qdp');
         this.$refs.toast.show();
         return;
@@ -181,7 +176,7 @@
       this.isLoading = true;
       this.showFlag = true;
       commentOrder(this.code, this.comment, this.content).then(data => {
-        if(data.filterFlag == '2'){
+        if(data.filterFlag === '2'){
           this.textMsg = this.$t('myOrderDetail.subject.pjsh');
         }else{
           this.textMsg = this.$t('myOrderDetail.subject.pjcg');
@@ -212,58 +207,63 @@
         }else{
           this.yjTitle = '';
         }
+        if(!data.sbComment || !data.bsComment) {
+          this.showPj = false;
+        }
         // 当前用户为买家
-        if (data.buyUser == getUserId()) {
+        if (data.buyUser === getUserId()) {
           if(data.sbComment){
-            this.pjback = data.sbComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+            this.showPj = true;
+            this.pjback = +data.sbComment === 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
           }
           this.pjComment = data.sbCommentContent;
           this.ishpTxt = data.sbComment ? this.pjList[data.sbComment] : '';
-          if(data.status == 0){
+          if(data.status === '0'){
             this.btns = `<button class="o-btn payBtn">
                           ${this.$t('myOrderDetail.subject.bjfk')}
                         </button>
                         <button class="o-btn qx-btn cancelBtn">
                           ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
-          }else if(data.status == "2"){
+          }else if(data.status === "2"){
             if (!data.bsComment) {
               this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
             }
           }
-          if (data.status == "1") {
+          if (data.status === "1") {
             this.btns = `<button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`
           }
         }else{  // 当前用户为卖家
-        if(data.bsComment){
-          this.pjback = data.bsComment == 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
-        }
-        this.pjComment = data.bsCommentContent;
-        this.ishpTxt = data.bsComment ? this.pjList[data.bsComment] : '';
+          if(data.bsComment){
+            this.showPj = true;
+            this.pjback = +data.bsComment === 2 ? 'background-image:url("/static/hp.png")' : 'background-image:url("/static/cph.png")';
+          }
+          this.pjComment = data.bsCommentContent;
+          this.ishpTxt = data.bsComment ? this.pjList[data.bsComment] : '';
           //待支付
-          if (data.status == "1") {
+          if (data.status === "1") {
               this.btns = `<button class="o-btn releaseBtn">${this.$t('myOrderDetail.subject.sfhb')}</button>
                           <button class="o-btn qx-btn sqBtn">${this.$t('myOrderDetail.subject.sqzc')}</button>`;
-          } else if (data.status == "2") {
+          } else if (data.status === "2") {
               if (!data.sbComment) {
                 this.btns = `<button class="o-btn pjBtn">${this.$t('myOrderDetail.subject.jypj')}</button>`
               }
           }
         }
 
-        if(data.status == '-1'){
+        if(data.status === '-1'){
           this.btns = `<button class="o-btn qx-btn cancelBtn">
                           ${this.$t('myOrderDetail.subject.qxjy')}
                         </button>`;
-          if(data.type == 'buy'){
-                if(data.buyUser == getUserId()){
+          if(data.type === 'buy'){
+                if(data.buyUser === getUserId()){
                     this.btns += `<button class="o-btn qx-btn buyBtn" data-ocode="${data.adsCode}" data-user="${data.sellUser}">
                               ${this.$t('wallet.subject.cz')}
                             </button>`;
                 }
             }
-          if(data.type == 'sell'){
-              if(data.sellUser == getUserId()){
+          if(data.type === 'sell'){
+              if(data.sellUser === getUserId()){
                   this.btns += `<button class="o-btn qx-btn sellBtn" data-ocode="${data.adsCode}" data-user="${data.buyUser}">
                               ${this.$t('wallet.subject.tx')}
                             </button>`;
@@ -272,7 +272,7 @@
         }
 
         // 系统自动取消
-        if( data.status == '4' || data.status == '5' || data.status == '3'){
+        if( data.status === '4' || data.status === '5' || data.status === '3'){
           if(getLangType() === 'en') {
             this.yjTitle = this.statusValueList[data.status];
           } else {
@@ -289,7 +289,6 @@
     },
     operationBtn(){
       let target = event.target;
-      let toast = this.$refs.toast;
       if(target.localName === 'button'){
         this.isLoading = true;
         // 去购买 buyBtn
@@ -353,7 +352,7 @@
       this.zcShow = false;
     },
     qrReason(){
-      if(this.reason == ''){
+      if(this.reason === ''){
         this.textMsg = this.$t('myOrderDetail.subject.sqlybk');
         this.$refs.toast.show();
         return;
@@ -363,7 +362,7 @@
         reason: this.reason
       };
       this.isLoading = true;
-      arbitrationlOrder(config).then(data => {
+      arbitrationlOrder(config).then(() => {
         this.textMsg = this.$t('myOrderDetail.subject.fqcg');
         this.$refs.toast.show();
         this.orderMessage();

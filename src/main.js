@@ -8,7 +8,6 @@ import VueLazyLoad from 'vue-lazyload';
 import 'common/js/validate';
 import VueI18n from 'vue-i18n';
 import LangStorage from './common/js/cookie';
-import echarts from 'echarts';
 import clipboard from 'clipboard';
 import zh from './common/lang/zh';
 import en from './common/lang/en';
@@ -16,6 +15,11 @@ import {isLogin, getUrlParam, setUser} from './common/js/util';
 
 import 'common/scss/index.scss';
 import 'swiper/dist/css/swiper.css';
+
+//引入基本模板
+const echarts = require('echarts/lib/echarts');
+
+require('echarts/lib/chart/line');
 
 Vue.prototype.$echarts = echarts;
 Vue.prototype.clipboard = clipboard;

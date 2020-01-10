@@ -16,15 +16,15 @@
         </div>
         <div class="user-list">
             <div class="jy-box">
-                <h5>{{userDataList.userStatistics.jiaoYiCount}}</h5>
+                <h5>{{userDataList.userStatistics && userDataList.userStatistics.jiaoYiCount}}</h5>
                 <p>{{$t('homepage.subject.jycs')}}</p>
             </div>
             <div class="xr-box">
-                <h5>{{userDataList.userStatistics.beiXinRenCount}}</h5>
+                <h5>{{userDataList.userStatistics && userDataList.userStatistics.beiXinRenCount}}</h5>
                 <p>{{$t('homepage.subject.xrcs')}}</p>
             </div>
             <div class="hp-box" @click="$router.push('userpj?userId=' + userId)">
-                <h5>{{getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
+                <h5>{{userDataList.userStatistics && getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
                 <p>{{$t('homepage.subject.xrl')}}</p>
             </div>
             <div class="ls-box">
@@ -85,7 +85,7 @@ export default {
       this.getGxFn();
       getUser(this.userId).then(data => {
           this.isLoading = false;
-          this.userDataList = data;
+          this.userDataList.nickname = data.nickname;
       }, () => {
           this.isLoading = false;
       });
@@ -104,23 +104,26 @@ export default {
             this.trust = data.isTrust;
             this.addBlack = data.isAddBlackList;
             // 查询与用户信任关系
-            if(data.isTrust == '0'){
+            if(data.isTrust === '0'){
                 this.xrText = '+ ' + this.$t('homepage.subject.xr');
             }else{
                 this.xrText = this.$t('homepage.subject.yxr');
             }
-            if(data.isAddBlackList == '0'){
+            if(data.isAddBlackList === '0'){
                 this.lhText = '+ ' + this.$t('homepage.subject.hmd');
             }else{
                 this.lhText = this.$t('homepage.subject.ylh');
             }
             let tradeCount =  ((Math.floor(parseFloat(formatAmount(data.totalTradeCount, '0', this.currency)) * 10000)) / 10000).toFixed(4);
-            this.totalTradeCount = data.totalTradeCount == '0' ? '0' : tradeCount;
+            this.totalTradeCount = data.totalTradeCount === '0' ? '0' : tradeCount;
+            this.userDataList.userStatistics = {
+              ...data
+            }
         });
       },
       xrClickFn(){
           this.isLoading = true;
-          if(this.trust == '0'){
+          if(this.trust === '0'){
               this.jlFn('1');
           }else{
               this.jcFn('1');
@@ -128,7 +131,7 @@ export default {
       },
       lhClickFn(){
           this.isLoading = true;
-          if(this.addBlack == '0'){
+          if(this.addBlack === '0'){
               this.jlFn('0');
           }else{
               this.jcFn('0');
@@ -138,15 +141,9 @@ export default {
         removeUserRelation({
             toUser: this.userId,
             type
-        }).then(data => {
-          getUser(this.userId).then(data => {
-            this.userDataList = data;
-            this.$refs.toast.show();
-            this.getGxFn();
-            this.isLoading = false;
-          }, () => {
-            this.isLoading = false;
-          });
+        }).then(() => {
+          this.getGxFn();
+          this.isLoading = false;
         }, () => {
             this.isLoading = false;
         })
@@ -155,15 +152,9 @@ export default {
         addUserRelation({
             type,
             toUser: this.userId
-        }).then(data => {
-          getUser(this.userId).then(data => {
-            this.userDataList = data;
-            this.$refs.toast.show();
-            this.getGxFn();
-            this.isLoading = false;
-          }, () => {
-            this.isLoading = false;
-          });
+        }).then(() => {
+          this.getGxFn();
+          this.isLoading = false;
         }, () => {
             this.isLoading = false;
         });

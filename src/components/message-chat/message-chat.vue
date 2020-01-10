@@ -1,7 +1,16 @@
 <template>
   <transition  name="slide">
-
     <div class="chat-wrapper" @click='hide'>
+      <div class="chat-head">
+        <div class="chat-head_left">
+          <p class="avatar avatarDefault" v-if="isUnDefined(orderMsg.photo)">{{getDefaultPhoto(orderMsg)}}</p>
+          <p class="avatar" v-else :style="formatAvatarSyl(orderMsg.photo)"></p>
+        </div>
+        <div class="chat-head_right">
+          <p>交易金额: {{orderMsg.tradeAmount ? orderMsg.tradeAmount : '-'}} {{orderMsg.tradeCurrency}}</p>
+          <p>交易数量: {{orderMsg.countString ? orderMsg.countString : '0'}} {{orderMsg.tradeCoin}}</p>
+        </div>
+      </div>
       <div class="message-wrapper">
         <scroll :data="curChatList"
                 :pullUpLoad="pullUpLoad"
@@ -80,7 +89,7 @@
   import Toast from 'base/toast/toast';
   import Qiniu from 'base/qiniu/qiniu';
   import {addMsg} from 'common/js/message';
-  import {getUserId, isUnDefined, formatChatDate, formatImg, setTitle, formatAvatarSyl, getTranslateText} from 'common/js/util';
+  import {getUserId, isUnDefined, formatAmount, formatChatDate, formatImg, setTitle, formatAvatarSyl, getTranslateText} from 'common/js/util';
   import User from 'common/bean/user';
   import {getUser} from 'api/user';
   import {getOrderDetail} from 'api/person';
@@ -107,7 +116,8 @@
         showEmoji: false,
         token: '',
         sendMessage: false,
-        getPrePageGroupHistroyMsgInfoMap: {}
+        getPrePageGroupHistroyMsgInfoMap: {},
+        orderMsg: {}
       };
     },
     created() {
@@ -195,16 +205,31 @@
       },
       // 获取订单详情
       getDetail() {
-        getOrderDetail(this.groupId).then((data) => {
+        const _this = this;
+        getOrderDetail(_this.groupId).then((data) => {
+          const orderMsg = {
+            tradeCurrency: data.tradeCurrency,
+            tradeCoin: data.tradeCoin
+          };
+          if(data.tradeAmount && data.tradePrice){
+            orderMsg.tradeAmount = (Math.floor(data.tradeAmount * 100) / 100).toFixed(2);
+            orderMsg.tradePrice = (Math.floor(data.tradePrice * 100) / 100).toFixed(2);
+          }
+          orderMsg.countString = formatAmount(data.countString, '', data.tradeCoin);
           let receiver = {};
           // 判断卖家卖家
-          if (data.buyUser === this.userId) {
+          if (data.buyUser === _this.userId) {
             receiver = data.sellUserInfo;
           } else {
             receiver = data.buyUserInfo;
           }
-          this.receiver = new User(receiver);
-          setTitle(this.receiver.nickname);
+          _this.receiver = new User(receiver);
+          orderMsg.nickname = _this.receiver.nickname;
+          orderMsg.photo = _this.receiver.photo;
+          _this.orderMsg = {
+            ...orderMsg
+          };
+          setTitle(_this.receiver.nickname);
         }).catch(() => {});
       },
       getStart() {
@@ -217,7 +242,7 @@
       },
       // 没有头像的显示nickname 第一个字
       getDefaultPhoto(info) {
-        return info.nickname.substring(0, 1).toUpperCase();
+        return info.nickname && info.nickname.substring(0, 1).toUpperCase();
       },
       formatAvatarSyl(photo) {
         return formatAvatarSyl(photo);
@@ -818,11 +843,44 @@
     &.slide-enter, &.slide-leave-to {
       left: 100%;
     }
+    .chat-head{
+      height: 1.4rem;
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+    }
+    .chat-head_left{
+      margin-right: 0.2rem;
+      padding-left: 0.2rem;
+      .avatar {
+        width: 0.76rem;
+        height: 0.76rem;
+        border-radius: 50%;
+        overflow: hidden;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-size: 0.4rem;
+        line-height: 0.76rem;
+        text-align: center;
+        color: #fff;
 
+        &.avatarDefault{
+          background-color: $primary-color;
+        }
+      }
+    }
+    .chat-head_right{
+      color: #333333;
+      font-family: PingFangSC-Regular;
+      font-size: 0.28rem;
+      p{
+        line-height: 0.4rem;
+      }
+    }
     .message-content {
       font-size: 0;
       padding: 0 0.3rem;
-
       .error-icon {
         width: 1rem;
         height: 1rem;
@@ -985,7 +1043,7 @@
 
     .message-wrapper {
       position: absolute;
-      top: 0;
+      top: 1.4rem;
       bottom: 1rem;
       width: 100%;
       z-index: 8;

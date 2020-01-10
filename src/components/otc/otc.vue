@@ -19,7 +19,7 @@
         <div class='top-main'>
           <p>
             <select name="hbName" @change="selHbName" ref="select_hb">
-              <option value="">货币</option>
+              <option value="">-货币-</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
             </select>
@@ -27,7 +27,7 @@
           </p>
           <p>
             <select name="bbPayType" @change="selPayType" ref="select_pay">
-              <option value="">支付方式</option>
+              <option value="">-支付方式-</option>
               <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
               <option value="1">{{ $t('otc.navtxt.wx') }}</option>
               <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
@@ -119,7 +119,7 @@
   import {formatImg, getUserId, getAvatar, setTitle, getPercentum, calculateDays} from 'common/js/util';
   import {getUser} from 'api/user';
   import {getBannerList} from 'api/general';
-  import {getAdvertisingData} from 'api/otc';
+  import {getAdvertisingData, getAdvertiseBbList} from 'api/otc';
   import Slider from 'base/slider/slider';
   import Scroll from 'base/scroll/scroll';
   import Toast from 'base/toast/toast';
@@ -179,22 +179,18 @@
     created() {
       setTitle(this.$t('page.cate.otc'));
       this.lang = window.localStorage.getItem('user_lang') || 'cn';
+      getAdvertiseBbList().then(data => {
+        this.bbList = data.map(item => item.symbol);
+        this.config.tradeType = sessionStorage.getItem('tradeType') || '1';
+        if (this.config.tradeType === '0') {
+          this.flag1 = false;
+          this.flag2 = true;
+        }
+        let coin = sessionStorage.getItem('coin') || this.bbList[0];
+        this.config.coin = coin != 'undefined' ? coin : this.bbList[0];
+        this.getBBListData();
+      });
     },
-    updated() {
-    },
-    mounted() {
-      let coinList = JSON.parse(sessionStorage.getItem('coinData'));
-      this.bbList = Object.keys(coinList);
-      this.config.tradeType = sessionStorage.getItem('tradeType') || '1';
-      if (this.config.tradeType === '0') {
-        this.flag1 = false;
-        this.flag2 = true;
-      }
-      let coin = sessionStorage.getItem('coin') || this.bbList[0];
-      this.config.coin = coin != 'undefined' ? coin : this.bbList[0];
-      this.getBBListData();
-    },
-    computed: {},
     methods: {
       // 登录状态
       calculateFn(userTime) {
@@ -521,7 +517,7 @@
         p {
           margin-right: .8rem;
           select {
-            min-width: 1.3rem;
+            /*min-width: 1.3rem;*/
             padding: 0.05rem 0.1rem;
           }
         }

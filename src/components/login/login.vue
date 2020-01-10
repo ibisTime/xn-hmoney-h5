@@ -21,6 +21,7 @@
                 v-validate="'required|password'"
                 :placeholder="$t('login.subject.srldsl')"
                 @blur="blurIn"
+                @keyup.enter="login"
               >
               <input type="submit" :value="$t('login.subject.dl')" @click='login'>
               <p>
