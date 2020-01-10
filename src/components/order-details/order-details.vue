@@ -41,7 +41,7 @@
       <div class='up-window'>
         <h3>{{$t('myOrderDetail.subject.zcly')}}</h3>
         <div class='text'>
-          <textarea type="text" :placeholder="$t('myOrderDetail.subject.sqly')" v-model="reason"></textarea>
+          <textarea type="text" :placeholder="$t('myOrderDetail.subject.sqly')" v-model="reason" @blur="blurIn"/>
         </div>
         <div class='btn'>
           <button class='no' @click='qxReason'>{{$t('common.qx')}}</button>
@@ -152,6 +152,10 @@
       setTitle(this.$t('myOrderDetail.subject.ddxq'));
   },
   methods: {
+    blurIn () {
+      this.isFocus = false;
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+    },
     // 评价
     pjClick(value){
       if(value === '0'){ // 差评
@@ -202,7 +206,7 @@
         this.sellNick = data.sellUserInfo.nickname;
         this.orderDetailData = data;
         this.countString = formatAmount(data.countString, '', data.tradeCoin);
-        if(data.invalidDatetime){
+        if(data.invalidDatetime && data.status === '0'){
           this.yjTitle = `${this.$t('myOrderDetail.subject.ddbcd')}<i>${formatDate(data.invalidDatetime, "hh:mm:ss")}</i>，${this.$t('myOrderDetail.subject.zdqx')}`;
         }else{
           this.yjTitle = '';

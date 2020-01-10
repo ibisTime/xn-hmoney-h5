@@ -43,8 +43,12 @@
           <p class='txt1'><span class='icon1'></span>{{$t('otcBuy.subject.nx')}}{{bText}}{{$t('otcBuy.subject.ds')}}</p>
           <p class='txt2'>{{type == '0' ? $t('otcBuy.subject.kyye') : $t('otcBuy.subject.syjyl')}}：{{yMoney}} {{data.tradeCoin}}</p>
           <div class='text'>
-            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span><input class="inp1" type="number" v-model="Cnum" @keyup="changeEnum" :placeholder="$t('otcBuy.subject.srsz')"></p>
-            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span><input v-model="Enum" @keyup="changeCnum" class="inp2" type="number" :placeholder="$t('otcBuy.subject.srsi')"></p>
+            <p class='txt3'><span class='txt'> {{data.tradeCurrency}}</span>
+              <input class="inp1" type="number" v-model="Cnum" @keyup="changeEnum"  @blur="blurIn" :placeholder="$t('otcBuy.subject.srsz')">
+            </p>
+            <p class=txt4><span class='icon2'></span><span class='txt'> {{data.tradeCoin}}</span>
+              <input v-model="Enum" @keyup="changeCnum" @blur="blurIn" class="inp2" type="number" :placeholder="$t('otcBuy.subject.srsi')">
+            </p>
           </div>
         </div>
       </div>
@@ -66,7 +70,7 @@
         <div class='up-window'>
           <h3>{{$t('otcBuy.subject.zjmm')}}</h3>
           <div class='text'>
-            <input type="password" :placeholder="$t('otcBuy.subject.qsrzj')" v-model="userMoney">
+            <input type="password" :placeholder="$t('otcBuy.subject.qsrzj')" v-model="userMoney" @blur="blurIn">
           </div>
           <div class='btn'>
             <button class='no' @click='qxMoney'>{{$t('common.qx')}}</button>
@@ -178,6 +182,10 @@ export default {
     })
   },
   methods: {
+    blurIn () {
+      this.isFocus = false;
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+    },
     // 开始聊天，提交交易订单
     toHomePage() {
       this.$router.push(`/homepage?userId=${this.userId}&currency=${this.data.tradeCurrency}`);
@@ -227,7 +235,7 @@ export default {
         this.config.tradePwd = this.userMoney;
         this.showBuy = false;
         this.isLoading = true;
-        sellBB(this.config).then(data => {
+        sellBB(this.config).then(() => {
           this.userMoney = '';
           sessionStorage.setItem('tradeType', '0');
           this.textMsg = this.$t('otcBuy.subject.ddtjcg');
@@ -285,7 +293,7 @@ export default {
       });
     },
     changeEnum() {
-      this.Enum = (Math.floor((this.Cnum / this.rate) * 1e8) / 1e8).toFixed(8);
+      this.Enum = (Math.floor((this.Cnum / this.rate) * 1e4) / 1e4).toFixed(4);
       let numLeft = this.Cnum.split('.')[0];
       let numRight = this.Cnum.split('.')[1];
       if(numRight){
@@ -302,10 +310,10 @@ export default {
       let numLeft = this.Enum.split('.')[0];
       let numRight = this.Enum.split('.')[1];
       if(numRight){
-        if(numRight.length > 8){
+        if(numRight.length > 4){
           this.textMsg = this.$t('trading.bbDepth.xsbdy');
           this.$refs.toast.show();
-          numRight = numRight.substring(0, 8);
+          numRight = numRight.substring(0, 4);
           this.Enum = numLeft + '.' + numRight;
         }
       }
@@ -319,7 +327,7 @@ export default {
         this.configFn();
         delete this.config.tradePwd;
         this.isLoading = true;
-        buyETH(this.config).then(data => {
+        buyETH(this.config).then(() => {
           sessionStorage.setItem('tradeType', '1');
           this.textMsg = this.$t('otcBuy.subject.ddtjcg');
           this.$refs.toast.show();
@@ -490,9 +498,8 @@ export default {
     border-bottom: 0.2rem solid #f7f7f7;
     padding: 0 0.3rem 0.3rem 0.3rem;
     .want {
-      padding: 0.28rem 0 0.3rem;
+      padding: 0.28rem 0 0.2rem;
       border-bottom: 0.01rem solid #e5e5e5;
-
       .txt1 {
         font-size: 0.3rem;
         color: #333;
@@ -519,7 +526,6 @@ export default {
       .text {
         display: flex;
         justify-content: space-between;
-
         .txt {
           font-size: 0.3rem;
           color: #333;
@@ -528,16 +534,18 @@ export default {
 
         .txt3 {
           width: 3.2rem;
+          display: flex;
+          align-items: center;
           input {
-            width: 2.3rem;
+            flex: 1;
             border: none;
             font-size: 0.28rem;
-            height: 0.3rem;
-            line-height: 0.3rem;
           }
         }
         .txt4 {
           width: 3.6rem;
+          display: flex;
+          align-items: center;
           .icon2 {
             display: inline-block;
             width: .49rem;
@@ -550,13 +558,10 @@ export default {
             vertical-align: middle;
 
           }
-
           input {
-            width: 1.8rem;
+            flex: 1;
             border: none;
             font-size: 0.28rem;
-            height: 0.3rem;
-            line-height: 0.3rem;
           }
         }
       }

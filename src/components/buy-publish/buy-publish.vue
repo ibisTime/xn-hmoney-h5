@@ -362,10 +362,11 @@ export default {
     //显示交易提示
     showMsg(type){
       let langText = getLangType() === 'en' ? '_en' : '';
+      console.log(this.MsgList, type);
       switch(type){
         case 'jg': this.text = this.MsgList['price' + langText];break;
         case 'jv': this.text = this.MsgList['premiumRate' + langText];break;
-        case 'low': this.text = this.lowTxt;break;
+        case 'low': this.text = this.MsgList['protectPrice' + langText];break;
         case 'min': this.text = this.MsgList['minTrade' + langText];break;
         case 'max': this.text = this.MsgList['maxTrade' + langText];break;
         case 'ty': this.text = this.MsgList['payType' + langText];break;
@@ -397,9 +398,7 @@ export default {
     },
     getBbPrice(tradeCoin, localCny){  // 获取币种价格
       getAdvertisePrice(tradeCoin, localCny).then(data => {
-        if(!this.adsCode){
-          this.bbPrice = (Math.floor(data.lastPrice * 100) / 100).toFixed(2);
-        }
+        this.bbPrice = (Math.floor(data.lastPrice * 100) / 100).toFixed(2);
         this.config.price = (Math.floor(data.lastPrice * 100) / 100).toFixed(2);
         });
     },

@@ -19,7 +19,7 @@
         <div class='top-main'>
           <p>
             <select name="hbName" @change="selHbName" ref="select_hb">
-              <option value="">-货币-</option>
+              <option value="">货币</option>
               <option value="CNY">CNY</option>
               <option value="USD">USD</option>
             </select>
@@ -27,7 +27,7 @@
           </p>
           <p>
             <select name="bbPayType" @change="selPayType" ref="select_pay">
-              <option value="">-支付方式-</option>
+              <option value="">支付方式</option>
               <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
               <option value="1">{{ $t('otc.navtxt.wx') }}</option>
               <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
@@ -177,7 +177,7 @@
       };
     },
     created() {
-      setTitle(this.$t('page.cate.otc'));
+      setTitle('法币交易');
       this.lang = window.localStorage.getItem('user_lang') || 'cn';
       getAdvertiseBbList().then(data => {
         this.bbList = data.map(item => item.symbol);
@@ -515,10 +515,11 @@
         background-color: #fafafa;
         font: .26rem/.64rem PingFangSC-Medium;
         p {
-          margin-right: .8rem;
+          width: 50%;
+          text-align: center;
           select {
             /*min-width: 1.3rem;*/
-            padding: 0.05rem 0.1rem;
+            padding: 0.05rem 0rem;
           }
         }
         .act {
@@ -711,8 +712,8 @@
     }
   }
   .release {
-    width: 1.06rem;
-    height: 1.06rem;
+    width: 1.66rem;
+    height: 1.66rem;
     border-radius: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -728,21 +729,21 @@
     .icon{
       display: inline-block;
       width: 100%;
-      height: 0.3rem;
+      height: 0.54rem;
       background-repeat: no-repeat;
       background-position: center;
-      background-size: 0.3rem;
+      background-size: 0.54rem;
       background-image: url('./fb_icon.png');
       position: absolute;
-      top: 0.15rem;
-      left: 0;
+      top: 0.2rem;
+      left: -0.06rem;
     }
     .txt{
       width: 100%;
-      font-size: 0.16rem;
+      font-size: 0.30rem;
       color: #fff;
       position: absolute;
-      top: 0.55rem;
+      top: 0.9rem;
       left: 0;
     }
 
