@@ -12,6 +12,7 @@
         <p class='price'><span>{{$t('myOrderDetail.subject.jyjg')}}</span><span>{{orderDetailData.tradePrice ? orderDetailData.tradePrice : '-'}} {{orderDetailData.tradeCurrency}}</span></p>
         <p class='paytype'><span>{{$t('buyPublish.subject.fkfs')}}</span><span>{{payTypeList[orderDetailData.payType]}}</span></p>
     </div>
+    <p class="line"></p>
     <div class='message'>
         <div class='mess'>
             <p class='text1'>
@@ -55,14 +56,18 @@
         <p>{{$t('myOrderDetail.subject.yhyx')}}</p>
         <div class='pj-text'>
           <div class="item on">
-              <div class="icon icon-good" @click="pjClick('2')">
+              <div class="icon icon-good" @click="() => {
+                this.pjClick('2')
+              }">
                 <img src="./hph.png" alt="" :class="{'hidden': userHp}">
                 <img src="./hp.png" alt="" :class="{'hidden': !userHp}">
               </div>
               <p>{{$t('common.hp')}}</p>
           </div>
           <div class="item ml20">
-              <div class="icon icon-bad" @click="pjClick('0')">
+              <div class="icon icon-bad" @click="() => {
+                this.pjClick('0');
+              }">
                 <img src="./cph.png" alt="" :class="{'hidden': userCp}">
                 <img src="./cp.png" alt="" :class="{'hidden': !userCp}">
               </div>
@@ -70,7 +75,7 @@
           </div>
         </div>
         <div class="pj-content">
-              <textarea name="" id="" :placeholder="$t('myOrderDetail.subject.klpj')" v-model="content"></textarea>
+              <textarea :placeholder="$t('myOrderDetail.subject.klpj')" v-model="content" @blur="blurIn"/>
           </div>
         <div class='btn'>
           <button class='no' @click='qxUserPj'>{{$t('common.qx')}}</button>
@@ -391,7 +396,9 @@
   position: fixed;
   left: 0;
   top: 0;
-  width: 100%;
+  bottom: 0;
+  right: 0;
+  background-color: #fff;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
@@ -448,8 +455,6 @@
     background: #fff;
     width: 100%;
     padding: 0.3rem 0.3rem;
-    margin-bottom: 0.2rem;
-
     p {
       display: flex;
       justify-content: space-between;
@@ -467,7 +472,10 @@
       margin-top: 0.34rem;
     }
   }
-
+  .line {
+    background-color: #f5f5f5;
+    height: 0.2rem;
+  }
   .message {
     width: 100%;
     padding: 0.32rem 0.3rem 0;
@@ -646,11 +654,12 @@
   }
 
   .zc-box{
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 110%;
+    bottom: 0;
+    right: 0;
+    z-index: 99;
     background-color: rgba(0,0,0,.5);
   }
   .up-window{

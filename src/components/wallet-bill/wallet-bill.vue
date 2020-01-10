@@ -77,16 +77,33 @@ export default {
           key: ['withdraw'],
           value: '提币'
         },{
+          key: ['ccorder_buy'],
+          value: '法币交易买入'
+        },{
+          key: ['ccorder_sell'],
+          value: '法币交易卖出'
+        },{
           key: ['bborder_buy'],
           value: '交易买入'
         },{
           key: ['bborder_sell'],
           value: '交易卖出'
         },{
-          key: ['bborder_fee', 'withdraw_fee'],
+          key: ['bborder_fee', 'withdraw_fee', 'ccorder_fee'],
           value: '手续费'
         },{
-          key: ["bborder_frozen","bborder_unfrozen_revoke","bborder_unfrozen_trade","withdraw_frozen","withdraw_unfrozen","delivery_frozen","delivery_unfrozen"],
+          key: [
+            "bborder_frozen",
+            "bborder_unfrozen_revoke",
+            "bborder_unfrozen_trade",
+            "withdraw_frozen",
+            "withdraw_unfrozen",
+            "delivery_frozen",
+            "delivery_unfrozen",
+            'ccorder_frozen',
+            'ccorder_unfrozen_revoke',
+            'ccorder_unfrozen_trade'
+          ],
           value: '冻结解冻'
         },{
           key: ["aj_purchase_product_in","aj_purchase_product_give"],

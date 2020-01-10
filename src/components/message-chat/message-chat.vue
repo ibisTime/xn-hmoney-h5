@@ -63,7 +63,15 @@
       </div>
       <div class="message-footer">
         <div class="message-input">
-          <input type="text" :placeholder="$t('messageChat.subject.ltnr')" ref="inputText" v-model="emoji" @keyup.enter="dealMessage" class="msgedit"/>
+          <input
+            type="text"
+            :placeholder="$t('messageChat.subject.ltnr')"
+            ref="inputText"
+            v-model="emoji"
+            @keyup.enter="dealMessage"
+            class="msgedit"
+            @blur="blurIn"
+          />
           <span @click.stop="show"></span>
           <div class="sendMessage" v-show="sendMessage" @click.stop="dealMessage">{{$t('messageChat.subject.fs')}}</div>
           <emoji ref="emoji" @select="selectItem"></emoji>
@@ -163,6 +171,10 @@
       ])
     },
     methods: {
+      blurIn () {
+        this.isFocus = false;
+        window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+      },
       getInitData() {
         this.getUser();
         this.getDetail();

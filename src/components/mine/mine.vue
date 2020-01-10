@@ -275,7 +275,6 @@
     width: 100%;
     height: 100%;
     background-color: #FAFAFA;
-
     .mine-header {
       width: 100%;
       height: 3.4rem;

@@ -1,6 +1,7 @@
 <template>
   <div class="publish-wrapper" @click.stop>
-    <div class='publish-list'>
+    <Scroll :pullUpLoad="null">
+      <div class='publish-list'>
         <p>
           <span class='txt1'>{{ $t('buyPublish.subject.gglx') }}<i></i></span>
           <input type="text" readonly v-model="type">
@@ -28,34 +29,58 @@
         </p>
         <p>
           <span class='txt1'>{{ $t('buyPublish.subject.yjl') }}<i></i></span>
-          <input type="number" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice">
+          <input type="number" v-model="yj_price" placeholder="-50% - 50%" @keyup="changeYjlPrice" @blur="blurIn">
           <span class='txt2'>%</span>
           <span class='ico' @click.stop="showMsg('jv')"></span>
         </p>
         <p>
           <span class='txt1'>{{type !== $t('buyPublish.subject.gm') ? $t('buyPublish.subject.zdj') : $t('buyPublish.subject.zgj')}}<i></i></span>
-          <input name="protectPrice" v-validate="'required|floatNumber'" v-model="config.protectPrice" :placeholder="type !== $t('buyPublish.subject.gm') ? $t('buyPublish.subject.kjyzdj') : $t('buyPublish.subject.kyjzgj')">
+          <input
+            name="protectPrice"
+            v-validate="'required|floatNumber'"
+            v-model="config.protectPrice"
+            :placeholder="type !== $t('buyPublish.subject.gm') ? $t('buyPublish.subject.kjyzdj') : $t('buyPublish.subject.kyjzgj')"
+            @blur="blurIn"
+          >
           <span v-show="errors.has('protectPrice')" class="error-tip">{{errors.first('protectPrice')}}</span>
           <span class='txt2'>{{config.tradeCurrency}}</span>
           <span class='ico' @click.stop="showMsg('low')"></span>
         </p>
         <p>
           <span class='txt1'>{{ $t('buyPublish.subject.zxj') }}<i></i></span>
-          <input name="minTrade" v-validate="'required|floatNumber'" v-model="config.minTrade" :placeholder="$t('buyPublish.subject.zced')">
+          <input
+            name="minTrade"
+            v-validate="'required|floatNumber'"
+            v-model="config.minTrade"
+            :placeholder="$t('buyPublish.subject.zced')"
+            @blur="blurIn"
+          >
           <span v-show="errors.has('minTrade')" class="error-tip">{{errors.first('minTrade')}}</span>
           <span class='txt2'>{{config.tradeCurrency}}</span>
           <span class='ico' @click.stop="showMsg('min')"></span>
         </p>
         <p>
           <span class='txt1'>{{ $t('buyPublish.subject.zdjg') }}<i></i></span>
-          <input name="maxTrade" v-validate="'required|floatNumber'" v-model="config.maxTrade" :placeholder="$t('buyPublish.subject.zded')">
+          <input
+            name="maxTrade"
+            v-validate="'required|floatNumber'"
+            v-model="config.maxTrade"
+            :placeholder="$t('buyPublish.subject.zded')"
+            @blur="blurIn"
+          >
           <span v-show="errors.has('maxTrade')" class="error-tip">{{errors.first('maxTrade')}}</span>
           <span class='txt2'>{{config.tradeCurrency}}</span>
           <span class='ico' @click.stop="showMsg('max')"></span>
         </p>
         <p>
           <span class='txt1'>{{type}}{{ $t('buyPublish.subject.zl') }}<i class="wallet">{{ $t('buyPublish.subject.ye') }}：{{walletMon}}</i></span>
-          <input name="count" v-validate="'required|floatNumber'" v-model="count" :placeholder="$t('buyPublish.subject.sbzl')">
+          <input
+            name="count"
+            v-validate="'required|floatNumber'"
+            v-model="count"
+            :placeholder="$t('buyPublish.subject.sbzl')"
+            @blur="blurIn"
+          >
           <span v-show="errors.has('count')" class="error-tip">{{errors.first('count')}}</span>
           <span class='txt2'>{{config.tradeCoin}}</span>
         </p>
@@ -63,8 +88,8 @@
           <span class='txt1'>{{ $t('buyPublish.subject.fkfs') }}<i></i></span>
           <select name="payType" v-model="config.payType">
             <option value="0">{{ $t('buyPublish.subject.zfb') }}</option>
-						<option value="1">{{ $t('buyPublish.subject.wx') }}</option>
-						<option value="2">{{ $t('buyPublish.subject.yhk') }}</option>
+            <option value="1">{{ $t('buyPublish.subject.wx') }}</option>
+            <option value="2">{{ $t('buyPublish.subject.yhk') }}</option>
           </select>
           <span class='icon'></span>
           <span class='ico' @click.stop="showMsg('ty')"></span>
@@ -76,19 +101,26 @@
           <span class='txt2'>{{ $t('buyPublish.subject.fz') }}</span>
           <span class='ico' @click.stop="showMsg('qx')"></span>
         </p> -->
-    </div>
-    <div class="textarea-wrap">
-      <textarea class='message' name="leaveMessage" v-validate="'required'" :placeholder="$t('buyPublish.subject.ggly')" ref="leaveMessage"></textarea>
-      <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
-    </div>
-    <div class='select' @click="show = !show">
+      </div>
+      <div class="textarea-wrap">
+        <textarea
+          class='message'
+          name="leaveMessage"
+          v-validate="'required'"
+          :placeholder="$t('buyPublish.subject.ggly')"
+          ref="leaveMessage"
+          @blur="blurIn"
+        />
+        <span v-show="errors.has('leaveMessage')" class="error-tip">{{errors.first('leaveMessage')}}</span>
+      </div>
+      <div class='select' @click="show = !show">
         <p class='text'>
-            <span>{{ $t('buyPublish.subject.gjsz') }}</span>
-            <span :class="[!show ? 'icon' : 'ico']" ></span>
+          <span>{{ $t('buyPublish.subject.gjsz') }}</span>
+          <span :class="[!show ? 'icon' : 'ico']" ></span>
         </p>
-    </div>
-    <div v-show='show' class='select-box'>
-      <div class='select-time-wrap'>
+      </div>
+      <div v-show='show' class='select-box'>
+        <div class='select-time-wrap'>
           <div class='text1'>
             <div class="select-time-title">
               <span class='txt1'>{{ $t('buyPublish.subject.kfsj') }}</span>
@@ -111,27 +143,28 @@
               </select>
             </p>
           </div>
-      </div>
-      <!-- <div class='select-time'>
-          <p class='text1'>
-            <span class='txt1'>是否实名</span>
-            <span class='txt2'><i :class="[isReal ? 'icon icon1' : 'icon']" @click='isRealFn("0")'></i>启用</span>
-            <span class='txt3'><i :class="[!isReal ? 'icon icon1' : 'icon']" @click='isRealFn("1")'></i>不启用</span>
-            <i class='icon ico2'></i>
+        </div>
+        <!-- <div class='select-time'>
+            <p class='text1'>
+              <span class='txt1'>是否实名</span>
+              <span class='txt2'><i :class="[isReal ? 'icon icon1' : 'icon']" @click='isRealFn("0")'></i>启用</span>
+              <span class='txt3'><i :class="[!isReal ? 'icon icon1' : 'icon']" @click='isRealFn("1")'></i>不启用</span>
+              <i class='icon ico2'></i>
+            </p>
+        </div> -->
+        <div class='select-last'>
+          <p class='text1' @click="onlyFans">
+            <span>{{ $t('buyPublish.subject.jfs') }} </span>
+            <i class="fr" :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i>
+            <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .4rem;"></i>
           </p>
-      </div> -->
-      <div class='select-last'>
-        <p class='text1' @click="onlyFans">
-          <span>{{ $t('buyPublish.subject.jfs') }} </span>
-          <i class="fr" :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i>
-          <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .4rem;"></i>
-        </p>
+        </div>
       </div>
-    </div>
-    <div class='footer'>
-      <button @click="toOtcFn" :class="{'btn-w': isDetail}">{{ $t('buyPublish.subject.zjfb') }}</button>
-      <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
-    </div>
+      <div class='footer'>
+        <button @click="toOtcFn" :class="{'btn-w': isDetail}">{{ $t('buyPublish.subject.zjfb') }}</button>
+        <button class='txt2' @click="saveOtcData" :class="{'hidden': isDetail}">{{ $t('buyPublish.subject.bccg') }}</button>
+      </div>
+    </Scroll>
     <showMsg :text="text" ref="showMsg"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
     <Toast :text="textMsg" ref="toast" />
@@ -145,6 +178,7 @@ import {addAdvertising, getBbListData, getAdvertisePrice, getAdvertiseDetail, Ex
 import { wallet } from 'api/person';
 import Toast from 'base/toast/toast';
 import FullLoading from 'base/full-loading/full-loading';
+import Scroll from 'base/scroll/scroll';
 
 const message = new Message();
 
@@ -342,6 +376,10 @@ export default {
     });
   },
   methods: {
+    blurIn () {
+      this.isFocus = false;
+      window.scrollTo(0, Math.max(this.scrollHeight - 1, 0));
+    },
     // 查询余额
     getUserWallet(){
       wallet().then(data => {
@@ -549,7 +587,8 @@ export default {
   components: {
     showMsg,
     FullLoading,
-    Toast
+    Toast,
+    Scroll
   }
 };
 </script>
@@ -562,7 +601,8 @@ export default {
   font-family: PingFangSC-Medium;
   color: #333;
   overflow: auto;
-
+  width: 100%;
+  height: 100%;
   .icon {
     display: inline-block;
     background-repeat: no-repeat;
