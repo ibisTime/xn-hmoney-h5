@@ -47,31 +47,6 @@
       </div>
       <div class="mine-main">
         <div class="card">
-          <router-link to="my-advertising" class="item item-advertising">
-            <i></i>
-            <span class='txt'>我的广告</span>
-            <span class='icon'></span>
-          </router-link>
-          <router-link to="my-order" class="item item-order" @click.native="toOrderFn">
-            <p class="item-left">
-              <i></i>
-              <span class="txt">我的订单</span>
-            </p>
-            <p class="item-right">
-              <span class='newMsg'>
-                <samp v-if="getUnreadMsgNum()">{{$t('mine.subject.nyxxx')}}</samp>
-              </span>
-              <span class='icon'></span>
-            </p>
-          </router-link>
-          <router-link to="my-guest" class="item item-guest">
-            <i></i>
-            <span class='txt'>交易对手</span>
-            <span class='icon'></span>
-          </router-link>
-        </div>
-        <p class="line"></p>
-        <div class="card">
           <router-link to="security-center" class="item item-6">
             <i></i>
             <span class="txt">账户与安全</span>
@@ -147,11 +122,6 @@
         picName: '',
         picUrl: ''
       };
-    },
-    computed: {
-      ...mapGetters([
-        'unreadMsgNum'
-      ])
     },
     created() {
       setTitle('我的');
@@ -436,44 +406,6 @@
           &.item-4 {
             i {
               background-image: url('./Fill 1@2x.png');
-            }
-          }
-
-          &.item-advertising{
-            i {
-              background-image: url('./wdgg.png');
-            }
-          }
-
-          &.item-guest{
-            i {
-              background-image: url('./jyds.png');
-            }
-          }
-
-          &.item-order {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .item-left{
-              i {
-                height: 1.18rem;
-                background-image: url('./wddd.png');
-              }
-            }
-            .item-right{
-              display: flex;
-              align-items: center;
-              .newMsg{
-                font-size: 0.24rem;
-                color: $primary-color;
-                text-align: right;
-                padding-right: 0.3rem;
-                white-space: nowrap;
-              }
-              .icon{
-                margin-top: 0;
-              }
             }
           }
 

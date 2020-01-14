@@ -133,6 +133,7 @@ export const messageMixin = {
           let unreadMsgNum = 0;
           let groupList = {};
           for (let i = 0; i < resp.GroupIdList.length; i++) {
+            // console.log(resp.GroupIdList[i]);
             unreadMsgNum += resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
             groupList[resp.GroupIdList[i].GroupId] = resp.GroupIdList[i].SelfInfo.UnreadMsgNum;
           }

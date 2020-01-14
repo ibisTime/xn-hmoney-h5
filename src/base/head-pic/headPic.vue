@@ -1,6 +1,6 @@
 <template>
     <div id="defPic">
-        <div class="def-pic"><span>{{content}}</span></div>
+        <div class="def-pic" :style="{backgroundImage: picUrl ? `url('${picUrl}')` : 'none'}"><span v-show="!picUrl">{{content}}</span></div>
     </div>
 </template>
 
@@ -10,6 +10,10 @@
             content: {
                 type: String,
                 default: 'Y'
+            },
+            picUrl: {
+              type: String,
+              default: ''
             }
         }
     }
@@ -30,6 +34,9 @@
     color: #fff;
     border-radius: 100%;
     position: relative;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 span {
     position: absolute;

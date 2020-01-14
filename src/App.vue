@@ -55,7 +55,6 @@
         if (userId && token) {
           setUser({userId, token});
         }
-        const isFirst = sessionStorage.getItem('tencentIsFirst') || '0';
         if(isLogin()) {
           sessionStorage.setItem('tencentIsFirst', '1');
           this.tencentLogin();

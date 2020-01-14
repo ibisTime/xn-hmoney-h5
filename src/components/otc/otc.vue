@@ -2,85 +2,81 @@
   <div class="template-wrapper">
     <div :class="[Show ? 'filter otc-wrapper': 'otc-wrapper' ]" @click.stop>
       <div class='header'>
-        <div>
-          <select name="bbName" v-model="config.coin" @change="getAdverFn">
-            <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}<span
-              :class="{sicon: index == 0}"></span></option>
-          </select>
-          <i class="icon ixla"></i>
+        <div class="head_left">
+          <p :class="[flag1 ? 'head_left_txt head_left_select' : 'head_left_txt']" @click.stop='buy'>我要买</p>
+          <p :class="[flag2 ? 'head_left_txt head_left_select' : 'head_left_txt']" @click.stop='sell'>我要卖</p>
         </div>
-        <p class="buySell">
-          <span :class="[flag1 ? 'buy select' : 'buy']" @click.stop='buy'>{{ $t('otc.navbar.buyB') }}</span>
-          <span :class="[flag2 ? 'sell select' : 'sell']" @click.stop='sell'>{{ $t('otc.navbar.sellB') }}</span>
-        </p>
-        <router-link to='trading' class='trading'>{{ $t('otc.navbar.bbjy') }}</router-link>
-      </div>
-      <div class="top">
-        <div class='top-main'>
-          <p>
-            <select name="hbName" @change="selHbName" ref="select_hb">
-              <option value="">货币</option>
-              <option value="CNY">CNY</option>
-              <option value="USD">USD</option>
-            </select>
-            <span></span>
-          </p>
-          <p>
-            <select name="bbPayType" @change="selPayType" ref="select_pay">
-              <option value="">支付方式</option>
-              <option value="0">{{ $t('otc.navtxt.zfb') }}</option>
-              <option value="1">{{ $t('otc.navtxt.wx') }}</option>
-              <option value="2">{{ $t('otc.navtxt.yhk') }}</option>
-            </select>
-            <span></span>
-          </p>
+        <div class="head_right">
+          <div class="head_r_01" @click="isShowSxBox = true">
+            <p class="head_r_01_icon"></p>
+            <p class="head_r_01_txt">筛选</p>
+          </div>
+          <div class="head_r_02" @click="showPersonalBox">
+            <p class="head_r_02_icon">
+              <span class="tip_icon" v-if="getUnreadMsgNum()"></span>
+            </p>
+            <p class="head_r_02_txt">我的</p>
+          </div>
         </div>
       </div>
-      <!-- 买币 -->
-      <div class='main'>
-        <Scroll
-          ref="scroll"
-          :data="bbDataList"
-          :hasMore="hasMore"
-          :pullUpLoad="pullUpLoad"
-          v-show="bbDataList.length"
-          @pullingUp="getBBListData"
-        >
-          <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
-            <div class='cont'>
-              <div class='preson'>
-                <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
-                  <p class="pic-p" :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}"
-                     alt=""></p>
-                  <HeadPic :content="adverItem.user.nickname.substring(0, 1)"
-                           :class="{'hidden': adverItem.user.photo}"/>
-                  <span class='color' :class="calculateFn(adverItem.user.lastLogin)"></span>
+      <div class="otc_content">
+        <ul class="top-main">
+          <li
+            class="top_sx_single"
+            :class="config.coin === item ? 'top_sx_single_select' : ''"
+            v-for="item in bbList"
+            :key="item"
+            @click="() => {
+              getAdverFn(item);
+            }"
+          >{{item}}</li>
+        </ul>
+        <!-- 买币 -->
+        <div class='main'>
+          <Scroll
+            ref="scroll"
+            :data="bbDataList"
+            :hasMore="hasMore"
+            :pullUpLoad="pullUpLoad"
+            v-show="bbDataList.length"
+            @pullingUp="getBBListData"
+          >
+            <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
+              <div class='cont'>
+                <div class='preson'>
+                  <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
+                    <p class="pic-p" :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}"
+                       alt=""></p>
+                    <HeadPic :content="adverItem.user.nickname.substring(0, 1)"
+                             :class="{'hidden': adverItem.user.photo}"/>
+                    <span class='color' :class="calculateFn(adverItem.user.lastLogin)"></span>
+                  </div>
+                  <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? $t('otc.subject.ysm') : $t('otc.subject.wsm')}}</span>
                 </div>
-                <span class='name' :class="{'wname': !adverItem.user.idNo}">{{adverItem.user.idNo ? $t('otc.subject.ysm') : $t('otc.subject.wsm')}}</span>
-              </div>
-              <div class='text'>
-                <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span>
-                </p>
-                <p class='disc'>{{ $t('otc.subject.jy') }}·{{adverItem.userStatistics.jiaoYiCount}} {{
-                  $t('otc.subject.hp') }}·{{getPercentum(adverItem.userStatistics.beiHaoPingCount,
-                  adverItem.userStatistics.beiPingJiaCount)}} {{ $t('otc.subject.xr')
-                  }}·{{adverItem.userStatistics.beiXinRenCount}}</p>
-                <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}}
-                  {{adverItem.tradeCurrency}}</p>
-              </div>
-              <div class='number'>
-                <p class='num'>{{(Math.floor(adverItem.truePrice * 100) / 100).toFixed(2)}}
-                  {{adverItem.tradeCurrency}}</p>
-                <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">
-                  {{adverItem.user.userId == userId ? $t('otc.subject.bj') : adverItem.tradeType == 0 ?
-                  $t('otc.subject.cs') : $t('otc.subject.gm')}}</p>
+                <div class='text'>
+                  <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span>
+                  </p>
+                  <p class='disc'>{{ $t('otc.subject.jy') }}·{{adverItem.userStatistics.jiaoYiCount}} {{
+                    $t('otc.subject.hp') }}·{{getPercentum(adverItem.userStatistics.beiHaoPingCount,
+                    adverItem.userStatistics.beiPingJiaCount)}} {{ $t('otc.subject.xr')
+                    }}·{{adverItem.userStatistics.beiXinRenCount}}</p>
+                  <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}}
+                    {{adverItem.tradeCurrency}}</p>
+                </div>
+                <div class='number'>
+                  <p class='num'>{{(Math.floor(adverItem.truePrice * 100) / 100).toFixed(2)}}
+                    {{adverItem.tradeCurrency}}</p>
+                  <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">
+                    {{adverItem.user.userId == userId ? $t('otc.subject.bj') : adverItem.tradeType == 0 ?
+                    $t('otc.subject.cs') : $t('otc.subject.gm')}}</p>
+                </div>
               </div>
             </div>
+          </Scroll>
+          <div class="no-data" :class="{'hidden': bbDataList.length > 0}">
+            <img src="./wu.png"/>
+            <p>{{ $t('common.zwgg') }}</p>
           </div>
-        </Scroll>
-        <div class="no-data" :class="{'hidden': bbDataList.length > 0}">
-          <img src="./wu.png"/>
-          <p>{{ $t('common.zwgg') }}</p>
         </div>
       </div>
     </div>
@@ -110,13 +106,109 @@
       </div>
       <div @click='relClose' class='close'></div>
     </div>
+    <div class="otc_sx_box" v-show="isShowSxBox" @click="isShowSxBox = false">
+      <div class="sx_content" @click.stop>
+        <div class="otc_sx_box_single">
+          <h5 class="sx_box_h5">货币</h5>
+          <ul class="sx_box_ul">
+            <li
+              class="sx_box__single"
+              :class="sx_currency === 'CNY' ? 'sx_box__single_select' : ''"
+              @click="sx_currency === 'CNY' ? sx_currency = '' : sx_currency = 'CNY'"
+            >CNY</li>
+            <li
+              class="sx_box__single"
+              :class="sx_currency === 'USD' ? 'sx_box__single_select' : ''"
+              @click="sx_currency === 'USD' ? sx_currency = '' : sx_currency = 'USD'"
+            >USD</li>
+          </ul>
+        </div>
+        <div class="otc_sx_box_single">
+          <h5 class="sx_box_h5">支付方式</h5>
+          <ul class="sx_box_ul">
+            <li
+              class="sx_box__single"
+              :class="sx_pay === '0' ? 'sx_box__single_select' : ''"
+              @click="sx_pay === '0' ? sx_pay = '' : sx_pay = '0'"
+            >支付宝</li>
+            <li
+              class="sx_box__single"
+              :class="sx_pay === '1' ? 'sx_box__single_select' : ''"
+              @click="sx_pay === '1' ? sx_pay = '' : sx_pay = '1'"
+            >微信</li>
+            <li
+              class="sx_box__single"
+              :class="sx_pay === '2' ? 'sx_box__single_select' : ''"
+              @click="sx_pay === '2' ? sx_pay = '' : sx_pay = '2'"
+            >银行卡转让</li>
+          </ul>
+        </div>
+        <div class="otc_sx_foo">
+          <p
+            class="otc_sx_foo_reset"
+            @click="() => {
+              sx_pay = '';
+              sx_currency = '';
+            }">重置</p>
+          <p class="otc_sx_foo_qd" @click="sxOtcList">确定</p>
+        </div>
+      </div>
+    </div>
+    <div class="otc_personal" v-show="isShowPersonal" @click="hidePersonalBox">
+      <div class="personal_box" @click.stop>
+        <div class="personal_box_head">
+          <div class="personal___head_left">
+            <HeadPic
+              :content="userNameSub.substring(0, 1)"
+              :picUrl="userPic"
+            />
+            <!--adverItem.user.nickname.substring(0, 1)-->
+          </div>
+          <div class="personal___head_right">
+            <p class="p_head_r_name">{{userNameSub}}</p>
+            <p class="p_head_r_info">交易 {{userMsg.jiaoYiCount}} | 好评率 {{userMsg.bingJiaCount}} | 信任 {{userMsg.beiXinRenCount}}</p>
+          </div>
+        </div>
+        <ul class="personal_box_con">
+          <li class="p_box_con_single" @click="toPage('my-advertising')">
+            <div class="p_single_left">
+              <p class="p_s_l_icon p_s_l_icon01"></p>
+              <p class="p_s_l_txt">我的广告</p>
+            </div>
+            <div class="p_single_right">
+              <p class="p_s_r_icon"></p>
+            </div>
+          </li>
+          <li class="p_box_con_single" @click="toPage('my-order')">
+            <div class="p_single_left">
+              <p class="p_s_l_icon p_s_l_icon02"></p>
+              <p class="p_s_l_txt">我的订单</p>
+            </div>
+            <div class="p_single_right">
+              <p class="p_s_r_txt" v-if="getUnreadMsgNum()">您有新消息</p>
+              <p class="p_s_r_icon"></p>
+            </div>
+          </li>
+          <li class="p_box_con_single" @click="toPage('my-guest')">
+            <div class="p_single_left">
+              <p class="p_s_l_icon p_s_l_icon03"></p>
+              <p class="p_s_l_txt">交易对手</p>
+            </div>
+            <div class="p_single_right">
+              <p class="p_s_r_icon"></p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
     <Toast :text="textMsg" ref="toast"/>
     <FullLoading ref="fullLoading" v-show="isLoading"/>
   </div>
 </template>
 <script>
+  import {mapGetters} from 'vuex';
   import Footer from 'components/footer/footer';
-  import {formatImg, getUserId, getAvatar, setTitle, getPercentum, calculateDays} from 'common/js/util';
+  import {formatImg, getUserId, getAvatar, setTitle, getPercentum, calculateDays, isLogin} from 'common/js/util';
   import {getUser} from 'api/user';
   import {getBannerList} from 'api/general';
   import {getAdvertisingData, getAdvertiseBbList} from 'api/otc';
@@ -173,7 +265,18 @@
           }
         },
         loginStatus: '',
-        lang: 'cn'
+        lang: 'cn',
+        sx_currency: '',
+        sx_pay: '',
+        isShowSxBox: false,
+        isShowPersonal: !!sessionStorage.getItem('isShowPersonal'),
+        userPic: '',
+        userNameSub: '',
+        userMsg: {
+          jiaoYiCount: '0',
+          bingJiaCount: '0',
+          beiXinRenCount: '0'
+        }
       };
     },
     created() {
@@ -190,6 +293,20 @@
         this.config.coin = coin != 'undefined' ? coin : this.bbList[0];
         this.getBBListData();
       });
+      if(isLogin()) {
+        getUser().then(data => {
+          this.userPic = data.photo ? formatImg(data.photo) : '';
+          this.userNameSub = data.nickname ? data.nickname : data.loginName;
+          const userStatistics = data.userStatistics;
+          if(userStatistics) {
+            this.userMsg = {
+              jiaoYiCount: userStatistics.jiaoYiCount,
+              bingJiaCount: this.getPercentum(userStatistics.beiHaoPingCount, userStatistics.beiPingJiaCount),
+              beiXinRenCount: userStatistics.beiXinRenCount
+            };
+          }
+        });
+      }
     },
     methods: {
       // 登录状态
@@ -202,6 +319,18 @@
         } else {
           return 'gray';
         }
+      },
+      hidePersonalBox() {
+        this.isShowPersonal = false;
+        sessionStorage.removeItem('isShowPersonal');
+      },
+      showPersonalBox() {
+        this.isShowPersonal = true;
+        sessionStorage.setItem('isShowPersonal', '1');
+      },
+      // 是否显示有新消息
+      getUnreadMsgNum() {
+        return this.unreadMsgNum > 0;
       },
       // 计算百分比
       getPercentum(num1, num2) {
@@ -246,23 +375,22 @@
 
       },
       // 根据条件查询数据
-      selHbName() {
-        this.config.tradeCurrency = this.$refs.select_hb.value;
+      sxOtcList() {
+        this.config.tradeCurrency = this.sx_currency;
+        this.config.payType = this.sx_pay;
+        this.isShowSxBox = false;
         this.start1 = 1;
         this.start2 = 1;
         this.bbDataList = [];
-        this.getBBListData();
-      },
-      selPayType() {
-        this.start1 = 1;
-        this.start2 = 1;
-        this.bbDataList = [];
-        this.config.payType = this.$refs.select_pay.value;
         this.getBBListData();
       },
       //根据币种请求数据
-      getAdverFn() {
-        sessionStorage.setItem('coin', this.config.coin);
+      getAdverFn(coin) {
+        sessionStorage.setItem('coin', coin);
+        this.config = {
+          ...this.config,
+          coin
+        };
         this.start1 = 1;
         this.start2 = 1;
         this.limit = 10;
@@ -412,7 +540,15 @@
       },
       toUrl(url) {
         window.open(url);
+      },
+      toPage(url) {
+        this.$router.push(url)
       }
+    },
+    computed: {
+      ...mapGetters([
+        'unreadMsgNum'
+      ])
     },
     components: {
       Footer,
@@ -440,129 +576,98 @@
 
     .header {
       width: 100%;
-      padding: 0 .3rem;
-      height: .98rem;
-      line-height: .98rem;
+      padding: 0.5rem .29rem 0.34rem;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       position: relative;
       z-index: 9;
-      select {
-        font-weight: bold;
-        font-size: 0.32rem;
-        .sicon {
-          display: inline-block;
-          width: .23rem;
-          height: .16rem;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: 100% 100%;
-          background-image: url('./xlabai.png');
-
-        }
-      }
-      .ixla {
-        width: 0.2rem;
-        height: 0.1rem;
-        margin-left: -0.08rem;
-        display: inline-block;
-        background-image: url('./xla.png');
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-        vertical-align: middle;
-      }
-
-      .buySell {
-        font-size: .34rem;
-        font-weight: bold;
-
-        .select {
-          color: #d53d3d;
-          border-bottom: .04rem solid #d53d3d;
-        }
-
-        .buy {
-          padding-bottom: .15rem;
-          margin-right: 0.5rem;
-          font-weight: bold;
-        }
-        .sell {
-          font-weight: bold;
-          padding-bottom: .15rem;
-        }
-      }
-
-      a {
-        font-size: .32rem;
-        font-weight: bold;
-        color: #333;
-      }
-
-    }
-
-    .top {
-      width: 100%;
-      padding: 0;
-      height: .64rem;
-      background: #fafafa;
-      position: relative;
-      z-index: 9;
-
-      .top-main {
-        width: 100%;
-        padding: 0 .3rem;
+      background-color: #F5F5F5;
+      font-family: 'PingFangSC-Regular';
+      .head_left{
         display: flex;
-        background-color: #fafafa;
-        font: .26rem/.64rem PingFangSC-Medium;
-        p {
-          width: 50%;
-          text-align: center;
-          select {
-            /*min-width: 1.3rem;*/
-            padding: 0.05rem 0rem;
+        align-items: center;
+        .head_left_txt{
+          color: #C0C4CC;
+          margin-right: 0.4rem;
+          font-size: 0.28rem;
+          line-height: 0.36rem;
+          &:last-child{
+            margin-right: 0;
           }
         }
-        .act {
-          color: #d53d3d;
-          span {
-            background-image: url('./sla.png');
-          }
+        .head_left_select{
+          color: #333333;
+          font-weight: 500;
+          font-size: 0.42rem;
         }
-
-        span {
-          display: inline-block;
-          width: .15rem;
-          height: .1rem;
-          background-repeat: no-repeat;
-          background-position: center;
+      }
+      .head_right{
+        display: flex;
+        align-items: center;
+        .head_r_01, .head_r_02{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .head_r_01{
+          margin-right: 0.38rem;
+        }
+        .head_r_01_icon, .head_r_02_icon{
+          width: 0.3rem;
+          height: 0.31rem;
+          margin-bottom: 0.05rem;
           background-size: 100% 100%;
-          background-image: url('./xla.png');
-          vertical-align: middle;
         }
-
+        .head_r_01_icon{
+          background-image: url("./otc_sx.png");
+        }
+        .head_r_02_icon{
+          position: relative;
+          background-image: url("./otc_me.png");
+          .tip_icon{
+            position: absolute;
+            right: -0.02rem;
+            top: -0.02rem;
+            display: inline-block;
+            width: 0.13rem;
+            height: 0.13rem;
+            border-radius: 100%;
+            background-color: #D53D3D;
+          }
+        }
+        .head_r_01_txt, .head_r_02_txt{
+          font-size: 0.2rem;
+          color: #333333;
+        }
       }
     }
-
-    .select3 {
-      position: fixed;
-      top: 1.62rem;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      background: rgba(0, 0, 0, .4);
-      .main {
-        line-height: .9rem;
-        font-size: .28rem;
-        color: #666;
-        width: 100%;
-        padding: 0 .3rem;
-        background: #fff;
-        p {
-          border-bottom: .01rem solid #e5e5e5;
-        }
-        p:active {
-          color: #d53d3d;
-        }
+    .otc_content{
+      border-top-left-radius: 0.12rem;
+      border-top-right-radius: 0.12rem;
+      background-color: #fff;
+    }
+    .top-main {
+      position: relative;
+      z-index: 9;
+      background-color: #fff;
+      display: flex;
+      padding: 0.25rem 0.3rem 0;
+      border-bottom: 1px solid #F0F0F0;
+      font-family: 'PingFangSC-Regular';
+      font-size: 0.24rem;
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
+      .top_sx_single{
+        margin-right: 0.82rem;
+        color: #333333;
+        box-sizing: border-box;
+        padding-bottom: 0.22rem;
+        border-bottom: 0.04rem solid transparent;
+      }
+      .top_sx_single_select{
+        border-color: #D53D3D;
+        color: #D53D3D;
       }
     }
 
@@ -585,17 +690,16 @@
       left: 0;
       width: 100%;
       height: 100%;
-      padding-top: 1.62rem;
+      padding-top: 2.25rem;
       padding-bottom: 0.6rem;
       overflow: scroll;
       z-index: 8;
+      background-color: #fff;
       .content {
         width: 92%;
-        margin: 0 auto;
+        margin: .2rem auto 0;
         height: 1.9rem;
         background: #fff;
-        margin-top: .2rem;
-
         .cont {
           width: 100%;
           padding: .4rem .2rem;
@@ -811,7 +915,172 @@
     }
 
   }
-
+  .otc_sx_box{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 99;
+    background-color: rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: row-reverse;
+    .sx_content{
+      position: relative;
+      width: 5.7rem;
+      height: 100%;
+      background-color: #fff;
+      padding: 0.76rem 0.61rem 0 0.29rem;
+      .otc_sx_box_single{
+        margin-bottom: 0.65rem;
+        .sx_box_h5{
+          font-size: 0.28rem;
+          color: #333333;
+          margin-bottom: 0.29rem;
+        }
+        .sx_box_ul{
+          display: flex;
+          align-items: center;
+          font-family: 'MicrosoftYaHei';
+          font-size: 0.24rem;
+          .sx_box__single{
+            padding: 0.14rem 0.18rem;
+            min-width: 1.3rem;
+            margin-right: 0.3rem;
+            background-color: #EFEFEF;
+            color: #333333;
+            border-radius: 0.04rem;
+            text-align: center;
+            border: 1px solid transparent;
+            &:last-child{
+              margin-right: 0;
+            }
+          }
+          .sx_box__single_select{
+            border: 1px solid #D53D3D;
+            color: #D53D3D;
+            background-color: #fff;
+          }
+        }
+      }
+      .otc_sx_foo{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 0.98rem;
+        display: flex;
+        align-items: center;
+        font-family: PingFangSC-Regular;
+        p{
+          flex: 1;
+          height: 0.98rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.32rem;
+        }
+        .otc_sx_foo_reset{
+          background-color: #EFEFEF;
+          color: #333;
+        }
+        .otc_sx_foo_qd{
+          background-color: #D53D3D;
+          color: #fff;
+        }
+      }
+    }
+  }
+  .otc_personal{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 99;
+    background-color: rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: row-reverse;
+    .personal_box{
+      position: relative;
+      width: 5.7rem;
+      height: 100%;
+      background-color: #fff;
+      padding: 1.17rem 0.3rem 0;
+      .personal_box_head{
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.41rem;
+        .personal___head_left{
+          width: 1rem;
+          height: 1rem;
+          margin-right: 0.16rem;
+        }
+        .personal___head_right{
+          .p_head_r_name{
+            font-size: 0.28rem;
+            color: #333;
+            margin-bottom: 0.26rem;
+          }
+          .p_head_r_info{
+            color: #999999;
+            font-size: 0.22rem;
+          }
+        }
+      }
+      .personal_box_con{
+        .p_box_con_single{
+          height: 0.9rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 0.02rem solid #F5F5F5;
+          .p_single_left{
+             display: flex;
+            align-items: center;
+            .p_s_l_icon{
+              margin-right: 0.16rem;
+              background-size: 100% 100%;
+            }
+            .p_s_l_icon01{
+              width: 0.36rem;
+              height: 0.33rem;
+              background-image: url("./wdgg.png");
+            }
+            .p_s_l_icon02{
+              width: 0.34rem;
+              height: 0.36rem;
+              background-image: url("./wddd.png");
+            }
+            .p_s_l_icon03{
+              width: 0.32rem;
+              height: 0.36rem;
+              background-image: url("./jyds.png");
+            }
+            .p_s_l_txt{
+              font-size: 0.28rem;
+              color: #333333;
+            }
+          }
+          .p_single_right{
+            display: flex;
+            align-items: center;
+            font-size: 0.2rem;
+            color: #EC3F3F;
+            .p_s_r_txt{
+              margin-right: 0.1rem;
+            }
+            .p_s_r_icon{
+              width: 0.12rem;
+              height: 0.2rem;
+              background-size: 100% 100%;
+              background-image: url("./to_right.png");
+            }
+          }
+        }
+      }
+    }
+  }
   .filter {
     -webkit-filter: blur(.45rem);
     -moz-filter: blur(.45rem);

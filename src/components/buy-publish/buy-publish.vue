@@ -7,17 +7,17 @@
           <input type="text" readonly v-model="type">
         </p>
         <p>
-          <span class='txt1'>货币<i></i></span>
-          <select name="tradeCoin" v-model="config.tradeCurrency" @change="changePrice">
-            <option value="CNY">CNY</option>
-            <option value="USD">USD</option>
+          <span class='txt1'>{{ $t('buyPublish.subject.jybz') }}<i></i></span>
+          <select name="tradeCoin" v-model="config.tradeCoin" @change="changePrice">
+            <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}</option>
           </select>
           <span class='icon'></span>
         </p>
         <p>
-          <span class='txt1'>{{ $t('buyPublish.subject.jybz') }}<i></i></span>
-          <select name="tradeCoin" v-model="config.tradeCoin" @change="changePrice">
-            <option :value="item" v-for="(item, index) in bbList" :key="index">{{item}}</option>
+          <span class='txt1'>货币<i></i></span>
+          <select name="tradeCoin" v-model="config.tradeCurrency" @change="changePrice">
+            <option value="CNY">CNY</option>
+            <option value="USD">USD</option>
           </select>
           <span class='icon'></span>
         </p>
@@ -155,8 +155,10 @@
         <div class='select-last'>
           <p class='text1' @click="onlyFans">
             <span>{{ $t('buyPublish.subject.jfs') }} </span>
-            <i class="fr" :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans' style="margin-left: .1rem;"></i>
-            <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-top: .4rem;"></i>
+            <span style="display: flex;align-items: center;">
+              <i class="fr" :class="[isFans ? 'icon ico1' : 'icon']" @click='onlyFans'></i>
+              <i class='icon ico2' @click.stop="showMsg('fs')" style="margin-left: 0.1rem"></i>
+            </span>
           </p>
         </div>
       </div>
@@ -880,11 +882,7 @@ export default {
         color: #666;
         display: flex;
         justify-content: space-between;
-        .fr{
-          position: absolute;
-          right: 0.5rem;
-          top: 46%;
-        }
+        align-items: center;
         .icon {
           width: .3rem;
           height: .3rem;
