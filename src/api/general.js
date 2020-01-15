@@ -143,3 +143,8 @@ export function notice(start) {
 export function noticeDetail(code) {
   return fetch(805307, {code});
 }
+
+// 用户心跳
+export function userHeartbeat() {
+  return fetch(805092);
+}

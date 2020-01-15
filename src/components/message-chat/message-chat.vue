@@ -23,7 +23,7 @@
           </div>
           <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
-            <div class="receive" v-if="!info.isSend && info.fromAccount != 'admin'">
+            <div class="receive" v-if="!info.isSend && info.fromAccount !== 'administrator'">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
               <span class="avatar" v-else :style="formatAvatarSyl(receiver.photo)"></span>
               <div class="p-content">
@@ -36,7 +36,7 @@
                 </i>
               </div>
             </div>
-            <div class="time-split" v-else-if="info.fromAccount === 'admin'">
+            <div class="time-split" v-else-if="info.fromAccount === 'administrator'">
               <div class="time-content">
                 <template v-for="item in getContent(info)">
                   <template v-if="item.type==='TIMTextElem'">{{getSystem(item.content)}}</template>

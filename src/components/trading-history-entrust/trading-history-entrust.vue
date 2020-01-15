@@ -12,7 +12,7 @@
           v-show="hisDataList.length > 0"
           @pullingUp="getHistory"
         >
-            <div class='list' v-for="(item, index) in hisDataList" :key="index">
+            <div class='list' v-for="(item, index) in hisDataList" :key="index" @click="toEntrustDetails(item)">
                 <p class='text1'>
                     <span :class='item.direction == "0" ? "green" : "red1"'>{{item.direction == '0' ? '买入' : '卖出'}}</span>
                     <span style="color: #333333; font-weight: 500;">({{item.symbol}}/{{item.toSymbol}})</span>
@@ -32,7 +32,7 @@
                         <p class='black'>{{(item.direction == 0 && item.type == 0) ? item.tradedAmount : item.tradedCount}}</p>
                     </div>
                 </div>
-                <p style="margin-top: 0.36rem;">成交时间：{{item.createDatetime}}</p>
+                <p style="margin-top: 0.36rem;">成交时间：{{item.lastTradedDatetime}}</p>
             </div>
         </Scroll>
         <div class="no-data" :class="{'hidden': hisDataList.length > 0}">
@@ -86,7 +86,7 @@ export default {
         this.hisConfig.limit = this.limit;
         getMyHistoryData(this.hisConfig).then(data => {
             data.list.map(item => {
-                item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
+                item.lastTradedDatetime = formatDate(item.lastTradedDatetime, 'yyyy-MM-dd hh:mm:ss');
                 item.price = formatAmount(`${item.price}`, '', item.toSymbol);
                 item.totalAmount = formatAmount(`${item.totalAmount}`, '', item.toSymbol);
                 item.totalCount = formatAmount(`${item.totalCount}`, '', item.symbol);
@@ -94,6 +94,7 @@ export default {
                 item.tradedCount = formatAmount(`${item.tradedCount}`, '', item.symbol);
                 item.avgPrice = formatAmount(`${item.avgPrice}`, '', item.toSymbol);
                 item.status = this.statusValueList[item.status];
+                item.tradedFee = formatAmount(`${item.tradedFee}`, '', item.direction === '0' ? item.symbol : item.toSymbol);
             });
             if (data.totalPage <= this.start) {
                 this.hasMore = false;
@@ -104,6 +105,10 @@ export default {
         }, () => {
             this.isLoading = false;
         });
+    },
+    toEntrustDetails(item) {
+      sessionStorage.setItem('entrustData', JSON.stringify(item));
+      this.$router.push('entrust-details');
     }
   },
   components: {

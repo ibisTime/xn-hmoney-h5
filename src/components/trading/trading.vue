@@ -766,14 +766,13 @@
         })
       },
       selectAsksPrice(index) {  // 卖盘选中
-        if (this.show1) {
-          this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, 4, this.setBazDeal.toSymbol) : '';
-        }
+        // if (this.show1) {
+        //
+        // }
+        this.xjPrice = this.bbAsks[index] ? formatAmount(this.bbAsks[index].price, 4, this.setBazDeal.toSymbol) : '';
       },
       selectBidsPrice(index) {  // 买盘选中
-        if (!this.show1) {
-          this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, 4, this.setBazDeal.toSymbol) : '';
-        }
+        this.xjPrice = this.bbBids[index] ? formatAmount(this.bbBids[index].price, 4, this.setBazDeal.toSymbol) : '';
       },
       formatAmount(money, len, coin) {
         return formatAmount(money, len, coin);

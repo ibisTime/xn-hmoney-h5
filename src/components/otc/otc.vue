@@ -42,9 +42,9 @@
             @pullingUp="getBBListData"
           >
             <div class='content' v-for="(adverItem, index) in bbDataList" :key="index">
-              <div class='cont'>
+              <div class='cont' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">
                 <div class='preson'>
-                  <div class='pic' @click="toHomePage(adverItem.userId, adverItem.tradeCoin)">
+                  <div class='pic' @click.stop="toHomePage(adverItem.userId, adverItem.tradeCoin)">
                     <p class="pic-p" :style="getUserPic(adverItem.user.photo)" :class="{'hidden': !adverItem.user.photo}"
                        alt=""></p>
                     <HeadPic :content="adverItem.user.nickname.substring(0, 1)"
@@ -67,7 +67,7 @@
                   <p class='num'>{{(Math.floor(adverItem.truePrice * 100) / 100).toFixed(2)}}
                     {{adverItem.tradeCurrency}}</p>
                   <p class='shop' @click="toclAdver(adverItem.user.userId, adverItem.tradeType, adverItem.code)">
-                    {{adverItem.user.userId == userId ? $t('otc.subject.bj') : adverItem.tradeType == 0 ?
+                    {{adverItem.user.userId === userId ? $t('otc.subject.bj') : +adverItem.tradeType === 0 ?
                     $t('otc.subject.cs') : $t('otc.subject.gm')}}</p>
                 </div>
               </div>
@@ -609,9 +609,10 @@
           display: flex;
           flex-direction: column;
           align-items: center;
+          padding: 0 0.2rem;
         }
         .head_r_01{
-          margin-right: 0.38rem;
+          margin-right: -0.02rem;
         }
         .head_r_01_icon, .head_r_02_icon{
           width: 0.3rem;

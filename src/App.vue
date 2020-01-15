@@ -11,7 +11,7 @@
   import Toast from 'base/toast/toast';
   import {isLogin, getUrlParam, setUser, getUserId} from 'common/js/util';
   import {getBbListData} from 'api/tradingOn';
-  import {getSysConfig} from 'api/general';
+  import {getSysConfig, userHeartbeat} from 'api/general';
   import {messageMixin} from 'common/js/message-mixin';
   import { mapMutations } from 'vuex';
   import * as types from './store/mutation-types';
@@ -71,6 +71,9 @@
             new WebSocket(SOCKET_URL);
           this.socketWatch();
         }
+        if(isLogin()) {
+          userHeartbeat();
+        }
       }, 5000);
     },
     methods: {
@@ -102,7 +105,7 @@
             };
             obj[scoketData.ch] && obj[scoketData.ch]();
           }
-        }
+        };
         window.SOCKET.onerror = function() {
           const SOCKET_URL = localStorage.getItem('SOCKET_URL');
           window.SOCKET = isLogin() ?

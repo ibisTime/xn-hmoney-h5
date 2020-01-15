@@ -15,6 +15,7 @@ const Trading = () => import('components/trading/trading');
 const TradingKline = () => import('components/trading-kline/trading-kline');
 // 交易 -- 历史委托
 const tradingHistoryEntrust = () => import('components/trading-history-entrust/trading-history-entrust');
+const entrustDetails = () => import('components/trading-history-entrust/entrust-details');
 // 钱包
 const Wallet = () => import('components/wallet/wallet');
 // 钱包 -- 转入
@@ -170,6 +171,10 @@ export default new Router({
     {
       path: '/trading-historyEntrust',
       component: tradingHistoryEntrust
+    },
+    {
+      path: '/entrust-details',
+      component: entrustDetails
     },
     {
       path: '/wallet',

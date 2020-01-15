@@ -111,9 +111,7 @@
       mineMessage() {
         mineMessage(this.config).then(data => {
           data.list.map(item => {
-            item.content = item.content;
             // item.type = (item.type === '1' ? '系统消息' : '订单消息');
-            item.title = item.title;
             item.createDatetime = formatDate(item.createDatetime, 'yyyy-MM-dd hh:mm:ss');
           })
           if (data.totalPage <= this.config.start) {

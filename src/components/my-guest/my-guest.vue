@@ -16,21 +16,21 @@
             v-show="list.length > 0"
             @pullingUp="getPageTrust"
             >
-                <div class='list' v-for='(item,index) in list' :key="index">
+                <div class='list' v-for='(item) in list' :key="item.code">
                     <div class='pic'>
-                        <p :style="getUserPic(item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo)" :class="{'hidden': !(item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo)}" alt=""></p>
+                        <!--<p :style="getUserPic(item.photo)" :class="{'hidden': !(item.photo)}" alt=""></p>-->
                         <!-- <img :class="{'hidden': item.toUserInfo.photo}" src="./txiang.png"/> -->
-                        <HeadPic :content="item.toUserInfo ? item.toUserInfo.nickname.substring(0, 1) : item.fromUserInfo.nickname.substring(0, 1)" :class="{'hidden': item.toUserInfo ? item.toUserInfo.photo : item.fromUserInfo.photo}"/>
+                        <HeadPic :content="item.nickname && item.nickname.substring(0, 1)" :picUrl="item.photo"/>
                     </div>
                     <div class='text'>
                         <div class='text1'>
-                            <p class='txt1'><span class='name'>{{item.toUserInfo ? item.toUserInfo.nickname : item.fromUserInfo.nickname }}</span></p>
+                            <p class='txt1'><span class='name'>{{item.nickname}}</span></p>
                             <p class='txt2 gray'>{{item.createDatetime}}</p>
                         </div>
                         <div class='text2'>
-                            <p class='txt1'>{{$t('myGuest.subject.jycs')}}：{{item.toUserInfo ? item.toUserInfo.userStatistics.jiaoYiCount : item.fromUserInfo.userStatistics.jiaoYiCount}}</p>
-                            <p class='txt2'>{{$t('myGuest.subject.xrrs')}}：{{item.toUserInfo ? item.toUserInfo.userStatistics.beiXinRenCount : item.fromUserInfo.userStatistics.beiXinRenCount}}</p>
-                            <p class='txt2'>{{$t('myGuest.subject.hpl')}}：{{getPercentum(item.toUserInfo ? item.toUserInfo.userStatistics.beiHaoPingCount : item.fromUserInfo.userStatistics.beiHaoPingCount,item.toUserInfo ? item.toUserInfo.userStatistics.beiPingJiaCount : item.fromUserInfo.userStatistics.beiPingJiaCount)}}</p>
+                            <p class='txt1'>{{$t('myGuest.subject.jycs')}}：{{item.userStatistics && item.userStatistics.jiaoYiCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.xrrs')}}：{{item.userStatistics && item.userStatistics.beiXinRenCount}}</p>
+                            <p class='txt2'>{{$t('myGuest.subject.hpl')}}：{{item.userStatistics && getPercentum(item.userStatistics.beiHaoPingCount, item.userStatistics.beiPingJiaCount)}}</p>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
 </template>
 <script>
 import { myGuest, getPageTrust } from "api/person";
-import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId } from "common/js/util";
+import { getUser, formatDate, formatAmount, isUnDefined, getAvatar, setTitle, getPercentum, getUserId, formatImg } from "common/js/util";
 import Scroll from 'base/scroll/scroll';
 import HeadPic from 'base/head-pic/headPic';
 import FullLoading from 'base/full-loading/full-loading';
@@ -72,7 +72,6 @@ export default {
   },
   created() {
     setTitle(this.$t('myGuest.subject.jyds'));
-    // this.myGuest();
     this.getPageTrust();
   },
   methods: {
@@ -83,35 +82,22 @@ export default {
     getUserPic(pic){
       return getAvatar(pic);
     },
-    myGuest() { // 邀请好友列表
-      myGuest(this.start, this.limit).then(data => {
-        data.list.map( v => {
-            v.total = formatAmount(v.tradeAwardCount + v.regAwardCount, '', 'FMVP');
-            v.regAwardCount = formatAmount(`${v.regAwardCount}`, '', 'FMVP');
-            v.tradeCount = formatAmount(`${v.tradeCount}`, '', 'FMVP');
-            v.tradeAwardCount = formatAmount(`${v.tradeAwardCount}`, '', 'FMVP');
-            v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
-        });
-        if (data.totalPage <= this.start) {
-          this.hasMore = false;
-        }
-        this.list = [...this.list, ...data.list];
-        this.len = this.list.length;
-        this.start++;
-      });
-    },
     getPageTrust(){
       this.isLoading = true;
       this.config.start = this.start;
       getPageTrust(this.config).then(data => {
         this.isLoading = false;
-        data.list.map( v => {
-          v.createDatetime = formatDate(v.createDatetime, 'yyyy-MM-dd');
-        });
+        const list = data.list.map( v => ({
+          code: v.code,
+          createDatetime: formatDate(v.createDatetime, 'yyyy-MM-dd'),
+          userStatistics: v.toUserInfo ? v.toUserInfo.userStatistics : v.fromUserInfo.userStatistics,
+          photo: v.toUserInfo ? formatImg(v.toUserInfo.photo) : formatImg(v.fromUserInfo.photo),
+          nickname: v.toUserInfo ? v.toUserInfo.nickname : v.fromUserInfo.nickname
+        }));
         if (data.totalPage <= this.start) {
           this.hasMore = false;
         }
-        this.list = [...this.list, ...data.list];
+        this.list = [...this.list, ...list];
         this.len = this.list.length;
         this.start++;
       }, () => {

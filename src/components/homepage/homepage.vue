@@ -5,9 +5,8 @@
     <div class="container">
         <div class="con-user">
             <div class="user-left">
-                <p :style="getUserPic(userDataList.photo)" :class="{'hidden': !(userDataList.photo)}" alt=""></p>
                 <!-- <img src="./user.png" :class="{'hidden': (userDataList.photo)}" alt=""> -->
-                <HeadPic :content="userDataList.nickname.substring(0, 1)" :class="{'hidden': userDataList.photo}"/>
+                <HeadPic :content="userDataList.nickname.substring(0, 1)" :picUrl="getUserPic(userDataList.photo)"/>
             </div>
             <div class="user-right">
                 <h5>{{userDataList.nickname}}</h5>
@@ -16,22 +15,22 @@
         </div>
         <div class="user-list">
             <div class="jy-box">
-                <h5>{{userDataList.userStatistics && userDataList.userStatistics.jiaoYiCount}}</h5>
+                <h5>{{userDataList.userStatistics.jiaoYiCount}}</h5>
                 <p>{{$t('homepage.subject.jycs')}}</p>
             </div>
             <div class="xr-box">
-                <h5>{{userDataList.userStatistics && userDataList.userStatistics.beiXinRenCount}}</h5>
+                <h5>{{userDataList.userStatistics.beiXinRenCount}}</h5>
                 <p>{{$t('homepage.subject.xrcs')}}</p>
             </div>
             <div class="hp-box" @click="$router.push('userpj?userId=' + userId)">
-                <h5>{{userDataList.userStatistics && getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
+                <h5>{{userDataList.userStatistics.beiHaoPingCount && getPercentum(userDataList.userStatistics.beiHaoPingCount, userDataList.userStatistics.beiPingJiaCount)}}</h5>
                 <p>{{$t('homepage.subject.xrl')}}</p>
             </div>
             <div class="ls-box">
                 <h5>
-                    {{totalTradeCount}}{{currency}}
+                    {{userDataList.userStatistics.betweenTradeTimes}}
                 </h5>
-                <p>{{$t('homepage.subject.lsjy')}}</p>
+                <p>相互交易数</p>
             </div>
         </div>
         <div class="user-btns">
@@ -48,7 +47,7 @@
   </div>
 </template>
 <script>
-import { getUrlParam, setTitle, formatAmount, getAvatar, getPercentum } from 'common/js/util';
+import { getUrlParam, setTitle, formatAmount, getAvatar, getPercentum, formatImg } from 'common/js/util';
 import { getUser, getUserRelation, addUserRelation, removeUserRelation } from "api/person";
 import FullLoading from 'base/full-loading/full-loading';
 import Toast from 'base/toast/toast';
@@ -64,6 +63,7 @@ export default {
                 beiXinRenCount: '',
                 beiHaoPingCount: '',
                 beiPingJiaCount: '',
+                betweenTradeTimes: ''
             }
         },
         textMsg: this.$t('common.czcg'),
@@ -86,6 +86,7 @@ export default {
       getUser(this.userId).then(data => {
           this.isLoading = false;
           this.userDataList.nickname = data.nickname;
+          this.userDataList.photo = data.photo;
       }, () => {
           this.isLoading = false;
       });
@@ -97,7 +98,7 @@ export default {
       },
       // 获取头像
       getUserPic(pic){
-          return getAvatar(pic);
+          return formatImg(pic);
       },
       getGxFn(){
           getUserRelation(this.currency, this.userId).then(data => {
@@ -235,13 +236,10 @@ export default {
             margin-bottom: 0.7rem;
             div{
                 text-align: center;
-                width: 20%;
+                width: 30%;
                 h5{
                     font-size: 0.36rem;
                     margin-bottom: 0.2rem;
-                }
-                &:nth-of-type(4){
-                    width: 36%;
                 }
             }
         }
