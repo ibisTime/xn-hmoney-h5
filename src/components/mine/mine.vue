@@ -23,9 +23,9 @@
                 {{data.nickname ? data.nickname : data.loginName}}
               </router-link>
             </p>
-            <p class="intro">{{$t('mine.subject.jy')}} {{data.userStatistics && data.userStatistics.jiaoYiCount}} | {{$t('mine.subject.hpl')}}
+            <!-- <p class="intro">{{$t('mine.subject.jy')}} {{data.userStatistics && data.userStatistics.jiaoYiCount}} | {{$t('mine.subject.hpl')}}
               {{data.userStatistics && getPercentum(data.userStatistics.beiHaoPingCount, data.userStatistics.beiPingJiaCount)}} |
-              {{$t('mine.subject.xr')}} {{data.userStatistics && data.userStatistics.beiXinRenCount}}</p>
+              {{$t('mine.subject.xr')}} {{data.userStatistics && data.userStatistics.beiXinRenCount}}</p> -->
           </div>
         </div>
         <div class="mine_tabs">

@@ -8,6 +8,7 @@
         <span :class="[ !show ? 'select' : '' ]" @click='changeStatus("ended")'>{{$t('myOrder.subject.yjs')}}{{endedUnread <= 0 ? '' : endedUnread <= 99 ? '('+endedUnread+')' : '(99+)'}}</span>
       </p>
     </div>
+    <p class="line"></p>
     <div class='list-start'>
       <Scroll
         ref="scroll"
@@ -16,41 +17,62 @@
         v-show="list.length > 0"
         @pullingUp="getOrderData"
       >
-        <div class='list' @click='goDetails(item.code, item.status)' v-for='(item,index) in list' :key="index">
-          <div class="top">
-            <p class='code' :title="item.code">
-              {{$t('myOrder.subject.ddbh')}}{{item.code.substring(item.code.length-8)}}</p>
-            <p class="unread" v-if="item.unreadMsgNum > 0">{{$t('myOrder.subject.wd')}}({{item.unreadMsgNum <= 99 ?
-              item.unreadMsgNum :
-              '99+'}})</p>
-          </div>
-          <div class="content">
-            <div class='pic' @click.stop="toHomePage(item.sellUser, item.buyUser, item.tradeCoin)">
-              <p
-                :style="getUserPic(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)"
-                :class="{'hidden': !(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)}"
-              >
+        <div class="order_box" v-for='item in list' :key="item.code">
+          <div class='list' @click='goDetails(item.code, item.status)'>
+            <div class="top">
+              <p class='code' :title="item.code">
+                {{$t('myOrder.subject.ddbh')}}{{item.code.substring(item.code.length-8)}}</p>
+              <p class="unread" v-if="item.unreadMsgNum > 0">
+                {{$t('myOrder.subject.wd')}}({{+item.unreadMsgNum < 100 ? item.unreadMsgNum : '99+'}})
               </p>
-              <!-- <img :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}" src="./txiang.png"/> -->
-              <HeadPic
-                :content="item.buyUser !== userId ? item.buyUserInfo.nickname.substring(0, 1) : item.sellUserInfo.nickname.substring(0, 1)"
-                :class="{'hidden': item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo}"/>
             </div>
-            <div class='text1'>
-              <p class='txt1'>
-              <span
-                class='t1'>{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</span>
-                <span :class="[item.buyUser !== userId ? 'txt buy' : 'txt sell']">{{typeList[item.buyUser !== userId ? 'buy' : 'sell']}} {{item.tradeCoin}}</span>
-              </p>
-              <p class='txt2'>{{$t('myOrder.subject.jyje')}}：{{item.status!='-1' ? item.tradeAmount : '-'}}
-                {{item.tradeCurrency}}</p>
-              <p class='txt3'>{{$t('myOrder.subject.jysl')}}：{{item.countString ? item.countString : '0'}}
-                {{item.tradeCoin}}</p>
-            </div>
-            <div class='text2'>
-              <p class='txt1'>{{statusValueList[item.status]}}</p>
+            <div class="content">
+              <div class="con_head">
+                <p class="con_head_left">
+                  {{typeList[item.buyUser === userId ? 'buy' : 'sell']}} {{item.tradeCoin}}
+                </p>
+                <p class="con_head_right">
+                  {{statusValueList[item.status]}}
+                </p>
+              </div>
+              <ul class="con_ul">
+                <li class="con_single">
+                  <p class="sing_head">
+                    时间
+                  </p>
+                  <p class="sing_p">
+                    {{item.createDatetime}}
+                  </p>
+                </li>
+                <li class="con_single">
+                  <p class="sing_head">
+                    数量({{item.tradeCoin}})
+                  </p>
+                  <p class="sing_p">
+                    {{item.countString ? item.countString : '0.0000'}}
+                  </p>
+                </li>
+                <li class="con_single">
+                  <p class="sing_head">
+                    交易总额({{item.tradeCurrency}})
+                  </p>
+                  <p class="sing_p">
+                    {{item.status!='-1' ? (+item.tradeAmount).toFixed(2) : '-'}}
+                  </p>
+                </li>
+              </ul>
+              <div class="foo_pic">
+                <HeadPic
+                  style="width: 0.48rem; height: 0.48rem"
+                  :content="item.buyUser !== userId ? item.buyUserInfo.nickname.substring(0, 1) : item.sellUserInfo.nickname.substring(0, 1)"
+                  :picUrl="(item.buyUser !== userId ? item.buyUserInfo.photo : item.sellUserInfo.photo)"
+                  :txtSize="'0.36rem'"
+                />
+                <p class="foo_pic_txt">{{item.buyUser !== userId ? item.buyUserInfo.nickname : item.sellUserInfo.nickname}}</p>
+              </div>
             </div>
           </div>
+          <p class="line"></p>
         </div>
       </Scroll>
       <div class="no-data" :class="{'hidden': list.length > 0}">
@@ -65,7 +87,7 @@
   import {mapGetters} from 'vuex';
   import {myOrder} from 'api/person';
   import {getDictList} from 'api/general';
-  import {formatAmount, getAvatar, setTitle, getUserId} from 'common/js/util';
+  import {formatAmount, getAvatar, setTitle, getUserId, formatDate} from 'common/js/util';
   import Scroll from 'base/scroll/scroll';
   import HeadPic from 'base/head-pic/headPic';
   import FullLoading from 'base/full-loading/full-loading';
@@ -176,6 +198,13 @@
           data.list.map(v => {
             v.countString = formatAmount(v.countString, '', v.tradeCoin);
             v.unreadMsgNum = this.groupList[v.code];
+            v.createDatetime = formatDate(v.createDatetime, 'MM/dd hh:mm:ss');
+            if(v.buyUserInfo.photo) {
+              v.buyUserInfo.photo = PIC_PREFIX + v.buyUserInfo.photo;
+            }
+            if(v.sellUserInfo.photo) {
+              v.sellUserInfo.photo = PIC_PREFIX + v.sellUserInfo.photo;
+            }
             if (v.unreadMsgNum > 0 && firstLoad) {
               if (this.statusList['starting'].indexOf(v.status) > -1) {
                 startingUnread += v.unreadMsgNum;
@@ -229,6 +258,7 @@
     color: #323232;
     overflow: auto;
     position: fixed;
+    background-color: #fff;
     top: 0;
     left: 0;
     width: 100%;
@@ -266,10 +296,8 @@
       text-align: center;
       padding: 0 0.3rem;
       background: #fff;
-      margin-bottom: 0.2rem;
       position: relative;
       z-index: 9;
-
       p {
         flex: 1;
         font-size: 0.32rem;
@@ -284,18 +312,68 @@
         }
       }
     }
+    .line{
+      height: 0.2rem;
+      background-color: #F8F8F8;
+    }
 
     .list {
       width: 100%;
-      padding: 0.2rem 0.3rem;
+      padding: 0 0.3rem;
       background: #fff;
-      margin-bottom: 0.2rem;
 
       .content {
-        width: 100%;
+        padding: 0.24rem 0 0.32rem;
+      }
+      .con_head{
         display: flex;
-        padding: 0.3rem 0 0.2rem;
-        position: relative;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.28rem;
+        line-height: 0.4rem;
+        margin-bottom: 0.4rem;
+        .con_head_left{
+          color: #333333;
+          font-weight: 500;
+        }
+        .con_head_right{
+          color: #D53D3D;
+          font-weight: 500;
+        }
+      }
+      .con_ul{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.3rem;
+        .con_single{
+          font-size: 0.24rem;
+          .sing_head{
+            color: #999999;
+            line-height: 0.33rem;
+            margin-bottom: 0.12rem;
+          }
+          .sing_p{
+            color: #333;
+            line-height: 0.33rem;
+            font-family: PingFangSC-Medium, PingFang SC;
+          }
+          &:nth-child(2) {
+            text-align: center;
+          }
+          &:nth-child(3) {
+            text-align: right;
+          }
+        }
+      }
+      .foo_pic{
+        display: flex;
+        align-items: center;
+        .foo_pic_txt{
+          margin-left: 0.13rem;
+          font-size: 0.24rem;
+          color: #323232;
+        }
       }
 
       .top {
@@ -308,7 +386,7 @@
           display: inline-block;
           float: left;
           font-size: 0.24rem;
-          color: #666;
+          color: #323232;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -318,96 +396,7 @@
           float: right;
           font-size: 0.24rem;
           line-height: 0.3rem;
-          color: $color-red;
-        }
-      }
-      .pic {
-        width: 1rem;
-        height: 1rem;
-        border-radius: 50%;
-        margin-right: 0.22rem;
-        p {
-          width: 100%;
-          height: 100%;
-          background-position: center;
-          background-size: cover;
-          border-radius: 100%;
-          position: relative;
-        }
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .text1 {
-        .txt1 {
-          margin-bottom: 0.17rem;
-          font-weight: bold;
-          display: inline-block;
-          .t1 {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            padding-right: 0.1rem;
-            line-height: 0.28rem;
-            float: left;
-          }
-          .txt {
-            display: inline-block;
-            width: 1.3rem;
-            font-size: 0.2rem;
-            color: #fff;
-            text-align: center;
-            line-height: 0.28rem;
-            border-radius: 0.04rem;
-            margin-left: 0.1rem;
-            margin-bottom: 0.05rem;
-            float: left;
-          }
-          .buy {
-            background: #d53d3d;
-          }
-
-          .sell {
-            background: #0ec55b;
-          }
-        }
-
-        .txt2, .txt3 {
-          font-size: 0.24rem;
-        }
-        .txt2 {
-          margin-bottom: 0.1rem;
-          margin-top: 0.05rem;
-        }
-      }
-
-      .text2 {
-        text-align: right;
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        .txt1 {
-          font-weight: bold;
-          margin-bottom: 0.2rem;
-        }
-        .txt2 {
-          width: 3rem;
-          font-size: 0.24rem;
-          color: #666;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-        .unread {
-          position: absolute;
-          top: 0;
-          right: 0;
-          font-size: 0.24rem;
-          line-height: 0.3rem;
-          color: $color-red;
+          color: #D53D3D;
         }
       }
     }
@@ -428,7 +417,7 @@
         }
         .text2 {
           .txt1 {
-            color: #d53d3d;
+            color: #D53D3D;
           }
         }
       }

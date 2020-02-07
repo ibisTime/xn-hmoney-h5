@@ -185,7 +185,7 @@
               <p class="p_s_l_txt">我的订单</p>
             </div>
             <div class="p_single_right">
-              <p class="p_s_r_txt" v-if="getUnreadMsgNum()">您有新消息</p>
+              <p class="p_s_r_txt" v-if="getUnreadMsgNum()">·</p>
               <p class="p_s_r_icon"></p>
             </div>
           </li>
@@ -699,7 +699,6 @@
       .content {
         width: 92%;
         margin: .2rem auto 0;
-        height: 1.9rem;
         background: #fff;
         .cont {
           width: 100%;
@@ -707,7 +706,7 @@
           margin-bottom: 0.2rem;
           display: flex;
           position: relative;
-          box-shadow: 0.1rem 0.08rem 0.18rem 0.1rem rgba(200,193,193,0.3);
+          box-shadow: 0.1rem 0.08rem 0.18rem 0.1rem rgba(200,193,193,0.1);
           .preson {
             margin-right: .2rem;
             .pic {
@@ -1069,7 +1068,7 @@
             font-size: 0.2rem;
             color: #EC3F3F;
             .p_s_r_txt{
-              margin-right: 0.1rem;
+              font-size: 0.8rem;
             }
             .p_s_r_icon{
               width: 0.12rem;
