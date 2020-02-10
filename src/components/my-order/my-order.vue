@@ -57,7 +57,7 @@
                     交易总额({{item.tradeCurrency}})
                   </p>
                   <p class="sing_p">
-                    {{item.status!='-1' ? (+item.tradeAmount).toFixed(2) : '-'}}
+                    {{item.status!=='-1' ? item.tradeAmount ? (+item.tradeAmount).toFixed(2) : '-' : '-'}}
                   </p>
                 </li>
               </ul>
