@@ -402,7 +402,6 @@ export default {
     //显示交易提示
     showMsg(type){
       let langText = getLangType() === 'en' ? '_en' : '';
-      console.log(this.MsgList, type);
       switch(type){
         case 'jg': this.text = this.MsgList['price' + langText];break;
         case 'jv': this.text = this.MsgList['premiumRate' + langText];break;
@@ -440,6 +439,7 @@ export default {
       getAdvertisePrice(tradeCoin, localCny).then(data => {
         this.bbPrice = (Math.floor(data.lastPrice * 100) / 100).toFixed(2);
         this.config.price = (Math.floor(data.lastPrice * 100) / 100).toFixed(2);
+        this.changeYjlPrice();
         });
     },
     goBack() {

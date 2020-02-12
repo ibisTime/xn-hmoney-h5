@@ -60,7 +60,7 @@
                     $t('otc.subject.hp') }}·{{getPercentum(adverItem.userStatistics.beiHaoPingCount,
                     adverItem.userStatistics.beiPingJiaCount)}} {{ $t('otc.subject.xr')
                     }}·{{adverItem.userStatistics.beiXinRenCount}}</p>
-                  <p class='limit'>{{ $t('otc.subject.xe') }}：{{adverItem.minTrade}}-{{adverItem.maxTrade}}
+                  <p class='limit'>{{ $t('otc.subject.xe') }}：{{(Math.floor(adverItem.minTrade * 100) / 100).toFixed(2)}}-{{(Math.floor(adverItem.maxTrade * 100) / 100).toFixed(2)}}
                     {{adverItem.tradeCurrency}}</p>
                 </div>
                 <div class='number'>
@@ -340,7 +340,7 @@
       getBBListData() {
         let that = this;
         this.config.limit = this.limit;
-        if (this.type == 's') {
+        if (this.type === 's') {
           this.config.start = this.start1;
           getAdvertisingData(this.config).then(data => {
             clData(data, that, this.start1, 's');

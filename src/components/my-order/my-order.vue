@@ -198,7 +198,7 @@
           data.list.map(v => {
             v.countString = formatAmount(v.countString, '', v.tradeCoin);
             v.unreadMsgNum = this.groupList[v.code];
-            v.createDatetime = formatDate(v.createDatetime, 'MM/dd hh:mm:ss');
+            v.createDatetime = formatDate(v.createDatetime, 'hh:mm MM/dd');
             if(v.buyUserInfo.photo) {
               v.buyUserInfo.photo = PIC_PREFIX + v.buyUserInfo.photo;
             }

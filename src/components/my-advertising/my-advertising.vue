@@ -26,7 +26,7 @@
                     <div class='text1'>
                         <p class='txt1'><span class='name'>{{adverItem.user.nickname}}</span><span class='green'>{{payTypeList[adverItem.payType]}}</span></p>
                         <p class='txt2'>{{$t('common.jy')}}{{adverItem.userStatistics.jiaoYiCount}} • {{$t('common.hp')}}{{adverItem.userStatistics.beiPingJiaCount != 0 ? getPercentum(adverItem.userStatistics.beiHaoPingCount, adverItem.userStatistics.beiPingJiaCount) : '0'}} • {{$t('common.xr')}}{{adverItem.userStatistics.beiXinRenCount}}</p>
-                        <p class='txt3'>{{$t('myAdvertising.subject.xe')}}：{{adverItem.minTrade}}-{{adverItem.maxTrade}} {{adverItem.tradeCurrency}}</p>
+                        <p class='txt3'>{{$t('myAdvertising.subject.xe')}}：{{(Math.floor(adverItem.minTrade * 100) / 100).toFixed(2)}}-{{(Math.floor(adverItem.maxTrade * 100) / 100).toFixed(2)}} {{adverItem.tradeCurrency}}</p>
                         <p class='txt4'>{{$t('myAdvertising.subject.type')}}：{{adverItem.tradeType === '0' ? $t('common.gm') : $t('common.cs')}} {{adverItem.tradeCoin}}</p>
                     </div>
                     <div class='text2'>

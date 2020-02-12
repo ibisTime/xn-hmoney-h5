@@ -12,7 +12,7 @@
           </div>
           <div class='text'>
             <p class='name'><span class='txt1'>{{data.user.nickname}}</span><span class='icon'>{{bizTypeList[data.payType]}}</span></p>
-            <p class='num'>{{$t('otcBuy.userMsg.xe')}}：{{data.minTrade}}-{{data.maxTrade}} {{data.tradeCurrency}}</p>
+            <p class='num'>{{$t('otcBuy.userMsg.xe')}}：{{(Math.floor(data.minTrade * 100) / 100).toFixed(2)}}-{{(Math.floor(data.maxTrade * 100) / 100).toFixed(2)}} {{data.tradeCurrency}}</p>
           </div>
           <div class='money'>{{truePrice}} {{data.tradeCurrency}}</div>
         </div>

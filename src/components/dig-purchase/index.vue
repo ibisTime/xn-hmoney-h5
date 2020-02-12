@@ -124,9 +124,10 @@
       },
       changeTabs(ev) {
         const key = ev.target.getAttribute('data-key');
-        this.tabType = key;
-        this.list = [];
         if(key) {
+          this.tabType = key;
+          this.list = [];
+          this.params.start = 1;
           this.queryPurchase(key);
         }
       },
