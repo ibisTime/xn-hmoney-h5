@@ -72,7 +72,8 @@
         params: {
           start: 1,
           limit: 20
-        }
+        },
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {
@@ -83,7 +84,7 @@
     },
     mounted() {
       ownerCalculateEarnings(this.outDatetime).then(data => {
-        this.dayPoolAmount = data.dayPoolAmount > 0 ? formatAmount(data.dayPoolAmount, '4', 'TWT') : '0.0000';
+        this.dayPoolAmount = data.dayPoolAmount > 0 ? formatAmount(data.dayPoolAmount, '4', this.systemCoin) : '0.0000';
         this.mapData.push({value: data.dayTeamAmount > 0 ? data.dayTeamAmount : 1});
         this.mapData.push({value: data.daySelfAmount > 0 ? data.daySelfAmount : 1});
         const allAmount = data.daySelfAmount + data.dayTeamAmount;
@@ -136,7 +137,7 @@
       queryCalculateRecord() {
         queryCalculateRecord(this.params).then(data => {
           data.list.forEach(item => {
-            item.poolAmount = item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0';
+            item.poolAmount = item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', this.systemCoin) : '0';
             item.receiveDatetime = item.status === '3' ? (item.receiveEndDatetime ? formatDate(item.receiveEndDatetime, 'yyyy-MM-dd hh:mm:ss') : '') : (item.receiveDatetime ? formatDate(item.receiveDatetime, 'yyyy-MM-dd hh:mm:ss') : '');
             item.statusName = item.status === '1' ? '待领取' : (item.status === '2' ? '已领取' : (item.status === '3' ? '已过期' : ''));
           });

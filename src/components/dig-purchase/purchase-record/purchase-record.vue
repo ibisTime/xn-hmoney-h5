@@ -25,7 +25,7 @@
                   <p>申购总量</p>
                 </div>
                 <div class="s_c_right">
-                  <h5 class="s_c_h5">{{item.payAmount}} <span>TWT</span></h5>
+                  <h5 class="s_c_h5">{{item.payAmount}} <span>{{systemCoin}}</span></h5>
                   <p>支付</p>
                 </div>
               </div>
@@ -52,7 +52,8 @@
           start: 1,
           limit: 20
         },
-        hasMore: true
+        hasMore: true,
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {

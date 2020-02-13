@@ -10,7 +10,7 @@
       <li>
         <router-link :to="`wallet-into?adress=${walletObj.address}&currency=${walletObj.currency}&accountNumber=${walletObj.accountNumber}`">
           <img src="../image/get_cbi.png" alt="">
-          <p>持TWT币</p>
+          <p>持{{systemCoin}}币</p>
         </router-link>
       </li>
       <li>
@@ -31,13 +31,14 @@ export default {
       walletObj: {
         address: '',
         currency: '',
-        accountNumber: ''
+        accountNumber: '',
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     }
   },
   created() {
     wallet().then(data => {
-      this.walletObj = data.accountList.filter(item => item.currency === 'TWT')[0];
+      this.walletObj = data.accountList.filter(item => item.currency === this.systemCoin)[0];
     });
   },
   methods: {

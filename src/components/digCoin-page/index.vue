@@ -108,7 +108,8 @@
           direction: 1,
           singleHeight: 1
         },
-        APIIpList: []
+        APIIpList: [],
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {
@@ -125,7 +126,7 @@
       willDigList().then(data => {
         this.digList = data.map(item => ({
           ...item,
-          poolAmount: item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0.0000'
+          poolAmount: item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', this.systemCoin) : '0.0000'
         }));
         const len = data.length;
         const listX = [], listY = [];
@@ -169,7 +170,7 @@
             willDigList().then(data => {
               this.digList = data.map(item => ({
                 ...item,
-                poolAmount: +item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', 'TWT') : '0.0000'
+                poolAmount: +item.poolAmount > 0 ? formatAmount(item.poolAmount, '4', this.systemCoin) : '0.0000'
               }));
               this.listX.splice(index, 1);
               this.listY.splice(index, 1);
@@ -181,7 +182,7 @@
         ownerDigValue().then(data => {
           this.digValues = {
             dayCalculate: +data.dayCalculate > 0 ? data.dayCalculate : '0.00',
-            totalAmount: +data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0.0000'
+            totalAmount: +data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', this.systemCoin) : '0.0000'
           }
         });
       },
@@ -198,7 +199,7 @@
         tokensList().then(data => {
           // 代币排行榜
           this.calculateData = data.map(item => ({
-            dayCalculate: item.amount > 0 ? formatAmount(item.amount, '4', 'TWT') : '0.0000',
+            dayCalculate: item.amount > 0 ? formatAmount(item.amount, '4', this.systemCoin) : '0.0000',
             nickname: item.mobile
           }));
         });

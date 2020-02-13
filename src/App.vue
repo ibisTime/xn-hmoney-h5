@@ -31,6 +31,9 @@
       getSysConfig('socket_url').then(obj => {
         localStorage.setItem('SOCKET_URL', obj.cvalue);
       });
+      getSysConfig('system_coin').then(obj => {
+        localStorage.setItem('SYSTEM_COIN', obj.cvalue);
+      });
       this.$router.afterEach(() => {
         this.isLoading = false;
         if(!window.SOCKET || !window.SOCKET.onmessage) {

@@ -3,7 +3,7 @@
     <div class="header">
       <div class="h_left">
         <img :src="purDetail.toSymbolIcon" alt="">
-        <p>TWT</p>
+        <p>{{systemCoin}}</p>
       </div>
       <div class="h_m">
         <img src="./Fill 1@2x.png" alt="">
@@ -57,7 +57,7 @@
         </div>
         <ul class="modal_ul">
           <li class="modal_li_single">申购通证 <span class="modal_li_single_sp">{{purDetail.symbol}}币</span></li>
-          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 TWT = {{purDetail.price}} {{purDetail.symbol}}</span></li>
+          <li class="modal_li_single">申购单价 <span class="modal_li_single_sp">1 {{systemCoin}} = {{purDetail.price}} {{purDetail.symbol}}</span></li>
           <li class="modal_li_single">最小支付数量 <span class="modal_li_single_sp">{{purDetail.payAmountMin}} {{purDetail.toSymbol}}</span></li>
           <li class="modal_li_single">支付步长 <span class="modal_li_single_sp">{{purDetail.payAmountStep}} {{purDetail.toSymbol}}</span></li>
           <li class="modal_li_single_num">
@@ -75,7 +75,7 @@
         </ul>
         <p class="modal_p">
           <span>得到 {{(purDetail.price * config.payAmount).toFixed(2)}} {{purDetail.symbol}}</span>
-          <span>TWT余额：{{userAmount}}</span>
+          <span>{{systemCoin}}余额：{{userAmount}}</span>
         </p>
         <div class="foo_btn" @click="comfirmPayment">
           确认付款
@@ -128,7 +128,8 @@
         textMsg: '',
         userAmount: 0,
         payAmountStep: 0,
-        payAmountMin: 0
+        payAmountMin: 0,
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {
@@ -152,8 +153,8 @@
         });
         this.config.purchaseProductCode = purchaseCode;
       }
-      wallet('TWT').then(data => {
-        this.userAmount = formatAmount((data.accountList[0].amount - data.accountList[0].frozenAmount), '', 'TWT');
+      wallet(this.systemCoin).then(data => {
+        this.userAmount = formatAmount((data.accountList[0].amount - data.accountList[0].frozenAmount), '', this.systemCoin);
       });
     },
     methods: {

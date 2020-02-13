@@ -67,7 +67,8 @@
         recordList: [],
         hasMore: true,
         dayCalculate: '',
-        dayPoolAmount: ''
+        dayPoolAmount: '',
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {
@@ -76,7 +77,7 @@
       this.queryCalculateRecord();
       ownerCalculateEarnings(this.params.outDatetime).then(data => {
         this.dayCalculate = data.dayCalculate;
-        this.dayPoolAmount = formatAmount(data.dayPoolAmount, '4', 'TWT');
+        this.dayPoolAmount = formatAmount(data.dayPoolAmount, '4', this.systemCoin);
       });
     },
     methods: {

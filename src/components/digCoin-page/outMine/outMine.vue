@@ -63,7 +63,7 @@
             <span>全部金额</span>
           </div>
         </div>
-        <p class="user_amount">可转入：{{userAmount}} TWT</p>
+        <p class="user_amount">可转入：{{userAmount}} {{systemCoin}}</p>
         <div class="foo_btn" @click="confirmInto">
           确认转入
         </div>
@@ -114,16 +114,17 @@
         yesterdayPoolOutAmount: '',
         amount: '',
         textMsg: '',
-        interval: null
+        interval: null,
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {
       setTitle('出矿');
       this.queryCalculateRecord();
       ownerDigAmount().then(data => {
-        this.userAmount = data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', 'TWT') : '0';
-        this.totalPoolOutAmount = data.totalPoolOutAmount > 0 ? formatAmount(data.totalPoolOutAmount, '4', 'TWT') : '0';
-        this.yesterdayPoolOutAmount = data.yesterdayPoolOutAmount > 0 ? formatAmount(data.yesterdayPoolOutAmount, '4', 'TWT') : '0';
+        this.userAmount = data.totalAmount > 0 ? formatAmount(data.totalAmount, '4', this.systemCoin) : '0';
+        this.totalPoolOutAmount = data.totalPoolOutAmount > 0 ? formatAmount(data.totalPoolOutAmount, '4', this.systemCoin) : '0';
+        this.yesterdayPoolOutAmount = data.yesterdayPoolOutAmount > 0 ? formatAmount(data.yesterdayPoolOutAmount, '4', this.systemCoin) : '0';
       });
       sessionStorage.removeItem('paw_go_back');
     },
@@ -140,7 +141,7 @@
           return;
         }
         outMineApply({
-          amount: formatMoneyMultiply(this.amount, '', 'TWT'),
+          amount: formatMoneyMultiply(this.amount, '', this.systemCoin),
           tradePwd
         }).then(() => {
           this.isShowModal = false;
@@ -164,7 +165,7 @@
       queryCalculateRecord() {
         queryHistoryRecord(this.params).then(data => {
           data.list.forEach(item => {
-            item.dayPoolAmount = item.dayPoolAmount > 0 ? formatAmount(item.dayPoolAmount, '4', 'TWT') : '0';
+            item.dayPoolAmount = item.dayPoolAmount > 0 ? formatAmount(item.dayPoolAmount, '4', this.systemCoin) : '0';
           });
           if (data.totalPage <= this.params.start) {
             this.hasMore = false;

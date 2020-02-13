@@ -6,7 +6,7 @@
           <div class='banner'>
             <p class='txt1'><span class='icon ico'></span>{{$t('wallet.subject.zzc')}} {{cdInfo.symbol}}</p>
             <div class='txt2' style='margin-top:.12rem;'>
-              <p class='t1'>{{cdInfo.totalAmountTWT}} TWT</p>
+              <p class='t1'>{{cdInfo.totalAmountTWT}} {{systemCoin}}</p>
               <p style="font-size: 0.24rem;margin-top: 0.08rem;">≈ {{currency === 'CNY' ? cdInfo.totalAmountCNY : cdInfo.totalAmountUSD}} {{currency}}</p>
             </div>
             <div class='txt3'>
@@ -83,7 +83,8 @@
         info: [{}, {}, {}],
         cdInfo: {},
         currency: 'CNY',
-        loginName: ''
+        loginName: '',
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       };
     },
     created() {

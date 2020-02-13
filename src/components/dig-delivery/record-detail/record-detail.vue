@@ -3,7 +3,7 @@
     <div class="header">
       <div class="h_left">
         <img src="" alt="">
-        <p>TWT</p>
+        <p>{{systemCoin}}</p>
       </div>
       <div class="h_m">
         <img src="" alt="">
@@ -58,7 +58,8 @@
         isShowModal: false,
         isShowPawModal: false,
         isSuccessModal: false,
-        timer: 5
+        timer: 5,
+        systemCoin: localStorage.getItem('SYSTEM_COIN')
       }
     },
     created() {

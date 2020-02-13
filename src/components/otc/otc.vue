@@ -56,10 +56,10 @@
                 <div class='text'>
                   <p class='title'>{{adverItem.user.nickname}}<span class='ico'>{{bizTypeList[adverItem.payType]}}</span>
                   </p>
-                  <p class='disc'>{{ $t('otc.subject.jy') }}·{{adverItem.userStatistics.jiaoYiCount}} {{
-                    $t('otc.subject.hp') }}·{{getPercentum(adverItem.userStatistics.beiHaoPingCount,
-                    adverItem.userStatistics.beiPingJiaCount)}} {{ $t('otc.subject.xr')
-                    }}·{{adverItem.userStatistics.beiXinRenCount}}</p>
+                  <p class='disc'>{{ $t('otc.subject.jy') }}{{adverItem.userStatistics.jiaoYiCount}} · {{
+                    $t('otc.subject.hp') }}{{getPercentum(adverItem.userStatistics.beiHaoPingCount,
+                    adverItem.userStatistics.beiPingJiaCount)}} · {{ $t('otc.subject.xr')
+                    }}{{adverItem.userStatistics.beiXinRenCount}}</p>
                   <p class='limit'>{{ $t('otc.subject.xe') }}：{{(Math.floor(adverItem.minTrade * 100) / 100).toFixed(2)}}-{{(Math.floor(adverItem.maxTrade * 100) / 100).toFixed(2)}}
                     {{adverItem.tradeCurrency}}</p>
                 </div>
@@ -750,9 +750,9 @@
               display: block;
               height: .3rem;
               border-radius: .04rem;
-              border: .01rem solid #d53d3d;
+              border: .01rem solid #D53D3D;
               font-size: 0.16rem;
-              color: #d53d3d;
+              color: #D53D3D;
               margin-top: .1rem;
               text-align: center;
               line-height: .26rem;
@@ -771,10 +771,9 @@
               .ico {
                 display: inline-block;
                 text-align: center;
-                width: .76rem;
-                height: .3rem;
-                background: #74c758;
-                border-radius: .03rem;
+                padding: 0.03rem 0.08rem 0.03rem;
+                background: #0EC55B;
+                border-radius: .04rem;
                 margin-left: .12rem;
                 font: .2rem/.28rem PingFangSC-Medium;
                 color: #fff;
@@ -782,6 +781,7 @@
             }
 
             .disc, .limit {
+              font-family: PingFangSC-Regular;
               font-size: .24rem;
               color: #999;
               line-height: .24rem;
