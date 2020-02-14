@@ -118,11 +118,11 @@ export default {
     p {
       text-shadow: 0 0.04rem 0.08rem #cf5340;
       position: absolute;
-      top: 1.1rem;
+      top: 1rem;
       left: 50%;
-      width: 120px;
-      height: 70px;
-      background-image: url('./head_logo.png');
+      width: 160px;
+      height: 80px;
+      background-image: url('./login.png');
       background-size: 100% 100%;
       transform: translateX(-50%);
     }

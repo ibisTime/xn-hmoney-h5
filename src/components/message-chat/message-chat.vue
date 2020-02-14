@@ -21,7 +21,7 @@
           <div v-show="hasMore" class="loading-wrapper">
             <loading title=""></loading>
           </div>
-          <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content">
+          <div v-for="(info,index) in curChatList" ref="mesRef" class="message-content" :key="`car_${index}`">
             <div class="time-split"><div v-show="showTime(info, index)" class="time-content">{{getDate(info.time)}}</div></div>
             <div class="receive" v-if="!info.isSend && info.fromAccount !== 'administrator'">
               <span class="avatar avatarDefault" v-if="isUnDefined(receiver.photo)">{{getDefaultPhoto(receiver)}}</span>
@@ -29,9 +29,9 @@
               <div class="p-content">
                 <span class="triangle-left"></span>
                 <i>
-                  <template v-for="item in getContent(info)">
+                  <template v-for="(item, index) in getContent(info)">
                     <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
-                    <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content"/>
+                    <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content" :key="`TIMTextElem_${index + 100}`"/>
                   </template>
                 </i>
               </div>
@@ -49,9 +49,9 @@
               <div class="p-content">
                 <span class="triangle-right"></span>
                 <i>
-                  <template v-for="item in getContent(info)">
+                  <template v-for="(item, index) in getContent(info)">
                     <template v-if="item.type==='TIMTextElem'">{{item.content}}</template>
-                    <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content"/>
+                    <img v-else @click="showImage(item.type, item.content)" @load="handleLoad" :src="item.content" :key="`TIMTextElem_${index}`"/>
                   </template>
                 </i>
                 <div @click="reSendMsg(info, index)" v-show="showErr(info)" class="error-icon"></div>
@@ -340,6 +340,7 @@
             elems: v.elems.slice()
           }));
           if(list.length > 0) {
+            console.log(list);
             let newList = self.getNewList(list);
             let oriList = self.curChatList.slice();
             self.setCurChatList(newList.concat(oriList));

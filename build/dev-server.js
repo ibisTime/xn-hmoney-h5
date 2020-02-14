@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/api', function (req, res) {
-  var url = 'http://api.twtdev.hichengdai.com/';
+  var url = 'http://api.cjs.hichengdai.com/';
   // var url = 'http://47.99.163.139:2801/forward-service/api';
   var _body = req.body;
   var param = 'code=' + _body.code + '&json=' + encodeURIComponent(_body.json);
