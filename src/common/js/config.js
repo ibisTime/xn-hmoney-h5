@@ -1,1 +1,1 @@
-export const SYSTEM_CODE = 'CD-EXCHANGE';
+export const SYSTEM_CODE = 'CD-TWToken';
